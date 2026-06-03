@@ -1,0 +1,62 @@
+{
+  "instance": "eco_loom_manufacturing_fixture_draft_001.json",
+  "confidence": "draft",
+  "entries": [
+    {
+      "field": "material",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending AutoCAD/CAM deliverable or machinist review"
+    },
+    {
+      "field": "stock_size",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending AutoCAD/CAM deliverable or machinist review"
+    },
+    {
+      "field": "machine",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending AutoCAD/CAM deliverable or machinist review"
+    },
+    {
+      "field": "workholding",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending AutoCAD/CAM deliverable or machinist review"
+    },
+    {
+      "field": "tooling",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending tooling plan from AutoCAD/CAM deliverable"
+    },
+    {
+      "field": "operations",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending process plan from AutoCAD/CAM deliverable"
+    },
+    {
+      "field": "cycle_time_minutes",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending cycle-time capture from AutoCAD/CAM deliverable"
+    }
+  ]
+}

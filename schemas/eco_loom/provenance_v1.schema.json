@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cnc-production-shop/schemas/eco_loom/provenance_v1.schema.json",
+  "title": "Eco-Loom Provenance v1",
+  "description": "Provenance sidecar for an Eco-Loom instance fixture (ECOLOOM-CYCLETIME-1). Records where each captured value came from -- NOT the value itself (the fixture is the single source of truth). Strict structure: unknown keys are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "instance",
+    "confidence",
+    "entries"
+  ],
+  "properties": {
+    "instance": {
+      "type": "string",
+      "description": "Filename of the value fixture this provenance describes."
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded"]
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "source",
+          "confidence"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Name of the field in the value fixture."
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "engineering_estimate",
+              "autocad_designer_estimate",
+              "shop_estimate",
+              "machinist_measured"
+            ]
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["draft", "reviewed", "approved", "superseded"]
+          },
+          "captured_by": {
+            "type": "string"
+          },
+          "capture_date": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
