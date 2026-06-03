@@ -36,12 +36,15 @@ from jsonschema import Draft202012Validator
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_DIR = REPO_ROOT / "schemas" / "eco_loom"
 FIXTURE_DIR = REPO_ROOT / "fixtures" / "eco_loom"
+INSTANCE_DIR = FIXTURE_DIR / "instances"
 
 # (fixture filename, schema filename) pairs validated by the no-argument CLI.
 ECO_LOOM_PAIRS: list[tuple[str, str]] = [
     ("eco_loom_cost_inputs_v1.json", "cost_inputs_v1.schema.json"),
     ("eco_loom_manufacturing_fixture_v1.json", "manufacturing_fixture_v1.schema.json"),
 ]
+
+PROVENANCE_SCHEMA = "provenance_v1.schema.json"
 
 
 # ---------------------------------------------------------------------------
@@ -129,11 +132,51 @@ def validate_file(fixture_path: Path, schema_path: Path) -> ValidationResult:
 
 
 def validate_eco_loom_pairs() -> list[ValidationResult]:
-    """Validate every known Eco-Loom (fixture, schema) pair."""
+    """Validate every known Eco-Loom (fixture, schema) template pair."""
     return [
         validate_file(FIXTURE_DIR / fixture_name, SCHEMA_DIR / schema_name)
         for fixture_name, schema_name in ECO_LOOM_PAIRS
     ]
+
+
+def schema_for_instance(filename: str) -> str | None:
+    """Map an instance filename to its schema by naming convention.
+
+    Returns the schema filename, or None if the file maps to no schema (which
+    the validator treats as a governance failure rather than skipping silently).
+    """
+    if filename.endswith(".provenance.json"):
+        return PROVENANCE_SCHEMA
+    if "cost_inputs" in filename:
+        return "cost_inputs_v1.schema.json"
+    if "manufacturing_fixture" in filename:
+        return "manufacturing_fixture_v1.schema.json"
+    return None
+
+
+def validate_eco_loom_instances() -> list[ValidationResult]:
+    """Validate every populated instance + provenance file under instances/.
+
+    Each file is routed to its schema by filename (see schema_for_instance). An
+    unrecognized instance file fails rather than being skipped, so stray files
+    cannot slip past governance.
+    """
+    if not INSTANCE_DIR.is_dir():
+        return []
+    results: list[ValidationResult] = []
+    for path in sorted(INSTANCE_DIR.glob("*.json")):
+        schema_name = schema_for_instance(path.name)
+        if schema_name is None:
+            results.append(
+                ValidationResult(
+                    label=path.name,
+                    ok=False,
+                    errors=[f"no schema mapping for instance file: {path.name}"],
+                )
+            )
+            continue
+        results.append(validate_file(path, SCHEMA_DIR / schema_name))
+    return results
 
 
 def _format_error(error: Any) -> str:
@@ -185,7 +228,7 @@ def main(fixture: Path | None, schema: Path | None) -> None:
     if fixture is not None and schema is not None:
         results = [validate_file(fixture, schema)]
     else:
-        results = validate_eco_loom_pairs()
+        results = validate_eco_loom_pairs() + validate_eco_loom_instances()
 
     all_ok = _report(results)
     raise SystemExit(0 if all_ok else 1)

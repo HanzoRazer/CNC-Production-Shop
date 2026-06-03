@@ -1,0 +1,78 @@
+{
+  "instance": "eco_loom_cost_inputs_draft_001.json",
+  "confidence": "draft",
+  "entries": [
+    {
+      "field": "material_cost",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending AutoCAD/CAM deliverable or machinist review"
+    },
+    {
+      "field": "machine_runtime_minutes",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending cycle-time capture from AutoCAD/CAM deliverable"
+    },
+    {
+      "field": "operator_rate",
+      "source": "shop_estimate",
+      "confidence": "draft",
+      "captured_by": "shop records",
+      "capture_date": "2026-06-03",
+      "note": "Established shop labor rate (CNC-COST-CORE scenarios)"
+    },
+    {
+      "field": "payroll_burden_pct",
+      "source": "shop_estimate",
+      "confidence": "draft",
+      "captured_by": "shop records",
+      "capture_date": "2026-06-03",
+      "note": "Established shop payroll burden (CNC-COST-CORE scenarios)"
+    },
+    {
+      "field": "machine_burden_rate",
+      "source": "shop_estimate",
+      "confidence": "draft",
+      "captured_by": "shop records",
+      "capture_date": "2026-06-03",
+      "note": "Derived from shop machine config burden rate (19.0/hr)"
+    },
+    {
+      "field": "electricity_rate_per_hour",
+      "source": "shop_estimate",
+      "confidence": "draft",
+      "captured_by": "shop records",
+      "capture_date": "2026-06-03",
+      "note": "Derived from shop electricity loads (1.97/hr)"
+    },
+    {
+      "field": "tooling_rate_per_hour",
+      "source": "shop_estimate",
+      "confidence": "draft",
+      "captured_by": "shop records",
+      "capture_date": "2026-06-03",
+      "note": "Established shop tooling rate (8.0/hr)"
+    },
+    {
+      "field": "setup_cost",
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "captured_by": "engineering placeholder",
+      "capture_date": "2026-06-03",
+      "note": "Pending AutoCAD/CAM deliverable or machinist review"
+    },
+    {
+      "field": "target_margin_pct",
+      "source": "shop_estimate",
+      "confidence": "draft",
+      "captured_by": "shop records",
+      "capture_date": "2026-06-03",
+      "note": "Business target-margin default (30%)"
+    }
+  ]
+}
