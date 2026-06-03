@@ -1,0 +1,11 @@
+{
+  "material_cost": 0,
+  "machine_runtime_minutes": 0,
+  "operator_rate": 23.0,
+  "payroll_burden_pct": 25.0,
+  "machine_burden_rate": 0,
+  "electricity_rate_per_hour": 0,
+  "tooling_rate_per_hour": 0,
+  "setup_cost": 0,
+  "target_margin_pct": 30.0
+}

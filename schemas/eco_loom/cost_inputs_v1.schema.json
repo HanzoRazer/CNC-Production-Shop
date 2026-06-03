@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cnc-production-shop/schemas/eco_loom/cost_inputs_v1.schema.json",
+  "title": "Eco-Loom Cost Inputs v1",
+  "description": "Manufacturing-derived cost inputs for the CNC cost engine (ECOLOOM-MFG-READINESS-1). Strict structure: unknown keys are rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "material_cost",
+    "machine_runtime_minutes",
+    "target_margin_pct"
+  ],
+  "properties": {
+    "material_cost": {
+      "type": "number"
+    },
+    "machine_runtime_minutes": {
+      "type": "number",
+      "minimum": 0
+    },
+    "operator_rate": {
+      "type": "number"
+    },
+    "payroll_burden_pct": {
+      "type": "number"
+    },
+    "machine_burden_rate": {
+      "type": "number"
+    },
+    "electricity_rate_per_hour": {
+      "type": "number"
+    },
+    "tooling_rate_per_hour": {
+      "type": "number"
+    },
+    "setup_cost": {
+      "type": "number"
+    },
+    "target_margin_pct": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 100
+    }
+  }
+}
