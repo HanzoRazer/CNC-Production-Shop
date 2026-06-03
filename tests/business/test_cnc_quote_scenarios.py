@@ -21,7 +21,6 @@ from business.calculators import (
     calculate_simple_job_cost,
 )
 
-
 # ---------------------------------------------------------------------------
 # Shop Configuration Fixtures
 # ---------------------------------------------------------------------------
@@ -227,6 +226,11 @@ class TestScenarioGuitarBodyRouting:
             )
         )
 
+        # Material cost = direct cost minus the other direct components
+        material_cost = (
+            result.direct_job_cost - result.labor_cost - result.runtime_cost - 50 - 12
+        )
+
         # Build summary dict for business use
         summary = {
             "job": "Les Paul Body Routing",
@@ -239,7 +243,7 @@ class TestScenarioGuitarBodyRouting:
                 "true_runtime_rate": f"${result.true_runtime_rate}/hr",
             },
             "costs": {
-                "material": f"${result.direct_job_cost - result.labor_cost - result.runtime_cost - 50 - 12:.2f}",
+                "material": f"${material_cost:.2f}",
                 "setup_programming": "$50.00",
                 "labor": f"${result.labor_cost}",
                 "runtime": f"${result.runtime_cost}",
@@ -288,11 +292,6 @@ class TestScenarioPickguardBatch:
         """Calculate batch quote with per-unit breakdown."""
 
         quantity = 10
-
-        loaded_labor_rate = calculate_loaded_labor_rate(
-            wage_per_hour=texas_guitar_shop_labor["operator_wage_per_hour"],
-            payroll_burden_pct=texas_guitar_shop_labor["payroll_burden_pct"],
-        )
 
         machine_burden = calculate_machine_burden_rate(
             annual_depreciation=texas_guitar_shop_machine["annual_depreciation"],
@@ -370,11 +369,6 @@ class TestScenarioFretboardSlotting:
         """Calculate premium lutherie job quote."""
 
         quantity = 5
-
-        loaded_labor_rate = calculate_loaded_labor_rate(
-            wage_per_hour=texas_guitar_shop_labor["operator_wage_per_hour"],
-            payroll_burden_pct=texas_guitar_shop_labor["payroll_burden_pct"],
-        )
 
         machine_burden = calculate_machine_burden_rate(
             annual_depreciation=texas_guitar_shop_machine["annual_depreciation"],
