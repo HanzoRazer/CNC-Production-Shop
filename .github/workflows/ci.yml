@@ -34,3 +34,6 @@ jobs:
 
       - name: Test with pytest
         run: pytest --cov=cam_assist --cov-report=term-missing
+
+      - name: Validate Eco-Loom fixtures
+        run: python scripts/validate_eco_loom_fixture.py
