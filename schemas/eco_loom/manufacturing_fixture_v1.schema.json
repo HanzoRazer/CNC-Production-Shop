@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cnc-production-shop/schemas/eco_loom/manufacturing_fixture_v1.schema.json",
+  "title": "Eco-Loom Manufacturing Fixture v1",
+  "description": "Single-source manufacturing record for Eco-Loom (ECOLOOM-MFG-READINESS-1). Strict structure: unknown keys are rejected. Draft fixtures with blank strings and zero values are structurally valid; confidence is a plain string so future review states are not pre-blocked.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "material",
+    "machine",
+    "operations",
+    "cycle_time_minutes"
+  ],
+  "properties": {
+    "material": {
+      "type": "string"
+    },
+    "stock_size": {
+      "type": "string"
+    },
+    "machine": {
+      "type": "string"
+    },
+    "workholding": {
+      "type": "string"
+    },
+    "tooling": {
+      "type": "array"
+    },
+    "operations": {
+      "type": "array"
+    },
+    "cycle_time_minutes": {
+      "type": "number",
+      "minimum": 0
+    },
+    "confidence": {
+      "type": "string"
+    }
+  }
+}
