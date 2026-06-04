@@ -1,0 +1,33 @@
+{
+  "name": "fretboard_slotting_v1",
+  "description": "5 ebony fretboards with precision slotting and radiusing. Premium lutherie work with higher contingency (15%) and margin (45%).",
+  "inputs": {
+    "material_cost": 250.0,
+    "setup_programming_cost": 125.0,
+    "machine_runtime_hours": 3.5,
+    "operator_hours": 5.0,
+    "operator_wage_per_hour": 23.0,
+    "payroll_burden_pct": 25.0,
+    "machine_burden_rate_per_hour": 19.0,
+    "electricity_cost_per_hour": 1.97,
+    "tooling_cost_per_hour": 8.0,
+    "consumables_cost": 35.0,
+    "scrap_pct": 8.0,
+    "contingency_pct": 15.0,
+    "target_margin_pct": 45.0,
+    "quantity": 5
+  },
+  "expected_outputs": {
+    "loaded_labor_rate": 28.75,
+    "true_runtime_rate": 28.97,
+    "labor_cost": 143.75,
+    "runtime_cost": 101.39,
+    "direct_job_cost": 655.14,
+    "risked_job_cost": 813.69,
+    "quote_price": 1479.44,
+    "gross_profit": 665.75,
+    "effective_margin_pct": 45.0,
+    "cost_per_unit": 162.74,
+    "price_per_unit": 295.89
+  }
+}

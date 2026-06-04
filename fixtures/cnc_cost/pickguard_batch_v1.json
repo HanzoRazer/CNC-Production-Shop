@@ -1,0 +1,33 @@
+{
+  "name": "pickguard_batch_v1",
+  "description": "Batch of 10 custom acrylic pickguards. Tests quantity handling and per-unit pricing at 40% margin.",
+  "inputs": {
+    "material_cost": 45.0,
+    "setup_programming_cost": 75.0,
+    "machine_runtime_hours": 0.75,
+    "operator_hours": 1.5,
+    "operator_wage_per_hour": 23.0,
+    "payroll_burden_pct": 25.0,
+    "machine_burden_rate_per_hour": 19.0,
+    "electricity_cost_per_hour": 1.97,
+    "tooling_cost_per_hour": 8.0,
+    "consumables_cost": 8.0,
+    "scrap_pct": 5.0,
+    "contingency_pct": 10.0,
+    "target_margin_pct": 40.0,
+    "quantity": 10
+  },
+  "expected_outputs": {
+    "loaded_labor_rate": 28.75,
+    "true_runtime_rate": 28.97,
+    "labor_cost": 43.12,
+    "runtime_cost": 21.73,
+    "direct_job_cost": 192.85,
+    "risked_job_cost": 222.74,
+    "quote_price": 371.24,
+    "gross_profit": 148.5,
+    "effective_margin_pct": 40.0,
+    "cost_per_unit": 22.27,
+    "price_per_unit": 37.12
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "guitar_body_routing_v1",
+  "description": "Single Les Paul body routed from mahogany blank. Standard lutherie job with proven program, 35% margin.",
+  "inputs": {
+    "material_cost": 85.0,
+    "setup_programming_cost": 50.0,
+    "machine_runtime_hours": 1.5,
+    "operator_hours": 2.0,
+    "operator_wage_per_hour": 23.0,
+    "payroll_burden_pct": 25.0,
+    "machine_burden_rate_per_hour": 19.0,
+    "electricity_cost_per_hour": 1.97,
+    "tooling_cost_per_hour": 8.0,
+    "consumables_cost": 12.0,
+    "scrap_pct": 0.0,
+    "contingency_pct": 10.0,
+    "target_margin_pct": 35.0,
+    "quantity": 1
+  },
+  "expected_outputs": {
+    "loaded_labor_rate": 28.75,
+    "true_runtime_rate": 28.97,
+    "labor_cost": 57.5,
+    "runtime_cost": 43.45,
+    "direct_job_cost": 247.95,
+    "risked_job_cost": 272.75,
+    "quote_price": 419.62,
+    "gross_profit": 146.87,
+    "effective_margin_pct": 35.0,
+    "cost_per_unit": 272.75,
+    "price_per_unit": 419.62
+  }
+}

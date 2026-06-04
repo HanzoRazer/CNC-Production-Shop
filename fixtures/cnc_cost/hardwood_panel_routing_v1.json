@@ -1,0 +1,33 @@
+{
+  "name": "hardwood_panel_routing_v1",
+  "description": "4 hardwood furniture panels for outside manufacturing work. Represents CNC routing services beyond lutherie. 30% margin.",
+  "inputs": {
+    "material_cost": 320.0,
+    "setup_programming_cost": 60.0,
+    "machine_runtime_hours": 2.0,
+    "operator_hours": 3.0,
+    "operator_wage_per_hour": 23.0,
+    "payroll_burden_pct": 25.0,
+    "machine_burden_rate_per_hour": 19.0,
+    "electricity_cost_per_hour": 1.97,
+    "tooling_cost_per_hour": 8.0,
+    "consumables_cost": 20.0,
+    "scrap_pct": 3.0,
+    "contingency_pct": 10.0,
+    "target_margin_pct": 30.0,
+    "quantity": 4
+  },
+  "expected_outputs": {
+    "loaded_labor_rate": 28.75,
+    "true_runtime_rate": 28.97,
+    "labor_cost": 86.25,
+    "runtime_cost": 57.94,
+    "direct_job_cost": 544.19,
+    "risked_job_cost": 616.57,
+    "quote_price": 880.81,
+    "gross_profit": 264.24,
+    "effective_margin_pct": 30.0,
+    "cost_per_unit": 154.14,
+    "price_per_unit": 220.2
+  }
+}
