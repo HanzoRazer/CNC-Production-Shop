@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "quote_scenario_v1.schema.json",
+  "title": "CNC Quote Scenario",
+  "description": "A governed quote scenario fixture for CNC job costing validation",
+  "type": "object",
+  "required": ["name", "description", "inputs", "expected_outputs"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique scenario identifier"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable scenario description"
+    },
+    "inputs": {
+      "type": "object",
+      "required": [
+        "material_cost",
+        "setup_programming_cost",
+        "machine_runtime_hours",
+        "operator_hours",
+        "operator_wage_per_hour",
+        "payroll_burden_pct",
+        "machine_burden_rate_per_hour",
+        "electricity_cost_per_hour",
+        "tooling_cost_per_hour",
+        "consumables_cost",
+        "scrap_pct",
+        "contingency_pct",
+        "target_margin_pct",
+        "quantity"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "material_cost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "setup_programming_cost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "machine_runtime_hours": {
+          "type": "number",
+          "minimum": 0
+        },
+        "operator_hours": {
+          "type": "number",
+          "minimum": 0
+        },
+        "operator_wage_per_hour": {
+          "type": "number",
+          "minimum": 0
+        },
+        "payroll_burden_pct": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Percentage POINTS (25.0 = 25%)"
+        },
+        "machine_burden_rate_per_hour": {
+          "type": "number",
+          "minimum": 0
+        },
+        "electricity_cost_per_hour": {
+          "type": "number",
+          "minimum": 0
+        },
+        "tooling_cost_per_hour": {
+          "type": "number",
+          "minimum": 0
+        },
+        "consumables_cost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "scrap_pct": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Percentage POINTS (5.0 = 5%)"
+        },
+        "contingency_pct": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Percentage POINTS (10.0 = 10%)"
+        },
+        "target_margin_pct": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 100,
+          "description": "Percentage POINTS (35.0 = 35%). Must be < 100."
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "expected_outputs": {
+      "type": "object",
+      "required": [
+        "loaded_labor_rate",
+        "true_runtime_rate",
+        "labor_cost",
+        "runtime_cost",
+        "direct_job_cost",
+        "risked_job_cost",
+        "quote_price",
+        "gross_profit",
+        "effective_margin_pct",
+        "cost_per_unit",
+        "price_per_unit"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "loaded_labor_rate": {
+          "type": "number"
+        },
+        "true_runtime_rate": {
+          "type": "number"
+        },
+        "labor_cost": {
+          "type": "number"
+        },
+        "runtime_cost": {
+          "type": "number"
+        },
+        "direct_job_cost": {
+          "type": "number"
+        },
+        "risked_job_cost": {
+          "type": "number"
+        },
+        "quote_price": {
+          "type": "number"
+        },
+        "gross_profit": {
+          "type": "number"
+        },
+        "effective_margin_pct": {
+          "type": "number",
+          "description": "Percentage POINTS (35.0 = 35%)"
+        },
+        "cost_per_unit": {
+          "type": "number"
+        },
+        "price_per_unit": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

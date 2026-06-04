@@ -1,0 +1,72 @@
+{
+  "name": "machine_burden_sensitivity_v1",
+  "description": "Demonstrates effect of machine utilization on burden rate and quote price. Same job at low (600 hrs/yr) vs high (1800 hrs/yr) utilization.",
+  "scenarios": [
+    {
+      "name": "low_utilization",
+      "description": "600 billable hours/year = $38/hr machine burden (50% of target utilization)",
+      "inputs": {
+        "material_cost": 100.0,
+        "setup_programming_cost": 40.0,
+        "machine_runtime_hours": 1.0,
+        "operator_hours": 1.5,
+        "operator_wage_per_hour": 23.0,
+        "payroll_burden_pct": 25.0,
+        "machine_burden_rate_per_hour": 38.0,
+        "electricity_cost_per_hour": 1.97,
+        "tooling_cost_per_hour": 8.0,
+        "consumables_cost": 10.0,
+        "scrap_pct": 0.0,
+        "contingency_pct": 10.0,
+        "target_margin_pct": 35.0,
+        "quantity": 1
+      },
+      "expected_outputs": {
+        "loaded_labor_rate": 28.75,
+        "true_runtime_rate": 47.97,
+        "labor_cost": 43.12,
+        "runtime_cost": 47.97,
+        "direct_job_cost": 241.09,
+        "risked_job_cost": 265.2,
+        "quote_price": 408.01,
+        "gross_profit": 142.81,
+        "effective_margin_pct": 35.0,
+        "cost_per_unit": 265.2,
+        "price_per_unit": 408.01
+      }
+    },
+    {
+      "name": "high_utilization",
+      "description": "1800 billable hours/year = $12.67/hr machine burden (150% of target utilization)",
+      "inputs": {
+        "material_cost": 100.0,
+        "setup_programming_cost": 40.0,
+        "machine_runtime_hours": 1.0,
+        "operator_hours": 1.5,
+        "operator_wage_per_hour": 23.0,
+        "payroll_burden_pct": 25.0,
+        "machine_burden_rate_per_hour": 12.67,
+        "electricity_cost_per_hour": 1.97,
+        "tooling_cost_per_hour": 8.0,
+        "consumables_cost": 10.0,
+        "scrap_pct": 0.0,
+        "contingency_pct": 10.0,
+        "target_margin_pct": 35.0,
+        "quantity": 1
+      },
+      "expected_outputs": {
+        "loaded_labor_rate": 28.75,
+        "true_runtime_rate": 22.64,
+        "labor_cost": 43.12,
+        "runtime_cost": 22.64,
+        "direct_job_cost": 215.76,
+        "risked_job_cost": 237.34,
+        "quote_price": 365.14,
+        "gross_profit": 127.8,
+        "effective_margin_pct": 35.0,
+        "cost_per_unit": 237.34,
+        "price_per_unit": 365.14
+      }
+    }
+  ]
+}
