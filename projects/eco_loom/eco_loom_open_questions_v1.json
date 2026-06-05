@@ -1,0 +1,54 @@
+{
+  "project_name": "eco_loom",
+  "version": "v1",
+  "status": "draft",
+  "created_date": "2026-06-04",
+  "last_updated": "2026-06-04",
+  "questions": [
+    {
+      "id": "Q001",
+      "question": "What material is required?",
+      "category": "material",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null
+    },
+    {
+      "id": "Q002",
+      "question": "What quantity is required?",
+      "category": "quantity",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null
+    },
+    {
+      "id": "Q003",
+      "question": "What delivery timeline is required?",
+      "category": "schedule",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null
+    },
+    {
+      "id": "Q004",
+      "question": "What tolerances are required?",
+      "category": "specification",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null
+    },
+    {
+      "id": "Q005",
+      "question": "What finish requirements exist?",
+      "category": "specification",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null
+    }
+  ]
+}

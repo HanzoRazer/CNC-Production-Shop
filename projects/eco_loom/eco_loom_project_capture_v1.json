@@ -1,0 +1,24 @@
+{
+  "project_name": "eco_loom",
+  "customer": "",
+  "status": "draft",
+  "description": "Eco-Loom manufacturing opportunity. Awaiting customer requirements.",
+  "created_date": "2026-06-04",
+  "last_updated": "2026-06-04",
+  "known_facts": [],
+  "estimated_facts": [],
+  "unknown_items": [
+    "material",
+    "quantity",
+    "delivery_timeline",
+    "tolerances",
+    "finish_requirements"
+  ],
+  "open_questions": [
+    "Q001",
+    "Q002",
+    "Q003",
+    "Q004",
+    "Q005"
+  ]
+}
