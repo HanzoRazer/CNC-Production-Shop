@@ -173,13 +173,15 @@ class TestProjectStructure:
         fixture = load_json(PROJECT_DIR / "eco_loom_project_capture_v1.json")
         assert fixture["status"] == "draft"
 
-    def test_known_facts_is_empty(self):
-        """Known facts is empty (no invented information)."""
+    def test_known_facts_have_source(self):
+        """All known facts have a source (no invented information)."""
         fixture = load_json(PROJECT_DIR / "eco_loom_project_capture_v1.json")
-        assert fixture["known_facts"] == []
+        for fact in fixture["known_facts"]:
+            assert "source" in fact, f"Fact {fact['field']} missing source"
+            assert fact["source"], f"Fact {fact['field']} has empty source"
 
     def test_estimated_facts_is_empty(self):
-        """Estimated facts is empty (no invented estimates)."""
+        """Estimated facts is empty (no unsubstantiated estimates)."""
         fixture = load_json(PROJECT_DIR / "eco_loom_project_capture_v1.json")
         assert fixture["estimated_facts"] == []
 

@@ -7,12 +7,13 @@
   "questions": [
     {
       "id": "Q001",
-      "question": "What material is required?",
+      "question": "What wood species is required?",
       "category": "material",
       "status": "open",
       "answer": null,
       "answered_date": null,
-      "answered_by": null
+      "answered_by": null,
+      "notes": "PDF specifies 'pre-finished wooden handle block' but not species"
     },
     {
       "id": "Q002",
@@ -34,7 +35,37 @@
     },
     {
       "id": "Q004",
-      "question": "What tolerances are required?",
+      "question": "What tolerances are acceptable beyond those specified in PDF?",
+      "category": "specification",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null,
+      "notes": "PDF provides nominal dimensions, need to confirm acceptable variance"
+    },
+    {
+      "id": "Q005",
+      "question": "What finish is required on the wood?",
+      "category": "specification",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null,
+      "notes": "PDF mentions 'pre-finished' - need to confirm if we apply finish or customer supplies pre-finished blanks"
+    },
+    {
+      "id": "Q006",
+      "question": "Is updated STEP revision available?",
+      "category": "specification",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null,
+      "notes": "PDF includes OpenSCAD code - confirm if STEP export is needed"
+    },
+    {
+      "id": "Q007",
+      "question": "Is AutoCAD manufacturing package available?",
       "category": "specification",
       "status": "open",
       "answer": null,
@@ -42,13 +73,44 @@
       "answered_by": null
     },
     {
-      "id": "Q005",
-      "question": "What finish requirements exist?",
+      "id": "Q008",
+      "question": "Is this prototype or production quantity?",
+      "category": "commercial",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null,
+      "notes": "Critical for costing model selection"
+    },
+    {
+      "id": "Q009",
+      "question": "Who supplies the rubber grip strips and Velcro?",
+      "category": "material",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null,
+      "notes": "PDF specifies VELCRO Brand HTH 830 and textured vulcanized rubber strips"
+    },
+    {
+      "id": "Q010",
+      "question": "Is laser debossing included in CNC scope or separate operation?",
       "category": "specification",
       "status": "open",
       "answer": null,
       "answered_date": null,
-      "answered_by": null
+      "answered_by": null,
+      "notes": "PDF specifies 0.025\" depth laser-debossed branding"
+    },
+    {
+      "id": "Q011",
+      "question": "What is the stock blank size being supplied?",
+      "category": "material",
+      "status": "open",
+      "answer": null,
+      "answered_date": null,
+      "answered_by": null,
+      "notes": "Need to know starting stock dimensions for CAM planning"
     }
   ]
 }
