@@ -1,0 +1,131 @@
+{
+  "bid_id": "BID-ECOLOOM-2026-001",
+  "project_name": "Eco-Loom Scrubber Handle Prototype",
+  "customer_name": "ECO-LOOM",
+  "revision": "Draft 1",
+  "status": "draft",
+  "created_at": "2026-06-08T12:00:00Z",
+  "updated_at": "2026-06-08T12:00:00Z",
+  "project_ref": "projects/eco_loom/eco_loom_project_capture_v1.json",
+  "manufacturing_ref": "fixtures/eco_loom/eco_loom_manufacturing_fixture_v1.json",
+  "scenario_ref": null,
+  "assumptions": [
+    {
+      "field": "labor_rate",
+      "value": 25.0,
+      "source": "Prototype bid basis",
+      "confidence": "reviewed",
+      "note": "Prototype bid uses standard labor rate of $25/hr. Existing shop costing fixtures may use separate loaded-labor modeling."
+    },
+    {
+      "field": "machine_rate",
+      "value": 72.0,
+      "source": "Shop machine burden rate",
+      "confidence": "reviewed",
+      "note": "Includes depreciation, maintenance, and overhead"
+    },
+    {
+      "field": "material_supply",
+      "value": "customer-supplied",
+      "source": "Customer agreement",
+      "confidence": "reviewed",
+      "note": "Wood stock and Velcro backing are customer-supplied materials and are excluded from direct material cost."
+    },
+    {
+      "field": "quantity",
+      "value": 10,
+      "source": "Customer verbal confirmation",
+      "confidence": "approved",
+      "note": "Captured 2026-06-04"
+    },
+    {
+      "field": "project_type",
+      "value": "prototype",
+      "source": "Customer verbal confirmation",
+      "confidence": "approved",
+      "note": "First run - higher contingency applied"
+    },
+    {
+      "field": "delivery_date",
+      "value": "2026-07-15",
+      "source": "Customer verbal confirmation",
+      "confidence": "approved",
+      "note": "~37 days lead time"
+    }
+  ],
+  "line_items": [
+    {
+      "name": "CNC Machine Time - Wood Operations",
+      "category": "machine",
+      "quantity": 39.2,
+      "unit": "minutes",
+      "unit_cost": 1.20,
+      "total_cost": 47.04,
+      "note": "10 units × 3.92 min/unit"
+    },
+    {
+      "name": "CNC Machine Time - Velcro Operations",
+      "category": "machine",
+      "quantity": 6.7,
+      "unit": "minutes",
+      "unit_cost": 1.20,
+      "total_cost": 8.04,
+      "note": "10 units × 0.67 min/unit"
+    },
+    {
+      "name": "Finishing Labor",
+      "category": "labor",
+      "quantity": 6.0,
+      "unit": "hours",
+      "unit_cost": 25.00,
+      "total_cost": 150.00,
+      "note": "Hand finishing, inspection, packaging"
+    },
+    {
+      "name": "CAM/Setup Labor",
+      "category": "labor",
+      "quantity": 2.0,
+      "unit": "hours",
+      "unit_cost": 25.00,
+      "total_cost": 50.00,
+      "note": "Program setup and first-article validation"
+    },
+    {
+      "name": "Finishing Materials",
+      "category": "materials",
+      "quantity": 1.0,
+      "unit": "lot",
+      "unit_cost": 60.00,
+      "total_cost": 60.00,
+      "note": "Seal, varnish, consumables"
+    }
+  ],
+  "cost_basis": {
+    "direct_material_cost": 0.00,
+    "direct_labor_cost": 0.00,
+    "machine_time_cost": 55.08,
+    "tooling_cost": 0.00,
+    "setup_cost": 50.00,
+    "finishing_cost": 150.00,
+    "finishing_material_cost": 60.00,
+    "engineering_cost": 0.00,
+    "base_manufacturing_cost": 315.08
+  },
+  "pricing": {
+    "tool_wear_pct": 5.0,
+    "manufacturing_contingency_pct": 10.0,
+    "business_overhead_pct": 10.0,
+    "engineering_recovery_pct": 15.0,
+    "target_margin_pct": 30.0,
+    "risked_cost": 441.11,
+    "quote_price": 630.16,
+    "quantity": 10,
+    "price_per_unit": 63.02
+  },
+  "notes": [
+    "Internal bid calculation record - not customer-facing",
+    "Recommended customer-facing rounded budgetary estimate: $650 total / $65 per unit",
+    "Wood and Velcro materials are customer-supplied",
+    "Prototype run - higher contingency factors applied"
+  ]
+}
