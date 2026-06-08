@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "open_questions_v1.schema.json",
+  "title": "Open Questions Register",
+  "description": "Unresolved questions blocking project progression",
+  "type": "object",
+  "required": ["project_name", "version", "status", "questions"],
+  "additionalProperties": false,
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "in_review", "approved", "superseded"]
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^Q[0-9]{3}$",
+            "description": "Question ID (Q001, Q002, etc.)"
+          },
+          "question": {
+            "type": "string",
+            "description": "The question text"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["material", "quantity", "schedule", "specification", "commercial", "other"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "answered", "closed"]
+          },
+          "answer": {
+            "description": "The answer if status is answered or closed"
+          },
+          "answered_date": {
+            "type": ["string", "null"],
+            "format": "date"
+          },
+          "answered_by": {
+            "type": ["string", "null"]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assumption_register_v1.schema.json",
+  "title": "Assumption Register",
+  "description": "Tracked assumptions with provenance for project costing",
+  "type": "object",
+  "required": ["project_name", "version", "status", "assumptions"],
+  "additionalProperties": false,
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "in_review", "approved", "superseded"]
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "value", "source", "confidence", "captured_by", "capture_date"],
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "The field this assumption applies to"
+          },
+          "value": {
+            "description": "The assumed value (any type)"
+          },
+          "source": {
+            "type": "string",
+            "description": "Where this assumption came from"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["draft", "reviewed", "approved", "superseded"],
+            "description": "Confidence level of this assumption"
+          },
+          "captured_by": {
+            "type": "string",
+            "description": "Who recorded this assumption"
+          },
+          "capture_date": {
+            "type": "string",
+            "format": "date",
+            "description": "When this assumption was recorded"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "superseded_by": {
+            "type": "string",
+            "description": "Reference to newer assumption if superseded"
+          }
+        }
+      }
+    }
+  }
+}
