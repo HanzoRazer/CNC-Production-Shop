@@ -19,19 +19,19 @@
       "id": "Q002",
       "question": "What quantity is required?",
       "category": "quantity",
-      "status": "open",
-      "answer": null,
-      "answered_date": null,
-      "answered_by": null
+      "status": "answered",
+      "answer": "10 units",
+      "answered_date": "2026-06-04",
+      "answered_by": "customer"
     },
     {
       "id": "Q003",
       "question": "What delivery timeline is required?",
       "category": "schedule",
-      "status": "open",
-      "answer": null,
-      "answered_date": null,
-      "answered_by": null
+      "status": "answered",
+      "answer": "July 15, 2026",
+      "answered_date": "2026-06-04",
+      "answered_by": "customer"
     },
     {
       "id": "Q004",
@@ -76,11 +76,11 @@
       "id": "Q008",
       "question": "Is this prototype or production quantity?",
       "category": "commercial",
-      "status": "open",
-      "answer": null,
-      "answered_date": null,
-      "answered_by": null,
-      "notes": "Critical for costing model selection"
+      "status": "answered",
+      "answer": "prototype",
+      "answered_date": "2026-06-04",
+      "answered_by": "customer",
+      "notes": "Prototype run - higher scrap/contingency allowances apply"
     },
     {
       "id": "Q009",

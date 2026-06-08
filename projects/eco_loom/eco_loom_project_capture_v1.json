@@ -128,15 +128,61 @@
       "value": "0.060 inches diameter",
       "source": "Manufacturing specification PDF Section 1.6",
       "captured_date": "2026-06-04"
+    },
+    {
+      "field": "quantity",
+      "value": 10,
+      "source": "Customer verbal confirmation",
+      "captured_date": "2026-06-04"
+    },
+    {
+      "field": "delivery_date",
+      "value": "2026-07-15",
+      "source": "Customer verbal confirmation",
+      "captured_date": "2026-06-04"
+    },
+    {
+      "field": "project_type",
+      "value": "prototype",
+      "source": "Customer verbal confirmation",
+      "captured_date": "2026-06-04"
     }
   ],
   "estimated_facts": [],
   "unknown_items": [
-    "quantity",
-    "delivery_timeline",
     "wood_species",
     "finish_type",
-    "prototype_or_production"
+    "stock_blank_size"
+  ],
+  "artifacts": [
+    {
+      "type": "STEP",
+      "filename": "eco_loom.step",
+      "status": "exists_locally",
+      "location": "user_system",
+      "notes": "User has STEP file, not yet imported to repo"
+    },
+    {
+      "type": "OpenSCAD",
+      "filename": "eco_loom.scad",
+      "status": "embedded_in_pdf",
+      "location": "Manufacturing specification PDF Section 2",
+      "notes": "Rev 4.0 and Rev 5.0 code in PDF"
+    },
+    {
+      "type": "PDF",
+      "filename": "scan_20260530064557.pdf",
+      "status": "received",
+      "location": "uploaded",
+      "notes": "Manufacturing specification with dimensions and OpenSCAD code"
+    },
+    {
+      "type": "PDF",
+      "filename": "ECO-LOOM.pdf",
+      "status": "received",
+      "location": "uploaded",
+      "notes": "Engineering drawing - top-down orthographic with key dimensions"
+    }
   ],
   "open_questions": [
     "Q001",

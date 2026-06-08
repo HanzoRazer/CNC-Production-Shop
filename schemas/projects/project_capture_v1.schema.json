@@ -77,6 +77,28 @@
       "type": "array",
       "items": {"type": "string"},
       "description": "References to question IDs in open_questions file"
+    },
+    "artifacts": {
+      "type": "array",
+      "description": "Design artifacts (CAD files, PDFs, etc.)",
+      "items": {
+        "type": "object",
+        "required": ["type", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["STEP", "STL", "OpenSCAD", "PDF", "DXF", "DWG", "other"]
+          },
+          "filename": {"type": "string"},
+          "status": {
+            "type": "string",
+            "enum": ["exists_locally", "embedded_in_pdf", "received", "pending", "not_available"]
+          },
+          "location": {"type": "string"},
+          "notes": {"type": "string"}
+        }
+      }
     }
   }
 }

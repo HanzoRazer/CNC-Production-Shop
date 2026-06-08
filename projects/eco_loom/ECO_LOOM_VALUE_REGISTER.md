@@ -104,9 +104,10 @@ Working sheet for project values. Updated as information is gathered.
 
 | Field | Value | Source | Confidence |
 |-------|-------|--------|------------|
-| Quantity | — | — | unknown |
-| Delivery Date | — | — | unknown |
-| Prototype or Production | — | — | unknown |
+| Quantity | 10 units | Customer verbal | reviewed |
+| Delivery Date | 2026-07-15 | Customer verbal | reviewed |
+| Prototype or Production | Prototype | Customer verbal | reviewed |
+| Lead Time | ~41 days | Calculated | reviewed |
 
 ---
 
@@ -125,17 +126,17 @@ Working sheet for project values. Updated as information is gathered.
 
 | ID | Question | Status |
 |----|----------|--------|
-| Q001 | What wood species is required? | open |
-| Q002 | What quantity is required? | open |
-| Q003 | What delivery timeline is required? | open |
-| Q004 | What tolerances are acceptable? | open |
-| Q005 | What finish is required? | open |
-| Q006 | Is updated STEP revision available? | open |
-| Q007 | Is AutoCAD manufacturing package available? | open |
-| Q008 | Prototype or production quantity? | open |
-| Q009 | Who supplies rubber grips and Velcro? | open |
-| Q010 | Is laser debossing in CNC scope? | open |
-| Q011 | What is the stock blank size? | open |
+| Q001 | What wood species is required? | **open** |
+| Q002 | What quantity is required? | answered: 10 units |
+| Q003 | What delivery timeline is required? | answered: 2026-07-15 |
+| Q004 | What tolerances are acceptable? | **open** |
+| Q005 | What finish is required? | **open** |
+| Q006 | Is updated STEP revision available? | **open** |
+| Q007 | Is AutoCAD manufacturing package available? | **open** |
+| Q008 | Prototype or production quantity? | answered: prototype |
+| Q009 | Who supplies rubber grips and Velcro? | **open** |
+| Q010 | Is laser debossing in CNC scope? | **open** |
+| Q011 | What is the stock blank size? | **open** |
 
 ---
 

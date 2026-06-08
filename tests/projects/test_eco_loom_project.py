@@ -195,8 +195,16 @@ class TestProjectStructure:
         fixture = load_json(PROJECT_DIR / "eco_loom_open_questions_v1.json")
         assert len(fixture["questions"]) >= 5
 
-    def test_all_questions_are_open(self):
-        """All questions are in 'open' status."""
+    def test_questions_have_valid_status(self):
+        """All questions have valid status (open, answered, or closed)."""
+        fixture = load_json(PROJECT_DIR / "eco_loom_open_questions_v1.json")
+        valid_statuses = {"open", "answered", "closed"}
+        for q in fixture["questions"]:
+            assert q["status"] in valid_statuses, f"Q{q['id']} has invalid status"
+
+    def test_answered_questions_have_answers(self):
+        """Answered questions have non-null answer field."""
         fixture = load_json(PROJECT_DIR / "eco_loom_open_questions_v1.json")
         for q in fixture["questions"]:
-            assert q["status"] == "open"
+            if q["status"] == "answered":
+                assert q["answer"] is not None, f"{q['id']} is answered but has no answer"
