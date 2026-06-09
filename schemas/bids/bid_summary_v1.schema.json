@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bid_summary_v1.schema.json",
+  "title": "BidSummaryV1",
+  "description": "Internal bid summary for review, not customer-facing",
+  "type": "object",
+  "required": [
+    "bid_id",
+    "project_name",
+    "customer_name",
+    "revision",
+    "status",
+    "quantity",
+    "canonical_quote_price",
+    "canonical_price_per_unit",
+    "base_manufacturing_cost",
+    "risked_cost",
+    "target_margin_pct",
+    "line_items",
+    "risk_factors",
+    "assumptions",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "bid_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "sent", "superseded", "rejected"]
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "canonical_quote_price": {
+      "type": "number",
+      "minimum": 0
+    },
+    "canonical_price_per_unit": {
+      "type": "number",
+      "minimum": 0
+    },
+    "rounded_quote_price": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "rounded_price_per_unit": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "base_manufacturing_cost": {
+      "type": "number",
+      "minimum": 0
+    },
+    "risked_cost": {
+      "type": "number",
+      "minimum": 0
+    },
+    "target_margin_pct": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 100
+    },
+    "line_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "category", "quantity", "unit", "unit_cost", "total_cost"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "category": {"type": "string"},
+          "quantity": {"type": "number", "minimum": 0},
+          "unit": {"type": "string"},
+          "unit_cost": {"type": "number", "minimum": 0},
+          "total_cost": {"type": "number", "minimum": 0},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "risk_factors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "percentage", "contribution"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "percentage": {"type": "number", "minimum": 0},
+          "contribution": {"type": "number", "minimum": 0},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "value", "source", "confidence"],
+        "additionalProperties": false,
+        "properties": {
+          "field": {"type": "string"},
+          "value": {},
+          "source": {"type": "string"},
+          "confidence": {
+            "type": "string",
+            "enum": ["draft", "reviewed", "approved", "superseded", "unknown"]
+          },
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
