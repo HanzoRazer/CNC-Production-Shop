@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Validate bid fixtures against schema.
+"""Validate bid summary fixtures against schema.
 
 Usage:
-    python scripts/validate_bid_fixtures.py
+    python scripts/validate_bid_summaries.py
 
 Exit codes:
     0 = all validations pass
@@ -16,7 +16,9 @@ from pathlib import Path
 import jsonschema
 
 FIXTURES_DIR = Path(__file__).parent.parent / "fixtures" / "bids"
-SCHEMA_PATH = Path(__file__).parent.parent / "schemas" / "bids" / "bid_v1.schema.json"
+SCHEMA_PATH = (
+    Path(__file__).parent.parent / "schemas" / "bids" / "bid_summary_v1.schema.json"
+)
 
 
 def load_json(path: Path) -> dict:
@@ -56,13 +58,11 @@ def main() -> int:
 
     schema = load_json(SCHEMA_PATH)
 
-    # Exclude summary files (validated by validate_bid_summaries.py)
-    fixtures = [
-        f for f in FIXTURES_DIR.glob("*.json") if "_summary_" not in f.name
-    ]
+    # Only validate *_summary_v1.json files
+    fixtures = list(FIXTURES_DIR.glob("*_summary_v1.json"))
 
     if not fixtures:
-        print("No fixtures found to validate")
+        print("No summary fixtures found to validate")
         return 0
 
     all_passed = True
