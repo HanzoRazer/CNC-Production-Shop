@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "proposal_v1.schema.json",
+  "title": "ProposalV1",
+  "description": "Customer-facing proposal document — does NOT expose internal margin or risk calculations",
+  "type": "object",
+  "required": [
+    "proposal_id",
+    "source_bid_id",
+    "project_name",
+    "customer_name",
+    "revision",
+    "status",
+    "created_at",
+    "pricing",
+    "sections",
+    "assumptions",
+    "exclusions",
+    "terms",
+    "next_steps",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "proposal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_bid_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "sent", "superseded", "rejected"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_summary_ref": {
+      "type": ["string", "null"]
+    },
+    "project_ref": {
+      "type": ["string", "null"]
+    },
+    "pricing": {
+      "type": "object",
+      "required": ["total_price", "price_per_unit", "quantity"],
+      "additionalProperties": false,
+      "properties": {
+        "total_price": {"type": "number", "minimum": 0},
+        "price_per_unit": {"type": "number", "minimum": 0},
+        "quantity": {"type": "integer", "minimum": 1},
+        "currency": {"type": "string"},
+        "pricing_note": {"type": "string"}
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "body", "bullets"],
+        "additionalProperties": false,
+        "properties": {
+          "title": {"type": "string"},
+          "body": {"type": "string"},
+          "bullets": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["statement"],
+        "additionalProperties": false,
+        "properties": {
+          "statement": {"type": "string"},
+          "customer_visible": {"type": "boolean"}
+        }
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "statement"],
+        "additionalProperties": false,
+        "properties": {
+          "title": {"type": "string"},
+          "statement": {"type": "string"}
+        }
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "notes": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
