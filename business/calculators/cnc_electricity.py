@@ -22,6 +22,13 @@ Job Cost Formula:
     RiskedCost = DirectCost × (1 + Scrap%/100) × (1 + Contingency%/100)
     QuotePrice = RiskedCost / (1 - TargetMargin%/100)
 
+    NOTE (ADR-0001): This MULTIPLICATIVE model is the *manufacturing /
+    job-cost adjustment* concept (canonical name: manufacturing_adjusted_cost),
+    NOT the canonical commercial bid risked cost. Final customer bid pricing
+    uses the ADDITIVE four-factor model in business/bids/calculator.py
+    (risked_bid_cost). The field below is still named `risked_job_cost`; it will
+    be renamed under the deferred quote_scenario_v2 migration (see ADR-0001).
+
 Dev Order: CNC-COST-CORE-1
 """
 

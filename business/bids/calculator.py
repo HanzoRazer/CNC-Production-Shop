@@ -2,6 +2,10 @@
 
 Dev Order: CNC-BID-CORE-1
 
+This is the canonical ADDITIVE bid-level risked cost model used by BidV1.
+See ADR-0001 for the distinction between this model and the multiplicative
+manufacturing-adjustment model in business/calculators/cnc_electricity.py.
+
 Percentage Convention:
     All percentage fields use PERCENTAGE POINTS (30.0 = 30%), not decimals.
 
