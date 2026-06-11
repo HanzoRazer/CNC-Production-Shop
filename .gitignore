@@ -52,4 +52,7 @@ Thumbs.db
 *.gcode
 *.tap
 /output/
-/exports/
+
+# Exports (allow proposal markdown fixtures)
+/exports/*
+!/exports/proposals/
