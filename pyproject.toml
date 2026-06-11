@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "cnc-production-shop"
 version = "0.1.0"
-description = "Integrated platform for CNC lutherie workflows"
+description = "Manufacturing cost, bid, and proposal engine for CNC shop workflows"
 readme = "README.md"
 license = "MIT"
 authors = [
@@ -44,7 +44,7 @@ server = [
 cam-assist = "cam_assist.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["cam_assist", "parametric", "fretboard", "materials", "acoustic"]
+packages = ["cam_assist", "business", "parametric", "fretboard", "materials", "acoustic"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

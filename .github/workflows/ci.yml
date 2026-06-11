@@ -30,10 +30,21 @@ jobs:
         run: ruff check .
 
       - name: Type check with mypy
-        run: mypy cam_assist --ignore-missing-imports
+        run: mypy business --ignore-missing-imports
 
       - name: Test with pytest
-        run: pytest --cov=cam_assist --cov-report=term-missing
+        run: pytest --cov=business --cov-report=term-missing --cov-fail-under=90
 
-      - name: Validate Eco-Loom fixtures
-        run: python scripts/validate_eco_loom_fixture.py
+      - name: Verify core imports
+        run: |
+          python -c "import business.bids.calculator"
+          python -c "import business.bids.generator"
+          python -c "import business.proposals.generator"
+
+      - name: Validate fixtures
+        run: |
+          python scripts/validate_eco_loom_fixture.py
+          python scripts/validate_eco_loom_project.py
+          python scripts/validate_bid_fixtures.py
+          python scripts/validate_bid_summaries.py
+          python scripts/validate_proposals.py
