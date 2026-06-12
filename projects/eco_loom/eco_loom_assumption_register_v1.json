@@ -3,6 +3,115 @@
   "version": "v1",
   "status": "draft",
   "created_date": "2026-06-04",
-  "last_updated": "2026-06-04",
-  "assumptions": []
+  "last_updated": "2026-06-11",
+  "assumptions": [
+    {
+      "field": "wood_price_per_board_foot",
+      "value": 17.00,
+      "source": "Shop material pricing",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "wood_waste_pct",
+      "value": 15.0,
+      "source": "Shop manufacturing estimate",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "velcro_roll_cost",
+      "value": 34.00,
+      "source": "Shop material pricing",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "velcro_roll_length_yards",
+      "value": 25,
+      "source": "Shop material pricing",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "machine_rate_per_hour",
+      "value": 72.00,
+      "source": "Shop rate card",
+      "confidence": "approved",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "machine_runtime_100_units",
+      "value": 2.0,
+      "source": "Shop manufacturing estimate",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11",
+      "notes": "2 hours for 100-unit production run"
+    },
+    {
+      "field": "machine_runtime_250_units",
+      "value": 5.0,
+      "source": "Shop manufacturing estimate",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11",
+      "notes": "5 hours for 250-unit production run"
+    },
+    {
+      "field": "machine_runtime_500_units",
+      "value": 10.0,
+      "source": "Shop manufacturing estimate",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11",
+      "notes": "10 hours for 500-unit production run"
+    },
+    {
+      "field": "stock_blank_board_feet",
+      "value": 0.1302,
+      "source": "Calculated: (5 × 3 × 1.25) / 144",
+      "confidence": "approved",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "velcro_procurement_model",
+      "value": "roll-based",
+      "source": "Shop procurement policy",
+      "confidence": "reviewed",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11",
+      "notes": "100-250 units require 1 roll, 500 units require 2 rolls"
+    },
+    {
+      "field": "labor_cost",
+      "value": "excluded",
+      "source": "Pending customer requirements",
+      "confidence": "draft",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "finishing_cost",
+      "value": "excluded",
+      "source": "Pending customer requirements",
+      "confidence": "draft",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    },
+    {
+      "field": "packaging_cost",
+      "value": "excluded",
+      "source": "Pending customer requirements",
+      "confidence": "draft",
+      "captured_by": "shop",
+      "capture_date": "2026-06-11"
+    }
+  ]
 }

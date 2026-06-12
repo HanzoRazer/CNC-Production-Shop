@@ -58,8 +58,8 @@ def main() -> int:
 
     schema = load_json(SCHEMA_PATH)
 
-    # Only validate *_summary_v1.json files
-    fixtures = list(FIXTURES_DIR.glob("*_summary_v1.json"))
+    # Validate all bid summary files
+    fixtures = [f for f in FIXTURES_DIR.glob("*.json") if "_summary_" in f.name]
 
     if not fixtures:
         print("No summary fixtures found to validate")

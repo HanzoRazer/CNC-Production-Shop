@@ -1,0 +1,102 @@
+{
+  "bid_id": "BID-ECOLOOM-PROD-250-2026-001",
+  "project_name": "Eco-Loom Scrubber Handle Production",
+  "customer_name": "ECO-LOOM",
+  "revision": "Draft 1",
+  "status": "draft",
+  "quantity": 250,
+  "canonical_quote_price": 2058.00,
+  "canonical_price_per_unit": 8.23,
+  "rounded_quote_price": 2100.00,
+  "rounded_price_per_unit": 8.40,
+  "base_manufacturing_cost": 1029.00,
+  "risked_cost": 1440.60,
+  "target_margin_pct": 30.0,
+  "line_items": [
+    {
+      "name": "Wood Material",
+      "category": "materials",
+      "quantity": 250,
+      "unit": "units",
+      "unit_cost": 2.54,
+      "total_cost": 635.00,
+      "note": "0.1302 BF/unit × $17/BF × 1.15 waste"
+    },
+    {
+      "name": "Velcro Material",
+      "category": "materials",
+      "quantity": 1,
+      "unit": "rolls",
+      "unit_cost": 34.00,
+      "total_cost": 34.00,
+      "note": "Roll-based procurement"
+    },
+    {
+      "name": "CNC Machine Time",
+      "category": "machine",
+      "quantity": 5.0,
+      "unit": "hours",
+      "unit_cost": 72.00,
+      "total_cost": 360.00,
+      "note": "250-unit production run"
+    }
+  ],
+  "risk_factors": [
+    {
+      "name": "tool_wear",
+      "percentage": 5.0,
+      "contribution": 51.45,
+      "note": "Production tooling wear allowance"
+    },
+    {
+      "name": "manufacturing_contingency",
+      "percentage": 10.0,
+      "contribution": 102.90,
+      "note": "Production contingency"
+    },
+    {
+      "name": "business_overhead",
+      "percentage": 10.0,
+      "contribution": 102.90,
+      "note": "Shop overhead allocation"
+    },
+    {
+      "name": "engineering_recovery",
+      "percentage": 15.0,
+      "contribution": 154.35,
+      "note": "CAM programming recovery"
+    }
+  ],
+  "assumptions": [
+    {
+      "field": "machine_rate",
+      "value": 72.0,
+      "source": "Shop machine burden rate",
+      "confidence": "approved"
+    },
+    {
+      "field": "material_supply",
+      "value": "shop-supplied",
+      "source": "Customer production requirements",
+      "confidence": "reviewed"
+    },
+    {
+      "field": "quantity",
+      "value": 250,
+      "source": "Production tier pricing",
+      "confidence": "reviewed"
+    },
+    {
+      "field": "delivery_date",
+      "value": "TBD",
+      "source": "Pending customer confirmation",
+      "confidence": "draft"
+    }
+  ],
+  "notes": [
+    "Internal bid summary - not customer-facing",
+    "Production tier: 250 units",
+    "Shop-supplied materials (wood and Velcro)",
+    "Labor, finishing, and packaging excluded - pending customer requirements"
+  ]
+}
