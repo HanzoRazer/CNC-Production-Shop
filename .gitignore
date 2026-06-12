@@ -53,6 +53,7 @@ Thumbs.db
 *.tap
 /output/
 
-# Exports (allow proposal markdown fixtures)
+# Exports (allow proposal markdown fixtures and workbooks)
 /exports/*
 !/exports/proposals/
+!/exports/workbooks/
