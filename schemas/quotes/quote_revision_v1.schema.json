@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "quote_revision_v1.schema.json",
+  "title": "QuoteRevisionV1",
+  "description": "A revision of a quote package containing pricing options",
+  "type": "object",
+  "required": [
+    "revision_id",
+    "package_ref",
+    "revision_letter",
+    "created_at",
+    "status",
+    "options",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "revision_id": {
+      "type": "string",
+      "pattern": "^QR-[A-Z0-9-]+-[0-9]{4}-[0-9]{3}-[A-Z]$",
+      "description": "Unique revision identifier (e.g., QR-ECOLOOM-PROD-2026-001-A)"
+    },
+    "package_ref": {
+      "type": "string",
+      "description": "Path to parent quote package file"
+    },
+    "revision_letter": {
+      "type": "string",
+      "pattern": "^[A-Z]$"
+    },
+    "revision_reason": {
+      "type": ["string", "null"],
+      "description": "Reason for this revision (null for initial revision)"
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "description": "Revision ID this supersedes (null for initial revision)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "superseded", "withdrawn"]
+    },
+    "workbook_ref": {
+      "type": ["string", "null"],
+      "description": "Path to Excel workbook containing all options (revision-level artifact)"
+    },
+    "options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["option_id", "label", "quantity", "status", "bid_ref", "bid_summary_ref", "proposal_ref", "notes"],
+        "additionalProperties": false,
+        "properties": {
+          "option_id": {
+            "type": "string",
+            "description": "Unique option identifier within revision"
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable option label (e.g., '100 units')"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "withdrawn", "superseded"]
+          },
+          "bid_ref": {
+            "type": ["string", "null"],
+            "description": "Path to BidV1 file"
+          },
+          "bid_summary_ref": {
+            "type": ["string", "null"],
+            "description": "Path to BidSummaryV1 file"
+          },
+          "proposal_ref": {
+            "type": ["string", "null"],
+            "description": "Path to ProposalV1 file"
+          },
+          "markdown_ref": {
+            "type": ["string", "null"],
+            "description": "Path to Markdown export"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

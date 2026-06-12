@@ -1,0 +1,59 @@
+{
+  "revision_id": "QR-ECOLOOM-PROD-2026-001-A",
+  "package_ref": "projects/eco_loom/eco_loom_production_quote_package_v1.json",
+  "revision_letter": "A",
+  "revision_reason": null,
+  "supersedes": null,
+  "created_at": "2026-06-11T12:00:00Z",
+  "status": "active",
+  "workbook_ref": "exports/workbooks/eco_loom_production_estimate_2026_001.xlsx",
+  "options": [
+    {
+      "option_id": "OPT-ECOLOOM-PROD-100",
+      "label": "100 units",
+      "quantity": 100,
+      "status": "active",
+      "bid_ref": "fixtures/bids/eco_loom_production_bid_100_v1.json",
+      "bid_summary_ref": "fixtures/bids/eco_loom_production_bid_summary_100_v1.json",
+      "proposal_ref": "fixtures/proposals/eco_loom_production_proposal_100_v1.json",
+      "markdown_ref": "exports/proposals/PROP-ECOLOOM-PROD-100-2026-001.md",
+      "notes": [
+        "Minimum production quantity",
+        "2 hours machine time"
+      ]
+    },
+    {
+      "option_id": "OPT-ECOLOOM-PROD-250",
+      "label": "250 units",
+      "quantity": 250,
+      "status": "active",
+      "bid_ref": "fixtures/bids/eco_loom_production_bid_250_v1.json",
+      "bid_summary_ref": "fixtures/bids/eco_loom_production_bid_summary_250_v1.json",
+      "proposal_ref": "fixtures/proposals/eco_loom_production_proposal_250_v1.json",
+      "markdown_ref": "exports/proposals/PROP-ECOLOOM-PROD-250-2026-001.md",
+      "notes": [
+        "Mid-range production quantity",
+        "5 hours machine time"
+      ]
+    },
+    {
+      "option_id": "OPT-ECOLOOM-PROD-500",
+      "label": "500 units",
+      "quantity": 500,
+      "status": "active",
+      "bid_ref": "fixtures/bids/eco_loom_production_bid_500_v1.json",
+      "bid_summary_ref": "fixtures/bids/eco_loom_production_bid_summary_500_v1.json",
+      "proposal_ref": "fixtures/proposals/eco_loom_production_proposal_500_v1.json",
+      "markdown_ref": "exports/proposals/PROP-ECOLOOM-PROD-500-2026-001.md",
+      "notes": [
+        "Maximum production quantity",
+        "10 hours machine time",
+        "Requires 2 Velcro rolls"
+      ]
+    }
+  ],
+  "notes": [
+    "Initial governed production quote",
+    "Labor, finishing, and packaging excluded - pending customer requirements"
+  ]
+}
