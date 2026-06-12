@@ -185,10 +185,16 @@ class TestProjectStructure:
         fixture = load_json(PROJECT_DIR / "eco_loom_project_capture_v1.json")
         assert fixture["estimated_facts"] == []
 
-    def test_assumptions_is_empty(self):
-        """Assumption register is empty (no invented assumptions)."""
+    def test_assumptions_have_required_fields(self):
+        """All assumptions have required fields."""
         fixture = load_json(PROJECT_DIR / "eco_loom_assumption_register_v1.json")
-        assert fixture["assumptions"] == []
+        for assumption in fixture["assumptions"]:
+            assert "field" in assumption
+            assert "value" in assumption
+            assert "source" in assumption
+            assert "confidence" in assumption
+            assert "captured_by" in assumption
+            assert "capture_date" in assumption
 
     def test_open_questions_exist(self):
         """Open questions have been captured."""

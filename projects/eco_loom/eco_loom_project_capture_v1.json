@@ -130,22 +130,64 @@
       "captured_date": "2026-06-04"
     },
     {
-      "field": "quantity",
+      "field": "quantity_prototype",
       "value": 10,
-      "source": "Customer verbal confirmation",
+      "source": "Customer verbal confirmation - prototype (superseded by production requirements)",
       "captured_date": "2026-06-04"
     },
     {
-      "field": "delivery_date",
+      "field": "delivery_date_prototype",
       "value": "2026-07-15",
-      "source": "Customer verbal confirmation",
+      "source": "Customer verbal confirmation - prototype (superseded by production requirements)",
       "captured_date": "2026-06-04"
     },
     {
-      "field": "project_type",
+      "field": "project_type_prototype",
       "value": "prototype",
-      "source": "Customer verbal confirmation",
+      "source": "Customer verbal confirmation - superseded by production",
       "captured_date": "2026-06-04"
+    },
+    {
+      "field": "production_quantity_range",
+      "value": {"min": 100, "max": 500, "tiers": [100, 250, 500]},
+      "source": "Customer production requirements",
+      "captured_date": "2026-06-11"
+    },
+    {
+      "field": "material_supply",
+      "value": "shop-supplied",
+      "source": "Customer production requirements",
+      "captured_date": "2026-06-11"
+    },
+    {
+      "field": "wood_price_per_board_foot",
+      "value": 17.00,
+      "source": "Shop material pricing",
+      "captured_date": "2026-06-11"
+    },
+    {
+      "field": "velcro_roll_price",
+      "value": 34.00,
+      "source": "Shop material pricing",
+      "captured_date": "2026-06-11"
+    },
+    {
+      "field": "velcro_roll_length_yards",
+      "value": 25,
+      "source": "Shop material pricing",
+      "captured_date": "2026-06-11"
+    },
+    {
+      "field": "stock_blank_dimensions",
+      "value": {"length": 5.0, "width": 3.0, "height": 1.25, "unit": "inches"},
+      "source": "Shop manufacturing requirements",
+      "captured_date": "2026-06-11"
+    },
+    {
+      "field": "delivery_schedule_tbd",
+      "value": "TBD",
+      "source": "Pending customer confirmation",
+      "captured_date": "2026-06-11"
     }
   ],
   "estimated_facts": [],

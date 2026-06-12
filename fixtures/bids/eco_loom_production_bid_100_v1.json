@@ -1,0 +1,127 @@
+{
+  "bid_id": "BID-ECOLOOM-PROD-100-2026-001",
+  "project_name": "Eco-Loom Scrubber Handle Production",
+  "customer_name": "ECO-LOOM",
+  "revision": "Draft 1",
+  "status": "draft",
+  "created_at": "2026-06-11T12:00:00Z",
+  "updated_at": "2026-06-11T12:00:00Z",
+  "project_ref": "projects/eco_loom/eco_loom_project_capture_v1.json",
+  "manufacturing_ref": null,
+  "scenario_ref": null,
+  "assumptions": [
+    {
+      "field": "machine_rate",
+      "value": 72.0,
+      "source": "Shop machine burden rate",
+      "confidence": "approved",
+      "note": "Includes depreciation, maintenance, and overhead"
+    },
+    {
+      "field": "material_supply",
+      "value": "shop-supplied",
+      "source": "Customer production requirements",
+      "confidence": "reviewed",
+      "note": "Shop supplies wood and Velcro materials"
+    },
+    {
+      "field": "quantity",
+      "value": 100,
+      "source": "Production tier pricing",
+      "confidence": "reviewed",
+      "note": "100-unit production tier"
+    },
+    {
+      "field": "project_type",
+      "value": "production",
+      "source": "Customer production requirements",
+      "confidence": "reviewed",
+      "note": "Production run"
+    },
+    {
+      "field": "delivery_date",
+      "value": "TBD",
+      "source": "Pending customer confirmation",
+      "confidence": "draft",
+      "note": "Delivery schedule to be confirmed"
+    },
+    {
+      "field": "wood_price_per_board_foot",
+      "value": 17.0,
+      "source": "Shop material pricing",
+      "confidence": "reviewed",
+      "note": "$17/BF"
+    },
+    {
+      "field": "wood_waste_pct",
+      "value": 15.0,
+      "source": "Shop manufacturing estimate",
+      "confidence": "reviewed",
+      "note": "15% waste allowance"
+    },
+    {
+      "field": "velcro_roll_cost",
+      "value": 34.0,
+      "source": "Shop material pricing",
+      "confidence": "reviewed",
+      "note": "$34 per 25-yard roll"
+    }
+  ],
+  "line_items": [
+    {
+      "name": "Wood Material",
+      "category": "materials",
+      "quantity": 100,
+      "unit": "units",
+      "unit_cost": 2.54,
+      "total_cost": 254.00,
+      "note": "0.1302 BF/unit × $17/BF × 1.15 waste = $2.54/unit"
+    },
+    {
+      "name": "Velcro Material",
+      "category": "materials",
+      "quantity": 1,
+      "unit": "rolls",
+      "unit_cost": 34.00,
+      "total_cost": 34.00,
+      "note": "Roll-based procurement"
+    },
+    {
+      "name": "CNC Machine Time",
+      "category": "machine",
+      "quantity": 2.0,
+      "unit": "hours",
+      "unit_cost": 72.00,
+      "total_cost": 144.00,
+      "note": "100-unit production run"
+    }
+  ],
+  "cost_basis": {
+    "direct_material_cost": 288.00,
+    "direct_labor_cost": 0.00,
+    "machine_time_cost": 144.00,
+    "tooling_cost": 0.00,
+    "setup_cost": 0.00,
+    "finishing_cost": 0.00,
+    "finishing_material_cost": 0.00,
+    "engineering_cost": 0.00,
+    "base_manufacturing_cost": 432.00
+  },
+  "pricing": {
+    "tool_wear_pct": 5.0,
+    "manufacturing_contingency_pct": 10.0,
+    "business_overhead_pct": 10.0,
+    "engineering_recovery_pct": 15.0,
+    "target_margin_pct": 30.0,
+    "risked_cost": 604.80,
+    "quote_price": 864.00,
+    "quantity": 100,
+    "price_per_unit": 8.64
+  },
+  "notes": [
+    "Internal bid calculation record - not customer-facing",
+    "Production tier: 100 units",
+    "Shop-supplied materials (wood and Velcro)",
+    "Labor, finishing, and packaging excluded - pending customer requirements"
+  ]
+}
