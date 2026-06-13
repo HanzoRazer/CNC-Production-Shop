@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "quote_classification_v1.schema.json",
+  "title": "QuoteClassificationV1",
+  "description": "Classification and clarification record for commercial quote documents",
+  "type": "object",
+  "required": [
+    "classification_id",
+    "project_name",
+    "customer_name",
+    "document_type",
+    "status",
+    "created_at",
+    "applies_to",
+    "clarification_summary",
+    "pricing_status",
+    "formal_quote_requirements",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "classification_id": {
+      "type": "string",
+      "pattern": "^QC-[A-Z0-9-]+-[0-9]{4}-[0-9]{3}$",
+      "description": "Unique classification identifier (e.g., QC-ECOLOOM-2026-001)"
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "DIRECT_MANUFACTURING_COST_WORKSHEET",
+        "BUDGETARY_PRODUCTION_ESTIMATE",
+        "FORMAL_PRODUCTION_QUOTE"
+      ],
+      "description": "Classification of the commercial document type"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "superseded", "withdrawn"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "applies_to": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of documents this classification applies to (repo paths or external references)"
+    },
+    "clarification_summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Summary explaining the classification and any clarifications"
+    },
+    "pricing_status": {
+      "type": "string",
+      "enum": [
+        "direct_cost_only",
+        "budgetary_estimate",
+        "formal_quote"
+      ],
+      "description": "Current status of pricing in the referenced documents"
+    },
+    "formal_quote_requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Requirements that must be confirmed before a formal quote can be issued"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

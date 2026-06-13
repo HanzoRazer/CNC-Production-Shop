@@ -1,0 +1,37 @@
+{
+  "classification_id": "QC-ECOLOOM-2026-001",
+  "project_name": "Eco-Loom Scrubber Handle",
+  "customer_name": "ECO-LOOM",
+  "document_type": "BUDGETARY_PRODUCTION_ESTIMATE",
+  "status": "active",
+  "created_at": "2026-06-12T12:00:00Z",
+  "applies_to": [
+    "Budgetary_Production_Proposal_Estimate_Worksheet.pdf",
+    "ECO-LOOM Prototype Manufacturing Proposal.pdf",
+    "projects/eco_loom/eco_loom_production_quote_package_v1.json",
+    "projects/eco_loom/eco_loom_production_quote_revision_a_v1.json",
+    "fixtures/proposals/eco_loom_production_proposal_100_v1.json",
+    "fixtures/proposals/eco_loom_production_proposal_250_v1.json",
+    "fixtures/proposals/eco_loom_production_proposal_500_v1.json",
+    "exports/proposals/PROP-ECOLOOM-PROD-100-2026-001.md",
+    "exports/proposals/PROP-ECOLOOM-PROD-250-2026-001.md",
+    "exports/proposals/PROP-ECOLOOM-PROD-500-2026-001.md"
+  ],
+  "clarification_summary": "Prior direct manufacturing cost values were preliminary manufacturing-cost worksheet values and should not be treated as accepted formal quote prices. The current production pricing represents a budgetary production estimate suitable for feasibility discussion, not a binding formal production quote.",
+  "pricing_status": "budgetary_estimate",
+  "formal_quote_requirements": [
+    "Final production quantity confirmation",
+    "Finish specification",
+    "Packaging requirements",
+    "Delivery schedule",
+    "Shipping responsibility",
+    "Quality and inspection requirements"
+  ],
+  "notes": [
+    "Direct manufacturing cost ($432/$1,029/$2,058) is not customer quote price.",
+    "Current budgetary production estimate pricing: $875/$2,100/$4,150 for 100/250/500 units.",
+    "Pricing is based on shop-supplied wood and Velcro materials.",
+    "Labor, finishing, and packaging are excluded pending customer requirements.",
+    "This classification supersedes any prior interpretation of the referenced documents as formal quotes."
+  ]
+}
