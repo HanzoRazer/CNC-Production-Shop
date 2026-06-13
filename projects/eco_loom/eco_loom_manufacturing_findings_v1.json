@@ -1,0 +1,67 @@
+{
+  "document_id": "MFD-ECOLOOM-2026-001",
+  "project_name": "Eco-Loom Scrubber Handle",
+  "customer_name": "ECO-LOOM",
+  "created_at": "2026-06-13T12:00:00Z",
+  "updated_at": "2026-06-13T12:00:00Z",
+  "status": "active",
+  "nc_program_ref": "eco_loom_v2_full.nc",
+  "findings": [
+    {
+      "finding_id": "MF-001",
+      "title": "ECO-LOOM NC Program Review – Engraving Depth Validation Required",
+      "description": "Review of generated NC program identified engraving toolpath depth reaching approximately Z=-15.740 mm while contour operation terminates at approximately Z=-14.740 mm. The engraving operation is 1 mm deeper than the contour, which is inconsistent with typical branding depths (0.5-2.0 mm).",
+      "severity": "medium",
+      "probability": "high",
+      "risk": [
+        "Unintended through-cutting",
+        "Spoilboard penetration",
+        "Damaged workpieces",
+        "Inaccurate cycle-time assumptions"
+      ],
+      "status": "open",
+      "required_verification": [
+        "Confirm design intent for branding depth",
+        "Verify stock thickness",
+        "Verify CAM stock-top reference",
+        "Simulate engraving operation independently",
+        "Regenerate NC file if required"
+      ],
+      "resolution": null,
+      "resolved_at": null,
+      "cost_impact": "unknown",
+      "quote_impact": "none",
+      "production_readiness_impact": true
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "MA-001",
+      "title": "Stock Thickness Not Yet Controlled",
+      "observation": "Contour depth of Z=-14.740 mm produces different results depending on actual stock thickness. If 15.875 mm (5/8 inch), approximately 1.1 mm onion skin remains. If 12.7 mm (1/2 inch), toolpath exceeds stock thickness and penetrates spoilboard.",
+      "impact": "Formal production quotation cannot assume machining cycle time, yield rate, spoilage rate, or tooling wear until stock specification is finalized.",
+      "status": "open",
+      "data": [
+        {
+          "stock_thickness_mm": 15.875,
+          "stock_thickness_in": 0.625,
+          "result": "~1.1 mm onion skin remains"
+        },
+        {
+          "stock_thickness_mm": 12.7,
+          "stock_thickness_in": 0.5,
+          "result": "Toolpath exceeds stock thickness"
+        }
+      ]
+    }
+  ],
+  "production_readiness": "not_ready",
+  "notes": [
+    "NC program review conducted 2026-06-13",
+    "Contour geometry verified appropriate for 5 inch x 3 inch handle dimensions",
+    "Feed rates conservative (F333 plunge, F1000 cut) - optimization opportunity for production",
+    "G92 temporary offset used - consider G54 for production repeatability",
+    "Findings do not affect budgetary estimate validity",
+    "Production readiness blocked pending MF-001 and MA-001 resolution"
+  ]
+}

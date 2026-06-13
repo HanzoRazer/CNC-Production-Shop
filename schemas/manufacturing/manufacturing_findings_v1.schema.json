@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "manufacturing_findings_v1.schema.json",
+  "title": "ManufacturingFindingsV1",
+  "description": "Manufacturing readiness findings and assumptions for production validation",
+  "type": "object",
+  "required": [
+    "document_id",
+    "project_name",
+    "customer_name",
+    "created_at",
+    "status",
+    "findings",
+    "assumptions",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "pattern": "^MFD-[A-Z0-9-]+-[0-9]{4}-[0-9]{3}$",
+      "description": "Manufacturing findings document ID"
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "resolved", "superseded"]
+    },
+    "nc_program_ref": {
+      "type": ["string", "null"],
+      "description": "Reference to NC program file reviewed"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "title", "description", "severity", "status", "required_verification"],
+        "additionalProperties": false,
+        "properties": {
+          "finding_id": {
+            "type": "string",
+            "pattern": "^MF-[0-9]{3}$",
+            "description": "Manufacturing finding ID (e.g., MF-001)"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "probability": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "risk": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Potential consequences if not addressed"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "in_progress", "resolved", "deferred", "accepted"]
+          },
+          "required_verification": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "resolution": {
+            "type": ["string", "null"],
+            "description": "How the finding was resolved (null if still open)"
+          },
+          "resolved_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "cost_impact": {
+            "type": "string",
+            "enum": ["none", "unknown", "minor", "moderate", "significant"]
+          },
+          "quote_impact": {
+            "type": "string",
+            "enum": ["none", "potential", "confirmed"]
+          },
+          "production_readiness_impact": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["assumption_id", "title", "observation", "impact", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "assumption_id": {
+            "type": "string",
+            "pattern": "^MA-[0-9]{3}$",
+            "description": "Manufacturing assumption ID (e.g., MA-001)"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "confirmed", "invalidated", "deferred"]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Supporting data observations"
+          }
+        }
+      }
+    },
+    "production_readiness": {
+      "type": "string",
+      "enum": ["not_ready", "conditional", "ready"],
+      "description": "Overall production readiness assessment"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
