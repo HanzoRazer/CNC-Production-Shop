@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "quote_package_v1.schema.json",
+  "title": "QuotePackageV1",
+  "description": "Commercial quote package grouping revisions for a customer project",
+  "type": "object",
+  "required": [
+    "package_id",
+    "project_name",
+    "customer_name",
+    "created_at",
+    "status",
+    "revisions",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "package_id": {
+      "type": "string",
+      "pattern": "^QP-[A-Z0-9-]+-[0-9]{4}-[0-9]{3}$",
+      "description": "Unique package identifier (e.g., QP-ECOLOOM-PROD-2026-001)"
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_ref": {
+      "type": ["string", "null"],
+      "description": "Reference to project capture file"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "closed", "cancelled"]
+    },
+    "revisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["revision_id", "revision_letter", "revision_ref"],
+        "additionalProperties": false,
+        "properties": {
+          "revision_id": {
+            "type": "string",
+            "pattern": "^QR-[A-Z0-9-]+-[0-9]{4}-[0-9]{3}-[A-Z]$"
+          },
+          "revision_letter": {
+            "type": "string",
+            "pattern": "^[A-Z]$"
+          },
+          "revision_ref": {
+            "type": "string",
+            "description": "Path to revision file"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "active", "superseded", "withdrawn"]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
