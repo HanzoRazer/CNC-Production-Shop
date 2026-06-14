@@ -3,7 +3,7 @@
   "project_name": "Eco-Loom Scrubber Handle",
   "customer_name": "ECO-LOOM",
   "created_at": "2026-06-13T12:00:00Z",
-  "updated_at": "2026-06-13T12:00:00Z",
+  "updated_at": "2026-06-13T12:30:00Z",
   "status": "active",
   "nc_program_ref": "eco_loom_v2_full.nc",
   "findings": [
@@ -56,12 +56,18 @@
     }
   ],
   "production_readiness": "not_ready",
+  "resolution_governance": {
+    "specification_ref": "projects/eco_loom/eco_loom_manufacturing_spec_v1.json",
+    "checklist_ref": "projects/eco_loom/eco_loom_investigation_checklist_v1.json",
+    "evidence_schema_ref": "schemas/manufacturing/resolution_evidence_v1.schema.json"
+  },
   "notes": [
     "NC program review conducted 2026-06-13",
     "Contour geometry verified appropriate for 5 inch x 3 inch handle dimensions",
     "Feed rates conservative (F333 plunge, F1000 cut) - optimization opportunity for production",
     "G92 temporary offset used - consider G54 for production repeatability",
     "Findings do not affect budgetary estimate validity",
-    "Production readiness blocked pending MF-001 and MA-001 resolution"
+    "Production readiness blocked pending MF-001 and MA-001 resolution",
+    "Resolution path defined 2026-06-13 - see investigation checklist IC-ECOLOOM-2026-001"
   ]
 }

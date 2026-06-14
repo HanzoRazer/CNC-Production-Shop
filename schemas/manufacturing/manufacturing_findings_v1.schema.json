@@ -151,6 +151,25 @@
         }
       }
     },
+    "resolution_governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "References to resolution governance artifacts",
+      "properties": {
+        "specification_ref": {
+          "type": ["string", "null"],
+          "description": "Path to manufacturing specification document"
+        },
+        "checklist_ref": {
+          "type": ["string", "null"],
+          "description": "Path to investigation checklist"
+        },
+        "evidence_schema_ref": {
+          "type": ["string", "null"],
+          "description": "Path to resolution evidence schema"
+        }
+      }
+    },
     "production_readiness": {
       "type": "string",
       "enum": ["not_ready", "conditional", "ready"],

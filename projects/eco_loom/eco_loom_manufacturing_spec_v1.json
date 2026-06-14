@@ -1,0 +1,56 @@
+{
+  "spec_id": "MS-ECOLOOM-2026-001",
+  "project_name": "Eco-Loom Scrubber Handle",
+  "customer_name": "ECO-LOOM",
+  "created_at": "2026-06-13T12:30:00Z",
+  "updated_at": "2026-06-13T12:30:00Z",
+  "status": "pending",
+  "stock_specification": {
+    "status": "pending",
+    "material_species": null,
+    "thickness_mm": null,
+    "thickness_in": null,
+    "width_mm": null,
+    "length_mm": null,
+    "sourcing_notes": null,
+    "approved_by": null,
+    "approved_at": null
+  },
+  "toolpath_specifications": [
+    {
+      "operation_name": "Handle Contour (T1)",
+      "tool_id": null,
+      "operation_type": "contour",
+      "depth_mm": null,
+      "status": "pending",
+      "design_intent": "Cut handle perimeter to near-through depth with onion skin",
+      "simulation_verified": false,
+      "notes": "Current NC shows Z=-14.740mm - requires stock thickness confirmation"
+    },
+    {
+      "operation_name": "ECO-TOOL Engraving (T2)",
+      "tool_id": null,
+      "operation_type": "engrave",
+      "depth_mm": null,
+      "status": "pending",
+      "design_intent": null,
+      "simulation_verified": false,
+      "notes": "MF-001: Current NC shows Z=-15.740mm which is deeper than contour - requires CAM review"
+    }
+  ],
+  "authoritative_source": {
+    "source_type": "cad_plus_cam",
+    "status": "pending",
+    "cad_file_ref": null,
+    "cam_file_ref": null,
+    "nc_file_ref": "eco_loom_v2_full.nc",
+    "notes": "NC file exists but CAD/CAM source not yet controlled. NC is output artifact, not authoritative source."
+  },
+  "notes": [
+    "Specification pending - created to establish resolution path for MF-001 and MA-001",
+    "Stock specification required before production (MA-001)",
+    "Engraving depth specification required before production (MF-001)",
+    "Authoritative CAD/CAM source must be identified and controlled",
+    "All pending fields must be specified before status can advance to draft"
+  ]
+}
