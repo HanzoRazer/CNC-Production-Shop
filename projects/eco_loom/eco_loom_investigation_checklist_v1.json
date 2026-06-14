@@ -1,0 +1,157 @@
+{
+  "checklist_id": "IC-ECOLOOM-2026-001",
+  "project_name": "Eco-Loom Scrubber Handle",
+  "customer_name": "ECO-LOOM",
+  "created_at": "2026-06-13T12:30:00Z",
+  "updated_at": "2026-06-13T12:30:00Z",
+  "status": "active",
+  "purpose": "Investigation checklist for resolving MF-001 and MA-001 manufacturing findings",
+  "findings_addressed": ["MF-001", "MA-001"],
+  "investigation_steps": [
+    {
+      "step_id": "INV-001",
+      "category": "cad_review",
+      "description": "Review original CAD geometry for handle dimensions and branding placement",
+      "status": "pending",
+      "required_for": ["MF-001"],
+      "evidence_type": "cad_review",
+      "acceptance_criteria": "CAD geometry documented with explicit dimensions",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-002",
+      "category": "cam_review",
+      "description": "Review CAM setup for stock-top reference and operation types",
+      "status": "pending",
+      "required_for": ["MF-001"],
+      "evidence_type": "cam_review",
+      "acceptance_criteria": "CAM stock setup documented, operation types confirmed",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-003",
+      "category": "cam_review",
+      "description": "Verify engraving operation type (engrave vs contour vs pocket)",
+      "status": "pending",
+      "required_for": ["MF-001"],
+      "evidence_type": "cam_review",
+      "acceptance_criteria": "Correct operation type selected for branding",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-004",
+      "category": "specification",
+      "description": "Determine intended engraving depth for ECO-TOOL branding",
+      "status": "pending",
+      "required_for": ["MF-001"],
+      "evidence_type": "specification_approval",
+      "acceptance_criteria": "Explicit depth specification recorded (e.g., 1.0mm)",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-005",
+      "category": "specification",
+      "description": "Determine production stock thickness",
+      "status": "pending",
+      "required_for": ["MA-001"],
+      "evidence_type": "stock_measurement",
+      "acceptance_criteria": "Stock thickness specified in mm and inches",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-006",
+      "category": "specification",
+      "description": "Determine production material species",
+      "status": "pending",
+      "required_for": ["MA-001"],
+      "evidence_type": "specification_approval",
+      "acceptance_criteria": "Material species recorded (e.g., maple, poplar)",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-007",
+      "category": "simulation",
+      "description": "Simulate contour operation against specified stock",
+      "status": "pending",
+      "required_for": ["MF-001", "MA-001"],
+      "evidence_type": "simulation_result",
+      "acceptance_criteria": "Simulation confirms no spoilboard penetration",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-008",
+      "category": "simulation",
+      "description": "Simulate engraving operation at corrected depth",
+      "status": "pending",
+      "required_for": ["MF-001"],
+      "evidence_type": "simulation_result",
+      "acceptance_criteria": "Engraving depth matches specification",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": null
+    },
+    {
+      "step_id": "INV-009",
+      "category": "regeneration",
+      "description": "Regenerate NC file from corrected CAM setup if required",
+      "status": "pending",
+      "required_for": ["MF-001"],
+      "evidence_type": "other",
+      "acceptance_criteria": "New NC file generated and verified",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": "Only required if CAM corrections are made"
+    },
+    {
+      "step_id": "INV-010",
+      "category": "verification",
+      "description": "Run test cut on scrap stock",
+      "status": "pending",
+      "required_for": ["MF-001", "MA-001"],
+      "evidence_type": "test_cut",
+      "acceptance_criteria": "Test cut matches expected geometry and depths",
+      "completed_at": null,
+      "completed_by": null,
+      "notes": "Optional but recommended before production run"
+    }
+  ],
+  "resolution_criteria": {
+    "MF-001": "All INV-001 through INV-004, INV-007, INV-008 complete with accepted evidence",
+    "MA-001": "INV-005, INV-006, INV-007 complete with accepted evidence"
+  },
+  "readiness_state_machine": {
+    "not_ready": {
+      "description": "Known unresolved manufacturing blockers. Production should not start.",
+      "exit_criteria": "All open findings resolved or moved to accepted risk"
+    },
+    "conditional_ready": {
+      "description": "Manufacturing path validated. Known operator instructions or monitoring requirements remain.",
+      "entry_criteria": "Core findings resolved, operator cautions documented",
+      "exit_criteria": "All cautions addressed or accepted"
+    },
+    "ready": {
+      "description": "Controlled specification exists. Toolpaths validated. Simulation completed. No special production cautions remain.",
+      "entry_criteria": "All findings closed, specifications approved, simulation verified"
+    }
+  },
+  "notes": [
+    "This checklist defines the investigation path for MF-001 and MA-001",
+    "Each step requires evidence before marking complete",
+    "Evidence records should reference RE-* resolution evidence IDs",
+    "Do not mark findings resolved until all required steps are complete"
+  ]
+}

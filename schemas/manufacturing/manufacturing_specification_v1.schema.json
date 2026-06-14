@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "manufacturing_specification_v1.schema.json",
+  "title": "ManufacturingSpecificationV1",
+  "description": "Controlled manufacturing specifications for production readiness",
+  "type": "object",
+  "required": [
+    "spec_id",
+    "project_name",
+    "customer_name",
+    "created_at",
+    "status",
+    "stock_specification",
+    "toolpath_specifications",
+    "authoritative_source",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "spec_id": {
+      "type": "string",
+      "pattern": "^MS-[A-Z0-9-]+-[0-9]{4}-[0-9]{3}$",
+      "description": "Manufacturing specification ID"
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "draft", "reviewed", "approved", "superseded"],
+      "description": "Specification status"
+    },
+    "stock_specification": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "specified", "approved"]
+        },
+        "material_species": {
+          "type": ["string", "null"]
+        },
+        "thickness_mm": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "thickness_in": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "width_mm": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "length_mm": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "sourcing_notes": {
+          "type": ["string", "null"]
+        },
+        "approved_by": {
+          "type": ["string", "null"]
+        },
+        "approved_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "toolpath_specifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["operation_name", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "operation_name": {
+            "type": "string"
+          },
+          "tool_id": {
+            "type": ["string", "null"]
+          },
+          "operation_type": {
+            "type": ["string", "null"],
+            "description": "contour, pocket, engrave, drill, etc."
+          },
+          "depth_mm": {
+            "type": ["number", "null"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "specified", "simulated", "approved"]
+          },
+          "design_intent": {
+            "type": ["string", "null"],
+            "description": "Why this depth/operation was chosen"
+          },
+          "simulation_verified": {
+            "type": "boolean",
+            "default": false
+          },
+          "notes": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "authoritative_source": {
+      "type": "object",
+      "required": ["source_type", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": ["fusion360", "freecad", "vcarve", "nc_file", "cad_plus_cam", "other"],
+          "description": "What is the controlled manufacturing source"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "identified", "controlled"]
+        },
+        "cad_file_ref": {
+          "type": ["string", "null"]
+        },
+        "cam_file_ref": {
+          "type": ["string", "null"]
+        },
+        "nc_file_ref": {
+          "type": ["string", "null"]
+        },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

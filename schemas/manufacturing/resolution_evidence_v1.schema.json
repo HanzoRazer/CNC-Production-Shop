@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "resolution_evidence_v1.schema.json",
+  "title": "ResolutionEvidenceV1",
+  "description": "Evidence records for manufacturing finding resolution",
+  "type": "object",
+  "required": [
+    "evidence_id",
+    "finding_ref",
+    "project_name",
+    "created_at",
+    "evidence_type",
+    "status",
+    "summary"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^RE-[A-Z0-9-]+-[0-9]{3}$",
+      "description": "Resolution evidence ID (e.g., RE-MF001-001)"
+    },
+    "finding_ref": {
+      "type": "string",
+      "description": "Reference to the finding this evidence supports (e.g., MF-001)"
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence_type": {
+      "type": "string",
+      "enum": [
+        "simulation_result",
+        "cam_review",
+        "cad_review",
+        "stock_measurement",
+        "first_article_inspection",
+        "operator_signoff",
+        "specification_approval",
+        "test_cut",
+        "other"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["submitted", "reviewed", "accepted", "rejected"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Brief description of what this evidence shows"
+    },
+    "findings": {
+      "type": ["string", "null"],
+      "description": "Detailed findings from the evidence"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["screenshot", "document", "measurement", "photo", "video", "file"]
+          },
+          "path": {
+            "type": ["string", "null"],
+            "description": "Path to attachment if stored in repo"
+          },
+          "external_ref": {
+            "type": ["string", "null"],
+            "description": "External reference if not in repo"
+          },
+          "description": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "conclusion": {
+      "type": "string",
+      "enum": ["supports_resolution", "requires_further_investigation", "blocks_resolution", "inconclusive"],
+      "description": "What this evidence concludes about the finding"
+    },
+    "reviewed_by": {
+      "type": ["string", "null"]
+    },
+    "reviewed_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
