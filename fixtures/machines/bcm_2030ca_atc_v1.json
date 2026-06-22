@@ -1,0 +1,85 @@
+{
+  "machine_id": "MACHINE-BCM2030CA-ATC-V1",
+  "name": "BCM 2030CA ATC CNC Router",
+  "manufacturer": "BCAMCNC",
+  "model": "2030CA ATC",
+  "status": "approved",
+  "work_area_mm": {
+    "x": 2000,
+    "y": 3000,
+    "z": 200
+  },
+  "spindle": {
+    "power_kw": 9.0,
+    "cooling": "air",
+    "max_rpm": 24000,
+    "tool_holder": "ISO30"
+  },
+  "atc": {
+    "type": "automatic",
+    "positions": 8
+  },
+  "controller": {
+    "model": "DDCSV 1.1"
+  },
+  "motion": {
+    "drive_type": "servo",
+    "servo_make": "Leadshine",
+    "servo_power_w": 750
+  },
+  "vacuum_system": {
+    "pump_count": 2,
+    "pump_power_kw_each": 5.5,
+    "total_power_kw": 11.0
+  },
+  "dust_collection": {
+    "power_kw": 3.0
+  },
+  "table": {
+    "type": "vacuum + T-slot",
+    "features": ["vacuum", "t-slot"]
+  },
+  "machine_weight_kg": 1850,
+  "connected_load_estimate": {
+    "total_kw": 24.0,
+    "components": [
+      {
+        "name": "spindle",
+        "power_kw": 9.0,
+        "basis": "nameplate"
+      },
+      {
+        "name": "vacuum_pumps",
+        "quantity": 2,
+        "power_kw_each": 5.5,
+        "total_kw": 11.0,
+        "basis": "owner_confirmed"
+      },
+      {
+        "name": "dust_collector",
+        "power_kw": 3.0,
+        "basis": "vendor_spec"
+      },
+      {
+        "name": "controls_servo",
+        "power_kw": 1.0,
+        "basis": "engineering_estimate"
+      }
+    ]
+  },
+  "provenance": {
+    "source": "owner-supplied machine specification (CNC-MACHINE-PROFILE-BCM2030CA-1 handoff)",
+    "captured_by": "engineering",
+    "capture_date": "2026-06-21",
+    "confidence": "approved",
+    "references": [
+      "CNC-MACHINE-PROFILE-BCM2030CA-1 dev-ready handoff"
+    ]
+  },
+  "notes": [
+    "Vacuum pumps recorded as 2 x 5.5 kW per owner confirmation.",
+    "Controls/servo connected load (1.0 kW) is an engineering estimate, not nameplate-confirmed.",
+    "Total connected load (24.0 kW) is an estimate: spindle 9.0 + vacuum 11.0 + dust collector 3.0 + controls/servo 1.0.",
+    "Profile captures machine capability only; no feeds/speeds, electrical code compliance, or safety certification is implied."
+  ]
+}
