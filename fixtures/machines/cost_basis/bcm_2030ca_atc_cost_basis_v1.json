@@ -1,0 +1,45 @@
+{
+  "cost_basis_id": "MACHINE-COST-BASIS-BCM2030CA-ATC-V1",
+  "machine_id": "MACHINE-BCM2030CA-ATC-V1",
+  "status": "draft",
+  "currency": "USD",
+  "machine_burden_rate_per_hour": 19.0,
+  "machine_burden_provenance": {
+    "source": "inherited_shop_default",
+    "confidence": "draft"
+  },
+  "electricity": {
+    "connected_load_kw": 24.0,
+    "load_factor": 0.684,
+    "price_per_kwh": 0.12,
+    "electricity_cost_per_hour": 1.97,
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft"
+    }
+  },
+  "tooling_cost_per_hour": 8.0,
+  "tooling_provenance": {
+    "source": "inherited_shop_default",
+    "confidence": "draft"
+  },
+  "machine_hour_rate": 28.97,
+  "provenance": {
+    "source": "CNC-MACHINE-COST-BASIS-1 sprint; inputs carried from generic shop true-runtime-rate defaults, electricity derived from machine profile connected load. No owner-confirmation artifact exists yet for burden or tooling.",
+    "captured_by": "engineering",
+    "capture_date": "2026-06-22",
+    "confidence": "draft",
+    "references": [
+      "MACHINE-BCM2030CA-ATC-V1 (machine profile)",
+      "fixtures/cnc_cost/README.md (generic shop true-runtime-rate defaults)"
+    ]
+  },
+  "notes": [
+    "Machine burden ($19.00/hr) is an inherited shop default at draft confidence: it is the generic shop burden number, NOT confirmed against this machine's annual depreciation/maintenance/insurance/overhead. Promote to owner_confirmed only when a supporting artifact exists.",
+    "Tooling ($8.00/hr) is an inherited shop default at draft confidence: the generic shop consumable wear allowance, not machine-specific evidence.",
+    "Electricity cost/hour is an engineering estimate: 24.0 kW connected load x load_factor 0.684 x $0.12/kWh = $1.97/hr. Load factor and price are documented assumptions chosen to reproduce the shop's existing $1.97/hr electricity figure; they are not metered values.",
+    "machine_hour_rate ($28.97/hr) is a true-cost rate: burden 19.00 + electricity 1.97 + tooling 8.00. It is a COST input, not a customer billing rate and not margin-inclusive.",
+    "Record status is 'draft' because its burden and tooling inputs are unconfirmed inherited defaults.",
+    "connected_load_kw (24.0) mirrors MACHINE-BCM2030CA-ATC-V1 connected_load_estimate.total_kw; changing the profile's total_kw should be reflected here."
+  ]
+}
