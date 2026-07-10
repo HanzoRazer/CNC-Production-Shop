@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "machine_profile_v1.schema.json",
+  "title": "MachineProfileV1",
+  "description": "Governed machine profile capturing physical CNC machine capability so estimates reference actual machine specs instead of generic CNC assumptions. Strict structure: unknown keys are rejected. 'status' tracks the review state of the record; the artifact is governed/test-protected regardless of status value.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "machine_id",
+    "name",
+    "manufacturer",
+    "model",
+    "status",
+    "work_area_mm",
+    "spindle",
+    "atc",
+    "controller",
+    "motion",
+    "vacuum_system",
+    "dust_collection",
+    "table",
+    "machine_weight_kg",
+    "connected_load_estimate",
+    "provenance",
+    "notes"
+  ],
+  "properties": {
+    "machine_id": {
+      "type": "string",
+      "pattern": "^MACHINE-[A-Z0-9-]+$",
+      "description": "Stable identifier, e.g. MACHINE-BCM2030CA-ATC-V1"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manufacturer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "work_area_mm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "exclusiveMinimum": 0 },
+        "y": { "type": "number", "exclusiveMinimum": 0 },
+        "z": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "spindle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["power_kw", "cooling", "max_rpm", "tool_holder"],
+      "properties": {
+        "power_kw": { "type": "number", "exclusiveMinimum": 0 },
+        "cooling": { "type": "string", "enum": ["air", "liquid"] },
+        "max_rpm": { "type": "integer", "exclusiveMinimum": 0 },
+        "tool_holder": { "type": "string", "minLength": 1 }
+      }
+    },
+    "atc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "positions"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "positions": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "controller": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model"],
+      "properties": {
+        "model": { "type": "string", "minLength": 1 }
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["drive_type", "servo_make", "servo_power_w"],
+      "properties": {
+        "drive_type": { "type": "string", "minLength": 1 },
+        "servo_make": { "type": "string", "minLength": 1 },
+        "servo_power_w": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "vacuum_system": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pump_count", "pump_power_kw_each", "total_power_kw"],
+      "properties": {
+        "pump_count": { "type": "integer", "minimum": 0 },
+        "pump_power_kw_each": { "type": "number", "minimum": 0 },
+        "total_power_kw": { "type": "number", "minimum": 0 }
+      }
+    },
+    "dust_collection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["power_kw"],
+      "properties": {
+        "power_kw": { "type": "number", "minimum": 0 }
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "features": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "machine_weight_kg": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "connected_load_estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_kw", "components"],
+      "properties": {
+        "total_kw": { "type": "number", "minimum": 0 },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "basis"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "power_kw": { "type": "number", "minimum": 0 },
+              "quantity": { "type": "integer", "minimum": 0 },
+              "power_kw_each": { "type": "number", "minimum": 0 },
+              "total_kw": { "type": "number", "minimum": 0 },
+              "basis": {
+                "type": "string",
+                "enum": [
+                  "nameplate",
+                  "owner_confirmed",
+                  "vendor_spec",
+                  "engineering_estimate"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "captured_by", "capture_date", "confidence"],
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "captured_by": { "type": "string", "minLength": 1 },
+        "capture_date": { "type": "string", "format": "date" },
+        "confidence": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved", "superseded"]
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
