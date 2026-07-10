@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "machine_cost_basis_v1.schema.json",
+  "title": "MachineCostBasisV1",
+  "description": "Governed per-machine hour-cost basis. Connects a machine profile (via machine_id) to a machine-hour COST rate used by costing. This is a true-cost rate (burden + electricity + tooling), NOT a customer-facing billing rate and NOT a margin-inclusive price. Electricity is derived from the referenced profile's connected load. Each cost input carries its own {source, confidence} provenance so the record does not overstate how well-supported its inputs are: use owner_confirmed only when a supporting owner-confirmation artifact exists, otherwise inherited_shop_default at draft confidence. Strict structure: unknown keys are rejected. 'status' tracks the review state of the record; the artifact is governed/test-protected regardless of status value.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "input_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "nameplate",
+            "owner_confirmed",
+            "vendor_spec",
+            "engineering_estimate",
+            "inherited_shop_default"
+          ],
+          "description": "owner_confirmed requires a supporting owner-confirmation artifact; inherited_shop_default is a generic shop number carried forward without machine-specific evidence."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved", "superseded"]
+        }
+      }
+    }
+  },
+  "required": [
+    "cost_basis_id",
+    "machine_id",
+    "status",
+    "currency",
+    "machine_burden_rate_per_hour",
+    "machine_burden_provenance",
+    "electricity",
+    "tooling_cost_per_hour",
+    "tooling_provenance",
+    "machine_hour_rate",
+    "provenance",
+    "notes"
+  ],
+  "properties": {
+    "cost_basis_id": {
+      "type": "string",
+      "pattern": "^MACHINE-COST-BASIS-[A-Z0-9-]+$",
+      "description": "Stable identifier, e.g. MACHINE-COST-BASIS-BCM2030CA-ATC-V1"
+    },
+    "machine_id": {
+      "type": "string",
+      "pattern": "^MACHINE-[A-Z0-9-]+$",
+      "description": "Foreign key into a governed machine profile, e.g. MACHINE-BCM2030CA-ATC-V1"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 currency code, e.g. USD"
+    },
+    "machine_burden_rate_per_hour": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Depreciation + maintenance + insurance + overhead per machine-hour. Not derived here; provenance recorded in machine_burden_provenance."
+    },
+    "machine_burden_provenance": { "$ref": "#/$defs/input_provenance" },
+    "electricity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "connected_load_kw",
+        "load_factor",
+        "price_per_kwh",
+        "electricity_cost_per_hour",
+        "provenance"
+      ],
+      "properties": {
+        "connected_load_kw": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Must match the referenced machine profile's connected_load_estimate.total_kw"
+        },
+        "load_factor": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Physical average load ratio 0.0-1.0 (NOT percentage points)"
+        },
+        "price_per_kwh": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Electricity price in currency/kWh"
+        },
+        "electricity_cost_per_hour": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Derived: connected_load_kw * load_factor * price_per_kwh, rounded to 2 dp"
+        },
+        "provenance": { "$ref": "#/$defs/input_provenance" }
+      }
+    },
+    "tooling_cost_per_hour": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Consumable tooling wear allowance per machine-hour. Provenance recorded in tooling_provenance."
+    },
+    "tooling_provenance": { "$ref": "#/$defs/input_provenance" },
+    "machine_hour_rate": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Derived: machine_burden_rate_per_hour + electricity.electricity_cost_per_hour + tooling_cost_per_hour, rounded to 2 dp"
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "captured_by", "capture_date", "confidence"],
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "captured_by": { "type": "string", "minLength": 1 },
+        "capture_date": { "type": "string", "format": "date" },
+        "confidence": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved", "superseded"]
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
