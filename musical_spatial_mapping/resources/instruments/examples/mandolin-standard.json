@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "instrument_id": "mandolin.standard.8",
+  "display_name": "Mandolin (four courses)",
+  "family": "mandolin",
+  "fingerboard_mode": "fretted",
+  "scale_length_mm": 350.0,
+  "fret_count": 20,
+  "strings": [
+    { "string_id": "string-1", "display_label": "1", "display_order": 1, "open_midi_note": 76, "course_id": "course-e", "enabled": true, "max_position": null },
+    { "string_id": "string-2", "display_label": "1", "display_order": 2, "open_midi_note": 76, "course_id": "course-e", "enabled": true, "max_position": null },
+    { "string_id": "string-3", "display_label": "2", "display_order": 3, "open_midi_note": 69, "course_id": "course-a", "enabled": true, "max_position": null },
+    { "string_id": "string-4", "display_label": "2", "display_order": 4, "open_midi_note": 69, "course_id": "course-a", "enabled": true, "max_position": null },
+    { "string_id": "string-5", "display_label": "3", "display_order": 5, "open_midi_note": 62, "course_id": "course-d", "enabled": true, "max_position": null },
+    { "string_id": "string-6", "display_label": "3", "display_order": 6, "open_midi_note": 62, "course_id": "course-d", "enabled": true, "max_position": null },
+    { "string_id": "string-7", "display_label": "4", "display_order": 7, "open_midi_note": 55, "course_id": "course-g", "enabled": true, "max_position": null },
+    { "string_id": "string-8", "display_label": "4", "display_order": 8, "open_midi_note": 55, "course_id": "course-g", "enabled": true, "max_position": null }
+  ],
+  "reference_markers": [
+    { "marker_id": "inlay-5", "semitone_offset": 5, "label": "5" },
+    { "marker_id": "inlay-7", "semitone_offset": 7, "label": "7" },
+    { "marker_id": "inlay-12", "semitone_offset": 12, "label": "12" },
+    { "marker_id": "inlay-15", "semitone_offset": 15, "label": "15" }
+  ],
+  "metadata": {
+    "tuning_name": "standard",
+    "note": "G3 D4 A4 E5 in four unison courses of two strings each; string 1 is the high E course."
+  }
+}
