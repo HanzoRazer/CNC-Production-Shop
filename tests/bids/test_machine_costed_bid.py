@@ -89,8 +89,12 @@ def load_json(path: Path) -> dict:
 
 
 def file_sha256(path: Path) -> str:
-    """Return lowercase hex SHA-256 of file bytes."""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """Return lowercase hex SHA-256 of LF-normalized file bytes.
+
+    Windows checkouts may materialize CRLF while git/CI store LF. Normalize
+    before hashing so the legacy byte-unchanged gate is cross-platform.
+    """
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _minimal_bid_dict(machine_costing: dict | None = None) -> dict:
