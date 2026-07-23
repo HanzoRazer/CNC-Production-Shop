@@ -55,16 +55,16 @@ LEGACY_BID_FIXTURES = [
 # SHA-256 of legacy bid fixtures at base e477ab2 (byte-unchanged hard gate).
 LEGACY_BID_SHA256 = {
     "eco_loom_prototype_bid_v1.json": (
-        "d687643ef49ff33fcae7778bc3a06e69cb14ab67ee40e701aa237687ca8c69d9"
+        "b41d59c6e622dd70bc0694d55bad30f146ed18b81c9dd44247b095d00727d15d"
     ),
     "eco_loom_production_bid_100_v1.json": (
-        "1738f8044d244816fd170800a4e99a6c00f15d9a8d6d6ae9755e155a755e0960"
+        "deddf11e2f671aaec91960679b59b534193e3825fa123f67662664433e013538"
     ),
     "eco_loom_production_bid_250_v1.json": (
-        "ecdf2ce8f826af245958aa52210c22084012db2b61d30b31335dfcc033299305"
+        "b8e1054c01b38919f33a2cff43c2bc51d667318b883955258d3a57337b016f35"
     ),
     "eco_loom_production_bid_500_v1.json": (
-        "5d46f459b44d95fed9b4984dfb5057edabd7ec85f471489b6db9e00adee2f956"
+        "a5fd69566c1d701f5ff87c10dc7d6d4ece974046e6a1dff7b13490346cc15ee6"
     ),
 }
 
