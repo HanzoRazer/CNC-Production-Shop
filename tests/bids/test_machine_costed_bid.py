@@ -52,7 +52,8 @@ LEGACY_BID_FIXTURES = [
     "eco_loom_production_bid_500_v1.json",
 ]
 
-# SHA-256 of legacy bid fixtures at base e477ab2 (byte-unchanged hard gate).
+# SHA-256 of legacy bid fixtures from origin/main @ e477ab2 (2026-07-22 baseline);
+# this hard gate ensures legacy fixture bytes remain unchanged.
 LEGACY_BID_SHA256 = {
     "eco_loom_prototype_bid_v1.json": (
         "b41d59c6e622dd70bc0694d55bad30f146ed18b81c9dd44247b095d00727d15d"
