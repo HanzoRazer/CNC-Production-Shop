@@ -21,9 +21,9 @@ class MachineCostBasisNotFoundError(LookupError):
     """Raised when no governed cost basis exists for a machine_id."""
 
 
-def _iter_cost_basis_records(cost_basis_dir: Path) -> list[dict]:
+def _iter_cost_basis_records(cost_basis_dir: Path) -> list[dict[str, object]]:
     """Load all cost-basis JSON records from a directory."""
-    records: list[dict] = []
+    records: list[dict[str, object]] = []
     if not cost_basis_dir.exists():
         return records
     for path in sorted(cost_basis_dir.glob("*.json")):
@@ -35,7 +35,7 @@ def _iter_cost_basis_records(cost_basis_dir: Path) -> list[dict]:
 def load_machine_cost_basis(
     machine_id: str,
     cost_basis_dir: Path | None = None,
-) -> dict:
+) -> dict[str, object]:
     """Load the governed cost basis for a machine.
 
     Args:
@@ -78,4 +78,9 @@ def machine_hour_rate_for(
     Raises:
         MachineCostBasisNotFoundError: If no record matches machine_id
     """
-    return float(load_machine_cost_basis(machine_id, cost_basis_dir)["machine_hour_rate"])
+    rate = load_machine_cost_basis(machine_id, cost_basis_dir)["machine_hour_rate"]
+    if isinstance(rate, bool) or not isinstance(rate, (int, float)):
+        raise MachineCostBasisNotFoundError(
+            f"machine_hour_rate missing or invalid for machine_id={machine_id!r}"
+        )
+    return float(rate)

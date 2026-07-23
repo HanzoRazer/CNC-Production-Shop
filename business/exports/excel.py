@@ -43,7 +43,7 @@ def _style_currency(ws: Any, row: int, col: int) -> None:
     cell.number_format = '"$"#,##0.00'
 
 
-def _create_summary_sheet(wb: Workbook, bids: list[dict]) -> None:
+def _create_summary_sheet(wb: Workbook, bids: list[dict[str, Any]]) -> None:
     """Create the Summary sheet."""
     ws = wb.active
     ws.title = "Summary"
@@ -79,7 +79,7 @@ def _create_summary_sheet(wb: Workbook, bids: list[dict]) -> None:
     ws.column_dimensions["C"].width = 15
 
 
-def _create_inputs_sheet(wb: Workbook, bids: list[dict]) -> None:
+def _create_inputs_sheet(wb: Workbook, bids: list[dict[str, Any]]) -> None:
     """Create the Inputs sheet."""
     ws = wb.create_sheet("Inputs")
 
@@ -125,7 +125,7 @@ def _create_inputs_sheet(wb: Workbook, bids: list[dict]) -> None:
     ws.column_dimensions["B"].width = 20
 
 
-def _create_cost_breakdown_sheet(wb: Workbook, bids: list[dict]) -> None:
+def _create_cost_breakdown_sheet(wb: Workbook, bids: list[dict[str, Any]]) -> None:
     """Create the Cost Breakdown sheet."""
     ws = wb.create_sheet("Cost Breakdown")
 
@@ -158,7 +158,7 @@ def _create_cost_breakdown_sheet(wb: Workbook, bids: list[dict]) -> None:
         ws.column_dimensions[get_column_letter(col)].width = 15
 
 
-def _create_risk_margin_sheet(wb: Workbook, bids: list[dict]) -> None:
+def _create_risk_margin_sheet(wb: Workbook, bids: list[dict[str, Any]]) -> None:
     """Create the Risk & Margin sheet."""
     ws = wb.create_sheet("Risk & Margin")
 
@@ -218,7 +218,7 @@ def _create_risk_margin_sheet(wb: Workbook, bids: list[dict]) -> None:
         ws.column_dimensions[get_column_letter(col)].width = 15
 
 
-def _create_tier_comparison_sheet(wb: Workbook, bids: list[dict]) -> None:
+def _create_tier_comparison_sheet(wb: Workbook, bids: list[dict[str, Any]]) -> None:
     """Create the Tier Comparison sheet."""
     ws = wb.create_sheet("Tier Comparison")
 
@@ -265,7 +265,7 @@ def _create_tier_comparison_sheet(wb: Workbook, bids: list[dict]) -> None:
         ws.column_dimensions[get_column_letter(col)].width = 15
 
 
-def _create_assumptions_sheet(wb: Workbook, bids: list[dict]) -> None:
+def _create_assumptions_sheet(wb: Workbook, bids: list[dict[str, Any]]) -> None:
     """Create the Assumptions sheet."""
     ws = wb.create_sheet("Assumptions")
 
@@ -313,7 +313,7 @@ def _create_assumptions_sheet(wb: Workbook, bids: list[dict]) -> None:
 
 
 def export_production_estimate_workbook(
-    bids: list[dict],
+    bids: list[dict[str, Any]],
     output_path: Path | None = None,
     filename: str = "eco_loom_production_estimate_2026_001.xlsx",
 ) -> Path:
