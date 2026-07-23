@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "guitar_estimate_input_v1.schema.json",
+  "title": "GuitarEstimateInputV1",
+  "description": "Governed draft inputs for an internal CNC guitar manufacturing estimate. Contains no customer price or margin fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "input_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "vendor_quote",
+            "catalog_price",
+            "owner_confirmed",
+            "inherited_shop_default",
+            "engineering_estimate",
+            "measured_trial",
+            "calculated"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved"]
+        },
+        "note": {"type": "string"}
+      }
+    },
+    "repo_relative_ref": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$"
+    }
+  },
+  "required": [
+    "estimate_input_id",
+    "product_id",
+    "product_ref",
+    "status",
+    "quantity",
+    "currency",
+    "material_inputs",
+    "purchased_component_inputs",
+    "labor_rate_inputs",
+    "operations",
+    "machine_profile_ref",
+    "cost_basis_ref",
+    "machine_id",
+    "cost_basis_id",
+    "scrap_policy",
+    "provenance",
+    "notes"
+  ],
+  "properties": {
+    "estimate_input_id": {
+      "type": "string",
+      "pattern": "^GUITAR-ESTIMATE-INPUT-[A-Z0-9-]+$"
+    },
+    "product_id": {
+      "type": "string",
+      "pattern": "^PRODUCT-[A-Z0-9-]+$"
+    },
+    "product_ref": {"$ref": "#/$defs/repo_relative_ref"},
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "material_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "input_id",
+          "description",
+          "category",
+          "quantity",
+          "unit",
+          "unit_cost",
+          "provenance"
+        ],
+        "properties": {
+          "input_id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "category": {
+            "type": "string",
+            "enum": ["wood"]
+          },
+          "quantity": {"type": "number", "exclusiveMinimum": 0},
+          "unit": {"type": "string", "minLength": 1},
+          "unit_cost": {"type": "number", "minimum": 0},
+          "provenance": {"$ref": "#/$defs/input_provenance"}
+        }
+      }
+    },
+    "purchased_component_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "input_id",
+          "description",
+          "category",
+          "quantity",
+          "unit",
+          "unit_cost",
+          "provenance"
+        ],
+        "properties": {
+          "input_id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "category": {
+            "type": "string",
+            "enum": ["hardware", "electronics", "consumables"]
+          },
+          "quantity": {"type": "number", "exclusiveMinimum": 0},
+          "unit": {"type": "string", "minLength": 1},
+          "unit_cost": {"type": "number", "minimum": 0},
+          "provenance": {"$ref": "#/$defs/input_provenance"}
+        }
+      }
+    },
+    "labor_rate_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "labor_rate_id",
+          "description",
+          "base_wage_per_hour",
+          "payroll_burden_pct",
+          "loaded_rate_per_hour",
+          "provenance"
+        ],
+        "properties": {
+          "labor_rate_id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "base_wage_per_hour": {"type": "number", "minimum": 0},
+          "payroll_burden_pct": {"type": "number", "minimum": 0},
+          "loaded_rate_per_hour": {"type": "number", "minimum": 0},
+          "provenance": {"$ref": "#/$defs/input_provenance"}
+        }
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "wbs_code",
+          "description",
+          "cost_category",
+          "attendance",
+          "setup_minutes",
+          "run_minutes_per_unit",
+          "setup_labor_minutes",
+          "attended_run_labor_minutes",
+          "manual_labor_minutes",
+          "cure_or_wait_minutes",
+          "uses_machine",
+          "labor_rate_id",
+          "provenance"
+        ],
+        "properties": {
+          "operation_id": {"type": "string", "minLength": 1},
+          "wbs_code": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{3}(-[0-9]{2})?$"
+          },
+          "description": {"type": "string", "minLength": 1},
+          "cost_category": {
+            "type": "string",
+            "enum": [
+              "machine",
+              "direct_labor",
+              "finishing",
+              "inspection_and_setup"
+            ]
+          },
+          "attendance": {
+            "type": "string",
+            "enum": ["attended", "partially_attended", "unattended"]
+          },
+          "setup_minutes": {"type": "number", "minimum": 0},
+          "run_minutes_per_unit": {"type": "number", "minimum": 0},
+          "setup_labor_minutes": {"type": "number", "minimum": 0},
+          "attended_run_labor_minutes": {"type": "number", "minimum": 0},
+          "manual_labor_minutes": {"type": "number", "minimum": 0},
+          "cure_or_wait_minutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Elapsed wait/cure time; does not become labor unless attended labor is recorded separately"
+          },
+          "uses_machine": {"type": "boolean"},
+          "labor_rate_id": {"type": "string", "minLength": 1},
+          "provenance": {"$ref": "#/$defs/input_provenance"}
+        }
+      }
+    },
+    "machine_profile_ref": {"$ref": "#/$defs/repo_relative_ref"},
+    "cost_basis_ref": {"$ref": "#/$defs/repo_relative_ref"},
+    "machine_id": {
+      "type": "string",
+      "pattern": "^MACHINE-[A-Z0-9-]+$"
+    },
+    "cost_basis_id": {
+      "type": "string",
+      "pattern": "^MACHINE-COST-BASIS-[A-Z0-9-]+$"
+    },
+    "scrap_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scrap_rate",
+        "eligible_input_ids",
+        "provenance"
+      ],
+      "properties": {
+        "scrap_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction, e.g. 0.05 = 5%"
+        },
+        "eligible_input_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "provenance": {"$ref": "#/$defs/input_provenance"}
+      }
+    },
+    "provenance": {"$ref": "#/$defs/input_provenance"},
+    "notes": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

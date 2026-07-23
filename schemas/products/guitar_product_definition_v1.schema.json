@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "guitar_product_definition_v1.schema.json",
+  "title": "GuitarProductDefinitionV1",
+  "description": "Neutral physical product definition for a CNC-buildable electric guitar. Contains no cost, price, margin, or commercial rate fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "product_id",
+    "product_name",
+    "status",
+    "construction",
+    "materials",
+    "configuration",
+    "provenance",
+    "notes"
+  ],
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "pattern": "^PRODUCT-[A-Z0-9-]+$",
+      "minLength": 1
+    },
+    "product_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "construction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "body_type",
+        "neck_joint",
+        "scale_length_in",
+        "string_count",
+        "orientation"
+      ],
+      "properties": {
+        "body_type": {
+          "type": "string",
+          "enum": ["solid_body"]
+        },
+        "neck_joint": {
+          "type": "string",
+          "enum": ["bolt_on"]
+        },
+        "scale_length_in": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "string_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "orientation": {
+          "type": "string",
+          "enum": ["right_handed", "left_handed"]
+        }
+      }
+    },
+    "materials": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["body", "neck", "fingerboard"],
+      "properties": {
+        "body": {"type": "string", "minLength": 1},
+        "neck": {"type": "string", "minLength": 1},
+        "fingerboard": {"type": "string", "minLength": 1}
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pickup_layout",
+        "bridge_type",
+        "control_layout",
+        "finish_system"
+      ],
+      "properties": {
+        "pickup_layout": {"type": "string", "minLength": 1},
+        "bridge_type": {"type": "string", "minLength": 1},
+        "control_layout": {"type": "string", "minLength": 1},
+        "finish_system": {"type": "string", "minLength": 1}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "vendor_quote",
+            "catalog_price",
+            "owner_confirmed",
+            "inherited_shop_default",
+            "engineering_estimate",
+            "measured_trial",
+            "calculated"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved"]
+        },
+        "references": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "note": {"type": "string"}
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
