@@ -98,7 +98,10 @@ class TestEcoLoomRevisionValidates:
 
     def test_revision_references_package(self, revision):
         """Revision references parent package."""
-        assert revision["package_ref"] == "projects/eco_loom/eco_loom_production_quote_package_v1.json"
+        assert (
+            revision["package_ref"]
+            == "projects/eco_loom/eco_loom_production_quote_package_v1.json"
+        )
 
 
 class TestCrossReferences:

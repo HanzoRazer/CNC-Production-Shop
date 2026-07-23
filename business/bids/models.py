@@ -6,10 +6,10 @@ These models represent internal bid calculation records, not customer-facing pro
 """
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 
-class BidStatus(str, Enum):
+class BidStatus(StrEnum):
     """Bid lifecycle status."""
 
     DRAFT = "draft"
@@ -87,6 +87,33 @@ class BidPricingV1:
     price_per_unit: float
 
 
+@dataclass(frozen=True)
+class MachineCostingV1:
+    """Opt-in auditable link from a bid to a governed machine cost basis.
+
+    When present on BidV1, cost_basis.machine_time_cost must equal
+    derived_machine_time_cost. The machine_hour_rate is an internal technical
+    cost basis, not a commercial billing rate. Construction belongs in
+    business.bids.machine_costing.build_machine_costing - this model stores
+    the derivation record only and performs no lookup.
+
+    Downstream pricing/proposal code must continue to use BidPricingV1 /
+    cost_basis.machine_time_cost. Do not treat machine_hour_rate as a
+    customer billing rate.
+    """
+
+    machine_id: str
+    machine_profile_ref: str
+    cost_basis_id: str
+    cost_basis_ref: str
+    cost_basis_role: str
+    runtime_minutes: float
+    machine_hour_rate: float
+    derived_machine_time_cost: float
+    derivation: str
+    provenance_status: str
+
+
 @dataclass
 class BidV1:
     """Complete internal bid calculation record."""
@@ -106,3 +133,4 @@ class BidV1:
     project_ref: str | None = None
     manufacturing_ref: str | None = None
     scenario_ref: str | None = None
+    machine_costing: MachineCostingV1 | None = None

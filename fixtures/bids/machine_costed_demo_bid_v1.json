@@ -1,0 +1,90 @@
+{
+  "bid_id": "BID-MACHINE-COSTED-DEMO-001",
+  "project_name": "Machine-Costed Demo Bid",
+  "customer_name": "INTERNAL-DEMO",
+  "revision": "Draft 1",
+  "status": "draft",
+  "created_at": "2026-06-22T12:00:00Z",
+  "updated_at": "2026-06-22T12:00:00Z",
+  "project_ref": null,
+  "manufacturing_ref": null,
+  "scenario_ref": null,
+  "machine_costing": {
+    "machine_id": "MACHINE-BCM2030CA-ATC-V1",
+    "machine_profile_ref": "fixtures/machines/bcm_2030ca_atc_v1.json",
+    "cost_basis_id": "MACHINE-COST-BASIS-BCM2030CA-ATC-V1",
+    "cost_basis_ref": "fixtures/machines/cost_basis/bcm_2030ca_atc_cost_basis_v1.json",
+    "cost_basis_role": "internal_technical_cost",
+    "runtime_minutes": 120.0,
+    "machine_hour_rate": 28.97,
+    "derived_machine_time_cost": 57.94,
+    "derivation": "machine_hour_rate * runtime_minutes / 60",
+    "provenance_status": "draft"
+  },
+  "assumptions": [
+    {
+      "field": "machine_hour_rate",
+      "value": 28.97,
+      "source": "MACHINE-COST-BASIS-BCM2030CA-ATC-V1",
+      "confidence": "draft",
+      "note": "Internal technical machine-hour cost basis (burden 19.00 + electricity 1.97 + tooling 8.00). Draft provenance inherited from the governed cost-basis record. Not a commercial billing rate and not owner-confirmed."
+    },
+    {
+      "field": "runtime_minutes",
+      "value": 120.0,
+      "source": "Demonstration job estimate",
+      "confidence": "draft",
+      "note": "2.0 machine-hours of runtime for this illustrative internal demo only."
+    }
+  ],
+  "line_items": [
+    {
+      "name": "CNC Machine Time - BCM 2030CA",
+      "category": "machine",
+      "quantity": 2.0,
+      "unit": "hours",
+      "unit_cost": 28.97,
+      "total_cost": 57.94,
+      "note": "Derived from internal technical cost basis: $28.97/hr x 120 min / 60. Not a commercial $72/hr billing rate."
+    },
+    {
+      "name": "CAM/Setup Labor",
+      "category": "labor",
+      "quantity": 2.0,
+      "unit": "hours",
+      "unit_cost": 25.00,
+      "total_cost": 50.00,
+      "note": "Program setup and first-article validation (demo values only)"
+    }
+  ],
+  "cost_basis": {
+    "direct_material_cost": 0.00,
+    "direct_labor_cost": 0.00,
+    "machine_time_cost": 57.94,
+    "tooling_cost": 0.00,
+    "setup_cost": 50.00,
+    "finishing_cost": 0.00,
+    "finishing_material_cost": 0.00,
+    "engineering_cost": 0.00,
+    "base_manufacturing_cost": 107.94
+  },
+  "pricing": {
+    "tool_wear_pct": 5.0,
+    "manufacturing_contingency_pct": 10.0,
+    "business_overhead_pct": 10.0,
+    "engineering_recovery_pct": 15.0,
+    "target_margin_pct": 30.0,
+    "risked_cost": 151.12,
+    "quote_price": 215.89,
+    "quantity": 1,
+    "price_per_unit": 215.89
+  },
+  "notes": [
+    "INTERNAL DEMO / non-customer-facing calculation record.",
+    "Demonstrates opt-in governed machine-cost derivation only. Not an Eco-Loom pricing revision and not a formal production quote.",
+    "machine_time_cost ($57.94) is DERIVED from the draft technical cost basis ($28.97/hr x 120 min / 60).",
+    "Technical machine cost basis ($28.97/hr) is distinct from the commercial machine billing rate ($72.00/hr) used by existing Eco-Loom bids.",
+    "Cost-basis provenance remains draft; this wiring does not upgrade draft inputs to approved or owner-confirmed.",
+    "Legacy bids that omit machine_costing are unaffected."
+  ]
+}

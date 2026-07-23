@@ -29,6 +29,24 @@ Machine time cost for a bid (opt-in):
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import SupportsFloat
+
+MONEY_DECIMALS = 2
+
+
+def as_money(value: SupportsFloat) -> float:
+    """Round a currency amount using the shop money convention (2 decimals)."""
+    return round(float(value), MONEY_DECIMALS)
+
+
+def money_equal(left: SupportsFloat | None, right: SupportsFloat | None) -> bool:
+    """Compare currency amounts after explicit money rounding.
+
+    Prefer this over raw float ``==`` when validating stored money fields.
+    """
+    if left is None or right is None:
+        return left is None and right is None
+    return as_money(left) == as_money(right)
 
 
 @dataclass(frozen=True)
@@ -70,7 +88,7 @@ def derive_electricity_cost_per_hour(
     if price_per_kwh < 0:
         raise ValueError("price_per_kwh must be non-negative")
 
-    return round(connected_load_kw * load_factor * price_per_kwh, 2)
+    return as_money(connected_load_kw * load_factor * price_per_kwh)
 
 
 def assemble_machine_hour_rate(
@@ -110,7 +128,7 @@ def assemble_machine_hour_rate(
         machine_burden_rate_per_hour=machine_burden_rate_per_hour,
         electricity_cost_per_hour=electricity_cost_per_hour,
         tooling_cost_per_hour=tooling_cost_per_hour,
-        machine_hour_rate=round(rate, 2),
+        machine_hour_rate=as_money(rate),
     )
 
 
@@ -133,9 +151,9 @@ def derive_machine_time_cost(
     Raises:
         ValueError: If either input is negative
     """
-    if machine_hour_rate < 0:
-        raise ValueError("machine_hour_rate must be non-negative")
-    if machine_minutes < 0:
-        raise ValueError("machine_minutes must be non-negative")
+    if isinstance(machine_hour_rate, bool) or machine_hour_rate < 0:
+        raise ValueError("machine_hour_rate must be a non-negative number")
+    if isinstance(machine_minutes, bool) or machine_minutes < 0:
+        raise ValueError("machine_minutes must be a non-negative number")
 
-    return round(machine_hour_rate * (machine_minutes / 60), 2)
+    return as_money(machine_hour_rate * (machine_minutes / 60))

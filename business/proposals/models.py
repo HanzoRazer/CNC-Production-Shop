@@ -7,10 +7,10 @@ Internal margin, risk factors, and contingency details should NOT appear here.
 """
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 
-class ProposalStatus(str, Enum):
+class ProposalStatus(StrEnum):
     """Proposal lifecycle status."""
 
     DRAFT = "draft"

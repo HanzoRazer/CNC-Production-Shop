@@ -57,6 +57,77 @@
     "scenario_ref": {
       "type": ["string", "null"]
     },
+    "machine_costing": {
+      "type": "object",
+      "description": "Optional opt-in link from a bid to a governed machine cost basis. When present, cost_basis.machine_time_cost must equal derived_machine_time_cost (machine_hour_rate * runtime_minutes / 60). Absent on legacy bids, which keep hand-entered machine_time_cost unchanged. The machine_hour_rate is an internal technical cost basis, not a commercial billing rate.",
+      "additionalProperties": false,
+      "required": [
+        "machine_id",
+        "machine_profile_ref",
+        "cost_basis_id",
+        "cost_basis_ref",
+        "cost_basis_role",
+        "runtime_minutes",
+        "machine_hour_rate",
+        "derived_machine_time_cost",
+        "derivation",
+        "provenance_status"
+      ],
+      "properties": {
+        "machine_id": {
+          "type": "string",
+          "pattern": "^MACHINE-[A-Z0-9-]+$",
+          "description": "Machine profile identifier used for this derivation"
+        },
+        "machine_profile_ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$",
+          "description": "Repository-relative path to the machine profile fixture (no absolute paths, no '..')"
+        },
+        "cost_basis_id": {
+          "type": "string",
+          "pattern": "^MACHINE-COST-BASIS-[A-Z0-9-]+$",
+          "description": "Cost-basis record identifier used for this derivation"
+        },
+        "cost_basis_ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$",
+          "description": "Repository-relative path to the machine cost-basis fixture (no absolute paths, no '..')"
+        },
+        "cost_basis_role": {
+          "type": "string",
+          "enum": ["internal_technical_cost"],
+          "description": "Labels the rate as internal technical cost, not a commercial billing rate"
+        },
+        "runtime_minutes": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Machine runtime for the job, in minutes"
+        },
+        "machine_hour_rate": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Internal technical machine-hour cost from the governed cost basis"
+        },
+        "derived_machine_time_cost": {
+          "type": "number",
+          "minimum": 0,
+          "description": "machine_hour_rate * runtime_minutes / 60, rounded per shop money convention"
+        },
+        "derivation": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable derivation formula preserved with the bid"
+        },
+        "provenance_status": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved", "superseded", "retired"],
+          "description": "Must not overstate the referenced cost-basis record status"
+        }
+      }
+    },
     "assumptions": {
       "type": "array",
       "items": {
