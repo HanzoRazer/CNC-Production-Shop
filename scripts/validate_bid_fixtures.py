@@ -7,6 +7,9 @@ Usage:
 Exit codes:
     0 = all validations pass
     1 = one or more validations fail
+
+Machine-costing cross-checks import only the calculator money helpers (not the
+bids package) so this script stays a lightweight fixture gate.
 """
 
 from __future__ import annotations
@@ -21,16 +24,21 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from business.bids.machine_costing import derive_machine_time_cost  # noqa: E402
+from business.calculators.machine_cost_basis import (  # noqa: E402
+    derive_machine_time_cost,
+    money_equal,
+)
 
 FIXTURES_DIR = ROOT / "fixtures" / "bids"
 SCHEMA_PATH = ROOT / "schemas" / "bids" / "bid_v1.schema.json"
 
-_STATUS_RANK = {
+# Progressive review ladder. Terminal statuses require exact match.
+_PROGRESSIVE_STATUS_RANK = {
     "draft": 0,
     "reviewed": 1,
     "approved": 2,
 }
+_TERMINAL_STATUSES = frozenset({"superseded", "retired"})
 
 
 def load_json(path: Path) -> dict:
@@ -39,12 +47,35 @@ def load_json(path: Path) -> dict:
         return json.load(f)
 
 
+def _is_portable_repo_ref(ref: str) -> bool:
+    """Reject absolute, parent-escaping, or empty refs."""
+    if not ref or ref.startswith("/") or ref.startswith("\\"):
+        return False
+    if len(ref) >= 2 and ref[1] == ":":
+        return False
+    parts = Path(ref).parts
+    if ".." in parts:
+        return False
+    return True
+
+
 def _resolve_ref(ref: str) -> Path:
-    """Resolve a fixture ref relative to the repository root."""
-    path = Path(ref)
-    if path.is_absolute():
-        return path
-    return ROOT / path
+    """Resolve a portable repo-relative fixture ref."""
+    if not _is_portable_repo_ref(ref):
+        raise ValueError(f"ref must be repository-relative without '..': {ref!r}")
+    return ROOT / ref
+
+
+def _provenance_status_ok(bid_status: object, basis_status: object) -> bool:
+    """Return True when bid provenance does not overstate the cost basis."""
+    if not isinstance(bid_status, str) or not isinstance(basis_status, str):
+        return False
+    if bid_status in _TERMINAL_STATUSES or basis_status in _TERMINAL_STATUSES:
+        # Terminal lifecycle states are not ranked; require exact agreement.
+        return bid_status == basis_status
+    if bid_status in _PROGRESSIVE_STATUS_RANK and basis_status in _PROGRESSIVE_STATUS_RANK:
+        return _PROGRESSIVE_STATUS_RANK[bid_status] <= _PROGRESSIVE_STATUS_RANK[basis_status]
+    return bid_status == basis_status
 
 
 def validate_machine_costing(fixture: dict, fixture_path: Path) -> list[str]:
@@ -65,8 +96,12 @@ def validate_machine_costing(fixture: dict, fixture_path: Path) -> list[str]:
         errors.append(f"{prefix}\n  machine_costing.cost_basis_ref is required")
         return errors
 
-    profile_path = _resolve_ref(profile_ref)
-    cost_basis_path = _resolve_ref(cost_basis_ref)
+    try:
+        profile_path = _resolve_ref(profile_ref)
+        cost_basis_path = _resolve_ref(cost_basis_ref)
+    except ValueError as exc:
+        errors.append(f"{prefix}\n  {exc}")
+        return errors
 
     if not profile_path.is_file():
         errors.append(
@@ -99,7 +134,7 @@ def validate_machine_costing(fixture: dict, fixture_path: Path) -> list[str]:
         )
 
     expected_rate = cost_basis.get("machine_hour_rate")
-    if expected_rate != mc.get("machine_hour_rate"):
+    if not money_equal(expected_rate, mc.get("machine_hour_rate")):
         errors.append(
             f"{prefix}\n  machine_hour_rate mismatch: bid={mc.get('machine_hour_rate')!r} "
             f"cost_basis={expected_rate!r}"
@@ -114,32 +149,24 @@ def validate_machine_costing(fixture: dict, fixture_path: Path) -> list[str]:
         errors.append(f"{prefix}\n  cannot recompute derived cost: {exc}")
         return errors
 
-    if recomputed != mc.get("derived_machine_time_cost"):
+    if not money_equal(recomputed, mc.get("derived_machine_time_cost")):
         errors.append(
             f"{prefix}\n  derived_machine_time_cost {mc.get('derived_machine_time_cost')!r} "
             f"!= recomputed {recomputed!r}"
         )
 
     line_item_cost = fixture.get("cost_basis", {}).get("machine_time_cost")
-    if line_item_cost != mc.get("derived_machine_time_cost"):
+    if not money_equal(line_item_cost, mc.get("derived_machine_time_cost")):
         errors.append(
             f"{prefix}\n  cost_basis.machine_time_cost {line_item_cost!r} "
             f"!= machine_costing.derived_machine_time_cost "
             f"{mc.get('derived_machine_time_cost')!r}"
         )
 
-    basis_status = cost_basis.get("status")
-    bid_status = mc.get("provenance_status")
-    if basis_status in _STATUS_RANK and bid_status in _STATUS_RANK:
-        if _STATUS_RANK[bid_status] > _STATUS_RANK[basis_status]:
-            errors.append(
-                f"{prefix}\n  provenance_status {bid_status!r} overstates "
-                f"cost-basis status {basis_status!r}"
-            )
-    elif bid_status != basis_status:
+    if not _provenance_status_ok(mc.get("provenance_status"), cost_basis.get("status")):
         errors.append(
-            f"{prefix}\n  provenance_status {bid_status!r} does not match "
-            f"cost-basis status {basis_status!r}"
+            f"{prefix}\n  provenance_status {mc.get('provenance_status')!r} overstates "
+            f"or mismatches cost-basis status {cost_basis.get('status')!r}"
         )
 
     return errors

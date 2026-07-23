@@ -94,8 +94,12 @@ class MachineCostingV1:
     When present on BidV1, cost_basis.machine_time_cost must equal
     derived_machine_time_cost. The machine_hour_rate is an internal technical
     cost basis, not a commercial billing rate. Construction belongs in
-    business.bids.machine_costing.build_machine_costing — this model stores
+    business.bids.machine_costing.build_machine_costing - this model stores
     the derivation record only and performs no lookup.
+
+    Downstream pricing/proposal code must continue to use BidPricingV1 /
+    cost_basis.machine_time_cost. Do not treat machine_hour_rate as a
+    customer billing rate.
     """
 
     machine_id: str

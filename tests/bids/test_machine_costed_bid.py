@@ -11,7 +11,7 @@ import json
 import subprocess
 import sys
 from copy import deepcopy
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import jsonschema
@@ -29,10 +29,15 @@ from business.bids import (
     calculate_price_per_unit,
     calculate_risked_cost,
     derive_machine_time_cost,
+    generate_bid_summary,
 )
 from business.calculators.machine_cost_basis import (
     derive_machine_time_cost as calculator_derive_machine_time_cost,
 )
+from business.calculators.machine_cost_basis import (
+    money_equal,
+)
+from business.proposals import generate_proposal_from_summary
 
 ROOT = Path(__file__).parent.parent.parent
 FIXTURES_DIR = ROOT / "fixtures" / "bids"
@@ -255,6 +260,13 @@ class TestCalculation:
         assert mc.cost_basis_role == "internal_technical_cost"
         assert mc.provenance_status == "draft"
         assert mc.derivation == "machine_hour_rate * runtime_minutes / 60"
+        assert mc.machine_profile_ref == "fixtures/machines/bcm_2030ca_atc_v1.json"
+        assert (
+            mc.cost_basis_ref
+            == "fixtures/machines/cost_basis/bcm_2030ca_atc_cost_basis_v1.json"
+        )
+        assert not Path(mc.machine_profile_ref).is_absolute()
+        assert money_equal(mc.derived_machine_time_cost, 57.94)
 
     def test_tampered_derived_cost_fails_validator_logic(self, demo):
         from scripts.validate_bid_fixtures import validate_machine_costing
@@ -276,37 +288,61 @@ class TestCalculation:
 class TestCrossReferenceIntegrity:
     """Path and ID agreement checks."""
 
-    def test_missing_machine_profile_fails(self, tmp_path):
-        missing = tmp_path / "missing_profile.json"
+    def test_missing_machine_profile_fails(self):
         with pytest.raises(FileNotFoundError):
             build_machine_costing(
                 machine_id="MACHINE-BCM2030CA-ATC-V1",
                 runtime_minutes=120,
-                machine_profile_path=missing,
+                machine_profile_path=Path("fixtures/machines/missing_profile.json"),
                 cost_basis_path=COST_BASIS,
             )
 
-    def test_missing_cost_basis_fails(self, tmp_path):
-        missing = tmp_path / "missing_cost_basis.json"
+    def test_missing_cost_basis_fails(self):
         with pytest.raises(FileNotFoundError):
             build_machine_costing(
                 machine_id="MACHINE-BCM2030CA-ATC-V1",
                 runtime_minutes=120,
                 machine_profile_path=MACHINE_PROFILE,
-                cost_basis_path=missing,
+                cost_basis_path=Path(
+                    "fixtures/machines/cost_basis/missing_cost_basis.json"
+                ),
             )
+
+    def test_path_outside_repo_rejected(self, tmp_path):
+        outside = tmp_path / "outside_profile.json"
+        outside.write_text("{}", encoding="utf-8")
+        with pytest.raises(ValueError, match="inside repository root"):
+            build_machine_costing(
+                machine_id="MACHINE-BCM2030CA-ATC-V1",
+                runtime_minutes=120,
+                machine_profile_path=outside,
+                cost_basis_path=COST_BASIS,
+            )
+
+    def test_absolute_repo_path_stores_relative_ref(self):
+        mc = build_machine_costing(
+            machine_id="MACHINE-BCM2030CA-ATC-V1",
+            runtime_minutes=120,
+            machine_profile_path=MACHINE_PROFILE.resolve(),
+            cost_basis_path=COST_BASIS.resolve(),
+        )
+        assert mc.machine_profile_ref == "fixtures/machines/bcm_2030ca_atc_v1.json"
+        assert not Path(mc.machine_profile_ref).is_absolute()
 
     def test_machine_id_mismatch_fails(self, tmp_path):
         profile = load_json(MACHINE_PROFILE)
         profile["machine_id"] = "MACHINE-OTHER-V1"
-        path = tmp_path / "profile.json"
-        path.write_text(json.dumps(profile), encoding="utf-8")
+        (tmp_path / "profile.json").write_text(json.dumps(profile), encoding="utf-8")
+        (tmp_path / "cost_basis.json").write_text(
+            json.dumps(load_json(COST_BASIS)), encoding="utf-8"
+        )
         with pytest.raises(ValueError, match="machine profile machine_id"):
             build_machine_costing(
                 machine_id="MACHINE-BCM2030CA-ATC-V1",
                 runtime_minutes=120,
-                machine_profile_path=path,
-                cost_basis_path=COST_BASIS,
+                machine_profile_path=Path("profile.json"),
+                cost_basis_path=Path("cost_basis.json"),
+                repo_root=tmp_path,
             )
 
     def test_cost_basis_id_mismatch_detected_by_validator(self, demo):
@@ -320,14 +356,17 @@ class TestCrossReferenceIntegrity:
     def test_cost_basis_referencing_other_machine_fails(self, tmp_path):
         basis = load_json(COST_BASIS)
         basis["machine_id"] = "MACHINE-OTHER-V1"
-        path = tmp_path / "cost_basis.json"
-        path.write_text(json.dumps(basis), encoding="utf-8")
+        (tmp_path / "profile.json").write_text(
+            json.dumps(load_json(MACHINE_PROFILE)), encoding="utf-8"
+        )
+        (tmp_path / "cost_basis.json").write_text(json.dumps(basis), encoding="utf-8")
         with pytest.raises(ValueError, match="cost basis machine_id"):
             build_machine_costing(
                 machine_id="MACHINE-BCM2030CA-ATC-V1",
                 runtime_minutes=120,
-                machine_profile_path=MACHINE_PROFILE,
-                cost_basis_path=path,
+                machine_profile_path=Path("profile.json"),
+                cost_basis_path=Path("cost_basis.json"),
+                repo_root=tmp_path,
             )
 
     def test_draft_provenance_cannot_be_represented_as_approved(self, demo):
@@ -336,7 +375,25 @@ class TestCrossReferenceIntegrity:
         tampered = deepcopy(demo)
         tampered["machine_costing"]["provenance_status"] = "approved"
         errors = validate_machine_costing(tampered, DEMO_FIXTURE)
-        assert any("overstates" in e for e in errors)
+        assert any("overstates" in e or "mismatches" in e for e in errors)
+
+    def test_absolute_ref_rejected_by_schema_and_validator(self, demo, schema):
+        from scripts.validate_bid_fixtures import validate_machine_costing
+
+        tampered = deepcopy(demo)
+        tampered["machine_costing"]["machine_profile_ref"] = str(MACHINE_PROFILE.resolve())
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate(tampered, schema)
+        errors = validate_machine_costing(tampered, DEMO_FIXTURE)
+        assert any("repository-relative" in e for e in errors)
+
+    def test_parent_escape_ref_rejected(self, demo, schema):
+        tampered = deepcopy(demo)
+        tampered["machine_costing"]["cost_basis_ref"] = (
+            "fixtures/machines/../../secrets.json"
+        )
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate(tampered, schema)
 
 
 class TestBackwardCompatibility:
@@ -477,6 +534,49 @@ class TestCommercialBoundary:
         assert demo["machine_costing"]["provenance_status"] == "draft"
         assert demo["machine_costing"]["cost_basis_role"] == "internal_technical_cost"
         assert demo["customer_name"] == "INTERNAL-DEMO"
+
+    def test_summary_and_proposal_ignore_machine_costing_for_pricing(self, demo):
+        """Customer-facing pricing paths use BidPricingV1, not machine_costing."""
+        mc = MachineCostingV1(**demo["machine_costing"])
+        bid = BidV1(
+            bid_id=demo["bid_id"],
+            project_name=demo["project_name"],
+            customer_name=demo["customer_name"],
+            revision=demo["revision"],
+            status=demo["status"],
+            created_at=demo["created_at"],
+            updated_at=demo["updated_at"],
+            assumptions=[BidAssumptionV1(**a) for a in demo["assumptions"]],
+            line_items=[BidLineItemV1(**li) for li in demo["line_items"]],
+            cost_basis=BidCostBasisV1(
+                **{
+                    k: v
+                    for k, v in demo["cost_basis"].items()
+                    if k != "base_manufacturing_cost"
+                }
+            ),
+            pricing=BidPricingV1(**demo["pricing"]),
+            notes=["Customer-safe note only"],
+            machine_costing=replace(
+                mc,
+                machine_hour_rate=999.0,
+                derived_machine_time_cost=999.0,
+            ),
+        )
+
+        summary = generate_bid_summary(bid)
+        assert not hasattr(summary, "machine_costing")
+        assert summary.canonical_quote_price == demo["pricing"]["quote_price"]
+        assert summary.risked_cost == demo["pricing"]["risked_cost"]
+        assert "machine_costing" not in asdict(summary)
+        assert "999" not in json.dumps(asdict(summary))
+
+        proposal = generate_proposal_from_summary(summary)
+        assert not hasattr(proposal, "machine_costing")
+        assert proposal.pricing.total_price == demo["pricing"]["quote_price"]
+        assert "machine_costing" not in asdict(proposal)
+        assert "internal_technical_cost" not in json.dumps(asdict(proposal))
+        assert "999" not in json.dumps(asdict(proposal))
 
 
 class TestDemoFixtureConsistency:

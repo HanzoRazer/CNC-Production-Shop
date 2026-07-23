@@ -32,10 +32,13 @@ from business.calculators.cnc_electricity import (
     calculate_simple_job_cost,
 )
 from business.calculators.machine_cost_basis import (
+    MONEY_DECIMALS,
     MachineHourRate,
+    as_money,
     assemble_machine_hour_rate,
     derive_electricity_cost_per_hour,
     derive_machine_time_cost,
+    money_equal,
 )
 
 __all__ = [
@@ -46,6 +49,8 @@ __all__ = [
     "SimpleJobCostInput",
     "SimpleJobCostResult",
     "MachineHourRate",
+    "MONEY_DECIMALS",
+    "as_money",
     "calculate_electricity_cost",
     "calculate_loaded_labor_rate",
     "calculate_machine_burden_rate",
@@ -53,4 +58,5 @@ __all__ = [
     "derive_electricity_cost_per_hour",
     "assemble_machine_hour_rate",
     "derive_machine_time_cost",
+    "money_equal",
 ]

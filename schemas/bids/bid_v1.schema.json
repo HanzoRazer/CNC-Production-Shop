@@ -82,7 +82,8 @@
         "machine_profile_ref": {
           "type": "string",
           "minLength": 1,
-          "description": "Path to the machine profile fixture used for this derivation"
+          "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$",
+          "description": "Repository-relative path to the machine profile fixture (no absolute paths, no '..')"
         },
         "cost_basis_id": {
           "type": "string",
@@ -92,7 +93,8 @@
         "cost_basis_ref": {
           "type": "string",
           "minLength": 1,
-          "description": "Path to the machine cost-basis fixture used for this derivation"
+          "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$",
+          "description": "Repository-relative path to the machine cost-basis fixture (no absolute paths, no '..')"
         },
         "cost_basis_role": {
           "type": "string",
