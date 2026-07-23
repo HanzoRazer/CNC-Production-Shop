@@ -6,10 +6,10 @@ These models represent internal bid calculation records, not customer-facing pro
 """
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 
-class BidStatus(str, Enum):
+class BidStatus(StrEnum):
     """Bid lifecycle status."""
 
     DRAFT = "draft"

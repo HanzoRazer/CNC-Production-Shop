@@ -11,8 +11,6 @@ Tests verify:
 """
 
 import json
-import subprocess
-import sys
 from pathlib import Path
 
 import jsonschema
