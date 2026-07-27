@@ -36,7 +36,7 @@
       "interface_id": "HEADPHONE_OUT",
       "direction": "out",
       "connection": "wire_to_board",
-      "description": "To the body-mounted headphone jack. Must drive 32 ohm headphones at useful level \u2014 this is the defining feature of the practice instrument."
+      "description": "To the body-mounted headphone jack. At least 100 mW into 32 ohm at or below 1% THD \u2014 see REQ-HEADPHONE-DRIVE. This is the defining feature of the practice instrument, so the figure is quantified rather than described."
     },
     {
       "interface_id": "GPIO_HOST",
@@ -103,7 +103,7 @@
     {
       "requirement_id": "REQ-NOISE",
       "requirement": "Separated analog and digital grounds joined at a single point, with analog rails on dedicated low-noise regulators. Demonstrated by ADC-path SNR of at least 95 dB A-weighted under the stated measurement conditions.",
-      "rationale": "Millivolt guitar signals run 20 mm from a Raspberry Pi 5 with WiFi active, inside a sealed cavity. Power supply and grounding failures are the usual cause of unusable noise floors in boards of this class.",
+      "rationale": "Millivolt guitar signals run 20 mm from a Raspberry Pi 5 with WiFi active, inside a sealed cavity. Power supply and grounding failures are the usual cause of unusable noise floors in boards of this class. The requirement is bounded deliberately: it governs noise the BOARD contributes, measured from its own input onward.",
       "criticality": "high"
     },
     {
@@ -120,14 +120,20 @@
     },
     {
       "requirement_id": "REQ-INPUT-HEADROOM",
-      "requirement": "The input shall accept at least 2.0 Vpp at minimum gain without clipping, against a typical program level near 0.6 Vpp.",
-      "rationale": "Passive humbucker transients reach volts on hard attack. Without a stated full-scale input the gain structure and clipping headroom are undefined, and the first loud chord finds the limit instead of the bench.",
-      "criticality": "high"
+      "requirement": "The input shall accept at least 4.0 Vpp at minimum gain without clipping, and shall provide at least 30 dB of gain range so a low-output passive pickup still reaches full scale. Pickup type is FLUID and may change without a board revision.",
+      "rationale": "Pickup selection is not fixed and may include SINGLE COILS. A vintage-output single coil and a high-output active sit roughly 20-30 dB apart: an active can peak near 4 Vpp where a low-output passive sits well under 1. Note that a P-90 is a single coil, not a humbucker \u2014 it is the pickup humbuckers were invented to replace \u2014 so the single-coil case is live rather than hypothetical. Specifying one level would tie the board to a pickup decision that is still open; headroom plus gain range makes it indifferent.",
+      "criticality": "shippable_blocker"
     },
     {
       "requirement_id": "REQ-MCU-LINK",
       "requirement": "The MCU link to the host shall run on the 40-pin GPIO header \u2014 UART or I2C. It shall not require a separate USB cable.",
       "rationale": "A second cable is not in the cavity budget: GPIO_HOST is the only host connection the packing accounts for. Resolves an inconsistency in Rev A of the tender, which offered USB-serial while the interface table placed the MCU link on the GPIO header.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-NOISE-BOUNDARY",
+      "requirement": "The board is responsible for noise from INSTRUMENT_IN onward. It is not responsible for interference the pickup itself receives. Acceptance of REQ-NOISE shall be measured with the input terminated in 10 kilohm, not through a live pickup.",
+      "rationale": "A pickup is a coil of wire and a magnet \u2014 an antenna. It receives the Pi's switching and RF emissions before the signal reaches this board, and no input stage can remove what arrives already summed with the signal. If single coils are used the instrument loses the common-mode rejection a humbucker provides, and that becomes an INSTRUMENT problem: shielding, pickup placement, cavity treatment, and how far the Pi sits from the coils. Stating the boundary protects a contractor from being held to something they cannot fix, and stops the buyer assuming a board fix exists for it.",
       "criticality": "high"
     }
   ],
@@ -135,7 +141,8 @@
     "Sealed wooden cavity with a cover plate, no forced airflow across the board itself.",
     "Approximately 20 mm from a Raspberry Pi 5 running at 2.4 GHz with WiFi and Bluetooth active.",
     "Battery powered, so quiescent draw affects runtime directly.",
-    "Cavity shielding is available and already specified for the pickup routes; the board should assume it and not rely on it."
+    "Cavity shielding is available and already specified for the pickup routes; the board should assume it and not rely on it.",
+    "Pickup type may include single-coil operation. A true single coil has no common-mode rejection; a coil-split humbucker loses it only while split; a stacked noiseless single coil retains it. Whichever is chosen, an instrument with an onboard computer is a harder EMC problem than a conventional one, and it is solved at instrument level \u2014 shielding, pickup placement, distance from the Pi \u2014 not on this board."
   ],
   "certification": [
     "FCC Part 15 Class B and CE/UKCA apply to the FINISHED ASSEMBLY. The Raspberry Pi's own certification does not transfer to a product containing it.",
@@ -145,11 +152,13 @@
   "open_questions": [
     "I2S versus USB has NOT been settled. I2S is preferred on cost, board area and battery draw, but USB Audio Class 2 is class-compliant and needs no driver or overlay at all, and would let the board work standalone with a phone or laptop. Latency does not decide it: the existing USB path already measures 3.1 ms against a 5 ms target, so the roughly 1.2 ms an all-I2S path would save is headroom, not a requirement.",
     "Codec selection, and therefore whether REQ-CODEC-SUPPORTED can be met, is unresolved.",
-    "PICKUP TYPE IS UNRESOLVED UPSTREAM and it sets the input level this board is designed around. Humbucker versus P90 is open as CONF-PICKUP-TYPE. input_full_scale_vpp of 2.0 assumes passive humbuckers; confirm before a bid prices the gain structure.",
+    "Pickup type is FLUID by owner decision and is no longer a blocker on this board: the input is specified as 4.0 Vpp headroom plus 30 dB of gain range rather than as a level. It remains open upstream as CONF-PICKUP-TYPE for pickup ROUTE dimensions, which this board does not touch.",
     "Whether the two pickups are humbuckers or P90s is unresolved upstream and affects the expected input level. See CONF-PICKUP-TYPE.",
     "Non-recurring engineering and certification cost are not estimated. They are separate lines in the budget model, not unit cost.",
     "Deliverables and IP ownership are NOT stated: what is handed over \u2014 schematics, layout source, gerbers, BOM, firmware \u2014 and who owns it. Commercial rather than engineering, but a tender is not complete without it.",
-    "MCU firmware and any device-tree overlay work are not scoped. State whether they are the contractor's or ours before NRE is quoted."
+    "MCU firmware and any device-tree overlay work are not scoped. State whether they are the contractor's or ours before NRE is quoted.",
+    "QUANTITY AND SCHEDULE ARE NOT STATED and cannot be derived here. Both change who bids and what they charge, and asking for BOM at 50/250/1000 units implies volumes the document never commits to. Supply an annual volume, a first-article date, and whether production assembly is in scope.",
+    "SINGLE-COIL EXPOSURE IS AN INSTRUMENT-LEVEL RISK, not a board question, and its SIZE depends on how single-coil tone is obtained. A true single coil has no common-mode rejection at any time, and sits in the same cavity as a Pi 5 radiating at 2.4 GHz alongside switching supplies. A coil-split humbucker loses rejection only in the split position, and a stacked noiseless single coil hum-cancels by construction \u2014 both reduce the worst case from a permanent condition to one switch setting or none. Owner direction on 2026-07-27 favours splittable pickups. Needs a shielded mock-up measurement in the WORST mode before pickups are chosen, because the answer may constrain pickup selection rather than the other way round."
   ],
   "provenance": {
     "source": "engineering_estimate",
@@ -169,7 +178,8 @@
     "The envelope is TIED TO THE CAVITY. This board appears in the geometry component register as SG_AUDIO_FRONTEND, and the pocket that holds it is derived from those dimensions. Changing the board here changes the pocket there, and a validator fails if the two disagree.",
     "This subassembly is on the critical path for BOTH product lines. The Smart Guitar cannot be self-contained without it, and the Khaya was made self-contained by owner decision on 2026-07-27, so neither line ships until it exists.",
     "The instrument constrains this board more than the board constrains the instrument. Two derived facts are already load-bearing: the Pi and this board must be ADJACENT, because a 150 mm ribbon channel costs more body area than the solid body has; and the battery must be the 2x 18650 pack rather than 4x. Those stopped being preferences when the Khaya went self-contained.",
-    "The electrical envelope was added on 2026-07-27 after review of the Rev A tender document, which carried the mechanical brief without any electrical specification. Every value in that block is an engineering estimate awaiting confirmation, and the brief marks them as such."
+    "The electrical envelope was added on 2026-07-27 after review of the Rev A tender document, which carried the mechanical brief without any electrical specification. Every value in that block is an engineering estimate awaiting confirmation, and the brief marks them as such.",
+    "DOCUMENT CLASS IS 'rfi', NOT A TENDER. The record status is 'concept': codec unselected, quantity and schedule unstated, several electrical values proposed rather than confirmed. Those are the right conditions for shortlisting designers and costing the work, and the wrong conditions for buying a design. Commercial terms including IP transfer are therefore OUT of scope at this revision \u2014 asking a contractor to price IP transfer against an unresolved specification produces either a padded number or an argument. Move to 'tender' once the codec is named, the quantity is committed and the electrical values are confirmed."
   ],
   "electrical": {
     "power_architecture": {
@@ -187,7 +197,7 @@
       "sample_rate_primary_khz": 48.0,
       "sample_rate_capable_khz": 96.0,
       "bit_depth": 24,
-      "input_full_scale_vpp": 2.0,
+      "input_full_scale_vpp": 4.0,
       "input_typical_vpp": 0.6
     },
     "performance": {
@@ -219,7 +229,100 @@
       "captured_by": "engineering",
       "capture_date": "2026-07-27",
       "confidence": "draft",
-      "note": "EVERY VALUE IN THIS BLOCK IS PROPOSED, NOT CONFIRMED. They were derived from the instrument's context rather than measured or specified by the owner, and each needs confirmation before tender. The load-bearing ones: input_full_scale_vpp 2.0 assumes passive humbuckers and is blocked on CONF-PICKUP-TYPE, since a P90 sets a different level; adc_snr_db_a_weighted 95 is a demanding but achievable figure for this environment and is the number a bid will be priced against; supply range 6.0-8.4 V follows from a 2x 18650 pack in series and changes entirely if the BMS presents a regulated rail instead; io_provision counts are a guess at the control layout, with an addressable channel included so fret markers do not force a connector change later."
+      "note": "EVERY VALUE IN THIS BLOCK IS PROPOSED, NOT CONFIRMED. They were derived from the instrument's context rather than measured or specified by the owner, and each needs confirmation before tender. The load-bearing ones: input_full_scale_vpp is 4.0 and is NO LONGER blocked on CONF-PICKUP-TYPE: the owner confirmed on 2026-07-27 that pickups are fluid, so the input is specified as headroom plus gain range rather than as a level, making the board indifferent to the pickup decision; adc_snr_db_a_weighted 95 is a demanding but achievable figure for this environment and is the number a bid will be priced against; supply range 6.0-8.4 V follows from a 2x 18650 pack in series and changes entirely if the BMS presents a regulated rail instead; io_provision counts are a guess at the control layout, with an addressable channel included so fret markers do not force a connector change later."
     }
+  },
+  "acceptance": [
+    {
+      "requirement_id": "REQ-BYPASS",
+      "stage": "prototype",
+      "method": "Cut host power with a signal present; repeat with the host held in reset and with the host hung after boot. Observe AMP_OUT on a scope.",
+      "pass_criterion": "Dry signal present at AMP_OUT in all three cases. Bypass is the unpowered resting state. Switch time stated and repeatable."
+    },
+    {
+      "requirement_id": "REQ-HIZ",
+      "stage": "design_review",
+      "method": "Measure input impedance at 1 kHz; confirm input topology from the schematic.",
+      "pass_criterion": "At least 1 megohm, JFET or equivalent high-impedance input stage."
+    },
+    {
+      "requirement_id": "REQ-GAIN-RECALL",
+      "stage": "prototype",
+      "method": "Set and read back gain over the host interface across the full range.",
+      "pass_criterion": "Gain settable and readable in discrete steps with no mechanical trimmer in the operating path."
+    },
+    {
+      "requirement_id": "REQ-HEADPHONE-DRIVE",
+      "stage": "prototype",
+      "method": "Drive 32 ohm resistive load at 1 kHz; measure continuous output power and THD.",
+      "pass_criterion": "At least 100 mW continuous at or below 1% THD."
+    },
+    {
+      "requirement_id": "REQ-INPUT-HEADROOM",
+      "stage": "prototype",
+      "method": "Inject 4.0 Vpp at 1 kHz at minimum gain; then inject a low-output level and raise gain to full scale.",
+      "pass_criterion": "No clipping at 4.0 Vpp minimum gain; at least 30 dB of usable gain range."
+    },
+    {
+      "requirement_id": "REQ-CODEC-SUPPORTED",
+      "stage": "design_review",
+      "method": "Name the codec and the specific mainline device-tree overlay; demonstrate capture and playback on a stock Raspberry Pi OS image.",
+      "pass_criterion": "Working audio using an existing overlay, with no out-of-tree driver required."
+    },
+    {
+      "requirement_id": "REQ-MCU-ONBOARD",
+      "stage": "design_review",
+      "method": "Inspect the schematic and board outline.",
+      "pass_criterion": "MCU functions on this board; no second module in the cavity budget."
+    },
+    {
+      "requirement_id": "REQ-MCU-LINK",
+      "stage": "design_review",
+      "method": "Inspect the interface list and connector schedule.",
+      "pass_criterion": "MCU-to-host link carried on the 40-pin GPIO header; no separate USB cable required."
+    },
+    {
+      "requirement_id": "REQ-NOISE",
+      "stage": "first_article",
+      "method": "Measure ADC-path SNR under the stated measurement conditions: A-weighted, input terminated in 10 kilohm, IN THE ASSEMBLED INSTRUMENT with the Pi powered and WiFi active.",
+      "pass_criterion": "At least 95 dB A-weighted. A bench figure on an isolated supply does not satisfy this."
+    },
+    {
+      "requirement_id": "REQ-POWER-ARCH",
+      "stage": "design_review",
+      "method": "Inspect the power tree; measure quiescent and peak current at nominal pack voltage.",
+      "pass_criterion": "Board regulates from raw pack voltage, supplies no host power, quiescent at or below 120 mA and peak at or below 350 mA."
+    },
+    {
+      "requirement_id": "REQ-LATENCY",
+      "stage": "prototype",
+      "method": "Loopback measurement instrument input to headphone output at the primary sample rate, buffer size stated with the result.",
+      "pass_criterion": "5 ms or better; 10 ms is the hard failure threshold."
+    },
+    {
+      "requirement_id": "REQ-NOISE-BOUNDARY",
+      "stage": "design_review",
+      "method": "Confirm the acceptance configuration for REQ-NOISE: input terminated in 10 kilohm, Pi powered, WiFi active, in the assembled instrument.",
+      "pass_criterion": "REQ-NOISE demonstrated with a terminated input. Pickup-borne interference is recorded separately as an instrument-level finding, not a board defect."
+    }
+  ],
+  "document_control": {
+    "revision": "B",
+    "issued": "2026-07-27",
+    "document_class": "rfi",
+    "change_contact": "TO BE NAMED BEFORE ISSUE \u2014 no change request can be raised against an unnamed owner.",
+    "commercial_terms_in_scope": false,
+    "revision_history": [
+      {
+        "revision": "A",
+        "date": "2026-07-27",
+        "change": "First issue. Mechanical envelope, interfaces and behavioural requirements."
+      },
+      {
+        "revision": "B",
+        "date": "2026-07-27",
+        "change": "Added electrical envelope and acceptance matrix. Ruled power architecture as independent rails. Fixed the MCU-link contradiction between the architecture text and the interface table. Input respecified as headroom plus gain range after the owner confirmed pickups are fluid."
+      }
+    ]
   }
 }

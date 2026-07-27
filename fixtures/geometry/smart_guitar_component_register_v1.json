@@ -338,7 +338,7 @@
         "luthiers-toolbox smart_guitar_v1.json cavities.teensy_io_pocket.signal_chain lines 449-450: BOTH audio paths begin 'P90 -> buffered_splitter', in the block marked canonical: true, spec_version 2.1"
       ],
       "status": "unresolved",
-      "ruling": "INTRA-FILE contradiction, not a cross-repo one: a single file names dual humbuckers in its hardware block and a P90 in its own canonical signal chain. sg-spec contains no P90 reference at all. Not resolved here because it does not affect electronics cavity geometry, but it decides pickup route dimensions and pickup cost downstream.",
+      "ruling": "INTRA-FILE contradiction, not a cross-repo one: a single file names dual humbuckers in its hardware block and a P90 in its own canonical signal chain. sg-spec contains no P90 reference at all. NOTE these are different pickup CLASSES, not two models of the same thing: a P-90 is a SINGLE COIL, the pickup humbuckers were designed to replace. The owner confirmed on 2026-07-27 that pickup selection is fluid and may include single coils. Consequences split: the audio front-end board is now indifferent to the choice, since its input is specified as headroom plus gain range rather than a level; but pickup ROUTE dimensions still depend on it, and a single coil removes the common-mode rejection that makes an onboard computer tolerable, which is an instrument-level EMC risk recorded in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1.",
       "ruled_by": "unresolved \u2014 deferred to the budget model"
     },
     {

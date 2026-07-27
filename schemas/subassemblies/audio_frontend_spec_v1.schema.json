@@ -17,9 +17,11 @@
     "requirements",
     "environment",
     "certification",
+    "acceptance",
     "open_questions",
     "provenance",
-    "notes"
+    "notes",
+    "document_control"
   ],
   "$defs": {
     "provenance": {
@@ -442,6 +444,104 @@
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ties every requirement to how it is demonstrated and what counts as a pass. Without this a MUST is an opinion: a contractor cannot prove compliance and the buyer cannot reject work.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirement_id",
+          "method",
+          "pass_criterion"
+        ],
+        "properties": {
+          "requirement_id": {
+            "type": "string",
+            "pattern": "^REQ-[A-Z0-9-]+$"
+          },
+          "method": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pass_criterion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "design_review",
+              "prototype",
+              "first_article",
+              "production"
+            ]
+          }
+        }
+      }
+    },
+    "document_control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "issued",
+        "document_class",
+        "change_contact",
+        "revision_history"
+      ],
+      "properties": {
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued": {
+          "type": "string",
+          "minLength": 1
+        },
+        "document_class": {
+          "type": "string",
+          "enum": [
+            "rfi",
+            "rfq",
+            "tender"
+          ],
+          "description": "An RFI shortlists and costs the work. A tender buys a design. They want different documents, and a concept-stage record cannot be tendered against."
+        },
+        "change_contact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commercial_terms_in_scope": {
+          "type": "boolean"
+        },
+        "revision_history": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revision",
+              "date",
+              "change"
+            ],
+            "properties": {
+              "revision": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "change": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }

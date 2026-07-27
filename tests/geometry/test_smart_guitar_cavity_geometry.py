@@ -680,6 +680,8 @@ def test_pickup_type_conflict_is_intra_file_not_cross_repo():
     assert all("luthiers-toolbox" in s for s in conflict["sources"])
     assert not any("sg-spec" in s for s in conflict["sources"])
     assert "INTRA-FILE" in conflict["ruling"]
+    # P-90 and humbucker are different pickup CLASSES, not two models.
+    assert "a P-90 is a SINGLE COIL" in conflict["ruling"]
 
 
 def test_pod_relocation_removes_the_opposed_face_constraint():

@@ -100,6 +100,7 @@ def test_blockers_are_the_ones_that_define_the_product(spec):
         "REQ-HIZ",
         "REQ-HEADPHONE-DRIVE",
         "REQ-POWER-ARCH",
+        "REQ-INPUT-HEADROOM",
     }
 
 
@@ -228,12 +229,16 @@ def test_mcu_link_is_on_the_gpio_header_not_usb(spec):
     assert "40-pin GPIO header" in req["requirement"]
 
 
-def test_pickup_type_is_carried_as_an_open_question(spec):
-    """It sets the input level and was dropped from the Rev A tender."""
+def test_pickup_type_no_longer_blocks_this_board(spec):
+    """Fluid pickups are recorded as answered HERE and still open upstream.
+
+    The board is made indifferent to the decision; the pickup ROUTE dimensions
+    are a separate question this board does not touch.
+    """
     questions = " ".join(spec["open_questions"])
-    assert "PICKUP TYPE IS UNRESOLVED" in questions
-    assert "CONF-PICKUP-TYPE" in questions
-    assert "input_full_scale_vpp of 2.0 assumes passive humbuckers" in questions
+    assert "Pickup type is FLUID by owner decision" in questions
+    assert "no longer a blocker on this board" in questions
+    assert "remains open upstream as CONF-PICKUP-TYPE" in questions
 
 
 def test_commercial_gaps_are_recorded_as_open(spec):
@@ -242,6 +247,124 @@ def test_commercial_gaps_are_recorded_as_open(spec):
     questions = " ".join(spec["open_questions"])
     assert "IP ownership" in questions
     assert "firmware" in questions
+
+
+def test_every_requirement_has_an_acceptance_row(spec):
+    """Traceability is what makes the document self-enforcing.
+
+    Requirement IDs and a request for a test procedure are not the same as
+    tying one to the other. Without this pairing a contractor cannot prove
+    compliance and the buyer has no ground to reject work.
+    """
+    reqs = {r["requirement_id"] for r in spec["requirements"]}
+    acc = {a["requirement_id"] for a in spec["acceptance"]}
+    assert reqs == acc, f"uncovered: {sorted(reqs - acc)}, orphaned: {sorted(acc - reqs)}"
+    for row in spec["acceptance"]:
+        assert row["method"].strip() and row["pass_criterion"].strip()
+
+
+def test_noise_acceptance_forbids_a_bench_measurement(spec):
+    """The noise environment IS the requirement, so the venue is part of it."""
+    row = next(a for a in spec["acceptance"] if a["requirement_id"] == "REQ-NOISE")
+    assert "ASSEMBLED INSTRUMENT" in row["method"]
+    assert "bench figure" in row["pass_criterion"]
+    assert row["stage"] == "first_article"
+
+
+def test_input_is_a_range_because_pickups_are_fluid(spec):
+    """Specifying one level would tie the board to an open pickup decision.
+
+    Headroom plus gain range makes the board indifferent to it, which is
+    cheaper than a respin when the pickups change.
+    """
+    audio = spec["electrical"]["audio"]
+    assert audio["input_full_scale_vpp"] == 4.0
+    req = next(
+        r for r in spec["requirements"] if r["requirement_id"] == "REQ-INPUT-HEADROOM"
+    )
+    assert "30 dB of gain range" in req["requirement"]
+    assert "FLUID" in req["requirement"]
+    assert req["criticality"] == "shippable_blocker"
+    # And it must no longer be blocked on the pickup conflict.
+    assert "NO LONGER blocked" in spec["electrical"]["provenance"]["note"]
+
+
+def test_noise_responsibility_boundary_is_stated(spec):
+    """A pickup is an antenna. No input stage removes what arrives pre-summed.
+
+    Stating the boundary protects a contractor from being held to something
+    they cannot fix, and stops the buyer assuming a board fix exists.
+    """
+    req = next(
+        r for r in spec["requirements"] if r["requirement_id"] == "REQ-NOISE-BOUNDARY"
+    )
+    assert "not responsible for interference the pickup itself receives" in req["requirement"]
+    assert "terminated in 10 kilohm, not through a live pickup" in req["requirement"]
+    assert "INSTRUMENT problem" in req["rationale"]
+
+
+def test_single_coil_risk_is_recorded_as_instrument_level(spec):
+    """A P-90 is a single coil — the pickup humbuckers replaced.
+
+    Losing common-mode rejection next to an onboard computer is a materially
+    harder EMC problem, and it may constrain pickup choice rather than the
+    other way round.
+    """
+    env = " ".join(spec["environment"])
+    assert "A true single coil has no common-mode rejection" in env
+    questions = " ".join(spec["open_questions"])
+    assert "SINGLE-COIL EXPOSURE IS AN INSTRUMENT-LEVEL RISK" in questions
+    assert "shielded mock-up" in questions
+    # How the tone is obtained decides the size of the exposure, so the record
+    # must distinguish the three cases rather than treat them as one.
+    assert "coil-split humbucker loses rejection only in the split position" in questions
+    assert "stacked noiseless single coil hum-cancels by construction" in questions
+    assert "WORST mode" in questions
+    req = next(
+        r for r in spec["requirements"] if r["requirement_id"] == "REQ-INPUT-HEADROOM"
+    )
+    assert "a P-90 is a single coil, not a humbucker" in req["rationale"]
+
+
+def test_document_is_an_rfi_not_a_tender(spec):
+    """Concept status cannot be tendered against.
+
+    Codec unselected, quantity unstated, several values proposed. Those are the
+    right conditions to shortlist and cost, and the wrong ones to buy a design
+    — so commercial terms stay out of scope until they resolve.
+    """
+    dc = spec["document_control"]
+    assert dc["document_class"] == "rfi"
+    assert dc["commercial_terms_in_scope"] is False
+    assert spec["status"] == "concept"
+    notes = " ".join(spec["notes"])
+    assert "NOT A TENDER" in notes
+    assert "padded number or an argument" in notes
+
+
+def test_document_control_is_complete(spec):
+    dc = spec["document_control"]
+    assert dc["revision"] == "B"
+    assert len(dc["revision_history"]) >= 2
+    assert dc["revision_history"][-1]["revision"] == dc["revision"]
+    # The contact is not yet named, and must say so rather than be absent.
+    assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
+
+
+def test_quantity_and_schedule_are_recorded_as_missing(spec):
+    """Asking for BOM tiers implies volumes the document never commits to."""
+    questions = " ".join(spec["open_questions"])
+    assert "QUANTITY AND SCHEDULE ARE NOT STATED" in questions
+    assert "first-article date" in questions
+
+
+def test_headphone_interface_row_is_quantified(spec):
+    """'Practice level' survived in the interface table after Table 2 fixed it."""
+    row = next(
+        i for i in spec["interfaces"] if i["interface_id"] == "HEADPHONE_OUT"
+    )
+    assert "100 mW into 32 ohm" in row["description"]
+    assert "REQ-HEADPHONE-DRIVE" in row["description"]
 
 
 def test_validator_enforces_the_envelope_link():
