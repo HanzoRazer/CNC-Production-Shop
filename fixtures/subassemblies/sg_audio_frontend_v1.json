@@ -7,7 +7,7 @@
   "form_factor": {
     "standard": "Raspberry Pi HAT, 65.0 x 56.5 mm outline, 4 x M2.5 mounting",
     "mounting": "Four M2.5 standoffs to the cavity floor, 6.0 mm",
-    "stacking": "NOT stacked on the Pi. The board sits BESIDE it, joined by a GPIO ribbon. Stacking was ruled out because a Pi plus standoffs plus a HAT is 58 mm in a 47 mm blank — see CONF-POD-LAYOUT. HAT form factor is retained anyway so a stock GPIO extension ribbon mates without a custom cable.",
+    "stacking": "NOT stacked on the Pi. The board sits BESIDE it, joined by a GPIO ribbon. Stacking was ruled out because a Pi plus standoffs plus a HAT is 58 mm in a 47 mm blank \u2014 see CONF-POD-LAYOUT. HAT form factor is retained anyway so a stock GPIO extension ribbon mates without a custom cable.",
     "authority_note": "Take the exact mounting-hole positions, corner radii and 40-pin connector offset from the official Raspberry Pi HAT mechanical specification, NOT from this record. Matching it exactly is what makes a stock ribbon work."
   },
   "envelope": {
@@ -36,7 +36,7 @@
       "interface_id": "HEADPHONE_OUT",
       "direction": "out",
       "connection": "wire_to_board",
-      "description": "To the body-mounted headphone jack. Must drive 32 ohm headphones at useful level — this is the defining feature of the practice instrument."
+      "description": "To the body-mounted headphone jack. Must drive 32 ohm headphones at useful level \u2014 this is the defining feature of the practice instrument."
     },
     {
       "interface_id": "GPIO_HOST",
@@ -84,7 +84,7 @@
     },
     {
       "requirement_id": "REQ-HEADPHONE-DRIVE",
-      "requirement": "The headphone output shall drive 32 ohm loads at a level adequate for practice without an external amplifier.",
+      "requirement": "The headphone output shall deliver at least 100 mW continuous into 32 ohm at or below 1% THD, without an external amplifier.",
       "rationale": "Headphone output is the reason this instrument exists. Roughly 100 mW into 32 ohm is a reasonable target.",
       "criticality": "shippable_blocker"
     },
@@ -97,12 +97,12 @@
     {
       "requirement_id": "REQ-MCU-ONBOARD",
       "requirement": "The board shall carry the I/O microcontroller functions on-board rather than as a separate module: footswitches, panel controls, LEDs, BMS telemetry and bypass control.",
-      "rationale": "Absorbing the separate Teensy module removes its pocket from the body. Combined with keeping the Pi and this board adjacent, that is what makes the electronics fit the SOLID body at all — the alternative is 37 cm2 short.",
+      "rationale": "Absorbing the separate Teensy module removes its pocket from the body. Combined with keeping the Pi and this board adjacent, that is what makes the electronics fit the SOLID body at all \u2014 the alternative is 37 cm2 short.",
       "criticality": "high"
     },
     {
       "requirement_id": "REQ-NOISE",
-      "requirement": "Analog and digital grounds shall be separated and joined at a single point, with analog rails on dedicated low-noise regulators.",
+      "requirement": "Separated analog and digital grounds joined at a single point, with analog rails on dedicated low-noise regulators. Demonstrated by ADC-path SNR of at least 95 dB A-weighted under the stated measurement conditions.",
       "rationale": "Millivolt guitar signals run 20 mm from a Raspberry Pi 5 with WiFi active, inside a sealed cavity. Power supply and grounding failures are the usual cause of unusable noise floors in boards of this class.",
       "criticality": "high"
     },
@@ -111,6 +111,24 @@
       "requirement": "Round-trip latency from instrument input to headphone output shall not exceed 5 ms, with 10 ms as the hard maximum.",
       "rationale": "Carried from the existing signal-chain budget. An all-I2S path is expected to land near 1.9 ms against the 3.1 ms of the previous USB-input path, so this is headroom rather than a constraint.",
       "criticality": "medium"
+    },
+    {
+      "requirement_id": "REQ-POWER-ARCH",
+      "requirement": "The board shall take raw battery pack voltage (6.0 to 8.4 V) and regulate its own rails. It shall NOT supply the Raspberry Pi. Quiescent draw shall not exceed 120 mA and peak draw shall not exceed 350 mA.",
+      "rationale": "Removes the largest ambiguity in the brief. A contractor who assumes this board feeds the Pi would design a 25 W converter and quote accordingly. Keeping the Pi's supply off this board also keeps its switching noise away from a millivolt analog front end.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-INPUT-HEADROOM",
+      "requirement": "The input shall accept at least 2.0 Vpp at minimum gain without clipping, against a typical program level near 0.6 Vpp.",
+      "rationale": "Passive humbucker transients reach volts on hard attack. Without a stated full-scale input the gain structure and clipping headroom are undefined, and the first loud chord finds the limit instead of the bench.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-MCU-LINK",
+      "requirement": "The MCU link to the host shall run on the 40-pin GPIO header \u2014 UART or I2C. It shall not require a separate USB cable.",
+      "rationale": "A second cable is not in the cavity budget: GPIO_HOST is the only host connection the packing accounts for. Resolves an inconsistency in Rev A of the tender, which offered USB-serial while the interface table placed the MCU link on the GPIO header.",
+      "criticality": "high"
     }
   ],
   "environment": [
@@ -127,8 +145,11 @@
   "open_questions": [
     "I2S versus USB has NOT been settled. I2S is preferred on cost, board area and battery draw, but USB Audio Class 2 is class-compliant and needs no driver or overlay at all, and would let the board work standalone with a phone or laptop. Latency does not decide it: the existing USB path already measures 3.1 ms against a 5 ms target, so the roughly 1.2 ms an all-I2S path would save is headroom, not a requirement.",
     "Codec selection, and therefore whether REQ-CODEC-SUPPORTED can be met, is unresolved.",
+    "PICKUP TYPE IS UNRESOLVED UPSTREAM and it sets the input level this board is designed around. Humbucker versus P90 is open as CONF-PICKUP-TYPE. input_full_scale_vpp of 2.0 assumes passive humbuckers; confirm before a bid prices the gain structure.",
     "Whether the two pickups are humbuckers or P90s is unresolved upstream and affects the expected input level. See CONF-PICKUP-TYPE.",
-    "Non-recurring engineering and certification cost are not estimated. They are separate lines in the budget model, not unit cost."
+    "Non-recurring engineering and certification cost are not estimated. They are separate lines in the budget model, not unit cost.",
+    "Deliverables and IP ownership are NOT stated: what is handed over \u2014 schematics, layout source, gerbers, BOM, firmware \u2014 and who owns it. Commercial rather than engineering, but a tender is not complete without it.",
+    "MCU firmware and any device-tree overlay work are not scoped. State whether they are the contractor's or ours before NRE is quoted."
   ],
   "provenance": {
     "source": "engineering_estimate",
@@ -147,6 +168,58 @@
     "Scope boundary: this record carries the envelope, the interfaces and the behavioural requirements. It deliberately does NOT specify circuit topology, part numbers or component values, which are the designer's to choose against these constraints.",
     "The envelope is TIED TO THE CAVITY. This board appears in the geometry component register as SG_AUDIO_FRONTEND, and the pocket that holds it is derived from those dimensions. Changing the board here changes the pocket there, and a validator fails if the two disagree.",
     "This subassembly is on the critical path for BOTH product lines. The Smart Guitar cannot be self-contained without it, and the Khaya was made self-contained by owner decision on 2026-07-27, so neither line ships until it exists.",
-    "The instrument constrains this board more than the board constrains the instrument. Two derived facts are already load-bearing: the Pi and this board must be ADJACENT, because a 150 mm ribbon channel costs more body area than the solid body has; and the battery must be the 2x 18650 pack rather than 4x. Those stopped being preferences when the Khaya went self-contained."
-  ]
+    "The instrument constrains this board more than the board constrains the instrument. Two derived facts are already load-bearing: the Pi and this board must be ADJACENT, because a 150 mm ribbon channel costs more body area than the solid body has; and the battery must be the 2x 18650 pack rather than 4x. Those stopped being preferences when the Khaya went self-contained.",
+    "The electrical envelope was added on 2026-07-27 after review of the Rev A tender document, which carried the mechanical brief without any electrical specification. Every value in that block is an engineering estimate awaiting confirmation, and the brief marks them as such."
+  ],
+  "electrical": {
+    "power_architecture": {
+      "mode": "independent_rails",
+      "rationale": "The board does NOT supply the Raspberry Pi. Both take raw pack voltage from the battery/BMS and regulate independently. Routing the Pi's supply \u2014 up to 5 V at 5 A, 25 W \u2014 through a 65 x 56.5 mm board that also carries millivolt analog would be poor practice and would dominate its thermal design inside a sealed cavity. Taking raw pack voltage rather than a shared 5 V rail is also the quieter choice: the board makes its own analog rails from ~7.4 V instead of inheriting a rail that is simultaneously feeding a Pi 5, and a bipolar analog supply stays available if the designer wants one."
+    },
+    "supply": {
+      "input_nominal_v": 7.4,
+      "input_min_v": 6.0,
+      "input_max_v": 8.4,
+      "quiescent_max_ma": 120.0,
+      "peak_max_ma": 350.0
+    },
+    "audio": {
+      "sample_rate_primary_khz": 48.0,
+      "sample_rate_capable_khz": 96.0,
+      "bit_depth": 24,
+      "input_full_scale_vpp": 2.0,
+      "input_typical_vpp": 0.6
+    },
+    "performance": {
+      "adc_snr_db_a_weighted": 95.0,
+      "thd_n_max_pct": 0.01,
+      "headphone_power_mw_into_32r": 100.0
+    },
+    "thermal": {
+      "cavity_ambient_min_c": 0.0,
+      "cavity_ambient_max_c": 60.0,
+      "component_rating_min_c": 85.0
+    },
+    "io_provision": {
+      "switch_inputs": 4,
+      "analog_inputs": 4,
+      "discrete_led_outputs": 8,
+      "addressable_led_channels": 1
+    },
+    "measurement_conditions": [
+      "ADC SNR: A-weighted, 20 Hz to 20 kHz, referenced to full scale, instrument input terminated in 10 kilohm to represent a pickup's DC resistance, measured with the Pi 5 powered and WiFi active \u2014 not on an isolated bench supply.",
+      "THD+N: 1 kHz at -3 dBFS, measured at AMP_OUT and again at HEADPHONE_OUT into 32 ohm.",
+      "Headphone power: continuous into 32 ohm at or below 1% THD.",
+      "Round-trip latency: instrument input to headphone output, at the primary sample rate, with the buffer size stated in the result.",
+      "Quiescent current: Pi idle, bypass engaged, no LEDs lit. Peak: full headphone output plus all LED provision active.",
+      "All figures to be demonstrated in the assembled instrument or a representative shielded cavity mock-up, NOT on open bench."
+    ],
+    "provenance": {
+      "source": "engineering_estimate",
+      "captured_by": "engineering",
+      "capture_date": "2026-07-27",
+      "confidence": "draft",
+      "note": "EVERY VALUE IN THIS BLOCK IS PROPOSED, NOT CONFIRMED. They were derived from the instrument's context rather than measured or specified by the owner, and each needs confirmation before tender. The load-bearing ones: input_full_scale_vpp 2.0 assumes passive humbuckers and is blocked on CONF-PICKUP-TYPE, since a P90 sets a different level; adc_snr_db_a_weighted 95 is a demanding but achievable figure for this environment and is the number a bid will be priced against; supply range 6.0-8.4 V follows from a 2x 18650 pack in series and changes entirely if the BMS presents a regulated rail instead; io_provision counts are a guess at the control layout, with an addressable channel included so fret markers do not force a connector change later."
+    }
+  }
 }

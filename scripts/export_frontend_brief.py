@@ -70,7 +70,7 @@ def render(spec: dict, register: dict) -> str:
     w(f"> {ff['authority_note']}")
     w("")
 
-    w("## 2. Envelope")
+    w("## 2. Mechanical envelope")
     w("")
     w("| | mm |")
     w("|---|---:|")
@@ -92,7 +92,53 @@ def render(spec: dict, register: dict) -> str:
           f"{board['margin_length_mm']} clearance per side.")
         w("")
 
-    w("## 3. Interfaces")
+    el = spec["electrical"]
+    w("## 3. Electrical envelope")
+    w("")
+    w(f"> **Every figure in this section is proposed, not confirmed.** "
+      f"{el['provenance']['confidence'].upper()} — "
+      f"{el['provenance']['source'].replace('_', ' ')}. Confirm before pricing against them.")
+    w("")
+    pa = el["power_architecture"]
+    w(f"**Power architecture — `{pa['mode']}`.** {pa['rationale']}")
+    w("")
+    w("| | |")
+    w("|---|---:|")
+    sup = el["supply"]
+    w(f"| Supply input, nominal | {sup['input_nominal_v']} V |")
+    w(f"| Supply input, range | {sup['input_min_v']} – {sup['input_max_v']} V |")
+    w(f"| Quiescent draw, max | {sup['quiescent_max_ma']} mA |")
+    w(f"| Peak draw, max | {sup['peak_max_ma']} mA |")
+    au = el["audio"]
+    w(f"| Sample rate, primary | {au['sample_rate_primary_khz']} kHz |")
+    w(f"| Sample rate, capable | {au['sample_rate_capable_khz']} kHz |")
+    w(f"| Bit depth | {au['bit_depth']} |")
+    w(f"| Input full scale, min gain | {au['input_full_scale_vpp']} Vpp |")
+    w(f"| Input typical program level | {au['input_typical_vpp']} Vpp |")
+    pf = el["performance"]
+    w(f"| ADC SNR | ≥ {pf['adc_snr_db_a_weighted']} dB A-weighted |")
+    w(f"| THD+N, max | {pf['thd_n_max_pct']} % |")
+    w(f"| Headphone power into 32 Ω | ≥ {pf['headphone_power_mw_into_32r']} mW |")
+    th = el["thermal"]
+    w(f"| Cavity ambient | {th['cavity_ambient_min_c']} – {th['cavity_ambient_max_c']} °C |")
+    w(f"| Component rating, min | {th['component_rating_min_c']} °C |")
+    io = el["io_provision"]
+    w(f"| Switch inputs | {io['switch_inputs']} |")
+    w(f"| Analog inputs | {io['analog_inputs']} |")
+    w(f"| Discrete LED outputs | {io['discrete_led_outputs']} |")
+    w(f"| Addressable LED channels | {io['addressable_led_channels']} |")
+    w("")
+    w("### How these are to be demonstrated")
+    w("")
+    w("A requirement without a measurement method cannot be accepted or rejected.")
+    w("")
+    for line in el["measurement_conditions"]:
+        w(f"- {line}")
+    w("")
+    w(f"*{el['provenance']['note']}*")
+    w("")
+
+    w("## 4. Interfaces")
     w("")
     w("| Interface | Direction | Connection | Notes |")
     w("|---|---|---|---|")
@@ -105,7 +151,7 @@ def render(spec: dict, register: dict) -> str:
     w("and so board height stays low.")
     w("")
 
-    w("## 4. Requirements")
+    w("## 5. Requirements")
     w("")
     blockers = [r for r in spec["requirements"] if r["criticality"] == "shippable_blocker"]
     if blockers:
@@ -120,19 +166,19 @@ def render(spec: dict, register: dict) -> str:
         w(f"*Why:* {r['rationale']}")
         w("")
 
-    w("## 5. Operating environment")
+    w("## 6. Operating environment")
     w("")
     for line in spec["environment"]:
         w(f"- {line}")
     w("")
 
-    w("## 6. Certification")
+    w("## 7. Certification")
     w("")
     for line in spec["certification"]:
         w(f"- {line}")
     w("")
 
-    w("## 7. Open questions")
+    w("## 8. Open questions")
     w("")
     w("These are unresolved at the time of writing and may change the design.")
     w("Raise them before committing to a topology.")
@@ -141,7 +187,7 @@ def render(spec: dict, register: dict) -> str:
         w(f"- {line}")
     w("")
 
-    w("## 8. Context worth knowing")
+    w("## 9. Context worth knowing")
     w("")
     for line in spec["notes"]:
         w(f"- {line}")

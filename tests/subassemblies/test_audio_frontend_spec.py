@@ -85,12 +85,22 @@ def test_bypass_is_a_shippable_blocker(spec):
 
 
 def test_blockers_are_the_ones_that_define_the_product(spec):
+    """Four things, each of which makes the instrument not-a-product if missed.
+
+    Sound when the Pi is down, a guitar-appropriate input, headphones loud
+    enough to practise through, and a power architecture that is not guessed at.
+    """
     blockers = {
         r["requirement_id"]
         for r in spec["requirements"]
         if r["criticality"] == "shippable_blocker"
     }
-    assert blockers == {"REQ-BYPASS", "REQ-HIZ", "REQ-HEADPHONE-DRIVE"}
+    assert blockers == {
+        "REQ-BYPASS",
+        "REQ-HIZ",
+        "REQ-HEADPHONE-DRIVE",
+        "REQ-POWER-ARCH",
+    }
 
 
 def test_mcu_absorption_records_why_it_is_required(spec):
@@ -151,6 +161,87 @@ def test_spec_records_that_the_instrument_constrains_the_board(spec):
     assert "must be ADJACENT" in notes
     assert "2x 18650" in notes
     assert "critical path for BOTH product lines" in notes
+
+
+def test_power_architecture_is_stated_not_left_ambiguous(spec):
+    """The largest gap in the Rev A tender: which way does power flow.
+
+    A contractor who assumed this board feeds the Pi would design a 25 W
+    converter and quote for it. Stating the mode removes that guess.
+    """
+    pa = spec["electrical"]["power_architecture"]
+    assert pa["mode"] == "independent_rails"
+    assert "does NOT supply the Raspberry Pi" in pa["rationale"]
+    req = next(
+        r for r in spec["requirements"] if r["requirement_id"] == "REQ-POWER-ARCH"
+    )
+    assert req["criticality"] == "shippable_blocker"
+
+
+def test_electrical_envelope_is_complete_enough_to_tender(spec):
+    """Each of these was missing from Rev A and blocks a real quote."""
+    el = spec["electrical"]
+    sup = el["supply"]
+    assert sup["input_min_v"] < sup["input_nominal_v"] < sup["input_max_v"]
+    assert sup["quiescent_max_ma"] < sup["peak_max_ma"]
+    assert el["audio"]["sample_rate_primary_khz"] == 48.0
+    assert el["audio"]["bit_depth"] == 24
+    assert el["audio"]["input_full_scale_vpp"] > el["audio"]["input_typical_vpp"]
+    assert el["performance"]["adc_snr_db_a_weighted"] > 0
+    assert el["thermal"]["component_rating_min_c"] > el["thermal"]["cavity_ambient_max_c"]
+
+
+def test_every_electrical_figure_is_flagged_as_unconfirmed(spec):
+    """These were proposed, not measured or specified. Say so, loudly.
+
+    A number that loses its provenance becomes a number someone builds to.
+    """
+    prov = spec["electrical"]["provenance"]
+    assert prov["source"] == "engineering_estimate"
+    assert prov["confidence"] == "draft"
+    assert "EVERY VALUE IN THIS BLOCK IS PROPOSED, NOT CONFIRMED" in prov["note"]
+    assert "CONF-PICKUP-TYPE" in prov["note"]
+
+
+def test_performance_figures_carry_measurement_methods(spec):
+    """A MUST without a method can be neither demonstrated nor rejected."""
+    conditions = " ".join(spec["electrical"]["measurement_conditions"])
+    assert "A-weighted" in conditions
+    assert "32 ohm" in conditions
+    assert "NOT on open bench" in conditions
+    # And the requirements themselves must carry the numbers.
+    noise = next(r for r in spec["requirements"] if r["requirement_id"] == "REQ-NOISE")
+    assert "95 dB" in noise["requirement"]
+    phones = next(
+        r for r in spec["requirements"] if r["requirement_id"] == "REQ-HEADPHONE-DRIVE"
+    )
+    assert "100 mW" in phones["requirement"] and "1% THD" in phones["requirement"]
+
+
+def test_mcu_link_is_on_the_gpio_header_not_usb(spec):
+    """Rev A offered USB-serial while its own table put the link on GPIO.
+
+    A second cable is not in the cavity budget, so the ambiguity had to close.
+    """
+    req = next(r for r in spec["requirements"] if r["requirement_id"] == "REQ-MCU-LINK")
+    assert "shall not require a separate USB cable" in req["requirement"]
+    assert "40-pin GPIO header" in req["requirement"]
+
+
+def test_pickup_type_is_carried_as_an_open_question(spec):
+    """It sets the input level and was dropped from the Rev A tender."""
+    questions = " ".join(spec["open_questions"])
+    assert "PICKUP TYPE IS UNRESOLVED" in questions
+    assert "CONF-PICKUP-TYPE" in questions
+    assert "input_full_scale_vpp of 2.0 assumes passive humbuckers" in questions
+
+
+def test_commercial_gaps_are_recorded_as_open(spec):
+    """Deliverables, IP and firmware scope are not engineering, but a tender
+    without them is incomplete and they were absent from Rev A."""
+    questions = " ".join(spec["open_questions"])
+    assert "IP ownership" in questions
+    assert "firmware" in questions
 
 
 def test_validator_enforces_the_envelope_link():
