@@ -119,15 +119,22 @@ def test_mcu_absorption_does_not_overclaim(spec):
     assert "reduces the shortfall without closing it" in req["rationale"]
 
 
-def test_board_serves_one_line_and_carries_all_its_nre(spec):
-    """The Khaya reverted to passive, so there is no second line to amortise.
+def test_board_serves_both_lines_and_amortises_across_them(spec):
+    """Restoring Khaya compute halves the NRE burden per line.
 
-    That is a costing consequence, not a design one, and it belongs on the
-    record before the budget model reads it.
+    A costing consequence, not a design one, and it belongs on the record
+    before the budget model reads it.
     """
     notes = " ".join(spec["notes"])
-    assert "critical path for the SMART GUITAR ONLY" in notes
-    assert "no second line to amortise across" in notes
+    assert "critical path for BOTH product lines again" in notes
+    assert "amortise across two lines rather than one" in notes
+
+
+def test_acceptance_should_be_measured_in_the_harder_instrument(spec):
+    """The Khaya pairs a single coil with onboard compute — the worst case."""
+    questions = " ".join(spec["open_questions"])
+    assert "worst EMC combination this board will meet" in questions
+    assert "taken in THAT instrument, not the hollow one" in questions
 
 
 def test_spec_defers_circuit_design_to_the_designer(spec):
@@ -179,7 +186,7 @@ def test_spec_records_that_the_instrument_constrains_the_board(spec):
     notes = " ".join(spec["notes"])
     assert "must be ADJACENT" in notes
     assert "2x 18650" in notes
-    assert "critical path for the SMART GUITAR ONLY" in notes
+    assert "critical path for BOTH product lines again" in notes
 
 
 def test_power_architecture_is_stated_not_left_ambiguous(spec):

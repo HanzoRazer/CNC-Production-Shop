@@ -3,7 +3,9 @@
 **Status:** proposed, not started
 **Prerequisites:** `SMART-GUITAR-CAVITY-GEOMETRY-1` (complete), product records
 split and ruled, `SUBASSEMBLY-SG-AUDIO-FRONTEND-V1` (concept)
-**Product:** `PRODUCT-SMART-GUITAR-V1` only — hollow thin-skin, headless
+**Products:** `PRODUCT-SMART-GUITAR-V1` (hollow thin-skin, headless) and
+`PRODUCT-KHAYA-SOLIDBODY-V1` (solid, single Tele-style pickup) — both carry
+onboard compute as of 2026-07-27
 
 ## The question it answers
 
@@ -21,15 +23,17 @@ That has resolved into something narrower and more answerable:
 
 | Then | Now |
 |---|---|
-| Two products conflated in one record | Two governed records; **only the Smart Guitar is in scope** |
-| Body architecture undecided | Hollow thin-skin box, ruled and load-bearing |
+| Two products conflated in one record | Two governed records, **both in scope**, sharing one electronics architecture |
+| Body architecture undecided | Hollow thin-skin for the Smart Guitar, solid Khaya for the other; both ruled |
 | Electronics package assumed | Custom front-end board, specified as an RFI |
 | Neck sourcing open | Shop-machined, ruled |
 | Geometry unverified | Derived, with 20 conflicts recorded |
 
-The Khaya is **out of scope**. It reverted to passive on 2026-07-27 and no
-longer depends on the front-end board. It should get its own, much simpler
-estimate later.
+**The Khaya is back in scope.** It reverted to passive on 2026-07-27 when the
+dual-humbucker solid body could not host both electronics pockets, then
+restored compute the same day once a single Telecaster-style pickup freed
+69 cm2 exactly where they were competing. Both lines now share one electronics
+architecture, differing only in battery capacity.
 
 ## Cost model layers
 
@@ -58,9 +62,10 @@ smart_system_test_cost              bench test, latency check, thermal check
 
 **Kept out of unit cost, on its own line.** The front-end board carries
 schematic, layout, prototype runs, bring-up, MCU firmware and EMC
-certification. With the Khaya now passive there is **no second product line to
-amortise across**, so the whole of it lands on this instrument's volume — which
-makes the amortisation assumption a headline output rather than a footnote.
+certification. It now amortises across **two** product lines rather than one,
+which is materially better than the single-line case — but the split between
+them is an assumption the model must state, not bury, because the two lines
+will not sell in equal numbers.
 
 ### Layer 3 — Fully burdened cost
 
@@ -84,9 +89,12 @@ ruled. What remains genuinely variable:
 | Pickup configuration | fluid — single coil, split humbucker, stacked noiseless |
 | Front-end board | in-house NRE amortised, versus an external interface with no NRE |
 | Volume | 1, 10, 50, 250 |
+| NRE split between the two lines | an assumption, not a derivation |
 
-That last axis matters more than it looks: with NRE on one product line, unit
-cost at volume 10 and volume 250 are different products commercially.
+The last two matter more than they look. Unit cost at volume 10 and at volume
+250 are different products commercially, and how the board's NRE is divided
+between a hollow practice instrument and a solid performance one is a choice
+that moves both.
 
 ## Inputs required, and their state
 
@@ -127,7 +135,6 @@ $400 of electronics plus NRE on top.
 
 - Approved retail pricing, dealer contracts, warranty policy
 - Exact annual overhead allocation
-- The Khaya line
 - Production scheduling, inventory, accounting integration
 - Final component selection
 
@@ -150,9 +157,9 @@ docs/estimates/SMART_GUITAR_BUDGET_MODEL_V1.md
 
 ## The honest risk
 
-The most likely output is that this instrument cannot reach a sensible price.
+The most likely output is that the Smart Guitar cannot reach a sensible price.
 Roughly: $700 of thin-skin body and neck, plus $400 of electronics, plus a
-custom board's BOM, plus NRE on a single line, before overhead. If that is what
+custom board's BOM, plus a share of NRE, before overhead. If that is what
 the model says, it has done its job — the value is in learning it from a
 spreadsheet rather than from a first article.
 
@@ -172,6 +179,11 @@ SMART-GUITAR-CHANNEL-PRICING-1
 
 ## What I need before starting
 
-**Quantity and schedule.** They block the RFI as well, and without them the
-volume axis is guesswork. Everything else the model can carry as a governed
-assumption; those two it cannot invent.
+**Quantity and schedule, per line.** They block the RFI as well, and without
+them both the volume axis and the NRE split are guesswork. Everything else the
+model can carry as a governed assumption; those it cannot invent.
+
+Worth noting alongside: the Khaya now pairs a single coil with an onboard Pi,
+which is the hardest EMC case in the program. If a shielded mock-up forces a
+hum-cancelling pickup, the route dimensions change and the packing that made
+this configuration possible has to be re-tested.

@@ -1,7 +1,7 @@
 {
   "product_id": "PRODUCT-KHAYA-SOLIDBODY-V1",
   "product_name": "Khaya Solid Body",
-  "product_description": "Solid Khaya (African mahogany) electric guitar in headless and headed series with a single Telecaster-style bridge single coil. A performance instrument, amplified through the output jack. Currently passive: onboard compute was dropped on 2026-07-27 and is deferred, though the single-pickup layout has since been shown to make room for it.",
+  "product_description": "Solid Khaya (African mahogany) electric guitar in headless and headed series with a single Telecaster-style bridge single coil and an embedded Linux host. A performance instrument that also practises silently: amplified through the output jack, with onboard effects, coaching and wireless monitoring.",
   "product_role": "performance_instrument",
   "status": "concept",
   "construction": {
@@ -33,16 +33,20 @@
     }
   ],
   "electronics_package": {
-    "package_id": "KHAYA-PASSIVE-V1",
-    "compute_host": "none \u2014 passive instrument",
-    "onboard_audio_output": false,
+    "package_id": "KHAYA-SMART-V1",
+    "compute_host": "Raspberry Pi 5 (8 GB)",
+    "onboard_audio_output": true,
     "components": [
+      "Raspberry Pi 5 (8 GB) \u2014 JACK + Guitarix/MODEP host and coaching engine",
+      "SG_AUDIO_FRONTEND custom board \u2014 instrument front end, codec, headphone amp, bypass relay, MCU",
+      "Battery pack + BMS (2x 18650), USB-C PD charging",
+      "40 mm cooling fan, lid-mounted, venting outward",
+      "GPIO ribbon, 100 mm, between the Pi and the front-end board",
       "One Telecaster-style bridge single coil, route approximately 80 x 22 x 19 mm",
-      "Passive volume and tone in the control cavity",
-      "Output jack, body mounted"
+      "Passive volume and tone in the control cavity"
     ],
-    "rationale": "Onboard compute dropped 2026-07-27. A solid body cannot host both the Pi pocket and the audio front-end pocket \u2014 only one site in the body is large enough for either, and the result held at wall 6 mm, rim 10 mm, voids -10% and body +10% (CONF-SOLID-BODY-PACKING). Rather than shrink the compute or abandon solid construction, this line reverts to a conventional passive instrument. That is not a loss: it decouples the Khaya from the front-end board's schedule and certification entirely, so it ships on wood and hardware alone.",
-    "open_question": "ONBOARD COMPUTE IS NO LONGER RULED OUT BY GEOMETRY, and this supersedes the earlier framing. Compute was dropped on 2026-07-27 because a solid body could not host both the Pi pocket and the front-end pocket. That result was measured against TWO HUMBUCKER routes. With a single Telecaster-style pickup the free area rises from 287 to 356 cm2, POD_PI valid sites rise from 10 to 130, and the complete electronics set packs \u2014 Pi at x -25 y_from_top 240.0, front-end board at x -25 y_from_top 165.0, battery at x +115 y_from_top 350.0, with a 75 mm pocket separation. Restoring compute is therefore a PRODUCT decision again rather than a geometric impossibility. See CONF-SINGLE-PICKUP-SPACE."
+    "rationale": "Onboard compute RESTORED 2026-07-27 after the single-pickup refactor. Deleting the neck route and shrinking the bridge route to 80 x 22 freed 69 cm2 exactly where the pockets were competing, and the complete set now packs with a governed placement. Both lines therefore share ONE electronics architecture \u2014 the same Pi 5 and the same custom front-end board \u2014 differing only in battery capacity, since this line packs a 2x 18650 pack against the hollow instrument's 4x. The headphone output is not wasted on a performance instrument: it is what lets it practise silently.",
+    "open_question": "SINGLE COIL PLUS ONBOARD COMPUTE IS THE HARDEST EMC CASE IN THE PROGRAM, and it is now this line's leading risk rather than a hypothetical. A single coil has no common-mode rejection, so it receives the Pi's switching and RF emissions directly, and REQ-NOISE-BOUNDARY establishes that no input stage can remove interference that arrives already summed with the signal. The board is not the mitigation: cavity shielding, pickup placement and distance from the Pi are. UNQUANTIFIED \u2014 needs a shielded mock-up measurement before this configuration is committed, and the answer may force a hum-cancelling pickup after all. That would be a stacked noiseless single coil or a splittable humbucker, both of which change the route."
   },
   "materials": {
     "body": "khaya (African mahogany)",
@@ -68,10 +72,10 @@
   },
   "notes": [
     "STATUS IS 'concept'. Like its sibling, this instrument exists as an AI-generated image and a set of derived dimensions, not as a measured object.",
+    "GOVERNED PLACEMENT, the first solved layout in the program: POD_PI at x -25 y_from_top 240.0, SG_AUDIO_FRONTEND at x -25 y_from_top 165.0, battery at x +115 y_from_top 350.0, with 75 mm pocket separation against a 100 mm ribbon. Derived against the calibrated outline with rim 12.7, void keep-out 8.0 and 8 mm cavity walls.",
+    "This line is now BLOCKED ON the front-end board again, having been decoupled from it for a day. That is the cost of restoring compute: no Khaya ships until the board exists, is certified, and the single-coil noise question is answered. The benefit is that NRE now amortises across two product lines instead of one.",
     "Refactored to a single Telecaster-style bridge single coil on 2026-07-27. Deleting the neck route and shrinking the bridge route from 92 x 40 to 80 x 22 frees 69 cm2 exactly where the electronics pockets were competing.",
-    "A single coil has no common-mode rejection, which matters only if compute returns to this line. While the instrument is passive it is a conventional guitar and the question does not arise.",
     "The packing evidence, retained so the decision is not re-litigated: with TWO HUMBUCKERS the solid body cannot host both pockets at any ribbon length of 75, 100 or 150 mm, and the largest pocket that fits anywhere is 100 x 60. With ONE single coil it packs. The constraint was the pickup layout, not the body.",
-    "This line no longer depends on the audio front-end board, so it is not blocked by that board's design, NRE or certification. It was the argument for dropping compute and it is the main benefit.",
     "The headed series is concept_defined and gated behind the headless first article, so its extra hardware is a documented delta rather than a costed variant.",
     "Contains no cost, price, or margin fields by design.",
     "SOURCING POLICY \u2014 NO EMBEDDED THIRD-PARTY CONSUMER PRODUCTS. A finished retail product may not be designed into either instrument as an internal component. Embedding one creates OEM licensing and trademark exposure, a single-source dependency on another company's product roadmap, warranty and support ambiguity, and re-certification questions for the finished assembly. This rules out mounting an iRig HD 2, Apogee Jam X, Scarlett Solo or MOTU M2 inside the body, regardless of whether it physically fits. EXTERNAL peripherals are NOT affected: shipping or recommending an interface the customer connects is resale, not embedding."

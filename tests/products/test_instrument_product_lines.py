@@ -67,36 +67,6 @@ def test_khaya_carries_both_headstock_series(khaya):
     assert primary[0]["headstock"] == "none_headless"
 
 
-def test_compute_is_the_functional_difference_between_the_lines(smart, khaya):
-    """The Khaya reverted to passive; the Smart Guitar carries the compute.
-
-    They no longer differ by an audio HAT. They differ by whether there is a
-    computer in the instrument at all, which is what the packing forced.
-    """
-    assert smart["electronics_package"]["compute_host"].startswith("Raspberry Pi 5")
-    assert khaya["electronics_package"]["compute_host"] == "none — passive instrument"
-    assert khaya["electronics_package"]["onboard_audio_output"] is False
-    assert not any(
-        "Raspberry" in c for c in khaya["electronics_package"]["components"]
-    )
-
-
-def test_khaya_single_pickup_reopens_onboard_compute(khaya):
-    """The constraint was the pickup layout, not the body.
-
-    Compute was dropped against a dual-humbucker layout. One Telecaster-style
-    pickup frees 69 cm2 exactly where the pockets competed, and the set packs.
-    That makes restoring compute a product decision again, not an impossibility.
-    """
-    assert khaya["configuration"]["pickup_layout"] == (
-        "single_bridge_single_coil_telecaster_style"
-    )
-    q = khaya["electronics_package"]["open_question"]
-    assert "NO LONGER RULED OUT BY GEOMETRY" in q
-    assert "287 to 356 cm2" in q
-    assert "CONF-SINGLE-PICKUP-SPACE" in q
-
-
 def test_khaya_retains_both_packing_results(khaya):
     """Two humbuckers fail, one single coil packs. Keep both, or the decision
     gets re-litigated from whichever half is remembered."""
@@ -104,22 +74,6 @@ def test_khaya_retains_both_packing_results(khaya):
     assert "TWO HUMBUCKERS the solid body cannot host both pockets" in notes
     assert "With ONE single coil it packs" in notes
     assert "constraint was the pickup layout, not the body" in notes
-
-
-def test_khaya_records_the_single_pickup_refactor(khaya):
-    """Deleting the neck route is where the space came from."""
-    notes = " ".join(khaya["notes"])
-    assert "single Telecaster-style bridge single coil" in notes
-    assert "frees 69 cm2" in notes
-    # Single-coil hum only matters if compute returns; say so rather than
-    # carrying an EMC warning on a passive instrument.
-    assert "does not arise" in notes
-
-
-def test_khaya_is_decoupled_from_the_board_schedule(khaya):
-    """The main benefit of dropping compute, stated as such."""
-    notes = " ".join(khaya["notes"])
-    assert "not blocked by that board's design, NRE or certification" in notes
 
 
 def test_smart_guitar_is_the_go_forward_line(smart):
@@ -131,6 +85,59 @@ def test_smart_guitar_is_the_go_forward_line(smart):
         "'s non-recurring engineering and certification now fall ENTIRELY on this line",
         " NRE and certification now fall ENTIRELY on this line",
     )
+
+
+def test_both_lines_share_one_electronics_architecture(smart, khaya):
+    """Same Pi, same custom board. They differ in battery capacity only.
+
+    That is where this started, and it took a pickup refactor to get back to
+    it: the dual-humbucker layout could not host both pockets in solid timber.
+    """
+    for product in (smart, khaya):
+        ep = product["electronics_package"]
+        assert ep["compute_host"].startswith("Raspberry Pi 5")
+        assert ep["onboard_audio_output"] is True
+        assert any("SG_AUDIO_FRONTEND" in c or "HiFiBerry" in c for c in ep["components"])
+    assert any("4x 18650" in c for c in smart["electronics_package"]["components"])
+    assert any("2x 18650" in c for c in khaya["electronics_package"]["components"])
+
+
+def test_khaya_single_pickup_is_what_made_compute_possible(khaya):
+    """The constraint was the pickup layout, not the body."""
+    assert khaya["configuration"]["pickup_layout"] == (
+        "single_bridge_single_coil_telecaster_style"
+    )
+    rationale = khaya["electronics_package"]["rationale"]
+    assert "RESTORED 2026-07-27" in rationale
+    assert "freed 69 cm2" in rationale
+
+
+def test_khaya_carries_the_first_solved_layout(khaya):
+    """Real coordinates, not a schematic arrangement."""
+    notes = " ".join(khaya["notes"])
+    assert "GOVERNED PLACEMENT" in notes
+    assert "POD_PI at x -25 y_from_top 240.0" in notes
+    assert "75 mm" in notes
+
+
+def test_khaya_records_the_cost_of_restoring_compute(khaya):
+    """It is blocked on the board again. Say so, with the compensation."""
+    notes = " ".join(khaya["notes"])
+    assert "BLOCKED ON the front-end board again" in notes
+    assert "amortises across two product lines instead of one" in notes
+
+
+def test_single_coil_plus_compute_is_flagged_as_the_leading_risk(khaya):
+    """The worst EMC combination in the program, and it is now real.
+
+    No common-mode rejection at the pickup, 20 mm from a Pi 5. The board
+    cannot fix it, so the record must not imply that it will.
+    """
+    q = khaya["electronics_package"]["open_question"]
+    assert "HARDEST EMC CASE IN THE PROGRAM" in q
+    assert "The board is not the mitigation" in q
+    assert "UNQUANTIFIED" in q
+    assert "may force a hum-cancelling pickup" in q
 
 
 def test_both_lines_are_concept_not_draft(smart, khaya):
