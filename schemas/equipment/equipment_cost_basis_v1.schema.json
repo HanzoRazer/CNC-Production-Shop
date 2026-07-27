@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "equipment_cost_basis_v1.schema.json",
+  "title": "EquipmentCostBasisV1",
+  "description": "True-cost hour rate for a non-CNC production resource, assembled as burden + electricity + consumables. This is a COST input, never a customer billing rate and never margin-inclusive. Mirrors the machine cost-basis contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "cost_basis_id",
+    "equipment_id",
+    "status",
+    "currency",
+    "equipment_burden_rate_per_hour",
+    "equipment_burden_provenance",
+    "electricity",
+    "consumables_cost_per_hour",
+    "consumables_provenance",
+    "equipment_hour_rate",
+    "provenance",
+    "notes"
+  ],
+  "properties": {
+    "cost_basis_id": {
+      "type": "string",
+      "pattern": "^EQUIPMENT-COST-BASIS-[A-Z0-9-]+$"
+    },
+    "equipment_id": {"type": "string", "pattern": "^EQUIPMENT-[A-Z0-9-]+$"},
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "currency": {"type": "string", "minLength": 3},
+    "equipment_burden_rate_per_hour": {"type": "number", "minimum": 0},
+    "equipment_burden_provenance": {"$ref": "#/$defs/provenance"},
+    "electricity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "connected_load_kw",
+        "load_factor",
+        "price_per_kwh",
+        "electricity_cost_per_hour",
+        "provenance"
+      ],
+      "properties": {
+        "connected_load_kw": {"type": "number", "minimum": 0},
+        "load_factor": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Physical ratio 0.0-1.0, NOT percentage points."
+        },
+        "price_per_kwh": {"type": "number", "minimum": 0},
+        "electricity_cost_per_hour": {"type": "number", "minimum": 0},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "consumables_cost_per_hour": {"type": "number", "minimum": 0},
+    "consumables_provenance": {"$ref": "#/$defs/provenance"},
+    "equipment_hour_rate": {
+      "type": "number",
+      "minimum": 0,
+      "description": "burden + electricity + consumables. Recomputed and enforced by scripts/validate_thin_skin_estimates.py."
+    },
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "confidence": {"type": "string", "enum": ["draft", "reviewed", "approved"]},
+        "captured_by": {"type": "string"},
+        "capture_date": {"type": "string"},
+        "references": {"type": "array", "items": {"type": "string"}},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

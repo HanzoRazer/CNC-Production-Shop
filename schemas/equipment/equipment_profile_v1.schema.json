@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "equipment_profile_v1.schema.json",
+  "title": "EquipmentProfileV1",
+  "description": "Physical profile for a non-CNC production resource whose time is consumed as occupancy rather than as cutting. Contains no cost fields by design; cost lives in the paired EquipmentCostBasisV1 record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "equipment_id",
+    "equipment_name",
+    "equipment_class",
+    "status",
+    "capacity",
+    "connected_load_estimate",
+    "provenance",
+    "notes"
+  ],
+  "properties": {
+    "equipment_id": {"type": "string", "pattern": "^EQUIPMENT-[A-Z0-9-]+$"},
+    "equipment_name": {"type": "string", "minLength": 1},
+    "equipment_class": {
+      "type": "string",
+      "enum": ["lamination_press", "finishing_booth", "cure_rack"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "platen_length_in",
+        "platen_width_in",
+        "max_stack_thickness_in",
+        "bodies_per_cycle"
+      ],
+      "properties": {
+        "platen_length_in": {"type": "number", "exclusiveMinimum": 0},
+        "platen_width_in": {"type": "number", "exclusiveMinimum": 0},
+        "max_stack_thickness_in": {"type": "number", "exclusiveMinimum": 0},
+        "bodies_per_cycle": {"type": "integer", "minimum": 1}
+      }
+    },
+    "connected_load_estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_kw", "components", "provenance"],
+      "properties": {
+        "total_kw": {"type": "number", "minimum": 0},
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "kw"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "kw": {"type": "number", "minimum": 0}
+            }
+          }
+        },
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "vendor_quote",
+            "catalog_price",
+            "owner_confirmed",
+            "inherited_shop_default",
+            "engineering_estimate",
+            "measured_trial",
+            "calculated"
+          ]
+        },
+        "confidence": {"type": "string", "enum": ["draft", "reviewed", "approved"]},
+        "captured_by": {"type": "string"},
+        "capture_date": {"type": "string"},
+        "references": {"type": "array", "items": {"type": "string"}},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

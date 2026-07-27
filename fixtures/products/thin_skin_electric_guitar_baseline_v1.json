@@ -1,0 +1,55 @@
+{
+  "product_id": "PRODUCT-THIN-SKIN-ELECTRIC-GUITAR-BASELINE-V1",
+  "product_name": "Thin-Skin Laminated Electric Guitar Baseline",
+  "product_description": "Small-batch, bolt-on-neck electric guitar using a CNC-cut structural core or chambered chassis with bonded hardboard/HDF face and back skins, opaque low-cycle finish, modular electronics, and standardized hardware.",
+  "status": "draft",
+  "construction": {
+    "body_type": "laminated_thin_skin",
+    "neck_joint": "bolt_on",
+    "neck_sourcing": "shop_machined",
+    "scale_length_in": 25.5,
+    "string_count": 6,
+    "orientation": "right_handed"
+  },
+  "body_architecture": {
+    "core_role": "structural chassis carrying neck pocket, bridge anchorage, and cavity walls",
+    "skin_role": "bonded face and back surfaces providing finish substrate and closing chambers",
+    "bonding_process": "vacuum-bag lamination with a single cure cycle bonding both skins",
+    "indexing_method": "index pins registering core and both skins before adhesive open time expires",
+    "nominal_core_thickness_in": 1.375,
+    "nominal_skin_thickness_in": 0.125,
+    "chambered": true
+  },
+  "materials": {
+    "core_family": "sheet or dimensional utility hardwood (governed estimate input, not a product invariant)",
+    "skin_family": "tempered hardboard / HDF panel",
+    "neck": "hard maple",
+    "fingerboard": "hard maple"
+  },
+  "configuration": {
+    "pickup_layout": "sss",
+    "bridge_type": "standard_hardtail",
+    "control_layout": "one_volume_two_tone",
+    "finish_system": "opaque_low_cycle_production_finish",
+    "electronics_sourcing": "modular_prewired_harness"
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-26",
+    "confidence": "draft",
+    "references": [
+      "PRODUCT-CNC-ELECTRIC-GUITAR-BASELINE-V1 (solid-body comparison variant)"
+    ],
+    "note": "Neutral reference architecture for internal manufacturing-cost modeling. Not a branded model."
+  },
+  "notes": [
+    "INTERNAL product definition for manufacturing-estimate development only.",
+    "Not a customer catalog item and not a representation of any protected brand or model.",
+    "Contains no cost, price, or margin fields by design.",
+    "materials.core_family is intentionally a family, not a species. Variant A (plywood core) and Variant B (poplar core) are governed ESTIMATE INPUTS against this one product identity, so cost per saleable unit can be compared without forking the product.",
+    "construction.neck_sourcing is 'shop_machined': the neck is CNC-machined in house from blank and fretboard stock, not purchased complete. This materially shifts cost from purchased components into direct build labor and adds independent fretwork yield risk.",
+    "body_architecture.chambered is true, but chamber geometry is not yet dimensioned. Chamber volume affects both machining time and final body weight, and is a required input to THIN-SKIN-PILOT-CAPTURE-1.",
+    "No acoustic or structural validation has been performed on this architecture. Bond-line durability under string tension, neck-pocket bearing strength in a laminated core, and skin telegraphing over chambers are open engineering questions, not settled assumptions."
+  ]
+}

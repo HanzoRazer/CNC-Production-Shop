@@ -1,0 +1,46 @@
+{
+  "cost_basis_id": "EQUIPMENT-COST-BASIS-VACUUM-PRESS-V1",
+  "equipment_id": "EQUIPMENT-VACUUM-PRESS-V1",
+  "status": "draft",
+  "currency": "USD",
+  "equipment_burden_rate_per_hour": 0.75,
+  "equipment_burden_provenance": {
+    "source": "engineering_estimate",
+    "confidence": "draft"
+  },
+  "electricity": {
+    "connected_load_kw": 0.75,
+    "load_factor": 0.3,
+    "price_per_kwh": 0.12,
+    "electricity_cost_per_hour": 0.03,
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft"
+    }
+  },
+  "consumables_cost_per_hour": 0.6,
+  "consumables_provenance": {
+    "source": "engineering_estimate",
+    "confidence": "draft"
+  },
+  "equipment_hour_rate": 1.38,
+  "provenance": {
+    "source": "THIN-SKIN-GUITAR-BUILD-ESTIMATE-1 sprint; all three components are engineering estimates with no owner-confirmation artifact.",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-26",
+    "confidence": "draft",
+    "references": [
+      "EQUIPMENT-VACUUM-PRESS-V1 (equipment profile)",
+      "fixtures/machines/cost_basis/bcm_2030ca_atc_cost_basis_v1.json (rate-assembly pattern)"
+    ]
+  },
+  "notes": [
+    "Burden ($0.75/hr) is an engineering estimate: ~$1,800 station capital (pump, bag, controller, cauls) over a 5-year life at an assumed 500 occupancy-hours/year = 2,500 hours, giving $0.72/hr, rounded to $0.75. Neither the capital figure nor the utilization assumption is owner-confirmed.",
+    "Electricity ($0.03/hr) = 0.75 kW x load_factor 0.30 x $0.12/kWh. Load factor 0.30 reflects a pump that cycles to hold vacuum rather than running continuously; it is an assumption, not a metered duty cycle.",
+    "Consumables ($0.60/hr) covers bag, breather mesh, and sealing-tape wear. It deliberately excludes adhesive, which is an estimate material input, so glue is never counted twice.",
+    "equipment_hour_rate ($1.38/hr) is a true-cost rate: burden 0.75 + electricity 0.03 + consumables 0.60. It is a COST input, not a billing rate.",
+    "Record status is 'draft' because every component is an unconfirmed engineering estimate. Promote to owner_confirmed only when a supporting artifact exists.",
+    "connected_load_kw (0.75) mirrors EQUIPMENT-VACUUM-PRESS-V1 connected_load_estimate.total_kw; changing the profile should be reflected here.",
+    "This rate is small in absolute terms. That is itself a finding: the cost of the lamination step is dominated by operator touch labor, not by press occupancy."
+  ]
+}

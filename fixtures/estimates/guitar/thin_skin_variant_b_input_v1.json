@@ -1,0 +1,1392 @@
+{
+  "estimate_input_id": "THIN-SKIN-ESTIMATE-INPUT-VARIANT-B-POPLAR-CORE-V1",
+  "product_id": "PRODUCT-THIN-SKIN-ELECTRIC-GUITAR-BASELINE-V1",
+  "product_ref": "fixtures/products/thin_skin_electric_guitar_baseline_v1.json",
+  "variant_id": "VARIANT-B-POPLAR-CORE",
+  "variant_description": "Hardboard/HDF skins over a solid poplar structural core",
+  "status": "draft",
+  "quantity": 1,
+  "currency": "USD",
+  "material_inputs": [
+    {
+      "input_id": "MAT-CORE-POPLAR",
+      "description": "Poplar 8/4 dimensional core stock, edge-jointed to body blank width",
+      "category": "core_material",
+      "quantity": 1,
+      "unit": "body_blank",
+      "unit_cost": 23.1,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Derived: ~4.2 board feet at ~$5.50/bf including glue-up and jointing waste. Unlike plywood this requires an edge glue-up, which is reflected in WBS 1100 times."
+      }
+    },
+    {
+      "input_id": "MAT-SKIN-HDF",
+      "description": "Tempered hardboard/HDF skin, 1/8 in, face and back",
+      "category": "skin_material",
+      "quantity": 2,
+      "unit": "skin",
+      "unit_cost": 1.69,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Derived: ~$22 per 4x8 ft sheet yielding ~13 usable skins after nesting waste."
+      }
+    },
+    {
+      "input_id": "MAT-ADH-PVA",
+      "description": "Lamination adhesive for two bond lines",
+      "category": "adhesive_lamination",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 3.1,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Spread rate is an assumption. Actual consumption per body is a required THIN-SKIN-PILOT-CAPTURE-1 measurement."
+      }
+    },
+    {
+      "input_id": "MAT-NECK-BLANK",
+      "description": "Hard maple neck blank, quartersawn",
+      "category": "neck_fretboard",
+      "quantity": 1,
+      "unit": "blank",
+      "unit_cost": 26.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "MAT-FRETBOARD-BLANK",
+      "description": "Hard maple fretboard blank",
+      "category": "neck_fretboard",
+      "quantity": 1,
+      "unit": "blank",
+      "unit_cost": 14.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "MAT-FIN-EDGE-SEALER",
+      "description": "Edge sealer for exposed core and skin edges",
+      "category": "finish_material",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 6.4,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Architecture-specific consumable with no solid-body equivalent. Consumption is an assumption."
+      }
+    },
+    {
+      "input_id": "MAT-FIN-SANDING-SEALER",
+      "description": "Sanding sealer",
+      "category": "finish_material",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 8.2,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Consumption per body is an assumption, not a measured usage."
+      }
+    },
+    {
+      "input_id": "MAT-FIN-PRIMER",
+      "description": "Opaque primer",
+      "category": "finish_material",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 9.6,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Consumption per body is an assumption, not a measured usage."
+      }
+    },
+    {
+      "input_id": "MAT-FIN-COLOR",
+      "description": "Opaque colour coat",
+      "category": "finish_material",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 16.5,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Assumes coverage to hiding in a low-cycle schedule."
+      }
+    },
+    {
+      "input_id": "MAT-FIN-TOPCOAT",
+      "description": "Clear topcoat",
+      "category": "finish_material",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 12.8,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Required to support the levelling and polishing operation at WBS 5600."
+      }
+    },
+    {
+      "input_id": "MAT-ABRASIVES",
+      "description": "Abrasives across edge cleanup, levelling, and polishing",
+      "category": "other_consumables",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 11.4,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Higher than a solid-body build would need because of edge cleanup at WBS 3600 and levelling at 5600."
+      }
+    },
+    {
+      "input_id": "MAT-MASKING-SOLVENT",
+      "description": "Masking, tack cloth, and solvent",
+      "category": "other_consumables",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 5.6,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Shop-default consumption assumption."
+      }
+    }
+  ],
+  "purchased_component_inputs": [
+    {
+      "input_id": "CMP-ADH-CONSUM",
+      "description": "Index pins, sealing tape, and spreaders consumed per lamination",
+      "category": "adhesive_lamination",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 1.6,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Distinct from the vacuum press consumables rate, which covers bag and breather wear only. No double counting."
+      }
+    },
+    {
+      "input_id": "CMP-TRUSS-ROD",
+      "description": "Dual-action truss rod",
+      "category": "neck_fretboard",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 12.5,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "CMP-FRETWIRE",
+      "description": "Nickel-silver fretwire, one neck set with waste",
+      "category": "neck_fretboard",
+      "quantity": 1,
+      "unit": "neck_set",
+      "unit_cost": 7.5,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "CMP-NUT-BLANK",
+      "description": "Bone nut blank",
+      "category": "neck_fretboard",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 3.25,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Unslotted blank, consistent with the hand nut work at WBS 4300."
+      }
+    },
+    {
+      "input_id": "CMP-BRIDGE",
+      "description": "Six-saddle hardtail bridge, value tier",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 22.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Value/import component tier per governed sprint scope."
+      }
+    },
+    {
+      "input_id": "CMP-TUNERS",
+      "description": "Sealed die-cast tuning machines, value tier",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 16.5,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Value/import component tier."
+      }
+    },
+    {
+      "input_id": "CMP-NECK-PLATE",
+      "description": "Neck plate and mounting screws",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 4.25,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "CMP-STRAP-BUTTONS",
+      "description": "Strap buttons",
+      "category": "hardware",
+      "quantity": 2,
+      "unit": "each",
+      "unit_cost": 1.05,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "CMP-SCREWS-MISC",
+      "description": "String tree, pickguard and cavity screws",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 1.85,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "CMP-JACK-PLATE",
+      "description": "Output jack and plate",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 2.4,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "CMP-HARNESS",
+      "description": "Prewired modular control harness, one volume two tone",
+      "category": "electronics",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 34.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Modular prewired sourcing per the governed product definition; this is what keeps WBS 6100 at 10 minutes."
+      }
+    },
+    {
+      "input_id": "CMP-PICKUP-SET",
+      "description": "Ceramic single-coil pickup set, value tier",
+      "category": "electronics",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 38.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Value/import component tier."
+      }
+    },
+    {
+      "input_id": "CMP-STRINGS",
+      "description": "String set",
+      "category": "other_consumables",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 6.5,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Catalog price, not a vendor quote."
+      }
+    },
+    {
+      "input_id": "CMP-SOLDER-WIRE",
+      "description": "Solder, heat shrink, and hookup wire",
+      "category": "other_consumables",
+      "quantity": 1,
+      "unit": "body_set",
+      "unit_cost": 2.3,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Shop-default consumption assumption."
+      }
+    }
+  ],
+  "labor_rate_inputs": [
+    {
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "description": "Inherited shop loaded labor rate ($23.00 x 1.25)",
+      "base_wage_per_hour": 23.0,
+      "payroll_burden_pct": 25.0,
+      "loaded_rate_per_hour": 28.75,
+      "provenance": {
+        "source": "inherited_shop_default",
+        "confidence": "draft",
+        "note": "Draft internal direct-labor input. NOT the $45-$75/hr future burdened commercial shop rate."
+      }
+    }
+  ],
+  "operations": [
+    {
+      "operation_id": "OP-1100",
+      "wbs_code": "1100",
+      "description": "Core stock preparation: cut core blank to rough body outline and flatten bonding faces",
+      "labor_category": "direct_build_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 6,
+        "operator_touch_minutes": 46,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 240,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Poplar core requires edge-jointing and a multi-board glue-up before it becomes a body blank. The 240 minute wait is clamp time and consumes no labor and no governed equipment."
+      }
+    },
+    {
+      "operation_id": "OP-1200",
+      "wbs_code": "1200",
+      "description": "Skin stock preparation: cut face and back skins oversize, scuff-sand bond faces, remove dust",
+      "labor_category": "direct_build_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 4,
+        "operator_touch_minutes": 14,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Scuff-sanding both skin bond faces is required for reliable adhesion to tempered hardboard."
+      }
+    },
+    {
+      "operation_id": "OP-1300",
+      "wbs_code": "1300",
+      "description": "Neck and component staging: pull neck blank, fretboard, hardware and electronics kit, verify against bill of materials",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 10,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Kitting time at quantity 1. Expected to fall sharply per unit in a batch."
+      }
+    },
+    {
+      "operation_id": "OP-2100",
+      "wbs_code": "2100",
+      "description": "Adhesive preparation: measure and mix adhesive, prepare spreaders and index hardware",
+      "labor_category": "lamination_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 3,
+        "operator_touch_minutes": 7,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Assumes a pre-measured adhesive with a working open time long enough for a two-bond-line stack."
+      }
+    },
+    {
+      "operation_id": "OP-2200",
+      "wbs_code": "2200",
+      "description": "Core and skin indexing: set index pins, dry-fit the stack, confirm registration of both skins",
+      "labor_category": "lamination_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 5,
+        "operator_touch_minutes": 12,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Dry-fit before adhesive is deliberate: mis-registration discovered after spread is a scrapped body."
+      }
+    },
+    {
+      "operation_id": "OP-2300",
+      "wbs_code": "2300",
+      "description": "Press loading: spread adhesive on both bond lines, stack, bag, draw vacuum, verify seal",
+      "labor_category": "lamination_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 4,
+        "operator_touch_minutes": 16,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 20,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "EQUIPMENT-VACUUM-PRESS-V1",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Highest-risk touch operation in the architecture. Must complete inside adhesive open time."
+      }
+    },
+    {
+      "operation_id": "OP-2400",
+      "wbs_code": "2400",
+      "description": "Cure occupancy: stack held under vacuum for the adhesive cure cycle",
+      "labor_category": "lamination_labor",
+      "attendance": "queue_or_cure",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 0,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 90,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "EQUIPMENT-VACUUM-PRESS-V1",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Zero labor by design. 90 minutes of press occupancy is a throughput constraint, not a labor cost."
+      }
+    },
+    {
+      "operation_id": "OP-2500",
+      "wbs_code": "2500",
+      "description": "Unloading and bond inspection: debag, remove squeeze-out, inspect glue lines and skin seating",
+      "labor_category": "lamination_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 14,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 8,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "EQUIPMENT-VACUUM-PRESS-V1",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Squeeze-out removal is real recurring labor created by lamination and is deliberately not hidden in generic build labor."
+      }
+    },
+    {
+      "operation_id": "OP-3100",
+      "wbs_code": "3100",
+      "description": "CNC fixture loading and workholding: fixture the laminated blank, set work coordinate system, probe",
+      "labor_category": "direct_build_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 12,
+        "operator_touch_minutes": 6,
+        "machine_runtime_minutes": 15,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": true,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "machine_runtime_minutes includes in-machine setup: the spindle is unavailable to other work throughout."
+      }
+    },
+    {
+      "operation_id": "OP-3200",
+      "wbs_code": "3200",
+      "description": "Perimeter trimming",
+      "labor_category": "direct_build_labor",
+      "attendance": "partially_attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 3,
+        "machine_runtime_minutes": 9,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": true,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Operator touch covers chip clearing and cut monitoring only, not the full 9 minutes of runtime."
+      }
+    },
+    {
+      "operation_id": "OP-3300",
+      "wbs_code": "3300",
+      "description": "Pickup and control cavity machining",
+      "labor_category": "direct_build_labor",
+      "attendance": "partially_attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 3,
+        "machine_runtime_minutes": 11,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": true,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Cavity depth must stop short of the opposite skin. Breakthrough is an unrecoverable defect."
+      }
+    },
+    {
+      "operation_id": "OP-3400",
+      "wbs_code": "3400",
+      "description": "Neck pocket machining",
+      "labor_category": "direct_build_labor",
+      "attendance": "partially_attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 2,
+        "machine_runtime_minutes": 4,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": true,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Pocket bears string tension against a laminated core; bearing strength is an open engineering question."
+      }
+    },
+    {
+      "operation_id": "OP-3500",
+      "wbs_code": "3500",
+      "description": "Bridge and hardware drilling",
+      "labor_category": "direct_build_labor",
+      "attendance": "partially_attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 2,
+        "machine_runtime_minutes": 5,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": true,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Anchor holes pass through the face skin into the core; skin tear-out at drill entry is a known risk."
+      }
+    },
+    {
+      "operation_id": "OP-3600",
+      "wbs_code": "3600",
+      "description": "Edge and skin cleanup: dress the exposed laminate edge, address skin lift and telegraphing at the perimeter",
+      "labor_category": "direct_build_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 26,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Architecture-specific labor with no equivalent in a solid body. A leading candidate to erase the material saving and a priority measurement in THIN-SKIN-PILOT-CAPTURE-1."
+      }
+    },
+    {
+      "operation_id": "OP-4100",
+      "wbs_code": "4100",
+      "description": "Neck blank preparation and CNC neck machining including fret slotting",
+      "labor_category": "direct_build_labor",
+      "attendance": "partially_attended",
+      "time_model": {
+        "setup_minutes": 18,
+        "operator_touch_minutes": 12,
+        "machine_runtime_minutes": 52,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": true,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Shop-machined neck per the governed product definition. Setup is high because the neck needs a different fixture and tool set than the body."
+      }
+    },
+    {
+      "operation_id": "OP-4200",
+      "wbs_code": "4200",
+      "description": "Fret preparation: install, level, crown, and polish frets, dress fret ends",
+      "labor_category": "direct_build_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 78,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Largest single touch-labor operation in the build and entirely unrelated to the thin-skin hypothesis. Sourcing a complete neck would remove most of it."
+      }
+    },
+    {
+      "operation_id": "OP-4300",
+      "wbs_code": "4300",
+      "description": "Nut work: fit blank, cut slots to height, shape and polish",
+      "labor_category": "direct_build_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 32,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Hand nut work at quantity 1. A pre-slotted nut would cut this materially."
+      }
+    },
+    {
+      "operation_id": "OP-4400",
+      "wbs_code": "4400",
+      "description": "Preliminary neck setup: truss rod tension and initial relief",
+      "labor_category": "direct_build_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 14,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Separate from final setup in the 8000 block; the neck is set before the body is finished."
+      }
+    },
+    {
+      "operation_id": "OP-5100",
+      "wbs_code": "5100",
+      "description": "Edge sealing: seal exposed core and skin edges against finish absorption",
+      "labor_category": "finishing_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 22,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 45,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Architecture-specific. Exposed HDF and plywood edges absorb finish heavily and will telegraph if not sealed first."
+      }
+    },
+    {
+      "operation_id": "OP-5200",
+      "wbs_code": "5200",
+      "description": "Surface sealing: sanding sealer over both skins, scuff between coats",
+      "labor_category": "finishing_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 18,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 12,
+        "elapsed_wait_minutes": 60,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "EQUIPMENT-SPRAY-BOOTH-V1",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Hardboard skins take sealer more evenly than open-grain hardwood, which is a genuine advantage of the architecture."
+      }
+    },
+    {
+      "operation_id": "OP-5300",
+      "wbs_code": "5300",
+      "description": "Primer and base preparation: primer coat and level sand",
+      "labor_category": "finishing_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 26,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 14,
+        "elapsed_wait_minutes": 90,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "EQUIPMENT-SPRAY-BOOTH-V1",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Opaque finish requires full hiding; primer level-sanding drives the surface quality of the finished unit."
+      }
+    },
+    {
+      "operation_id": "OP-5400",
+      "wbs_code": "5400",
+      "description": "Opaque coating: colour coats to hiding",
+      "labor_category": "finishing_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 30,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 26,
+        "elapsed_wait_minutes": 120,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "EQUIPMENT-SPRAY-BOOTH-V1",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Assumes an opaque low-cycle schedule. A transparent finish is not viable over these substrates."
+      }
+    },
+    {
+      "operation_id": "OP-5500",
+      "wbs_code": "5500",
+      "description": "Cure handling: rack the finished body for the full cure cycle",
+      "labor_category": "finishing_labor",
+      "attendance": "queue_or_cure",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 6,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 2880,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "EQUIPMENT-CURE-RACK-V1",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "6 minutes of labor against 48 hours of rack occupancy. The cost is trivial; the work-in-process and floor-space consequence is not, and belongs to a later overhead layer."
+      }
+    },
+    {
+      "operation_id": "OP-5600",
+      "wbs_code": "5600",
+      "description": "Leveling and polishing: wet sand and buff to final gloss",
+      "labor_category": "finishing_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 55,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Wet sanding over a thin skin risks cutting through primer at the edges, where the substrate is least forgiving."
+      }
+    },
+    {
+      "operation_id": "OP-6100",
+      "wbs_code": "6100",
+      "description": "Harness preparation: inspect and dress the prewired harness",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 10,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Low because the harness is purchased modular and prewired."
+      }
+    },
+    {
+      "operation_id": "OP-6200",
+      "wbs_code": "6200",
+      "description": "Harness bench test: continuity, pot sweep, and switch positions before installation",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 8,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Testing before installation avoids diagnosing a fault through a finished body."
+      }
+    },
+    {
+      "operation_id": "OP-6300",
+      "wbs_code": "6300",
+      "description": "Hardware installation: bridge, tuners, string tree, strap buttons, jack plate",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 26,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Screw retention into a laminated core is an open question; pilot capture should record any stripped or re-drilled anchor."
+      }
+    },
+    {
+      "operation_id": "OP-6400",
+      "wbs_code": "6400",
+      "description": "Electronics installation: seat harness, install pickups, solder bridge ground",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 22,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Cavity access through a bonded skin is less forgiving than a routed solid body."
+      }
+    },
+    {
+      "operation_id": "OP-7100",
+      "wbs_code": "7100",
+      "description": "Neck installation",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 12,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Bolt-on neck into the machined pocket."
+      }
+    },
+    {
+      "operation_id": "OP-7200",
+      "wbs_code": "7200",
+      "description": "Stringing",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 9,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "First string-up; the body carries full string tension from this point."
+      }
+    },
+    {
+      "operation_id": "OP-7300",
+      "wbs_code": "7300",
+      "description": "Alignment and functional assembly: neck angle, string alignment, pickup height",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 14,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Corrections here often mean returning to 7100."
+      }
+    },
+    {
+      "operation_id": "OP-8100",
+      "wbs_code": "8100",
+      "description": "Relief and action setup",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 16,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Assumes the fretwork in 4200 was completed to level."
+      }
+    },
+    {
+      "operation_id": "OP-8200",
+      "wbs_code": "8200",
+      "description": "Intonation",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 12,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Depends on bridge saddle travel adequate for the 25.5 in scale."
+      }
+    },
+    {
+      "operation_id": "OP-8300",
+      "wbs_code": "8300",
+      "description": "Electrical test: all switch positions under amplification",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 8,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Second electrical check, now in the assembled instrument."
+      }
+    },
+    {
+      "operation_id": "OP-8400",
+      "wbs_code": "8400",
+      "description": "Cosmetic inspection: finish, edges, bond lines, hardware fit",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 10,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Defect classes recorded here feed the yield reserve once pilot data exists."
+      }
+    },
+    {
+      "operation_id": "OP-8500",
+      "wbs_code": "8500",
+      "description": "Final acceptance: record disposition against acceptance criteria",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 6,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Disposition is saleable, rework, or scrap. Human authority; the estimate never authorises acceptance."
+      }
+    },
+    {
+      "operation_id": "OP-9100",
+      "wbs_code": "9100",
+      "description": "Cleaning",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 8,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Packaging readiness only. Packaging materials are excluded from this estimate."
+      }
+    },
+    {
+      "operation_id": "OP-9200",
+      "wbs_code": "9200",
+      "description": "Documentation: serial record, build sheet, setup measurements",
+      "labor_category": "setup_and_inspection",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 7,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Per-unit serial record is the carrier for THIN-SKIN-PILOT-CAPTURE-1 data."
+      }
+    },
+    {
+      "operation_id": "OP-9300",
+      "wbs_code": "9300",
+      "description": "Packing labor",
+      "labor_category": "assembly_labor",
+      "attendance": "attended",
+      "time_model": {
+        "setup_minutes": 0,
+        "operator_touch_minutes": 9,
+        "machine_runtime_minutes": 0,
+        "equipment_occupancy_minutes": 0,
+        "elapsed_wait_minutes": 0,
+        "rework_minutes": 0.0
+      },
+      "uses_machine": false,
+      "equipment_id": "",
+      "reserve_eligible": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Labor only. Packaging materials are out of scope for this sprint."
+      }
+    }
+  ],
+  "machine_profile_ref": "fixtures/machines/bcm_2030ca_atc_v1.json",
+  "cost_basis_ref": "fixtures/machines/cost_basis/bcm_2030ca_atc_cost_basis_v1.json",
+  "machine_id": "MACHINE-BCM2030CA-ATC-V1",
+  "cost_basis_id": "MACHINE-COST-BASIS-BCM2030CA-ATC-V1",
+  "equipment_refs": [
+    {
+      "equipment_id": "EQUIPMENT-VACUUM-PRESS-V1",
+      "equipment_profile_ref": "fixtures/equipment/vacuum_press_v1.json",
+      "cost_basis_ref": "fixtures/equipment/cost_basis/vacuum_press_cost_basis_v1.json",
+      "cost_basis_id": "EQUIPMENT-COST-BASIS-VACUUM-PRESS-V1"
+    },
+    {
+      "equipment_id": "EQUIPMENT-SPRAY-BOOTH-V1",
+      "equipment_profile_ref": "fixtures/equipment/spray_booth_v1.json",
+      "cost_basis_ref": "fixtures/equipment/cost_basis/spray_booth_cost_basis_v1.json",
+      "cost_basis_id": "EQUIPMENT-COST-BASIS-SPRAY-BOOTH-V1"
+    },
+    {
+      "equipment_id": "EQUIPMENT-CURE-RACK-V1",
+      "equipment_profile_ref": "fixtures/equipment/cure_rack_v1.json",
+      "cost_basis_ref": "fixtures/equipment/cost_basis/cure_rack_cost_basis_v1.json",
+      "cost_basis_id": "EQUIPMENT-COST-BASIS-CURE-RACK-V1"
+    }
+  ],
+  "material_scrap_policy": {
+    "scrap_rate": 0.05,
+    "eligible_input_ids": [
+      "MAT-CORE-POPLAR",
+      "MAT-SKIN-HDF",
+      "MAT-ADH-PVA",
+      "CMP-ADH-CONSUM",
+      "MAT-NECK-BLANK",
+      "MAT-FRETBOARD-BLANK",
+      "MAT-FIN-EDGE-SEALER",
+      "MAT-FIN-SANDING-SEALER",
+      "MAT-FIN-PRIMER",
+      "MAT-FIN-COLOR",
+      "MAT-FIN-TOPCOAT"
+    ],
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "5% applies only to listed stock materials and lamination consumables. High-value pickups, bridge, tuners, strings, and packaging are excluded. Recalculate once pilot yield data exists."
+    }
+  },
+  "process_yield_reserve_policy": {
+    "reserve_rate": 0.1,
+    "eligible_input_ids": [
+      "MAT-CORE-POPLAR",
+      "MAT-SKIN-HDF",
+      "MAT-ADH-PVA",
+      "CMP-ADH-CONSUM",
+      "MAT-NECK-BLANK",
+      "MAT-FRETBOARD-BLANK",
+      "MAT-FIN-EDGE-SEALER",
+      "MAT-FIN-SANDING-SEALER",
+      "MAT-FIN-PRIMER",
+      "MAT-FIN-COLOR",
+      "MAT-FIN-TOPCOAT",
+      "MAT-ABRASIVES",
+      "MAT-MASKING-SOLVENT"
+    ],
+    "include_machine_time": true,
+    "include_equipment_occupancy": true,
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "10% of eligible conversion cost, chosen as the documented midpoint of the 8%-15% draft range for a new laminated process. Base excludes high-value purchased hardware and electronics, and excludes the material scrap allowance so the two mechanisms never compound."
+    }
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "confidence": "draft",
+    "note": "THIN-SKIN-GUITAR-BUILD-ESTIMATE-1. No vendor quotes and no measured shop trials exist for this architecture."
+  },
+  "notes": [
+    "INTERNAL direct manufacturing estimate input. Contains no customer price, margin, overhead allocation, warranty reserve, or fulfilment cost.",
+    "Every material price, component price, and operation duration in this record is a draft engineering estimate or catalog price. None is a vendor quote or a measured shop trial. The calculated total is an engineering estimate, not evidence.",
+    "rework_minutes is 0.0 on every operation by design. No measured rework data exists yet, and process risk is carried once by process_rework_and_yield_reserve. When THIN-SKIN-PILOT-CAPTURE-1 supplies real rework times, populate rework_minutes AND reduce the reserve rate accordingly, or the two mechanisms will double count.",
+    "Machine cost uses the governed technical basis of $28.97/hr. The $72/hr commercial machine rate is deliberately not used.",
+    "Labor uses the governed draft loaded rate of $28.75/hr ($23.00 x 1.25). The $45-$75/hr mature composite shop rate is a future burdened commercial concept and is deliberately not substituted here.",
+    "Equipment occupancy is costed at governed draft equipment-hour rates and is reported separately from CNC machine time, so press and booth behaviour never hides inside machine cost.",
+    "The neck is shop-machined per the governed product definition. Its blank, fretboard, and machining labor are therefore reserve-eligible: the exclusion of a 'completed purchased neck' from the reserve base does not apply, because no purchased neck exists in this bill. This is an explicit deviation from the sprint brief's default exclusion list.",
+    "Quantity is 1. Setup minutes are absorbed entirely by a single unit, which overstates per-unit cost against the 10-body pilot target. Setup allocation across batch sizes is deferred to THIN-SKIN-BATCH-COSTING-1.",
+    "Variant B of the governed comparison. Differs from Variant A in exactly two governed places: the core_material input line, and the WBS 1100 core-preparation times.",
+    "The extra WBS 1100 time is not padding. A dimensional poplar core must be edge-jointed and glued up before it can be laminated, which plywood does not require.",
+    "Poplar is expected to hold screws and machine cleaner at the neck pocket and bridge anchors than plywood. That advantage is a quality argument, not a cost argument, and this estimate does not price it."
+  ]
+}

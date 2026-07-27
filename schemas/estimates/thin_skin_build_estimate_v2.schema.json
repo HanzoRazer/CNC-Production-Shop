@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "thin_skin_build_estimate_v2.schema.json",
+  "title": "ThinSkinBuildEstimateV2",
+  "description": "Calculated internal direct manufacturing cost for one thin-skin laminated-body guitar. Contains no overhead allocation, warranty reserve, fulfilment cost, margin, wholesale, dealer, DTC, or MSRP field. Those belong to later governed layers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "estimate_id",
+    "product_id",
+    "product_ref",
+    "variant_id",
+    "variant_description",
+    "estimate_input_id",
+    "estimate_input_ref",
+    "status",
+    "quantity",
+    "currency",
+    "cost_summary",
+    "time_summary",
+    "risk_basis",
+    "operation_results",
+    "machine_costing",
+    "equipment_costing",
+    "calculation",
+    "provenance",
+    "notes"
+  ],
+  "$defs": {
+    "money": {"type": "number"},
+    "minutes": {"type": "number", "minimum": 0}
+  },
+  "properties": {
+    "estimate_id": {
+      "type": "string",
+      "pattern": "^THIN-SKIN-GUITAR-BUILD-ESTIMATE-[A-Z0-9-]+$"
+    },
+    "product_id": {"type": "string", "pattern": "^PRODUCT-[A-Z0-9-]+$"},
+    "product_ref": {"type": "string", "minLength": 1},
+    "variant_id": {"type": "string", "pattern": "^VARIANT-[A-Z0-9-]+$"},
+    "variant_description": {"type": "string", "minLength": 1},
+    "estimate_input_id": {
+      "type": "string",
+      "pattern": "^THIN-SKIN-ESTIMATE-INPUT-[A-Z0-9-]+$"
+    },
+    "estimate_input_ref": {"type": "string", "minLength": 1},
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "quantity": {"type": "integer", "minimum": 1},
+    "currency": {"type": "string", "minLength": 3},
+    "cost_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Eighteen explicit categories. Lamination, finishing, and equipment occupancy are first-class lines and are never folded into generic labor or machine time.",
+      "required": [
+        "core_material_cost",
+        "skin_material_cost",
+        "adhesive_and_lamination_consumables",
+        "neck_and_fretboard_cost",
+        "hardware_cost",
+        "electronics_cost",
+        "finish_material_cost",
+        "other_consumables_cost",
+        "machine_time_cost",
+        "equipment_occupancy_cost",
+        "lamination_labor_cost",
+        "direct_build_labor_cost",
+        "finishing_labor_cost",
+        "assembly_labor_cost",
+        "setup_and_inspection_cost",
+        "material_scrap_allowance",
+        "process_rework_and_yield_reserve",
+        "total_direct_manufacturing_cost"
+      ],
+      "properties": {
+        "core_material_cost": {"$ref": "#/$defs/money"},
+        "skin_material_cost": {"$ref": "#/$defs/money"},
+        "adhesive_and_lamination_consumables": {"$ref": "#/$defs/money"},
+        "neck_and_fretboard_cost": {"$ref": "#/$defs/money"},
+        "hardware_cost": {"$ref": "#/$defs/money"},
+        "electronics_cost": {"$ref": "#/$defs/money"},
+        "finish_material_cost": {"$ref": "#/$defs/money"},
+        "other_consumables_cost": {"$ref": "#/$defs/money"},
+        "machine_time_cost": {"$ref": "#/$defs/money"},
+        "equipment_occupancy_cost": {"$ref": "#/$defs/money"},
+        "lamination_labor_cost": {"$ref": "#/$defs/money"},
+        "direct_build_labor_cost": {"$ref": "#/$defs/money"},
+        "finishing_labor_cost": {"$ref": "#/$defs/money"},
+        "assembly_labor_cost": {"$ref": "#/$defs/money"},
+        "setup_and_inspection_cost": {"$ref": "#/$defs/money"},
+        "material_scrap_allowance": {"$ref": "#/$defs/money"},
+        "process_rework_and_yield_reserve": {"$ref": "#/$defs/money"},
+        "total_direct_manufacturing_cost": {"$ref": "#/$defs/money"}
+      }
+    },
+    "time_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Process behaviour reported independently of cost, so touch labor and throughput stay visible.",
+      "required": [
+        "total_labor_minutes",
+        "total_machine_runtime_minutes",
+        "total_equipment_occupancy_minutes",
+        "total_elapsed_wait_minutes",
+        "total_rework_minutes",
+        "lamination_labor_minutes",
+        "direct_build_labor_minutes",
+        "finishing_labor_minutes",
+        "assembly_labor_minutes",
+        "setup_and_inspection_minutes"
+      ],
+      "properties": {
+        "total_labor_minutes": {"$ref": "#/$defs/minutes"},
+        "total_machine_runtime_minutes": {"$ref": "#/$defs/minutes"},
+        "total_equipment_occupancy_minutes": {"$ref": "#/$defs/minutes"},
+        "total_elapsed_wait_minutes": {"$ref": "#/$defs/minutes"},
+        "total_rework_minutes": {"$ref": "#/$defs/minutes"},
+        "lamination_labor_minutes": {"$ref": "#/$defs/minutes"},
+        "direct_build_labor_minutes": {"$ref": "#/$defs/minutes"},
+        "finishing_labor_minutes": {"$ref": "#/$defs/minutes"},
+        "assembly_labor_minutes": {"$ref": "#/$defs/minutes"},
+        "setup_and_inspection_minutes": {"$ref": "#/$defs/minutes"}
+      }
+    },
+    "risk_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Audit trail for both risk mechanisms, including an explicit statement that they do not compound.",
+      "required": [
+        "material_scrap_rate",
+        "material_scrap_base",
+        "process_reserve_rate",
+        "process_reserve_material_base",
+        "process_reserve_machine_base",
+        "process_reserve_equipment_base",
+        "process_reserve_labor_base",
+        "process_reserve_base",
+        "compounding"
+      ],
+      "properties": {
+        "material_scrap_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "material_scrap_base": {"$ref": "#/$defs/money"},
+        "process_reserve_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "process_reserve_material_base": {"$ref": "#/$defs/money"},
+        "process_reserve_machine_base": {"$ref": "#/$defs/money"},
+        "process_reserve_equipment_base": {"$ref": "#/$defs/money"},
+        "process_reserve_labor_base": {"$ref": "#/$defs/money"},
+        "process_reserve_base": {"$ref": "#/$defs/money"},
+        "compounding": {"type": "string", "minLength": 1}
+      }
+    },
+    "operation_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "wbs_code",
+          "labor_category",
+          "attendance",
+          "labor_minutes",
+          "machine_runtime_minutes",
+          "equipment_occupancy_minutes",
+          "elapsed_wait_minutes",
+          "rework_minutes",
+          "equipment_id",
+          "labor_cost",
+          "machine_time_cost",
+          "equipment_occupancy_cost",
+          "operation_cost"
+        ],
+        "properties": {
+          "operation_id": {"type": "string", "minLength": 1},
+          "wbs_code": {"type": "string", "pattern": "^[0-9]{4}$"},
+          "labor_category": {"type": "string", "minLength": 1},
+          "attendance": {"type": "string", "minLength": 1},
+          "labor_minutes": {"$ref": "#/$defs/minutes"},
+          "machine_runtime_minutes": {"$ref": "#/$defs/minutes"},
+          "equipment_occupancy_minutes": {"$ref": "#/$defs/minutes"},
+          "elapsed_wait_minutes": {"$ref": "#/$defs/minutes"},
+          "rework_minutes": {"$ref": "#/$defs/minutes"},
+          "equipment_id": {"type": "string"},
+          "labor_cost": {"$ref": "#/$defs/money"},
+          "machine_time_cost": {
+            "$ref": "#/$defs/money",
+            "description": "Informational allocation. Machine dollars are derived once from aggregate minutes; do not re-sum this field to form a total."
+          },
+          "equipment_occupancy_cost": {
+            "$ref": "#/$defs/money",
+            "description": "Informational allocation. See machine_time_cost."
+          },
+          "operation_cost": {"$ref": "#/$defs/money"}
+        }
+      }
+    },
+    "machine_costing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "machine_id",
+        "machine_profile_ref",
+        "cost_basis_id",
+        "cost_basis_ref",
+        "cost_basis_role",
+        "runtime_minutes",
+        "machine_hour_rate",
+        "derived_machine_time_cost",
+        "derivation",
+        "provenance_status"
+      ],
+      "properties": {
+        "machine_id": {"type": "string", "pattern": "^MACHINE-[A-Z0-9-]+$"},
+        "machine_profile_ref": {"type": "string", "minLength": 1},
+        "cost_basis_id": {
+          "type": "string",
+          "pattern": "^MACHINE-COST-BASIS-[A-Z0-9-]+$"
+        },
+        "cost_basis_ref": {"type": "string", "minLength": 1},
+        "cost_basis_role": {
+          "type": "string",
+          "const": "internal_technical_cost"
+        },
+        "runtime_minutes": {"$ref": "#/$defs/minutes"},
+        "machine_hour_rate": {"$ref": "#/$defs/money"},
+        "derived_machine_time_cost": {"$ref": "#/$defs/money"},
+        "derivation": {"type": "string", "minLength": 1},
+        "provenance_status": {"type": "string", "minLength": 1}
+      }
+    },
+    "equipment_costing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "equipment_id",
+          "equipment_profile_ref",
+          "cost_basis_id",
+          "cost_basis_ref",
+          "cost_basis_role",
+          "occupancy_minutes",
+          "equipment_hour_rate",
+          "derived_occupancy_cost",
+          "derivation",
+          "provenance_status"
+        ],
+        "properties": {
+          "equipment_id": {"type": "string", "pattern": "^EQUIPMENT-[A-Z0-9-]+$"},
+          "equipment_profile_ref": {"type": "string", "minLength": 1},
+          "cost_basis_id": {
+            "type": "string",
+            "pattern": "^EQUIPMENT-COST-BASIS-[A-Z0-9-]+$"
+          },
+          "cost_basis_ref": {"type": "string", "minLength": 1},
+          "cost_basis_role": {
+            "type": "string",
+            "const": "internal_technical_cost"
+          },
+          "occupancy_minutes": {"$ref": "#/$defs/minutes"},
+          "equipment_hour_rate": {"$ref": "#/$defs/money"},
+          "derived_occupancy_cost": {"$ref": "#/$defs/money"},
+          "derivation": {"type": "string", "minLength": 1},
+          "provenance_status": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "calculation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["calculator_id", "rounding_policy", "effective_date"],
+      "properties": {
+        "calculator_id": {"type": "string", "minLength": 1},
+        "rounding_policy": {"type": "string", "minLength": 1},
+        "effective_date": {"type": "string", "minLength": 1}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "vendor_quote",
+            "catalog_price",
+            "owner_confirmed",
+            "inherited_shop_default",
+            "engineering_estimate",
+            "measured_trial",
+            "calculated"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved"]
+        },
+        "note": {"type": "string"}
+      }
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

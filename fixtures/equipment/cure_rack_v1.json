@@ -1,0 +1,37 @@
+{
+  "equipment_id": "EQUIPMENT-CURE-RACK-V1",
+  "equipment_name": "Finish Cure Rack",
+  "equipment_class": "cure_rack",
+  "status": "draft",
+  "capacity": {
+    "platen_length_in": 96.0,
+    "platen_width_in": 24.0,
+    "max_stack_thickness_in": 24.0,
+    "bodies_per_cycle": 8
+  },
+  "connected_load_estimate": {
+    "total_kw": 0.15,
+    "components": [
+      {
+        "name": "air circulation fan",
+        "kw": 0.15
+      }
+    ],
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft"
+    }
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-26",
+    "confidence": "draft",
+    "references": []
+  },
+  "notes": [
+    "Passive rack with air movement. Its hour rate is deliberately near-trivial: cure is expensive in elapsed time and work-in-process, not in dollars per hour.",
+    "bodies_per_cycle is 8, but the draft estimate books full single-body occupancy rather than a 1/8 share, which overstates cure cost at quantity 1. Occupancy sharing is deferred to THIN-SKIN-BATCH-COSTING-1.",
+    "Physical record only: contains no cost fields by design."
+  ]
+}

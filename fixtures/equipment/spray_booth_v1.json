@@ -1,0 +1,46 @@
+{
+  "equipment_id": "EQUIPMENT-SPRAY-BOOTH-V1",
+  "equipment_name": "Ventilated Spray Finishing Booth",
+  "equipment_class": "finishing_booth",
+  "status": "draft",
+  "capacity": {
+    "platen_length_in": 60.0,
+    "platen_width_in": 48.0,
+    "max_stack_thickness_in": 48.0,
+    "bodies_per_cycle": 1
+  },
+  "connected_load_estimate": {
+    "total_kw": 2.2,
+    "components": [
+      {
+        "name": "explosion-proof exhaust fan",
+        "kw": 1.5
+      },
+      {
+        "name": "booth lighting",
+        "kw": 0.4
+      },
+      {
+        "name": "make-up air blower",
+        "kw": 0.3
+      }
+    ],
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft"
+    }
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-26",
+    "confidence": "draft",
+    "references": []
+  },
+  "notes": [
+    "Occupancy is booked only while the booth is actively in use for spraying and immediate flash-off.",
+    "Downstream cure is booked against EQUIPMENT-CURE-RACK-V1, not the booth, so booth throughput is not understated by cure time.",
+    "connected_load total_kw (2.2) is a nameplate estimate, not a metered value.",
+    "Physical record only: contains no cost fields by design."
+  ]
+}
