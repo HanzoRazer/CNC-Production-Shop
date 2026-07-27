@@ -583,7 +583,7 @@ def test_pickup_emc_conflict_awaits_measurement_not_derivation():
     assert "no measurement has been taken" in conflict["ruling"]
     # Failing it re-opens the packing that put compute back in the Khaya.
     assert "CONF-SINGLE-PICKUP-SPACE" in conflict["ruling"]
-    assert "74.1 mm" in conflict["field"]
+    assert "71.6 mm" in conflict["field"]
     # Moving the pockets improved the geometry; it did not answer the question.
     assert "GEOMETRY IMPROVED but the question stands" in conflict["ruling"]
 
@@ -603,11 +603,11 @@ def test_pocket_relocation_improved_both_coupling_axes():
     )
     assert conflict["status"] == "ruled"
     assert "STRICTLY BETTER" in conflict["ruling"]
-    assert "10.75 mm to 48.3 mm" in conflict["ruling"]
+    assert "10.75 mm to 35.75 mm" in conflict["ruling"]
     assert "NEAREST victim" in conflict["ruling"]
     # The ceiling is set by the ergonomic void, not by the pickup: without this
     # the next reader will assume there is more room to buy.
-    assert any("bass-side ergonomic void at 8.01 mm" in s for s in conflict["sources"])
+    assert any("bass-side ergonomic void" in s for s in conflict["sources"])
     assert "does NOT resolve CONF-SINGLE-PICKUP-EMC" in conflict["ruling"]
 
 
@@ -625,9 +625,9 @@ def test_relocated_pockets_still_pack_against_every_keepout():
     usable = outline.buffer(-solver.RIM_MIN)
     route = solver.rect(0.0, 294.6, 80.0, 22.0)
     placement = {
-        "POD_PI": (9.410, 177.5),
-        "POD_HAT": (121.910, 280.0),
-        "BATTERY_CHAMBER": (2.910, 245.0),
+        "POD_PI": (11.910, 180.0),
+        "POD_HAT": (94.410, 280.0),
+        "BATTERY_CHAMBER": (2.910, 247.5),
     }
     boxes = {
         name: solver.rect(x, y, *solver.POCKETS[name]) for name, (x, y) in placement.items()
@@ -642,10 +642,15 @@ def test_relocated_pockets_still_pack_against_every_keepout():
     for name, other in ((a, b) for a in boxes for b in boxes if a < b):
         assert boxes[name].distance(boxes[other]) >= solver.MIN_WEB
 
-    assert boxes["POD_PI"].distance(route) == pytest.approx(74.1, abs=0.1)
-    ribbon = boxes["POD_PI"].distance(boxes["POD_HAT"])
-    assert ribbon == pytest.approx(48.3, abs=0.1)
-    assert ribbon <= solver.RIBBON_LENGTH
+    assert boxes["POD_PI"].distance(route) == pytest.approx(71.6, abs=0.1)
+    assert boxes["POD_PI"].distance(boxes["POD_HAT"]) == pytest.approx(35.75, abs=0.1)
+
+    # The constraint that matters is how far the RIBBON travels, not how far
+    # apart the pockets are. Ruling the first relocation on edge clearance
+    # produced a layout needing 118.8 mm of a 100 mm part.
+    span = solver._header_span(boxes["POD_PI"], boxes["POD_HAT"])
+    assert span == pytest.approx(89.9, abs=0.1)
+    assert span <= solver.RIBBON_LENGTH * 0.9, "less than 10% ribbon slack"
 
 
 def test_length_datum_is_resolved_and_preserves_cavity_positions():

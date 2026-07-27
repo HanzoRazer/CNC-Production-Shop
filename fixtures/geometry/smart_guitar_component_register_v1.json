@@ -503,25 +503,51 @@
       "field": "back-face pocket placement, ranked by clearance rather than by fit",
       "sources": [
         "derived: the placement ruled in CONF-SINGLE-PICKUP-SPACE left POD_PI 11.6 mm from the pickup route and 10.75 mm from POD_HAT",
-        "derived: re-solving the same packing with clearance as the objective reaches POD_PI 74.1 mm from the route and 48.3 mm from POD_HAT, with the whole set still packing",
-        "derived: at the new placement POD_PI is bound by the upper bass-side ergonomic void at 8.01 mm, not by the pickup, so 74.1 mm is the ceiling this outline allows",
-        "scripts/solve_khaya_pocket_layout.py, front_v5 outline, 2.5 mm grid, min_web 8.0, rim 12.7, ribbon 100.0"
+        "derived: re-solving the same packing for clearance reaches POD_PI 71.6 mm from the route and 35.75 mm from POD_HAT, with the whole set still packing",
+        "derived: at the new placement POD_PI is bound by the upper bass-side ergonomic void, not by the pickup, so this is close to the ceiling this outline allows",
+        "derived: the GPIO ribbon must span 89.9 mm header to header, leaving 10.1 mm of a 100 mm part as slack - see CONF-RIBBON-REACH for why that constraint, not edge-to-edge clearance, governs",
+        "scripts/solve_khaya_pocket_layout.py --ribbon-metric header, front_v5 outline, 2.5 mm grid, min_web 8.0, rim 12.7"
       ],
       "status": "ruled",
-      "ruling": "POCKETS RELOCATED. POD_PI x +9.410 y_from_top 177.5, POD_HAT x +121.910 y_from_top 280.0, BATTERY_CHAMBER x +2.910 y_from_top 245.0. This is STRICTLY BETTER than the placement it replaces on both coupling axes - the Pi's nearest victim goes from 10.75 mm to 48.3 mm - so there is no trade to weigh. The Pi moves up into the space the deleted neck pickup vacated, which is the same 69 cm2 that made CONF-SINGLE-PICKUP-SPACE resolvable; the front-end board moves DOWN toward the bridge, shortening the analog run to the pickup rather than lengthening it. NOTE the objective matters: maximising POD_PI's distance from the pickup ALONE lands the Pi 8.5 mm from POD_HAT, trading the pickup coil for the more sensitive analog board. The ruled placement maximises distance to the NEAREST victim instead. This does NOT resolve CONF-SINGLE-PICKUP-EMC; it improves the geometry the measurement will be taken on.",
+      "ruling": "POCKETS RELOCATED. POD_PI x +11.910 y_from_top 180.0, POD_HAT x +94.410 y_from_top 280.0, BATTERY_CHAMBER x +2.910 y_from_top 247.5. STRICTLY BETTER than the placement it replaces on both coupling axes - the Pi's nearest victim goes from 10.75 mm to 35.75 mm - so there is no trade to weigh. The Pi moves up into the space the deleted neck pickup vacated, which is the same 69 cm2 that made CONF-SINGLE-PICKUP-SPACE resolvable; the front-end board moves DOWN toward the bridge, shortening the analog run to the pickup rather than lengthening it. NOTE the objective matters: maximising POD_PI's distance from the pickup ALONE lands the Pi 8.5 mm from POD_HAT, trading the pickup coil for the more sensitive analog board. This placement maximises distance to the NEAREST victim instead. It also assumes 10% ribbon slack; see CONF-RIBBON-REACH, where the sensitivity is sharp. This does NOT resolve CONF-SINGLE-PICKUP-EMC; it improves the geometry the measurement will be taken on.",
       "ruled_by": "derived 2026-07-27 from the owner's instruction to move the Pi pocket further from the pickup"
     },
     {
+      "conflict_id": "CONF-RIBBON-REACH",
+      "field": "how far the GPIO ribbon must travel between POD_PI and POD_HAT",
+      "sources": [
+        "register: GPIO_RIBBON is a fixed 100.0 mm part",
+        "derived: edge-to-edge pocket clearance understates the run badly once the pockets sit diagonally - a layout with a 48.3 mm edge gap needs 118.8 mm of ribbon",
+        "derived: the Pi 5's 40-pin header runs along the long edge of the board and the HAT's mates with it, so each header sits at its pocket's x centre on one of the two x-aligned edges; the run is the best of those four pairings",
+        "derived: sweeping usable ribbon length gives POD_PI-to-pickup 74.1 mm at 100, 74.1 at 95, 71.6 at 90, 71.6 at 85, and 11.6 at 80"
+      ],
+      "status": "ruled",
+      "ruling": "HEADER-TO-HEADER SPAN GOVERNS, NOT EDGE CLEARANCE. This caught a real error: the first relocation was ruled on edge-to-edge clearance and produced a layout needing 118.8 mm of a 100 mm ribbon - not buildable. The corrected placement spans 89.9 mm, holding 10.1 mm of slack. THE SENSITIVITY IS A CLIFF, NOT A SLOPE: anything from 0 to 15% slack keeps the Pi 71-74 mm from the pickup, but at 20% the packing collapses back to the original 11.6 mm layout. 10% was chosen because zero slack allows no bend radius or connector entry and buys only 2.5 mm of extra clearance. IF A LONGER RIBBON IS SOURCED the constraint relaxes and the search should be re-run; nothing here depends on 100 mm being the only option.",
+      "ruled_by": "derived 2026-07-27 while exporting the cavity DXF, which exposed the diagonal run"
+    },
+    {
       "conflict_id": "CONF-SINGLE-PICKUP-EMC",
-      "field": "whether a single coil is viable 74.1 mm from a Raspberry Pi 5",
+      "field": "whether a single coil is viable 71.6 mm from a Raspberry Pi 5",
       "sources": [
         "derived: as first solved, POD_PI sat 11.6 mm from the Telecaster route, fully overlapping it in X, with only 1.0 mm of stock between the pocket ceiling and the route floor at their respective depths",
-        "derived: after CONF-POD-EMC-CLEARANCE the gap is 74.1 mm to the route and 48.3 mm to POD_HAT, and no plan overlap remains",
+        "derived: after CONF-POD-EMC-CLEARANCE the gap is 71.6 mm to the route and 35.75 mm to POD_HAT, and no plan overlap remains",
         "engineering judgement: a single coil has no common-mode rejection, and the Pi's 2.4 GHz radio and switching supplies remain inside the same cavity set"
       ],
       "status": "unresolved",
-      "ruling": "CANNOT BE SETTLED BY DERIVATION. This is the first question in the program that needs a physical measurement rather than a calculation. Procedure written at docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md; no measurement has been taken. The comparison is against a conventional single-coil guitar's ambient floor, NOT against silence, and discrete switching tones are weighted above broadband hiss. GEOMETRY IMPROVED but the question stands: CONF-POD-EMC-CLEARANCE took the separation from 11.6 mm to 74.1 mm, which is the most this outline allows, and distance alone does not establish a pass. CONSEQUENCE IF IT FAILS: a hum-cancelling pickup changes the route dimensions, which re-opens the packing ruled in CONF-SINGLE-PICKUP-SPACE. Cavity shielding is now the leading mitigation, because the cheap geometric one has been spent.",
+      "ruling": "CANNOT BE SETTLED BY DERIVATION. This is the first question in the program that needs a physical measurement rather than a calculation. Procedure written at docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md; no measurement has been taken. The comparison is against a conventional single-coil guitar's ambient floor, NOT against silence, and discrete switching tones are weighted above broadband hiss. GEOMETRY IMPROVED but the question stands: CONF-POD-EMC-CLEARANCE took the separation from 11.6 mm to 71.6 mm, close to the most this outline allows, and distance alone does not establish a pass. CONSEQUENCE IF IT FAILS: a hum-cancelling pickup changes the route dimensions, which re-opens the packing ruled in CONF-SINGLE-PICKUP-SPACE. Cavity shielding is now the leading mitigation, because the cheap geometric one has been spent.",
       "ruled_by": "unresolved - awaits a shielded mock-up measurement"
+    },
+    {
+      "conflict_id": "CONF-CONTROL-PLATE-POSITION",
+      "field": "control cavity position, which decides whether POD_HAT clears it",
+      "sources": [
+        "front_v5 CONTROL_PLATE layer, both scale errors undone: x 5.2..106.1, y_from_top 320.6..370.0",
+        "the DXF export's own cavity table: centred x 25.0, y_from_top 317.0, 100 x 60 mm",
+        "derived: POD_HAT at the ruled placement spans x 57.9..130.9, y_from_top 247.8..312.2 - it clears the first by 8.4 mm and OVERLAPS the second"
+      ],
+      "status": "unresolved",
+      "ruling": "The two available positions disagree by about 30 mm in both axes, and POD_HAT clears one but not the other. CONTROL_PLATE is also one of the two front_v5 layers that would not calibrate against the datum, so its derived position carries less weight than the six that did. The ruled pocket layout uses the derived position. IF THE EXPORT TABLE'S POSITION IS CORRECT, POD_HAT COLLIDES WITH THE CONTROL CAVITY and the layout must be re-solved. Cheap to settle from the CAD file; expensive to discover after a body is cut.",
+      "ruled_by": "unresolved - needs the control cavity position confirmed against CAD"
     }
   ],
   "provenance": {

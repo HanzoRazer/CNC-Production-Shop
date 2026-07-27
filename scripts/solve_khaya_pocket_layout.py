@@ -135,7 +135,31 @@ def opposed_face_web(pocket_id: str) -> float:
     return BODY_THICKNESS - PICKUP["depth"] - POCKET_DEPTH[pocket_id]
 
 
-def solve(step: float) -> dict[str, Any]:
+def _centres(a: Polygon, b: Polygon) -> float:
+    """Distance between two footprint centres."""
+    return ((a.centroid.x - b.centroid.x) ** 2 + (a.centroid.y - b.centroid.y) ** 2) ** 0.5
+
+
+def _header_span(a: Polygon, b: Polygon) -> float:
+    """Shortest header-to-header run between two pockets.
+
+    The ribbon does not connect the nearest corners; it connects two 40-pin
+    headers. On a Pi 5 that header runs along the long edge of the board, and
+    the HAT's mates with it, so each header sits at its pocket's x centre on
+    one of the two x-aligned edges. The run is the best of those four pairings.
+
+    Edge-to-edge distance flatters a diagonal layout badly — it measures corner
+    to corner while the ribbon has to travel centre to centre in x.
+    """
+    ax0, ay0, ax1, ay1 = a.bounds
+    bx0, by0, bx1, by1 = b.bounds
+    ax, bx = (ax0 + ax1) / 2, (bx0 + bx1) / 2
+    return min(
+        ((ax - bx) ** 2 + (ay - by) ** 2) ** 0.5 for ay in (ay0, ay1) for by in (by0, by1)
+    )
+
+
+def solve(step: float, ribbon_metric: str = "header") -> dict[str, Any]:
     outline, voids, features = load_body()
     usable = outline.buffer(-RIM_MIN)
     keepout = [v.buffer(MIN_WEB) for v in voids]
@@ -183,7 +207,18 @@ def solve(step: float) -> dict[str, Any]:
         pi_gap = pbox.distance(route)
         for hx, hy, hbox in hat_sites:
             ribbon = hbox.distance(pbox)
-            if ribbon < MIN_WEB or ribbon > RIBBON_LENGTH:
+            if ribbon < MIN_WEB:
+                continue
+            # How far the ribbon actually has to travel. "header" is the real
+            # constraint and the default; the other two are kept because the
+            # first layout was ruled on "edge" and it is worth being able to
+            # reproduce how far wrong that was.
+            span = {
+                "header": _header_span,
+                "centre": _centres,
+                "edge": lambda a, b: a.distance(b),
+            }[ribbon_metric](pbox, hbox)
+            if span > RIBBON_LENGTH:
                 continue
             pairs.append(
                 {
@@ -194,6 +229,7 @@ def solve(step: float) -> dict[str, Any]:
                     # to, so this is the number that actually bounds coupling.
                     "nearest_victim": min(pi_gap, ribbon),
                     "ribbon_gap": ribbon,
+                    "ribbon_span": span,
                     "POD_PI": (px, py),
                     "POD_HAT": (hx, hy),
                     "_pi": pbox,
@@ -230,10 +266,17 @@ def solve(step: float) -> dict[str, Any]:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--step", type=float, default=2.5, help="grid step in mm")
+    ap.add_argument(
+        "--ribbon-metric",
+        choices=("header", "centre", "edge"),
+        default="header",
+        help="how far the ribbon must travel; header is the real constraint",
+    )
     args = ap.parse_args()
 
-    result = solve(args.step)
-    print(f"grid step {args.step} mm, y window {Y_MIN}-{Y_MAX} from top")
+    result = solve(args.step, args.ribbon_metric)
+    print(f"grid step {args.step} mm, y window {Y_MIN}-{Y_MAX} from top, "
+          f"ribbon metric {args.ribbon_metric!r} (limit {RIBBON_LENGTH} mm)")
     print("web between a back pocket and the route where they overlap in plan:")
     for pocket in POCKETS:
         print(f"  {pocket:16s} {opposed_face_web(pocket):5.1f} mm  (min {MIN_WEB})")
@@ -258,6 +301,7 @@ def main() -> int:
         print(f"     POD_PI to route      {best['pi_gap']:6.1f} mm")
         print(f"     POD_PI to POD_HAT    {best['ribbon_gap']:6.1f} mm  (ribbon {RIBBON_LENGTH})")
         print(f"     POD_HAT to route     {best['hat_gap']:6.1f} mm")
+        print(f"     ribbon span          {best['ribbon_span']:6.1f} mm")
         print(f"     nearest victim       {best['nearest_victim']:6.1f} mm")
         for pocket in POCKETS:
             x, y = best[pocket]

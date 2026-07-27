@@ -96,15 +96,15 @@ def test_entity_counts_are_as_intended(doc):
     assert counts["LINE"] == 1  # centreline reference
 
 
-def test_pod_sits_on_the_treble_side(doc):
-    """+X is treble, ruled 2026-07-27. The pod is the asymmetric feature.
+def test_pods_sit_on_the_treble_side(doc):
+    """+X is treble, ruled 2026-07-27. The pods are the asymmetric features.
 
     If the sign convention were ever flipped back, this is where it shows:
-    the pod would land on the bass half with nothing else complaining.
+    the pods would land on the bass half with nothing else complaining.
     """
-    pod = next(c for c in CAVITIES if c[1] == "POD")
-    _, _, cx, _, _, _ = pod
-    assert cx > 0, "pod centre must be positive, i.e. treble"
+    pods = {c[1]: c[2] for c in CAVITIES if c[1] in ("POD_PI", "POD_HAT")}
+    assert set(pods) == {"POD_PI", "POD_HAT"}
+    assert all(cx > 0 for cx in pods.values()), "pod centres must be treble"
 
     profiles = [
         e
@@ -114,7 +114,44 @@ def test_pod_sits_on_the_treble_side(doc):
     centres = [
         sum(p[0] for p in e.get_points()) / len(e.get_points()) for e in profiles
     ]
-    assert any(c == pytest.approx(74.0, abs=0.01) for c in centres)
+    for cx in pods.values():
+        assert any(c == pytest.approx(cx, abs=0.01) for c in centres)
+
+
+def test_centreline_features_are_actually_on_the_centreline(doc):
+    """x = 0 must be the centreline in the FILE, not just in the console.
+
+    front_v5's outline is displaced about 8.5 mm in x. The export used to warn
+    about that on stdout while still emitting a drawing whose own note claimed
+    x = 0 was the centreline — a warning that does not travel with the DXF.
+    The pickup route is specified at x_center 0, so it is the witness.
+    """
+    route = next(c for c in CAVITIES if c[1] == "PU_BRIDGE")
+    assert route[2] == 0.0
+
+    profiles = [
+        e
+        for e in doc.modelspace()
+        if e.dxftype() == "LWPOLYLINE" and e.dxf.layer == "CAV_TOP"
+    ]
+    widths = {
+        round(max(p[0] for p in e.get_points()) - min(p[0] for p in e.get_points()), 2): e
+        for e in profiles
+    }
+    entity = widths[round(route[4], 2)]
+    xs = [p[0] for p in entity.get_points()]
+    assert sum((min(xs), max(xs))) == pytest.approx(0.0, abs=0.01)
+
+
+def test_outline_honours_the_documented_bass_overhang(doc):
+    """The centreline is recovered from the overhang, so it must come back out."""
+    body = next(
+        e
+        for e in doc.modelspace()
+        if e.dxftype() == "LWPOLYLINE" and e.dxf.layer == "BODY_OUTLINE"
+    )
+    xs = [p[0] for p in body.get_points()]
+    assert abs(min(xs)) - max(xs) == pytest.approx(DOCUMENTED_BASS_OVERHANG_MM, abs=0.05)
 
 
 def test_rect_is_centred_on_its_station():

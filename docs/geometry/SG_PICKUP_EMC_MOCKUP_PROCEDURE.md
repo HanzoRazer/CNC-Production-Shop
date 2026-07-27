@@ -1,7 +1,7 @@
 # Pickup EMC mock-up — measurement procedure
 
 **Status:** procedure only. No measurement has been taken.
-**Answers:** `CONF-SINGLE-PICKUP-EMC` — whether a single coil is viable 74.1 mm
+**Answers:** `CONF-SINGLE-PICKUP-EMC` — whether a single coil is viable 71.6 mm
 from a Raspberry Pi 5.
 **Applies to:** `PRODUCT-KHAYA-SOLIDBODY-V1` (the harder case) and, by
 inference, `PRODUCT-SMART-GUITAR-V1`.
@@ -16,15 +16,16 @@ the set fit, never how much room was left. Re-solving for clearance
 
 ```text
                               was      now
-POD_PI to pickup route      11.6 mm   74.1 mm
-POD_PI to POD_HAT           10.8 mm   48.3 mm
+POD_PI to pickup route      11.6 mm   71.6 mm
+POD_PI to POD_HAT           10.8 mm   35.8 mm
 ```
 
-**That is the ceiling this outline allows.** POD_PI is now bound by the upper
-bass-side ergonomic void at 8.01 mm, not by the pickup — pushing it further
-means changing the body, not the layout. The cheap geometric mitigation has
-been spent, so if the measurement goes badly the next moves are cavity
-shielding, then a hum-cancelling pickup.
+**That is close to the ceiling this outline allows.** POD_PI is now bound by
+the upper bass-side ergonomic void and by the GPIO ribbon's reach, not by the
+pickup — pushing it further means a longer ribbon or a different body, not a
+different layout. The cheap geometric mitigation has been spent, so if the
+measurement goes badly the next moves are cavity shielding, then a
+hum-cancelling pickup.
 
 One thing the relocation does not fix: the Pi's radio and switching supplies
 are still inside the same cavity set as a pickup with no common-mode rejection.
@@ -75,7 +76,7 @@ noise floor, not the instrument.
 
 Configuration F is deliberately backwards. The layout has already been moved
 to its geometric limit, so there is no further-away case left to test — but a
-close case still tells you how much the 62 mm bought. If F and E measure the
+close case still tells you how much the 60 mm bought. If F and E measure the
 same, distance was never the mechanism and shielding is the whole answer.
 
 Run A0 and D at minimum. B and C separate the radio from the switching

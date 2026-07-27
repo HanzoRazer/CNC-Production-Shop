@@ -132,16 +132,32 @@ LAYERS: dict[str, tuple[int, int, str]] = {
 }
 
 # (layer, label, centre x, y_from_top, width across X, height along Y)
+# layer, label, x_center, y_from_top, width, height
+#
+# Back-face pockets carry the placement ruled in CONF-POD-EMC-CLEARANCE, which
+# maximises the Pi's distance from its nearest victim rather than from the
+# pickup alone, and holds the GPIO ribbon to a 89.9 mm header-to-header span.
+# Re-derive with scripts/solve_khaya_pocket_layout.py; do not hand-edit.
+#
+# The rows this replaces were stale in almost every particular: one 162 mm POD
+# before the split, a TEENSY pocket for a part no longer in the design, a
+# BATTERY drawn on top of it, a neck pickup deleted by the single-pickup
+# layout, and a 92 x 40 humbucker route where a 80 x 22 single coil now sits.
 CAVITIES = (
-    ("CAV_BACK", "POD", 74.0, 387.0, 162.0, 64.0),
-    ("CAV_BACK", "TEENSY", 36.8, 133.5, 70.0, 25.0),
-    ("CAV_BACK", "BATTERY", 36.8, 133.5, 90.0, 55.0),
-    ("CAV_BACK", "CONTROL", 25.0, 317.0, 100.0, 60.0),
-    ("CAV_TOP", "NECK_POCKET", 0.0, 53.3, 76.2, 55.9),
-    ("CAV_TOP", "PU_NECK", 0.0, 167.6, 92.0, 40.0),
-    ("CAV_TOP", "PU_BRIDGE", 0.0, 294.6, 92.0, 40.0),
-    ("CAV_TOP", "BRIDGE", 0.0, 320.0, 95.0, 42.0),
+    ("CAV_BACK", "POD_PI", 11.910, 180.0, 93.0, 64.0),
+    ("CAV_BACK", "POD_HAT", 94.410, 280.0, 73.0, 64.5),
+    ("CAV_BACK", "BATTERY", 2.910, 247.5, 90.0, 55.0),
+    ("CAV_TOP", "PU_BRIDGE", 0.0, 294.6, 80.0, 22.0),
+    ("CAV_TOP", "NECK_POCKET", 0.0, 93.1, 76.8, 55.2),
+    ("CAV_TOP", "BRIDGE", 0.0, 319.0, 95.8, 41.5),
+    ("CAV_TOP", "CONTROL", 55.7, 345.3, 100.9, 49.4),
 )
+
+# The ribbon channel is drawn as the straight header-to-header run rather than
+# an axis-aligned rectangle, because the pockets no longer sit square to each
+# other. Width is the derived channel width; the path is indicative — routing
+# it as a dogleg is equally valid and may machine better.
+WIRE_CHANNEL = ("POD_PI", "POD_HAT", 30.0)
 
 Point = tuple[float, float]
 Profile = list[Point]
@@ -228,24 +244,68 @@ def rect(cx: float, y_from_top: float, w: float, h: float, top_y: float) -> Prof
     ]
 
 
+def wire_channel(
+    drawn: dict[str, tuple[float, float, float, float]], top_y: float
+) -> Profile:
+    """The ribbon channel, drawn along the actual header-to-header run.
+
+    Each 40-pin header sits at its pocket's x centre on one of the two
+    x-aligned edges; the run is the shortest pairing. Drawing it as an
+    axis-aligned rectangle would misrepresent a diagonal path as a square one,
+    which is exactly the error that made the first relocation unbuildable.
+    """
+    from_id, to_id, width = WIRE_CHANNEL
+    ax, ay, _, ah = drawn[from_id]
+    bx, by, _, bh = drawn[to_id]
+    a_edges = (ay - ah / 2, ay + ah / 2)
+    b_edges = (by - bh / 2, by + bh / 2)
+    ae, be = min(
+        ((p, q) for p in a_edges for q in b_edges),
+        key=lambda pair: (ax - bx) ** 2 + (pair[0] - pair[1]) ** 2,
+    )
+    x0, y0 = ax, top_y - ae
+    x1, y1 = bx, top_y - be
+    dx, dy = x1 - x0, y1 - y0
+    length = (dx * dx + dy * dy) ** 0.5
+    nx, ny = -dy / length * width / 2, dx / length * width / 2
+    return [(x0 + nx, y0 + ny), (x1 + nx, y1 + ny), (x1 - nx, y1 - ny), (x0 - nx, y0 - ny)]
+
+
 def build_document(version: str, source: str) -> tuple[Any, Profile, float, float]:
     outline_raw, voids_raw, refs_raw = load_source(source)
-    _, _, y0, y1 = _bbox(outline_raw)
+    x0_raw, _, y0, y1 = _bbox(outline_raw)
     scale = BODY_LENGTH_MM / (y1 - y0)
 
     offset, spread = v5_datum_offset(outline_raw, refs_raw) if refs_raw else (0.0, 0.0)
     if refs_raw and spread > V5_DATUM_MAX_SPREAD:
         offset = 0.0  # correction does not fit; leave the reference where it lies
 
+    # Put x = 0 on the instrument centreline, recovered from the documented bass
+    # overhang rather than from the source file's origin. front_v5's outline is
+    # horizontally displaced, so without this the drawing's own note that x = 0
+    # is the centreline would be false by roughly 8.5 mm — and a warning printed
+    # to a terminal does not travel with the DXF. Every centreline feature is
+    # specified at x 0, so this has to be right in the file, not in the console.
+    dx = -(BODY_WIDTH_MM + DOCUMENTED_BASS_OVERHANG_MM) / 2 - x0_raw * scale
+
     # Normalise so the body top edge sits at y = 0. Every cavity is specified as
     # y_from_top, so this makes cavity y simply -y_from_top, and it removes the
     # arbitrary vertical placement that differs between source files.
     def to_mm(points: Profile, dy: float = 0.0) -> Profile:
-        return [(x * scale, (y + dy - y1) * scale) for x, y in points]
+        return [(x * scale + dx, (y + dy - y1) * scale) for x, y in points]
+
+    # Cavity reference layers carry BOTH of front_v5's scale errors: its
+    # generator multiplied millimetre positions by the trace scale, and the
+    # drawing is then scaled again to body size. Undoing the product lands each
+    # layer within about a millimetre of its nominal y_from_top.
+    k = V5_TRACE_SCALE * scale
+
+    def ref_to_mm(points: Profile) -> Profile:
+        return [(x * scale / k, (y + offset - y1) * scale / k) for x, y in points]
 
     outline = to_mm(outline_raw)
     voids = [to_mm(v) for v in voids_raw]
-    refs = [(layer, to_mm(p, offset)) for layer, p in refs_raw]
+    refs = [(layer, ref_to_mm(p)) for layer, p in refs_raw]
 
     doc = ezdxf.new(version, setup=True)
     doc.units = ezunits.MM
@@ -268,6 +328,7 @@ def build_document(version: str, source: str) -> tuple[Any, Profile, float, floa
     for _, profile in refs:
         msp.add_lwpolyline(profile, close=True, dxfattribs={"layer": "REF_V5"})
 
+    drawn: dict[str, tuple[float, float, float, float]] = {}
     for layer, label, cx, y_from_top, w, h in CAVITIES:
         msp.add_lwpolyline(
             rect(cx, y_from_top, w, h, top_y), close=True, dxfattribs={"layer": layer}
@@ -275,6 +336,11 @@ def build_document(version: str, source: str) -> tuple[Any, Profile, float, floa
         msp.add_text(
             label, height=6.0, dxfattribs={"layer": "NOTES", "color": LAYERS[layer][0]}
         ).set_placement((cx, top_y - y_from_top))
+        drawn[label] = (cx, y_from_top, w, h)
+
+    msp.add_lwpolyline(
+        wire_channel(drawn, top_y), close=True, dxfattribs={"layer": "CAV_BACK"}
+    )
 
     msp.add_line(
         (0, top_y + 20), (0, bottom_y - 20), dxfattribs={"layer": "REF_CENTERLINE"}
@@ -289,9 +355,16 @@ def build_document(version: str, source: str) -> tuple[Any, Profile, float, floa
         "CAV_TOP cut from FRONT face, CAV_BACK cut from REAR face",
         "footprints only - no corner radii, see the CAD dimension sheet",
         "edge features omitted - position them from the drawn curve",
-        "BATTERY shown at the Teensy position - placement undecided",
         "cavity y equals -y_from_top; body spans y 0 to -468.5",
-        "REF_V5 is the earlier layout, datum-corrected, for comparison only",
+        "REF_V5 is the earlier layout, both scale errors undone, reference only",
+        "",
+        "POCKET PLACEMENT per CONF-POD-EMC-CLEARANCE: maximises the Pi's",
+        "distance from its NEAREST victim, not from the pickup alone",
+        "GPIO ribbon spans 89.9 mm header to header, 10.1 mm slack of 100 mm",
+        "wire channel path is INDICATIVE - a dogleg may machine better",
+        "CONTROL position is UNRESOLVED (CONF-CONTROL-PLATE-POSITION):",
+        "  an alternate position 30 mm away would collide with POD_HAT",
+        "single coil 80 x 22 bridge route - pickup selection remains fluid",
     ]
     for index, line in enumerate(notes):
         msp.add_text(line, height=5.0, dxfattribs={"layer": "NOTES"}).set_placement(
