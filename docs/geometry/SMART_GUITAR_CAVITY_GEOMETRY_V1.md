@@ -106,7 +106,7 @@ larger than 162 × 64 mm by however much that part needs.
 
 ## Reconciliation record
 
-Ten conflicts found: four ruled, six open. Recorded in the register and
+Twelve conflicts found: four ruled, eight open. Recorded in the register and
 propagated verbatim into the derived record, with a test enforcing that they
 match, so a reviewer reading only the derived file cannot see fewer conflicts
 than exist.
@@ -129,7 +129,9 @@ than exist.
 | `CONF-HIZ-SPLITTER-DIMS` | buffered splitter | Required by both audio paths, dimensioned nowhere. Omitted rather than invented. |
 | `CONF-BATTERY-PLACEMENT` | battery location | sg-spec sites it in a bass chamber; the body was ruled a solid blank with through-body ergonomic voids, which has no such chamber. Depth and footprint hold; position does not. |
 | `CONF-NVME-PLACEMENT` | NVMe SSD | Sited "under Pi 5", where it would fit inside the 6 mm standoff gap and add nothing. Plausible, unestablished, so registered but not placed. |
-| `CONF-PICKUP-TYPE` | pickups | luthiers-toolbox says dual humbucker with route dimensions; sg-spec's signal chain says P90. No effect on electronics cavities; will affect pickup routes and cost. |
+| `CONF-PICKUP-TYPE` | pickup type | **Intra-file**, not cross-repo: luthiers-toolbox says dual humbucker in `hardware.pickups` and P90 in its own `signal_chain` marked `canonical: true` (lines 449–450). sg-spec contains no P90 reference at all. No effect on electronics cavities; decides route size and pickup cost. |
+| `CONF-PICKUP-ROUTE-DIMS` | pickup route size | Both sources say humbucker and disagree on the route: sg-spec 82 × 38 × 19.05 (r4.0), luthiers-toolbox 92 × 40 × 19.0 (r3.0). Blocked on `CONF-PICKUP-TYPE`, since a P90 route is different again. |
+| `CONF-OPPOSED-FACE-WEB` | top routes vs back pod | On stated positions the bridge route (19 mm, top) overlaps the rear cavity in plan. 19 + 33 = 52 mm through a 44.45 mm blank is a 7.55 mm breach. The source's own `structural_analysis` only measured floor-to-front-face. Unresolvable here — needs plan-level checking. |
 
 ## Scope and limits
 
@@ -144,6 +146,19 @@ derived rather than transcribed.
 in plan or a cavity breaching the perimeter. Given `CONF-BASE-MODEL` retires
 the Les Paul outline that sg-spec's positions were mapped against, plan-level
 validation is genuinely needed and is out of scope here.
+`CONF-OPPOSED-FACE-WEB` is a concrete instance of what that omission hides.
+
+**Only the embedded-electronics cavities are modelled** — the pod, the Teensy
+pocket, and the battery chamber. Pickups, pickup routes, the neck pocket, the
+bridge, the control cavity, and the output jack are **not** here. Both pickup
+disagreements are recorded as conflicts, but no pickup dimension is derived or
+fit-checked, and a test asserts no pickup appears as a component or cavity so
+silence cannot be mistaken for agreement.
+
+**The required blank thickness is a lower bound in two directions.** It omits
+the Hi-Z splitter, which has no dimensions anywhere; and it counts only
+back-face depth plus floor, never a top-face route cutting toward the same
+plane from the other side.
 
 **`min_floor_mm` is 8.0 everywhere and is an engineering estimate**, not a
 structural calculation. The pod sits in the lower bout near the control cavity

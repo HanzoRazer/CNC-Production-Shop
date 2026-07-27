@@ -189,14 +189,37 @@
     },
     {
       "conflict_id": "CONF-PICKUP-TYPE",
-      "field": "hardware.pickups / signal_chain.path_a_dry",
+      "field": "luthiers-toolbox smart_guitar_v1.json: hardware.pickups vs cavities.teensy_io_pocket.signal_chain",
       "sources": [
-        "luthiers-toolbox smart_guitar_v1.json hardware.pickups: dual humbucker, 92 x 40 x 19 mm routes",
-        "sg-spec smart_guitar_cavity_map.json signal_chain: both audio paths begin 'P90 -> buffered_splitter'"
+        "luthiers-toolbox smart_guitar_v1.json hardware.pickups: dual humbucker, direct mount, with neck and bridge route dimensions",
+        "luthiers-toolbox smart_guitar_v1.json cavities.teensy_io_pocket.signal_chain lines 449-450: BOTH audio paths begin 'P90 -> buffered_splitter', in the block marked canonical: true, spec_version 2.1"
       ],
       "status": "unresolved",
-      "ruling": "Not resolved here because it does not affect electronics cavity geometry. Flagged because it will affect pickup route dimensions and component cost downstream.",
+      "ruling": "INTRA-FILE contradiction, not a cross-repo one: a single file names dual humbuckers in its hardware block and a P90 in its own canonical signal chain. sg-spec contains no P90 reference at all. Not resolved here because it does not affect electronics cavity geometry, but it decides pickup route dimensions and pickup cost downstream.",
       "ruled_by": "unresolved \u2014 deferred to the budget model"
+    },
+    {
+      "conflict_id": "CONF-PICKUP-ROUTE-DIMS",
+      "field": "pickup route dimensions",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json cavities.pickup_neck / pickup_bridge: 82.0 x 38.0 x 19.05 mm, corner radius 4.0 mm",
+        "luthiers-toolbox smart_guitar_v1.json cavities.neck_pickup_route / bridge_pickup_route: 92.0 x 40.0 x 19.0 mm, corner radius 3.0 mm"
+      ],
+      "status": "unresolved",
+      "ruling": "Both sources agree the pickups are humbuckers and disagree on the route by 10 mm of length, 2 mm of width, and 1 mm of corner radius. Unresolvable until CONF-PICKUP-TYPE is settled, since a P90 route is a different size again. Pickup routes are deliberately NOT modelled in this register, so this conflict is recorded rather than derived away.",
+      "ruled_by": "unresolved \u2014 blocked on CONF-PICKUP-TYPE"
+    },
+    {
+      "conflict_id": "CONF-OPPOSED-FACE-WEB",
+      "field": "top pickup routes vs back electronics pod, combined depth",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json: bridge_pickup_route 19.0 mm deep on the TOP face at y_from_top 294.6, x_center 0.0",
+        "luthiers-toolbox smart_guitar_v1.json: rear_electronics_cavity 22.0 mm deep on the BACK face at y_from_top 275.7, x_center 36.8 \u2014 the two overlap in plan on these stated positions",
+        "derived: this register's side-by-side pod is 33.0 mm deep and 162.0 mm long, deeper and far longer than the 95 x 65 x 22 mm cavity those positions were checked against"
+      ],
+      "status": "unresolved",
+      "ruling": "On the stated positions the bridge pickup route and the rear cavity overlap in plan, and 19.0 + 33.0 = 52.0 mm through a 44.45 mm blank is a 7.55 mm breach. The source's own structural_analysis measured only floor-to-front-face and never checked the opposing cavity. THIS REGISTER CANNOT RESOLVE IT: it derives cavity size only and excludes plan positions, and CONF-BASE-MODEL already retired the outline those positions were mapped against. Requires plan-level collision checking against the traced outline.",
+      "ruled_by": "unresolved \u2014 needs plan-level validation, out of scope here"
     }
   ],
   "calculation": {
@@ -218,6 +241,8 @@
     "The source scan behind this register was BOUNDED and is not exhaustive. It covered sg-spec, luthiers-toolbox instrument_geometry, and tap_tone_pi hardware docs. string_master_v.4.0 was not fully searched. Absence of a conflict record is not evidence that no conflict exists.",
     "min_floor_mm is 8.0 on every cavity: an engineering estimate, not a structural calculation. The pod sits in the lower bout near the control cavity and the battery routing, so the real minimum should come from a structural review under string tension.",
     "The derived pod footprint is a LOWER BOUND. The Hi-Z buffered splitter is required by the canonical signal chain and has no dimensions anywhere, so it could not be included.",
-    "This record derives cavity SIZE only. It does not validate cavity POSITION against the body outline, so it cannot detect two cavities colliding in plan or a cavity breaching the perimeter. Plan-level collision checking needs the traced outline and is out of scope."
+    "This record derives cavity SIZE only. It does not validate cavity POSITION against the body outline, so it cannot detect two cavities colliding in plan or a cavity breaching the perimeter. Plan-level collision checking needs the traced outline and is out of scope. CONF-OPPOSED-FACE-WEB is a concrete instance of what that omission hides.",
+    "Pickups, pickup routes, the neck pocket, the bridge, the control cavity, and the output jack are NOT modelled here. This register covers the embedded-electronics cavities only: the pod, the Teensy pocket, and the battery chamber. Pickup disagreements are recorded as conflicts (CONF-PICKUP-TYPE, CONF-PICKUP-ROUTE-DIMS) but no pickup dimension is derived or fit-checked.",
+    "Because top-face routes are excluded, the derived body thickness is a LOWER BOUND in a second way: it accounts only for back-face cavity depth plus floor, never for a top-face route cutting toward the same plane from the other side."
   ]
 }

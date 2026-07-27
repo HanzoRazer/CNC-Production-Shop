@@ -471,7 +471,68 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
         "CONF-FAN-INTRUSION",
         "CONF-HIZ-SPLITTER-DIMS",
         "CONF-USB-INTERFACE-LOCATION",
+        "CONF-PICKUP-TYPE",
+        "CONF-PICKUP-ROUTE-DIMS",
+        "CONF-OPPOSED-FACE-WEB",
     } <= unresolved
+
+
+def test_pickups_are_recorded_as_conflicts_but_not_modelled():
+    """Pickups are out of scope here; the record must not imply otherwise.
+
+    The register covers embedded-electronics cavities only. Both pickup
+    disagreements are logged, and no pickup dimension is derived or fit-checked
+    anywhere, so nothing downstream can mistake silence for agreement.
+    """
+    stored = load_json(GEOMETRY)
+    conflicts = {c["conflict_id"]: c for c in stored["conflicts"]}
+
+    assert conflicts["CONF-PICKUP-TYPE"]["status"] == "unresolved"
+    assert conflicts["CONF-PICKUP-ROUTE-DIMS"]["status"] == "unresolved"
+
+    # No pickup is modelled as a component or a cavity.
+    placed = {cid for c in stored["cavities"] for cid in c["component_ids"]}
+    assert not any("PICKUP" in cid for cid in placed)
+    assert not any("PICKUP" in c["cavity_id"] for c in stored["cavities"])
+
+    notes = " ".join(stored["notes"]).lower()
+    assert "pickup routes" in notes and "not modelled" in notes
+
+
+def test_pickup_type_conflict_is_intra_file_not_cross_repo():
+    """P90 appears only in luthiers-toolbox; sg-spec has no P90 reference.
+
+    Guards a real misattribution: the conflict was first filed as sg-spec
+    versus luthiers-toolbox, which would send a reader to the wrong repo.
+    """
+    conflict = next(
+        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-PICKUP-TYPE"
+    )
+    assert all("luthiers-toolbox" in s for s in conflict["sources"])
+    assert not any("sg-spec" in s for s in conflict["sources"])
+    assert "INTRA-FILE" in conflict["ruling"]
+
+
+def test_opposed_face_web_risk_is_recorded_as_out_of_scope():
+    """Top routes cut toward the same plane as back cavities and are excluded.
+
+    19 mm of top-face route plus 33 mm of derived pod is 52 mm through a
+    44.45 mm blank. Whether that matters depends on plan position, which this
+    record deliberately does not model, so the derived thickness is a lower
+    bound and must say so.
+    """
+    stored = load_json(GEOMETRY)
+    conflict = next(
+        c for c in stored["conflicts"] if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
+    )
+    assert conflict["status"] == "unresolved"
+    assert "CANNOT RESOLVE" in conflict["ruling"]
+
+    pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
+    assert pod["derived_depth_mm"] + 19.0 > stored["body"]["stated_thickness_mm"]
+
+    notes = " ".join(stored["notes"]).lower()
+    assert "lower bound" in notes
 
 
 def test_ruled_conflicts_name_who_ruled_them():
