@@ -22,20 +22,25 @@ from export_smart_guitar_dxf import (  # noqa: E402
     BODY_LENGTH_MM,
     BODY_WIDTH_MM,
     CAVITIES,
+    DOCUMENTED_BASS_OVERHANG_MM,
     LAYERS,
-    SCALE,
+    SOURCES,
     build_document,
     rect,
 )
 
 
+def _written(tmp_path_factory, source: str):
+    document, _, _, _ = build_document("R2010", source)
+    path = tmp_path_factory.mktemp("dxf") / f"{source}.dxf"
+    document.saveas(path)
+    return ezdxf.readfile(path)
+
+
 @pytest.fixture(scope="module")
 def doc(tmp_path_factory):
     """Round-trip through a real file rather than testing the in-memory doc."""
-    document, _ = build_document("R2010")
-    path = tmp_path_factory.mktemp("dxf") / "body.dxf"
-    document.saveas(path)
-    return ezdxf.readfile(path)
+    return _written(tmp_path_factory, "back_v5")
 
 
 def test_units_are_declared_as_millimetres(doc):
@@ -75,11 +80,13 @@ def test_body_extents_match_the_governed_blank(doc):
     xs = [p[0] for p in pts]
     ys = [p[1] for p in pts]
 
-    assert len(pts) == 78
+    assert len(pts) == 79  # back_v5 carries the richest outline
     assert max(xs) - min(xs) == pytest.approx(BODY_WIDTH_MM, abs=0.01)
     assert max(ys) - min(ys) == pytest.approx(BODY_LENGTH_MM, abs=0.01)
-    # Body top at +202.60 is the datum every y_from_top is measured against.
-    assert max(ys) == pytest.approx(202.60, abs=0.01)
+    # Body top normalised to y = 0: it is the datum every y_from_top is
+    # measured from, so cavity y reads directly as -y_from_top.
+    assert max(ys) == pytest.approx(0.0, abs=0.01)
+    assert min(ys) == pytest.approx(-BODY_LENGTH_MM, abs=0.01)
 
 
 def test_entity_counts_are_as_intended(doc):
@@ -119,9 +126,47 @@ def test_rect_is_centred_on_its_station():
     assert sum(ys) / 4 == pytest.approx(102.6)
 
 
-def test_scale_is_the_governed_factor():
-    """468.5 / 290.79 — changing it silently rescales the whole drawing."""
-    assert SCALE == pytest.approx(468.5 / 290.79, abs=1e-6)
+@pytest.mark.parametrize("source", sorted(SOURCES))
+def test_every_source_normalises_to_the_same_blank(tmp_path_factory, source):
+    """Three outlines of differing fidelity must emit one blank size.
+
+    They disagree on point count and on x placement, but all carry aspect
+    0.8599, so any of them scaled to 468.5 must give 402.85.
+    """
+    written = _written(tmp_path_factory, source)
+    body = next(
+        e
+        for e in written.modelspace()
+        if e.dxftype() == "LWPOLYLINE" and e.dxf.layer == "BODY_OUTLINE"
+    )
+    pts = [(p[0], p[1]) for p in body.get_points()]
+    xs = [p[0] for p in pts]
+    ys = [p[1] for p in pts]
+    assert max(xs) - min(xs) == pytest.approx(BODY_WIDTH_MM, abs=0.05)
+    assert max(ys) - min(ys) == pytest.approx(BODY_LENGTH_MM, abs=0.01)
+    # Body top normalised to y = 0 so cavity y is simply -y_from_top.
+    assert max(ys) == pytest.approx(0.0, abs=0.01)
+
+
+def test_back_v5_and_trace_agree_on_the_centreline(tmp_path_factory):
+    """The documented bass overhang is the check on horizontal placement.
+
+    back_v5 and the trace reproduce 12.28 mm exactly. front_v5 does not, and
+    is deliberately not asserted here — see the centreline warning the export
+    emits for it.
+    """
+    for source in ("back_v5", "trace"):
+        written = _written(tmp_path_factory, source)
+        body = next(
+            e
+            for e in written.modelspace()
+            if e.dxftype() == "LWPOLYLINE" and e.dxf.layer == "BODY_OUTLINE"
+        )
+        xs = [p[0] for p in body.get_points()]
+        overhang = abs(min(xs)) - max(xs)
+        assert overhang == pytest.approx(
+            DOCUMENTED_BASS_OVERHANG_MM, abs=0.05
+        ), source
 
 
 def test_export_script_runs_and_self_checks():

@@ -400,28 +400,65 @@ def test_stored_geometry_matches_recomputation():
                 assert actual[key] == value, f"{cavity['cavity_id']}.{key}"
 
 
-def test_pod_is_side_by_side_and_fits_the_specified_blank():
-    """The ruling, and the number that makes it work."""
+def test_pod_is_split_into_two_pockets_that_both_fit():
+    """The one-piece pod had no valid position anywhere in the outline.
+
+    Splitting is not a preference: a 162 x 64 slab could not be placed inside
+    the body with rim inset and void clearance at any position, and growing
+    the body to accept it needed 1.381x — a 556 x 647 mm instrument.
+    """
     stored = load_json(GEOMETRY)
-    pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
+    by_id = {c["cavity_id"]: c for c in stored["cavities"]}
 
-    assert pod["layout"] == "side_by_side"
-    assert pod["derived_depth_mm"] == 33.0
-    assert pod["derived_length_mm"] == 162.0
-    assert pod["derived_width_mm"] == 64.0
-    assert pod["fit_ok"] is True
-    assert stored["body"]["verdict"] == VERDICT_SUFFICIENT
-    assert stored["body"]["governing_cavity_id"] == "ELECTRONICS_POD"
-    assert stored["body"]["margin_mm"] == 6.0
+    assert "ELECTRONICS_POD" not in by_id
+    pi, hat = by_id["POD_PI"], by_id["POD_HAT"]
+
+    assert (pi["derived_length_mm"], pi["derived_width_mm"], pi["derived_depth_mm"]) == (
+        93.0, 64.0, 27.0,
+    )
+    assert (hat["derived_length_mm"], hat["derived_width_mm"], hat["derived_depth_mm"]) == (
+        73.0, 64.0, 33.0,
+    )
+    # Dropping the HAT out of the Pi pocket buys back 6 mm of depth.
+    assert hat["derived_depth_mm"] - pi["derived_depth_mm"] == 6.0
+    assert pi["fit_ok"] and hat["fit_ok"]
+    assert stored["body"]["governing_cavity_id"] == "POD_HAT"
 
 
-def test_sg_spec_stated_pod_depth_is_too_shallow_for_its_own_contents():
-    """Guards the finding: 30.48 mm stated against 33.0 mm derived."""
+def test_wire_channel_is_too_narrow_in_the_spec_for_a_ribbon():
+    """Modelling the ribbon as a part exposed a channel that cannot hold it.
+
+    sg-spec sizes its wiring channel at 10 mm, adequate for discrete leads.
+    A 40-way GPIO ribbon needs 30. This surfaced only because the ribbon was
+    registered as a component rather than described in a note.
+    """
+    channel = next(
+        c for c in load_json(GEOMETRY)["cavities"]
+        if c["cavity_id"] == "WIRE_CHANNEL_PI_HAT"
+    )
+    assert channel["stated_width_mm"] == 10.0
+    assert channel["derived_width_mm"] == 30.0
+    assert channel["width_delta_mm"] == -20.0
+    assert any("cannot hold its own contents" in f for f in channel["findings"])
+
+
+def test_ribbon_length_constrains_pocket_separation():
+    """The channel's derived length IS the maximum pocket separation.
+
+    Recorded as geometry rather than prose so that moving a pocket too far
+    fails the derivation instead of silently assuming a longer cable.
+    """
     stored = load_json(GEOMETRY)
-    pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
-    assert pod["stated_depth_mm"] == 30.48
-    assert pod["depth_delta_mm"] == -2.52
-    assert any("cannot hold its own contents" in f for f in pod["findings"])
+    channel = next(
+        c for c in stored["cavities"] if c["cavity_id"] == "WIRE_CHANNEL_PI_HAT"
+    )
+    assert channel["derived_length_mm"] == 150.0
+    assert "GPIO_RIBBON" in channel["component_ids"]
+
+    register = _register()
+    ribbon = next(c for c in register.components if c.component_id == "GPIO_RIBBON")
+    assert ribbon.required is True
+    assert "ENGINEERING ESTIMATE" in ribbon.provenance.note
 
 
 def test_teensy_pocket_footprint_reproduces_the_stated_pocket():
@@ -462,9 +499,7 @@ def test_fan_venting_is_ruled_not_assumed():
 def test_internal_fan_would_break_the_blank():
     """Counterfactual: an internally mounted fan does not fit the 47.0 blank.
 
-    It briefly did, during the 51.0 mm interval, where it landed exactly on
-    the requirement. At 47.0 it fails by 4.0 mm again. Kept because a later
-    edit flipping the mounting would otherwise pass silently.
+    The fan lives in POD_PI since the split, so this now tests that pocket.
     """
     register = _register()
     components = [
@@ -476,12 +511,12 @@ def test_internal_fan_would_break_the_blank():
         register_ref="x",
         effective_date="2026-07-26",
     )
-    assert result.body.required_thickness_mm == 51.0
-    assert result.body.verdict == VERDICT_INSUFFICIENT
-    assert result.body.margin_mm == -4.0
-    pod = next(c for c in result.cavities if c.cavity_id == "ELECTRONICS_POD")
-    assert pod.fit_ok is False
-    assert pod.derived_depth_mm == 43.0
+    pod_pi = next(c for c in result.cavities if c.cavity_id == "POD_PI")
+    assert pod_pi.derived_depth_mm == 37.0
+    assert pod_pi.floor_remaining_mm == 10.0
+    # POD_HAT still governs at 33 + 8, so the blank survives — but the Pi
+    # pocket loses 10 mm of floor, which is the cost worth seeing.
+    assert result.body.verdict == VERDICT_SUFFICIENT
 
 
 def test_every_cavity_fits_the_stated_blank():
@@ -657,28 +692,32 @@ def test_pod_relocation_removes_the_opposed_face_constraint():
     assert "owner instruction" in conflict["ruled_by"]
 
 
-def test_pod_placement_records_its_clearances_and_its_narrow_latitude():
-    """A placement is only trustworthy if its margins are written down.
+def test_pod_split_is_recorded_with_why_it_was_forced():
+    """A ruling without its reason is a note, and notes rot."""
+    conflict = next(
+        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-POD-SPLIT"
+    )
+    assert conflict["status"] == "ruled"
+    assert "NO valid position" in " ".join(conflict["sources"])
+    assert "1.381x" in " ".join(conflict["sources"])
+    assert "GPIO_RIBBON" in conflict["ruling"]
 
-    The feasible centre-x window is 24.3 mm wide because the body narrows
-    toward the tail. Recording that stops the position reading as free choice.
+
+def test_cavity_datum_offset_is_recorded_as_a_fit_not_a_measurement():
+    """dx -15, dy -50 takes four non-negotiable features from failing to passing.
+
+    It must stay flagged as derived: it shifts every cavity in the instrument,
+    so it needs confirming against the drawing rather than inheriting trust
+    from having worked once.
     """
     conflict = next(
         c for c in load_json(GEOMETRY)["conflicts"]
-        if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
+        if c["conflict_id"] == "CONF-CAVITY-DATUM"
     )
-    for marker in ("8.0 mm wall to control_cavity", "36.8 mm of spare",
-                   "61.9..86.2", "LATITUDE IS NARROW"):
-        assert marker in conflict["ruling"], marker
-
-    # Floor must still follow from the governed blank.
-    stored = load_json(GEOMETRY)
-    pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
-    assert pod["floor_remaining_mm"] == 14.0
-    assert stored["body"]["stated_thickness_mm"] - pod["derived_depth_mm"] == 14.0
-
-    # The wall figure is borrowed, not ruled, and must say so.
-    assert "has not itself been ruled" in conflict["ruling"]
+    assert conflict["status"] == "ruled"
+    assert "dx -15.0 dy -50.0" in conflict["ruling"]
+    assert "ENGINEERING FIT, not a measured datum" in conflict["ruling"]
+    assert "confirm against the CAD drawing" in conflict["ruled_by"]
 
 
 def test_x_sign_convention_is_ruled_treble_positive():

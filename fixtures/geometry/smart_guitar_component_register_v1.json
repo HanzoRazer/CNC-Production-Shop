@@ -147,28 +147,86 @@
         "confidence": "draft",
         "note": "Deliberately NOT placed in any cavity plan. The source sites it 'under Pi 5', where its 3.5 mm would fit inside the Pi's 6 mm standoff gap and consume no additional depth or plan area. That is an assumption, not a derivation, so the part is registered and left unplaced rather than modelled falsely. See conflict CONF-NVME-PLACEMENT."
       }
+    },
+    {
+      "component_id": "GPIO_RIBBON",
+      "display_name": "Pi 5 GPIO to HiFiBerry ribbon/riser",
+      "role": "Carries the I2S bus between the Pi 5 and the HiFiBerry HAT once they no longer stack",
+      "length_mm": 150.0,
+      "width_mm": 26.0,
+      "height_mm": 2.0,
+      "mounting": "floor",
+      "standoff_mm": 0.0,
+      "margin_length_mm": 0.0,
+      "margin_width_mm": 2.0,
+      "lid_clearance_mm": 3.0,
+      "consumes_cavity_depth": true,
+      "required": true,
+      "provenance": {
+        "source": "engineering_estimate",
+        "source_ref": "required by CONF-POD-LAYOUT: side-by-side placement forbids header stacking",
+        "snapshot_date": "2026-07-27",
+        "confidence": "draft",
+        "note": "length_mm 150.0 is a typical 40-way GPIO extension ribbon and is an ENGINEERING ESTIMATE, not a selected part. It is registered as a component so that pocket separation is CONSTRAINED rather than described: the derived WIRE_CHANNEL_PI_HAT length is the maximum the two pockets may be separated by, and moving them further apart fails the derivation instead of quietly stretching a cable that does not exist."
+      }
     }
   ],
   "cavity_plans": [
     {
-      "cavity_id": "ELECTRONICS_POD",
-      "description": "Rear-access electronics pod housing the Pi 5 and HiFiBerry DAC+ADC side by side, with a lid-mounted cooling fan",
+      "cavity_id": "POD_PI",
+      "description": "Rear-access pocket for the Raspberry Pi 5, with a lid-mounted cooling fan",
       "surface": "back",
       "layout": "side_by_side",
       "component_ids": [
         "PI5",
-        "HIFIBERRY_DAC_ADC",
         "FAN_40MM"
       ],
       "inter_component_margin_mm": 4.0,
       "min_floor_mm": 8.0,
-      "stated_depth_mm": 30.48,
       "provenance": {
-        "source": "vendored_snapshot",
-        "source_ref": "sg-spec smart_guitar_cavity_map.json cavities.electronics_pod",
-        "snapshot_date": "2026-07-26",
+        "source": "engineering_estimate",
+        "source_ref": "split from ELECTRONICS_POD, 2026-07-27, per CONF-POD-SPLIT",
+        "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "Layout ruled side_by_side by the owner on 2026-07-26. The source declares stacked_vertical with total_height_mm 76.0, which cannot fit any guitar-plausible blank: stacked, the assembly is 58 mm before lid clearance, against a 44.45 mm body. No stated length or width exists in any source, so both are derived. min_floor 8.0 mm is an engineering estimate awaiting structural review."
+        "note": "The one-piece 162 x 64 pod had NO valid position anywhere in the body outline once containment, rim inset and through-body voids were checked. Splitting is not a preference; it is what makes the electronics placeable at the governed body size."
+      }
+    },
+    {
+      "cavity_id": "POD_HAT",
+      "description": "Rear-access pocket for the HiFiBerry DAC+ADC, linked to POD_PI by the GPIO ribbon",
+      "surface": "back",
+      "layout": "single",
+      "component_ids": [
+        "HIFIBERRY_DAC_ADC"
+      ],
+      "inter_component_margin_mm": 0.0,
+      "min_floor_mm": 8.0,
+      "provenance": {
+        "source": "engineering_estimate",
+        "source_ref": "split from ELECTRONICS_POD, 2026-07-27, per CONF-POD-SPLIT",
+        "snapshot_date": "2026-07-27",
+        "confidence": "draft",
+        "note": "The one-piece 162 x 64 pod had NO valid position anywhere in the body outline once containment, rim inset and through-body voids were checked. Splitting is not a preference; it is what makes the electronics placeable at the governed body size."
+      }
+    },
+    {
+      "cavity_id": "WIRE_CHANNEL_PI_HAT",
+      "description": "Routed channel carrying the GPIO ribbon between POD_PI and POD_HAT",
+      "surface": "back",
+      "layout": "single",
+      "component_ids": [
+        "GPIO_RIBBON"
+      ],
+      "inter_component_margin_mm": 0.0,
+      "min_floor_mm": 8.0,
+      "stated_width_mm": 10.0,
+      "stated_depth_mm": 15.0,
+      "provenance": {
+        "source": "engineering_estimate",
+        "source_ref": "sg-spec rear_wiring_channel (10 x 15 mm) compared against a 40-way ribbon",
+        "snapshot_date": "2026-07-27",
+        "confidence": "draft",
+        "note": "The derived length of this channel IS the maximum permitted separation between POD_PI and POD_HAT. Stated dimensions are the spec's generic wiring channel, sized for discrete leads."
       }
     },
     {
@@ -420,6 +478,29 @@
       "status": "ruled",
       "ruling": "RESOLVED: +X IS TREBLE. The traced outline's convention is correct and the spec annotation is wrong \u2014 luthiers-toolbox labels a positive x_center of 36.8 as 'bass side', and that note should be disregarded wherever it appears. Corroborated independently by the trace: its bass-side voids V1 (upper_bass) and V5 (bass_lower) have centroids at negative x, and the metadata records the bass side extending 7.62 mm further, matching extents of x -128.83..121.21. CONSEQUENCE: the governed pod placement at centre x +74.0 sits on the TREBLE side as drawn, and no asymmetric feature needs mirroring.",
       "ruled_by": "owner ruling, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-POD-SPLIT",
+      "field": "cavities.electronics_pod \u2014 one pocket or two",
+      "sources": [
+        "derived: a one-piece 162 x 64 pod has NO valid position in the body outline under containment, 12.7 mm rim inset and 8.0 mm clearance from the through-body voids",
+        "derived: split into POD_PI 93 x 64 x 27 and POD_HAT 73 x 64 x 33, both place with room to spare at the governed 468.5 x 402.85 body",
+        "derived: accommodating the one-piece pod by growing the body needs 1.381x \u2014 a 556 x 647 mm, ~14 lb instrument"
+      ],
+      "status": "ruled",
+      "ruling": "SPLIT into POD_PI and POD_HAT, ruled 2026-07-27. Nothing ever required the Pi 5 and the HiFiBerry to share a cavity \u2014 side-by-side placement already forbids header stacking, so a ribbon runs between them either way. The one-piece pod was an artifact of modelling them as one side_by_side group. Splitting also drops the Pi pocket to 27 mm deep, since only the HAT needs 33. The ribbon is registered as component GPIO_RIBBON so that pocket separation is constrained rather than merely noted.",
+      "ruled_by": "owner instruction, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-CAVITY-DATUM",
+      "field": "datum for cavity y_from_top and x_center",
+      "sources": [
+        "spec cavity positions plotted against the outline's topmost point: NECK_POCKET, PU_NECK, PU_BRIDGE and BRIDGE all fall outside the body",
+        "derived: a single offset of dx -15.0, dy -50.0 mm places all four function-driven features inside the body with rim inset AND clear of the through-body voids"
+      ],
+      "status": "ruled",
+      "ruling": "The datum for y_from_top is NOT the topmost point of the outline. It sits about 50 mm below it, with the centreline about 15 mm off x = 0. The topmost point of the traced silhouette is the tip of the upper horn, which is not the body-top reference the spec measures from. This single offset is the substance of CONF-TRACE-REGISTRATION: applying it takes the four non-negotiable, scale-length-driven features from all-failing to all-passing. dx -15.0 dy -50.0 is recovered from those four features and is an ENGINEERING FIT, not a measured datum \u2014 it should be confirmed against the CAD drawing, since it shifts every cavity in the instrument.",
+      "ruled_by": "derived 2026-07-27 from the four scale-length-driven features; confirm against the CAD drawing"
     }
   ],
   "provenance": {
