@@ -48,7 +48,7 @@ GEOMETRY = FIXTURES / "smart_guitar_cavity_geometry_v1.json"
 VALIDATE = ROOT / "scripts" / "validate_smart_guitar_geometry.py"
 DOC = ROOT / "docs" / "geometry" / "SMART_GUITAR_CAVITY_GEOMETRY_V1.md"
 
-BODY_THICKNESS_MM = 44.45
+BODY_THICKNESS_MM = 51.0
 
 
 def load_json(path: Path) -> dict:
@@ -147,7 +147,7 @@ def test_side_by_side_depth_is_the_tallest_not_the_sum():
 
 
 def test_stacked_depth_sums_and_exceeds_the_smart_guitar_blank():
-    """The finding that forced the ruling: stacked is 58 mm in a 44.45 mm body."""
+    """The finding that forced the ruling: stacked is 58 mm, over any blank."""
     parts = [
         _component("PI5", 85, 56, 18, standoff=6),
         _component("HAT", 65, 56, 24, standoff=10),
@@ -236,11 +236,11 @@ def test_slack_is_reported_but_is_not_a_failure():
 
 
 def test_cavity_that_breaches_min_floor_fails_fit():
-    registry = {"BIG": _component("BIG", 50, 50, 40, standoff=0)}
+    registry = {"BIG": _component("BIG", 50, 50, 45, standoff=0)}
     plan = _plan("DEEP", ("BIG",), "single", min_floor=8.0)
     result = derive_cavity(plan, registry, BODY_THICKNESS_MM)
 
-    assert result.floor_remaining_mm == 4.45
+    assert result.floor_remaining_mm == 6.0
     assert result.fit_ok is False
     assert any("does not fit" in f for f in result.findings)
 
@@ -259,17 +259,17 @@ def test_required_thickness_is_governed_by_deepest_plus_floor():
 
     assert body.governing_cavity_id == "B"
     assert body.required_thickness_mm == 38.0
-    assert body.margin_mm == 6.45
+    assert body.margin_mm == 13.0
     assert body.verdict == VERDICT_SUFFICIENT
 
 
 def test_insufficient_blank_is_reported_with_negative_margin():
-    registry = {"DEEP": _component("DEEP", 10, 10, 40)}
+    registry = {"DEEP": _component("DEEP", 10, 10, 50)}
     derivations = [derive_cavity(_plan("B", ("DEEP",), "single"), registry, BODY_THICKNESS_MM)]
     body = derive_required_body_thickness(derivations, BODY_THICKNESS_MM)
 
-    assert body.required_thickness_mm == 48.0
-    assert body.margin_mm == -3.55
+    assert body.required_thickness_mm == 58.0
+    assert body.margin_mm == -7.0
     assert body.verdict == VERDICT_INSUFFICIENT
 
 
@@ -412,7 +412,7 @@ def test_pod_is_side_by_side_and_fits_the_specified_blank():
     assert pod["fit_ok"] is True
     assert stored["body"]["verdict"] == VERDICT_SUFFICIENT
     assert stored["body"]["governing_cavity_id"] == "ELECTRONICS_POD"
-    assert stored["body"]["margin_mm"] == 3.45
+    assert stored["body"]["margin_mm"] == 10.0
 
 
 def test_sg_spec_stated_pod_depth_is_too_shallow_for_its_own_contents():
@@ -456,15 +456,17 @@ def test_fan_venting_is_ruled_not_assumed():
 
     stored = load_json(GEOMETRY)
     assert stored["body"]["verdict"] == VERDICT_SUFFICIENT
-    assert stored["body"]["margin_mm"] == 3.45
+    assert stored["body"]["margin_mm"] == 10.0
 
 
-def test_internal_fan_would_break_the_blank():
-    """Counterfactual retained after the ruling: 51 mm against a 44.45 mm body.
+def test_internal_fan_is_exactly_viable_at_the_enlarged_blank():
+    """The enlargement changed this counterfactual's answer.
 
-    Kept deliberately. The ruling went the way the model assumed, so without
-    this the cost of the alternative would be invisible, and a later edit
-    flipping the mounting would pass silently.
+    At the original 44.45 mm blank an internally mounted fan failed by
+    6.55 mm. At the ruled 51.0 mm it lands exactly on the requirement with
+    zero margin — viable, but with nothing in hand. Kept because a later edit
+    flipping the mounting would otherwise pass silently, and because zero
+    margin is worth seeing rather than discovering.
     """
     register = _register()
     components = [
@@ -477,10 +479,12 @@ def test_internal_fan_would_break_the_blank():
         effective_date="2026-07-26",
     )
     assert result.body.required_thickness_mm == 51.0
-    assert result.body.verdict == VERDICT_INSUFFICIENT
-    assert result.body.margin_mm == -6.55
+    assert result.body.verdict == VERDICT_SUFFICIENT
+    assert result.body.margin_mm == 0.0
     pod = next(c for c in result.cavities if c.cavity_id == "ELECTRONICS_POD")
-    assert pod.fit_ok is False
+    assert pod.fit_ok is True
+    assert pod.derived_depth_mm == 43.0
+    assert pod.floor_remaining_mm == 8.0
 
 
 def test_every_cavity_fits_the_stated_blank():
@@ -649,22 +653,22 @@ def test_opposed_face_web_is_quantified_and_fails():
     min_web = 8.0
     web = thickness - bridge_route_depth - pod["derived_depth_mm"]
 
-    assert web == pytest.approx(-7.55)
+    assert web == pytest.approx(-1.0)
     assert web < min_web
     assert web < 0, "negative web means the cavities intersect, not merely crowd"
-    assert min_web - web == pytest.approx(15.55)
+    assert min_web - web == pytest.approx(9.0)
 
-    # Neither dimension can absorb it.
+    # The enlargement narrowed the gap but did not close it.
     assert bridge_route_depth + pod["derived_depth_mm"] + min_web == pytest.approx(60.0)
-    assert thickness - bridge_route_depth - min_web == pytest.approx(17.45)
+    assert thickness - bridge_route_depth - min_web == pytest.approx(24.0)
 
     conflict = next(
         c for c in stored["conflicts"] if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
     )
-    assert "QUANTIFIED, and it fails" in conflict["ruling"]
-    assert "-7.55" in conflict["ruling"]
+    assert "still fails after the thickness enlargement" in conflict["ruling"]
+    assert "-1.0" in conflict["ruling"]
     assert "ROBUST TO ORIENTATION" in conflict["ruling"]
-    assert "min_web ruled at 8.0" in conflict["ruled_by"]
+    assert "min_web ruled 8.0" in conflict["ruled_by"]
 
 
 def test_opposed_face_web_stays_open_as_a_placement_decision():
@@ -679,11 +683,13 @@ def test_opposed_face_web_stays_open_as_a_placement_decision():
         c for c in stored["conflicts"] if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
     )
     assert conflict["status"] == "unresolved"
-    assert "design decision, not a derivation" in conflict["ruling"]
+    assert "Plan separation is the only viable fix" in conflict["ruling"]
     assert "SMART-GUITAR-PLAN-COLLISION-1" in conflict["ruled_by"]
 
     # The viable direction must be recorded, not just the failure.
     assert "148.5 mm of tail" in conflict["ruling"]
+    # And that the enlargement fixed the spec-native failures but not this one.
+    assert "NOT POD-SPECIFIC" in conflict["ruling"]
 
     pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
     assert pod["derived_depth_mm"] + 19.0 > stored["body"]["stated_thickness_mm"]

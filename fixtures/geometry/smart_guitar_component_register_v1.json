@@ -5,21 +5,21 @@
   "units": "mm",
   "body": {
     "body_id": "SMART-GUITAR-BODY-BLANK-V1",
-    "description": "Smart Guitar body blank, Explorer-derived ergonomic solidbody. Official CAD length 468.5 mm; width disputed (see CONF-BODY-WIDTH). Only thickness is consumed by this record.",
-    "stated_thickness_mm": 44.45,
+    "description": "Smart Guitar body blank, Explorer-derived ergonomic solidbody. Official CAD length 468.5 mm, derived width 402.85 mm. Thickness ENLARGED to 51.0 mm to clear the opposed-face web failures (see CONF-BODY-THICKNESS).",
+    "stated_thickness_mm": 51.0,
     "provenance": {
       "source": "vendored_snapshot",
       "source_ref": "luthiers-toolbox smart_guitar_v1.json v1.1 body.dimensions.thickness_mm",
       "snapshot_date": "2026-07-26",
       "confidence": "draft",
-      "note": "1.75 in. Agrees with sg-spec cavity map body_geometry.dimensions.thickness_in, so not in conflict."
+      "note": "Thickness enlarged from 44.45 mm to 51.0 mm by owner instruction on 2026-07-26 to resolve opposed-face web violations. 51.0 is the binding requirement from antenna_recess (24) against neck_pickup_route (19) at min_web 8.0. Length and width are carried for reference and are consumed by no derivation here."
     }
   },
   "components": [
     {
       "component_id": "PI5",
       "display_name": "Raspberry Pi 5 (8 GB)",
-      "role": "Linux music brain — JACK + Guitarix/MODEP effects host",
+      "role": "Linux music brain \u2014 JACK + Guitarix/MODEP effects host",
       "length_mm": 85.0,
       "width_mm": 56.0,
       "height_mm": 18.0,
@@ -63,7 +63,7 @@
     {
       "component_id": "TEENSY_4_1",
       "display_name": "Teensy 4.1",
-      "role": "I/O coprocessor — footswitches, pots, LEDs, BMS telemetry, relay bypass. No audio path.",
+      "role": "I/O coprocessor \u2014 footswitches, pots, LEDs, BMS telemetry, relay bypass. No audio path.",
       "length_mm": 61.0,
       "width_mm": 18.0,
       "height_mm": 3.0,
@@ -155,7 +155,11 @@
       "description": "Rear-access electronics pod housing the Pi 5 and HiFiBerry DAC+ADC side by side, with a lid-mounted cooling fan",
       "surface": "back",
       "layout": "side_by_side",
-      "component_ids": ["PI5", "HIFIBERRY_DAC_ADC", "FAN_40MM"],
+      "component_ids": [
+        "PI5",
+        "HIFIBERRY_DAC_ADC",
+        "FAN_40MM"
+      ],
       "inter_component_margin_mm": 4.0,
       "min_floor_mm": 8.0,
       "stated_depth_mm": 30.48,
@@ -172,7 +176,9 @@
       "description": "Rear-access pocket for the Teensy 4.1 I/O coprocessor, sited near the neck pickup for a short analog lead",
       "surface": "back",
       "layout": "single",
-      "component_ids": ["TEENSY_4_1"],
+      "component_ids": [
+        "TEENSY_4_1"
+      ],
       "inter_component_margin_mm": 0.0,
       "min_floor_mm": 8.0,
       "stated_length_mm": 70.0,
@@ -191,7 +197,9 @@
       "description": "Chamber for the 4x 18650 pack and BMS, with power routed to the pod via the spine channel",
       "surface": "back",
       "layout": "single",
-      "component_ids": ["BATTERY_PACK"],
+      "component_ids": [
+        "BATTERY_PACK"
+      ],
       "inter_component_margin_mm": 0.0,
       "min_floor_mm": 8.0,
       "stated_depth_mm": 30.48,
@@ -225,7 +233,7 @@
         "no source states whether the fan body sits inside the cavity or protrudes through the cover"
       ],
       "status": "ruled",
-      "ruling": "RESOLVED: the fan vents OUTWARD through the lid and consumes no cavity depth. This confirms the configuration already modelled, so no derived dimension changes — but it converts the body-thickness verdict from provisional to settled. Required thickness stays 41.0 mm against the 44.45 mm blank, a real 3.45 mm margin. The counterfactual is retained in test_internal_fan_would_break_the_blank: an internally mounted fan would demand 51.0 mm and fail the specified body by 6.55 mm. The lid requires vents, per the source note.",
+      "ruling": "RESOLVED: the fan vents OUTWARD through the lid and consumes no cavity depth. This confirms the configuration already modelled, so no derived dimension changes \u2014 but it converts the body-thickness verdict from provisional to settled. Required thickness stays 41.0 mm against the 44.45 mm blank, a real 3.45 mm margin. The counterfactual is retained in test_internal_fan_would_break_the_blank: an internally mounted fan would demand 51.0 mm and fail the specified body by 6.55 mm. The lid requires vents, per the source note.",
       "ruled_by": "owner ruling, 2026-07-26"
     },
     {
@@ -248,7 +256,7 @@
       ],
       "status": "unresolved",
       "ruling": "Pack dimensions taken from sg-spec. Plan position left unresolved: sg-spec sites the battery in a bass chamber, but the body was ruled a solid Explorer-derived blank with through-body ergonomic voids rather than internal chambers. Depth and footprint hold either way; position does not.",
-      "ruled_by": "unresolved — depends on whether the body is chambered"
+      "ruled_by": "unresolved \u2014 depends on whether the body is chambered"
     },
     {
       "conflict_id": "CONF-NVME-PLACEMENT",
@@ -259,7 +267,7 @@
       ],
       "status": "unresolved",
       "ruling": "Registered but not placed. Sitting it in the Pi's 6 mm standoff gap is plausible and would add no depth, but nothing in either source establishes it. Left out of the derivation rather than assumed into it.",
-      "ruled_by": "unresolved — needs mechanical confirmation"
+      "ruled_by": "unresolved \u2014 needs mechanical confirmation"
     },
     {
       "conflict_id": "CONF-HIZ-SPLITTER-DIMS",
@@ -270,7 +278,7 @@
       ],
       "status": "unresolved",
       "ruling": "Omitted from the register entirely rather than given invented dimensions. A required in-body component with no known size is a genuine gap, and the derived pod footprint is therefore a LOWER BOUND.",
-      "ruled_by": "unresolved — component not yet selected"
+      "ruled_by": "unresolved \u2014 component not yet selected"
     },
     {
       "conflict_id": "CONF-USB-INTERFACE-LOCATION",
@@ -281,7 +289,7 @@
       ],
       "status": "unresolved",
       "ruling": "Treated as EXTERNAL to the instrument and excluded from the register. The canonical signal chain implies it is in the audio path but never states whether it is onboard. If it must be onboard, the named parts are impossible and a different Hi-Z front end is required.",
-      "ruled_by": "unresolved — architecture decision required"
+      "ruled_by": "unresolved \u2014 architecture decision required"
     },
     {
       "conflict_id": "CONF-FRET-COUNT",
@@ -315,7 +323,7 @@
       ],
       "status": "unresolved",
       "ruling": "INTRA-FILE contradiction, not a cross-repo one: a single file names dual humbuckers in its hardware block and a P90 in its own canonical signal chain. sg-spec contains no P90 reference at all. Not resolved here because it does not affect electronics cavity geometry, but it decides pickup route dimensions and pickup cost downstream.",
-      "ruled_by": "unresolved — deferred to the budget model"
+      "ruled_by": "unresolved \u2014 deferred to the budget model"
     },
     {
       "conflict_id": "CONF-PICKUP-ROUTE-DIMS",
@@ -326,7 +334,7 @@
       ],
       "status": "unresolved",
       "ruling": "Both sources agree the pickups are humbuckers and disagree on the route by 10 mm of length, 2 mm of width, and 1 mm of corner radius. Unresolvable until CONF-PICKUP-TYPE is settled, since a P90 route is a different size again. Pickup routes are deliberately NOT modelled in this register, so this conflict is recorded rather than derived away.",
-      "ruled_by": "unresolved — blocked on CONF-PICKUP-TYPE"
+      "ruled_by": "unresolved \u2014 blocked on CONF-PICKUP-TYPE"
     },
     {
       "conflict_id": "CONF-BODY-WIDTH",
@@ -338,7 +346,7 @@
       ],
       "status": "ruled",
       "ruling": "Stated width 368.3 mm is the outlier and is treated as stale. Taking the official CAD length with the traced topology gives a single uniform scale k = 468.5/290.79 = 1.611128 and a derived width of 402.85 mm, against which the stated 368.3 mm is 34.55 mm (9.38%) short. The cross-check is decisive: trusting the stated width instead derives a body length of 428.32 mm, 40.18 mm short of the official CAD. Corroborated by the spec's own design_heritage.explorer.reference_body_mm of 420 x 460 mm, which the derived 402.85 x 468.5 resembles and the stated 368.3 x 444.5 does not. Note also that 368.3, 444.5, and 438.15 are all exact round inch values (14.50, 17.50, 17.25) which read as assumptions, while 468.5 (18.44 in) is not and reads as measured. DERIVED WIDTH 402.85 mm IS A PREDICTION, not a measurement: it must be verified against a physical blank in SMART-GUITAR-PLAN-COLLISION-1 phase 1.",
-      "ruled_by": "owner ruling, 2026-07-26. CORROBORATED INDEPENDENTLY: the owner's own separate calculation also arrives at 402.85 mm, so the figure no longer rests solely on the traced aspect ratio. The official CAD declares no width — the drawing is on hold and will produce a comparable width according to shape — so 402.85 mm stands as the governed derived width. CONF-TRACE-REGISTRATION concerns void POSITIONS and does not impugn the silhouette aspect; the two are separable claims."
+      "ruled_by": "owner ruling, 2026-07-26. CORROBORATED INDEPENDENTLY: the owner's own separate calculation also arrives at 402.85 mm, so the figure no longer rests solely on the traced aspect ratio. The official CAD declares no width \u2014 the drawing is on hold and will produce a comparable width according to shape \u2014 so 402.85 mm stands as the governed derived width. CONF-TRACE-REGISTRATION concerns void POSITIONS and does not impugn the silhouette aspect; the two are separable claims."
     },
     {
       "conflict_id": "CONF-LENGTH-DATUM",
@@ -361,20 +369,43 @@
         "trace provenance: 'hand-traced from AI render back view, 2026-03-26'"
       ],
       "status": "unresolved",
-      "ruling": "SCOPE: this concerns the trace's internal VOID POSITIONS only. It does NOT impugn the traced silhouette's aspect ratio, which is independently corroborated under CONF-BODY-WIDTH. The two are separable: an AI render can place voids decoratively while the outline proportion it was traced from remains faithful. FINDING: the trace's V4 and V6 cannot be reconciled with the spec's cavity positions by any similarity transform. V4 sits higher than the spec expects while V6 sits lower — opposite directions, so no single scale or offset fits, and the X sign disagrees too. The trace's own provenance explains it: an AI render's voids are drawn, not dimensioned. CONSEQUENCE: the outline-to-spec frame transform is deterministic once body length is known and needs no landmarks, but V4 and V6 were the only landmarks available to VERIFY it, so that alignment stays unverified. Mitigation: use the trace for the body silhouette and the through-body voids V1, V2, V3, V5 only, and take every cavity position from the spec. Never read a cavity position out of the trace.",
-      "ruled_by": "unresolved — frame alignment is unverifiable until a dimensioned CAD outline exists; residual risk, not a blocker"
+      "ruling": "SCOPE: this concerns the trace's internal VOID POSITIONS only. It does NOT impugn the traced silhouette's aspect ratio, which is independently corroborated under CONF-BODY-WIDTH. The two are separable: an AI render can place voids decoratively while the outline proportion it was traced from remains faithful. FINDING: the trace's V4 and V6 cannot be reconciled with the spec's cavity positions by any similarity transform. V4 sits higher than the spec expects while V6 sits lower \u2014 opposite directions, so no single scale or offset fits, and the X sign disagrees too. The trace's own provenance explains it: an AI render's voids are drawn, not dimensioned. CONSEQUENCE: the outline-to-spec frame transform is deterministic once body length is known and needs no landmarks, but V4 and V6 were the only landmarks available to VERIFY it, so that alignment stays unverified. Mitigation: use the trace for the body silhouette and the through-body voids V1, V2, V3, V5 only, and take every cavity position from the spec. Never read a cavity position out of the trace.",
+      "ruled_by": "unresolved \u2014 frame alignment is unverifiable until a dimensioned CAD outline exists; residual risk, not a blocker"
     },
     {
       "conflict_id": "CONF-OPPOSED-FACE-WEB",
       "field": "top pickup routes vs back electronics pod, combined depth",
       "sources": [
         "luthiers-toolbox smart_guitar_v1.json: bridge_pickup_route 19.0 mm deep on the TOP face at y_from_top 294.6, x_center 0.0",
-        "luthiers-toolbox smart_guitar_v1.json: rear_electronics_cavity 22.0 mm deep on the BACK face at y_from_top 275.7, x_center 36.8 — the two overlap in plan on these stated positions",
+        "luthiers-toolbox smart_guitar_v1.json: rear_electronics_cavity 22.0 mm deep on the BACK face at y_from_top 275.7, x_center 36.8 \u2014 the two overlap in plan on these stated positions",
         "derived: this register's side-by-side pod is 33.0 mm deep and 162.0 mm long, deeper and far longer than the 95 x 65 x 22 mm cavity those positions were checked against"
       ],
       "status": "unresolved",
-      "ruling": "QUANTIFIED, and it fails. With min_web ruled at 8.0 mm (owner, 2026-07-26, matching the floor minimum): web = 44.45 - 19.0 (bridge route, top face) - 33.0 (pod, back face) = -7.55 mm against a required 8.0 mm, short by 15.55 mm. The web is NEGATIVE, so the two cavities physically intersect by 7.55 mm rather than merely violating a margin. ROBUST TO ORIENTATION: the overlap occurs in all three placements tested at the stated position — the stated 95x65 cavity (41.7 x 40.0 mm of overlap), the derived pod laid 162 along Y (41.2 x 40.0), and laid 162 across X (90.2 x 33.1) — so the conclusion does not depend on which cavity dimension runs along which axis. NEITHER DIMENSION CAN ABSORB IT: passing would need a 60.0 mm blank, or a 17.5 mm pod when the HiFiBerry alone demands 30 mm. Plan separation is the only viable fix. VIABLE DIRECTION: the bridge sits at y_from_top 320.0 and the body is now 468.5 long, leaving 148.5 mm of tail; the pod needs 64 mm in Y if laid 162 across X, which fits below the bridge with 84.5 mm spare before rim inset. The 24 mm tail extension ruled under CONF-LENGTH-DATUM is what creates that room. Still unresolved because choosing the placement is a design decision, not a derivation.",
-      "ruled_by": "unresolved — min_web ruled at 8.0 mm; placement decision belongs to SMART-GUITAR-PLAN-COLLISION-1. NOT POD-SPECIFIC: a full sweep at min_web 8.0 finds six of nine overlapping opposed-face pairs failing, and FOUR of those involve only spec-native cavities with no derived pod in the pair — neck_pickup_route x antenna_recess (web 1.45), bridge_pickup_route x rear_electronics_cavity (3.45), bridge_pickup_route x control_cavity (5.45), and neck_pickup_route x teensy_io_pocket (5.45). The derived pod did not break the design; the design was already unbuildable and the derivation exposed it. Relocating the pod alone leaves four violations standing."
+      "ruling": "QUANTIFIED, and it still fails after the thickness enlargement. At the ruled 51.0 mm blank with min_web 8.0: web = 51.0 - 19.0 (bridge route, top face) - 33.0 (pod, back face) = -1.0 mm against a required 8.0 mm, short by 9.0 mm. The web remains NEGATIVE, so the cavities still physically intersect, by 1.0 mm. Passing by thickness alone would need a 60.0 mm blank. ROBUST TO ORIENTATION: the overlap occurs in all three placements tested at the stated position \u2014 the stated 95x65 cavity, the derived pod laid 162 along Y, and laid 162 across X \u2014 so the conclusion does not depend on which cavity dimension runs along which axis. Plan separation is the only viable fix. VIABLE DIRECTION: the bridge sits at y_from_top 320.0 and the body is 468.5 long, leaving 148.5 mm of tail; the pod needs 64 mm in Y if laid 162 across X, fitting below the bridge with 84.5 mm spare before rim inset. The band between the two pickup routes (y 187.6-274.6, 87.0 mm) also accommodates it. NOT POD-SPECIFIC: at the original 44.45 mm blank a full sweep found six of nine overlapping opposed pairs failing, four of them involving only spec-native cavities. The 51.0 mm enlargement cleared those four; the pod is what remains.",
+      "ruled_by": "unresolved \u2014 min_web ruled 8.0 and blank enlarged to 51.0; the pod placement decision belongs to SMART-GUITAR-PLAN-COLLISION-1"
+    },
+    {
+      "conflict_id": "CONF-BODY-THICKNESS",
+      "field": "body.dimensions.thickness_mm",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json and sg-spec cavity map: 44.45 mm (1.75 in), previously agreed by both",
+        "derived: at 44.45 mm, four opposed-face pairs of SPEC-NATIVE cavities breach min_web 8.0 \u2014 antenna_recess x neck_pickup_route (web 1.45), rear_electronics_cavity x bridge_pickup_route (3.45), control_cavity x bridge_pickup_route (5.45), teensy_io_pocket x neck_pickup_route (5.45)"
+      ],
+      "status": "ruled",
+      "ruling": "ENLARGED to 51.0 mm by owner instruction, 2026-07-26. 51.0 is the binding requirement: antenna_recess (24) + neck_pickup_route (19) + min_web (8) = 51.0. At 51.0 all four spec-native web failures clear, with margins of 8.0, 10.0, 12.0 and 12.0. The derived ELECTRONICS_POD at 33.0 deep still fails against a 19 mm pickup route (web -1.0, needs 60.0) and must be RELOCATED rather than accommodated by thickness. CONSEQUENCES: body weight rises from an estimated 7.5 lb to 8.61 lb (+14.7%); pod floor remaining improves from 11.45 to 18.00 mm; sg-spec's max_hollow_depth of 30.48 was set against a 44.45 blank and scales to 34.97, which the 33.0 pod would satisfy, so C9 needs restating against the new thickness rather than assuming it still binds; and the internal-fan counterfactual becomes exactly viable at 51.0 (margin 0.00) where it previously failed by 6.55. LOWER ALTERNATIVE: if CONF-ANTENNA-PARENT resolves in favour of the antenna's own stated parent cavity, the antenna relocates with the pod and the binding requirement drops to 47.0 mm, saving roughly 0.7 lb.",
+      "ruled_by": "owner instruction, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-ANTENNA-PARENT",
+      "field": "cavities.antenna_recess.parent_cavity vs its body_position_mm",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json antenna_recess: 'Stepped shelf milled into floor of rear_electronics_cavity', parent_cavity 'rear_electronics_cavity', with a 2 mm RF window",
+        "luthiers-toolbox smart_guitar_v1.json antenna_recess body_position_mm: x 22.2, y_from_top 202.6, giving a y extent of at most 177.6-227.6",
+        "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity: y_from_top 275.7, length 95, giving a y extent of 228.2-323.2"
+      ],
+      "status": "unresolved",
+      "ruling": "The antenna is declared a shelf INSIDE the rear electronics cavity but is positioned OUTSIDE it \u2014 the two y extents do not intersect, missing by 0.6 mm at closest. This matters because the antenna is the binding constraint on body thickness. If its stated parent cavity is correct, its position is wrong, it relocates with the pod, and the required blank drops from 51.0 to 47.0 mm. If its position is correct, it is a free-standing recess and 51.0 stands. Also note the RF premise: the design intends a 2 mm wood window, and at 44.45 mm thickness only 1.45 mm separated it from the neck pickup route floor, so the window was effectively the pickup cavity.",
+      "ruled_by": "unresolved \u2014 decides 51.0 vs 47.0 mm of blank"
     }
   ],
   "provenance": {

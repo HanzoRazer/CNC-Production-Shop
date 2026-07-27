@@ -58,21 +58,23 @@ riser between the Pi 5 GPIO header and the HAT instead of direct stacking.
 
 ## Derived geometry
 
-Body blank 44.45 mm. All dimensions in mm.
+Body blank **51.0 mm** (enlarged from 44.45, see `CONF-BODY-THICKNESS`). All dimensions in mm.
 
 | Cavity | Layout | Derived L × W × D | Stated D | Floor left | Fits |
 |---|---|---|---:|---:|:--:|
-| `ELECTRONICS_POD` | side_by_side | 162.0 × 64.0 × 33.0 | 30.48 | 11.45 | yes |
-| `TEENSY_IO_POCKET` | single | 70.0 × 25.0 × 11.5 | 20.0 | 32.95 | yes |
-| `BATTERY_CHAMBER` | single | 90.0 × 55.0 × 21.0 | 30.48 | 23.45 | yes |
+| `ELECTRONICS_POD` | side_by_side | 162.0 × 64.0 × 33.0 | 30.48 | 18.00 | yes |
+| `TEENSY_IO_POCKET` | single | 70.0 × 25.0 × 11.5 | 20.0 | 39.50 | yes |
+| `BATTERY_CHAMBER` | single | 90.0 × 55.0 × 21.0 | 30.48 | 30.00 | yes |
 
 ```text
 required blank thickness   41.0 mm   (governed by ELECTRONICS_POD: 33.0 + 8.0)
-stated blank thickness     44.45 mm
-margin                      3.45 mm  -> SUFFICIENT
+stated blank thickness     51.0 mm   (enlarged from 44.45)
+margin                     10.0 mm  -> SUFFICIENT
 ```
 
-The specified body works, side by side, with 3.45 mm to spare.
+The blank works side by side with 10.0 mm to spare. It was enlarged to 51.0 not for
+the pod, which already fitted, but to clear four opposed-face web failures among
+the spec's own cavities.
 
 ## Findings
 
@@ -93,13 +95,19 @@ of 4.5 mm on length and 3.5 mm on width give 70.0 × 25.0 exactly. A test locks
 this, because an exact reproduction is the evidence that the derivation rules
 match how the original dimensions were actually arrived at.
 
-**4. The fan mounting decided whether the body worked at all, and it went the
-right way.** Ruled 2026-07-26: the 40 mm fan vents outward through the cover
-and consumes no cavity depth. Had it been mounted internally, required
-thickness would be 51.0 mm and the specified 44.45 mm body would **fail by
-6.55 mm**. The counterfactual is retained under test — the ruling confirmed the
-model, so without it the cost of the alternative would be invisible and a later
-edit flipping the mounting would pass silently.
+**4. The fan mounting was decisive at 44.45 mm, and the enlargement overtook
+it.** Ruled 2026-07-26: the fan vents outward and consumes no cavity depth. At
+the original blank an internal fan would have required 51.0 mm and failed by
+6.55 mm. At the enlarged 51.0 mm blank it lands **exactly** on the requirement
+with zero margin — viable, but with nothing in hand. The counterfactual is
+retained under test.
+
+**6. The blank was enlarged for the spec's cavities, not for the pod.** At
+44.45 mm, four opposed-face pairs of *spec-native* cavities breached the 8.0 mm
+web minimum — worst was the antenna recess at 1.45 mm against the neck pickup
+route. Enlarging to 51.0 mm clears all four, at a cost of roughly 15% body
+weight (7.5 lb → 8.61 lb estimated). The pod still fails at −1.0 mm and must be
+relocated; thickness alone would need 60.0 mm.
 
 **5. The derived pod footprint is a lower bound.** The canonical signal chain
 requires an "active buffered Hi-Z 1 MOhm" splitter that has no dimensions
@@ -108,7 +116,7 @@ larger than 162 × 64 mm by however much that part needs.
 
 ## Reconciliation record
 
-Fifteen conflicts found: seven ruled, eight open. Recorded in the register and
+Seventeen conflicts found: eight ruled, nine open. Recorded in the register and
 propagated verbatim into the derived record, with a test enforcing that they
 match, so a reviewer reading only the derived file cannot see fewer conflicts
 than exist.

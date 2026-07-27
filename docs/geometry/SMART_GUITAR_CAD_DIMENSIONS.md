@@ -20,7 +20,7 @@ All dimensions **mm**. Origin for positions: **body top (neck end)** for `y`,
 |---|---:|---|
 | Length | **468.5** | Official CAD, ruled 2026-07-26 |
 | Width (max) | **402.85** | Derived at k = 1.611128 from traced aspect; independently corroborated |
-| Thickness | **44.45** | Both sources agree |
+| Thickness | **51.0** | ENLARGED from 44.45 to clear four spec-native web failures |
 | Half-width | 201.43 | |
 
 Growth of +24.0 from the previous 444.5 sits **at the tail, below the bridge**,
@@ -44,11 +44,11 @@ in either source spec.
 
 | Cavity | Length | Width | Depth | Floor left | Fits blank |
 |---|---:|---:|---:|---:|:--:|
-| `ELECTRONICS_POD` | **162.0** | **64.0** | **33.0** | 11.45 | yes |
-| `TEENSY_IO_POCKET` | **70.0** | **25.0** | **11.5** | 32.95 | yes |
-| `BATTERY_CHAMBER` | **90.0** | **55.0** | **21.0** | 23.45 | yes |
+| `ELECTRONICS_POD` | **162.0** | **64.0** | **33.0** | 18.0 | yes |
+| `TEENSY_IO_POCKET` | **70.0** | **25.0** | **11.5** | 39.5 | yes |
+| `BATTERY_CHAMBER` | **90.0** | **55.0** | **21.0** | 30.0 | yes |
 
-Required blank thickness **41.0** (governed by `ELECTRONICS_POD`), against 44.45 — margin **3.45**.
+Required blank thickness **41.0** (governed by `ELECTRONICS_POD`), against 51.0 — margin **10.0**.
 
 ### Contents and internal clearances
 
@@ -91,14 +91,14 @@ Positions carried from the spec. Sizes here are the spec's own, *not* derived.
 ### 5.1 The electronics pod collides with the bridge pickup route
 
 ```text
-web = 44.45 − 19.0 (bridge route, TOP) − 33.0 (pod, BACK) = −7.55 mm
-required ≥ 8.0                                FAIL, short by 15.55
+web = 51.0 − 19.0 (bridge route, TOP) − 33.0 (pod, BACK) = -1.00 mm
+required ≥ 8.0                                FAIL, short by 9.00
 ```
 
-Negative web means the two cavities **physically intersect by 7.55 mm**.
+Negative web means the two cavities **physically intersect by 1.00 mm**.
 The overlap occurs in every orientation tested, so it does not depend on how
 the pod is turned. Neither thickness nor depth can absorb it: passing would
-need a 60.0 blank, or a 17.5 pod when the HiFiBerry alone demands 30.
+need a 60.0 blank, or a 24.0 pod when the HiFiBerry alone demands 30.
 
 **The pod must move.** The bridge sits at y 320.0 and the body is now 468.5
 long, leaving **148.5 of tail**. Laid 162 across X, the pod needs 64 in Y and
@@ -107,8 +107,11 @@ fits below the bridge with 84.5 spare before rim inset.
 ### 5.2 The pod exceeds the maximum hollow depth
 
 Derived depth **33.0** against sg-spec's `max_hollow_depth` of **30.48** —
-over by 2.52. Moving it does not help. Either relax the constraint or find a
-shallower assembly; the current stack is already at its floor.
+over by 2.52. Moving it does not help.
+
+Note the constraint was set against a 44.45 blank. Scaled to 51.0, it becomes
+**34.97**, which 33.0 satisfies. Restate the limit against the new
+thickness rather than assuming it still binds.
 
 ### 5.3 The USB-C port sits outside the body
 
