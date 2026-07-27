@@ -288,9 +288,9 @@
         "traced outline smart_guitar_back_v1.json coordinate_system: 'body_center_origin \u2014 X+ treble, Y+ toward neck', corroborated by its own metadata note that the bass side extends 7.62 mm further and by trace extents x -128.83..121.21",
         "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity.body_position_mm.notes: 'Offset right (bass side)' for a POSITIVE x_center of 36.8, which under the trace convention is the treble side"
       ],
-      "status": "unresolved",
-      "ruling": "The two sources disagree on which side positive x denotes. Under the trace convention (+X treble, independently corroborated by the bass overhang and the bass-side void centroids at negative x), a stated x_center of +36.8 is TREBLE, but the spec annotates it 'bass side'. This is the mirror risk: getting it wrong flips every asymmetric feature while still looking plausible, because the body is only 7.62 mm wider on one side overall. THE GOVERNED POD PLACEMENT (centre x +74.0) IS EXPRESSED IN THE TRACE CONVENTION and therefore sits on the TREBLE side. If the spec's annotation is right and the conventions are mirrored, the pod centre is -74.0 and every other x_center flips with it.",
-      "ruled_by": "unresolved \u2014 must be settled before any asymmetric feature is cut"
+      "status": "ruled",
+      "ruling": "RESOLVED: +X IS TREBLE. The traced outline's convention is correct and the spec annotation is wrong \u2014 luthiers-toolbox labels a positive x_center of 36.8 as 'bass side', and that note should be disregarded wherever it appears. Corroborated independently by the trace: its bass-side voids V1 (upper_bass) and V5 (bass_lower) have centroids at negative x, and the metadata records the bass side extending 7.62 mm further, matching extents of x -128.83..121.21. CONSEQUENCE: the governed pod placement at centre x +74.0 sits on the TREBLE side as drawn, and no asymmetric feature needs mirroring.",
+      "ruled_by": "owner ruling, 2026-07-27"
     }
   ],
   "calculation": {

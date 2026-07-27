@@ -504,7 +504,6 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
         "CONF-PICKUP-TYPE",
         "CONF-PICKUP-ROUTE-DIMS",
         "CONF-TRACE-REGISTRATION",
-        "CONF-X-SIGN-CONVENTION",
     } <= unresolved
 
 
@@ -676,21 +675,23 @@ def test_pod_placement_records_its_clearances_and_its_narrow_latitude():
     assert "has not itself been ruled" in conflict["ruling"]
 
 
-def test_x_sign_convention_is_flagged_before_any_asymmetric_cut():
-    """The mirror risk, now that the pod has an asymmetric position.
+def test_x_sign_convention_is_ruled_treble_positive():
+    """+X is treble; the spec's 'bass side' annotation is wrong.
 
-    The trace says +X is treble; the spec annotates a positive x_center as
-    'bass side'. With the pod at x +74.0 that disagreement decides which half
-    of the instrument it is cut into.
+    This decided which half of the instrument the pod is cut into, so the
+    ruling and its corroboration are pinned rather than left to memory.
     """
     conflict = next(
         c for c in load_json(GEOMETRY)["conflicts"]
         if c["conflict_id"] == "CONF-X-SIGN-CONVENTION"
     )
-    assert conflict["status"] == "unresolved"
-    assert "TREBLE side" in conflict["ruling"]
-    assert "-74.0" in conflict["ruling"]
-    assert "before any asymmetric feature is cut" in conflict["ruled_by"]
+    assert conflict["status"] == "ruled"
+    assert "+X IS TREBLE" in conflict["ruling"]
+    assert "spec annotation is wrong" in conflict["ruling"]
+    # Corroboration matters more than the ruling: bass voids sit at negative x.
+    assert "V1 (upper_bass) and V5 (bass_lower)" in conflict["ruling"]
+    assert "no asymmetric feature needs mirroring" in conflict["ruling"]
+    assert "owner ruling" in conflict["ruled_by"]
 
 
 def test_ruled_conflicts_name_who_ruled_them():
