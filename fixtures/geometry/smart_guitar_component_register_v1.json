@@ -1,0 +1,337 @@
+{
+  "register_id": "SMART-GUITAR-COMPONENT-REGISTER-V1",
+  "product_ref": "external:luthiers-toolbox/services/api/app/instrument_geometry/body/specs/smart_guitar_v1.json@v1.1",
+  "status": "draft",
+  "units": "mm",
+  "body": {
+    "body_id": "SMART-GUITAR-BODY-BLANK-V1",
+    "description": "Smart Guitar body blank, Explorer-derived ergonomic solidbody, 444.5 x 368.3 mm",
+    "stated_thickness_mm": 44.45,
+    "provenance": {
+      "source": "vendored_snapshot",
+      "source_ref": "luthiers-toolbox smart_guitar_v1.json v1.1 body.dimensions.thickness_mm",
+      "snapshot_date": "2026-07-26",
+      "confidence": "draft",
+      "note": "1.75 in. Agrees with sg-spec cavity map body_geometry.dimensions.thickness_in, so not in conflict."
+    }
+  },
+  "components": [
+    {
+      "component_id": "PI5",
+      "display_name": "Raspberry Pi 5 (8 GB)",
+      "role": "Linux music brain — JACK + Guitarix/MODEP effects host",
+      "length_mm": 85.0,
+      "width_mm": 56.0,
+      "height_mm": 18.0,
+      "mounting": "floor",
+      "standoff_mm": 6.0,
+      "margin_length_mm": 4.0,
+      "margin_width_mm": 4.0,
+      "lid_clearance_mm": 3.0,
+      "consumes_cavity_depth": true,
+      "required": true,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.pi5",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "Height 18.0 per sg-spec, which the owner ruled canonical. luthiers-toolbox states 17.0 for the same board; see conflict CONF-PI5-HEIGHT. lid_clearance 3.0 mm is an engineering estimate for cable dressing, not a sourced value."
+      }
+    },
+    {
+      "component_id": "HIFIBERRY_DAC_ADC",
+      "display_name": "HiFiBerry DAC+ADC",
+      "role": "Audio I/O, 24-bit 48-96 kHz, I2S",
+      "length_mm": 65.0,
+      "width_mm": 56.0,
+      "height_mm": 24.0,
+      "mounting": "floor",
+      "standoff_mm": 6.0,
+      "margin_length_mm": 4.0,
+      "margin_width_mm": 4.0,
+      "lid_clearance_mm": 3.0,
+      "consumes_cavity_depth": true,
+      "required": true,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.hifiberry_dac_adc",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "standoff_mm is 6.0, NOT the 10.0 in the source. The source value was a stacking standoff for mounting this HAT on the Pi 5 header; under the ruled side-by-side layout it is floor-mounted like the Pi. Requires a ribbon or riser to the Pi 5 GPIO header rather than direct stacking."
+      }
+    },
+    {
+      "component_id": "TEENSY_4_1",
+      "display_name": "Teensy 4.1",
+      "role": "I/O coprocessor — footswitches, pots, LEDs, BMS telemetry, relay bypass. No audio path.",
+      "length_mm": 61.0,
+      "width_mm": 18.0,
+      "height_mm": 3.0,
+      "mounting": "floor",
+      "standoff_mm": 4.0,
+      "margin_length_mm": 4.5,
+      "margin_width_mm": 3.5,
+      "lid_clearance_mm": 4.5,
+      "consumes_cavity_depth": true,
+      "required": true,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.teensy_4_1",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "Anisotropic margins are back-derived from the stated 70 x 25 mm pocket: 61 + 2x4.5 = 70 and 18 + 2x3.5 = 25. The source states a single margin of 4.5, which does not reproduce the stated width. lid_clearance 4.5 mm is the source's header_clearance_mm."
+      }
+    },
+    {
+      "component_id": "BATTERY_PACK",
+      "display_name": "Battery pack + BMS (4x 18650)",
+      "role": "Power supply, USB-C PD 20 W charging",
+      "length_mm": 80.0,
+      "width_mm": 45.0,
+      "height_mm": 18.0,
+      "mounting": "floor",
+      "standoff_mm": 0.0,
+      "margin_length_mm": 5.0,
+      "margin_width_mm": 5.0,
+      "lid_clearance_mm": 3.0,
+      "consumes_cavity_depth": true,
+      "required": true,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.battery_pack",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "Pack dimensions per sg-spec. luthiers-toolbox instead lists a single 6000 mAh 18650 cell at 65 x 18.3 mm sited beside the Pi 5. See conflict CONF-BATTERY-PLACEMENT."
+      }
+    },
+    {
+      "component_id": "FAN_40MM",
+      "display_name": "40 mm cooling fan",
+      "role": "Thermal management for the Pi 5 in a closed cavity",
+      "length_mm": 40.0,
+      "width_mm": 40.0,
+      "height_mm": 10.0,
+      "mounting": "lid",
+      "standoff_mm": 0.0,
+      "margin_length_mm": 2.0,
+      "margin_width_mm": 2.0,
+      "lid_clearance_mm": 0.0,
+      "consumes_cavity_depth": false,
+      "required": true,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.fan_40mm",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "consumes_cavity_depth is false: the fan is assumed to vent OUTWARD through the cover rather than sitting inside the cavity depth. This is the single most consequential assumption in the register. If the fan must sit inside, the blank fails by 6.55 mm. No source states which. See conflict CONF-FAN-INTRUSION."
+      }
+    },
+    {
+      "component_id": "NVME_SSD",
+      "display_name": "NVMe SSD, M.2 2280, 128 GB",
+      "role": "Storage (optional)",
+      "length_mm": 80.0,
+      "width_mm": 22.0,
+      "height_mm": 3.5,
+      "mounting": "floor",
+      "standoff_mm": 0.0,
+      "margin_length_mm": 4.0,
+      "margin_width_mm": 4.0,
+      "lid_clearance_mm": 0.0,
+      "consumes_cavity_depth": false,
+      "required": false,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity.contains[NVMe SSD]",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "Deliberately NOT placed in any cavity plan. The source sites it 'under Pi 5', where its 3.5 mm would fit inside the Pi's 6 mm standoff gap and consume no additional depth or plan area. That is an assumption, not a derivation, so the part is registered and left unplaced rather than modelled falsely. See conflict CONF-NVME-PLACEMENT."
+      }
+    }
+  ],
+  "cavity_plans": [
+    {
+      "cavity_id": "ELECTRONICS_POD",
+      "description": "Rear-access electronics pod housing the Pi 5 and HiFiBerry DAC+ADC side by side, with a lid-mounted cooling fan",
+      "surface": "back",
+      "layout": "side_by_side",
+      "component_ids": ["PI5", "HIFIBERRY_DAC_ADC", "FAN_40MM"],
+      "inter_component_margin_mm": 4.0,
+      "min_floor_mm": 8.0,
+      "stated_depth_mm": 30.48,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json cavities.electronics_pod",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "Layout ruled side_by_side by the owner on 2026-07-26. The source declares stacked_vertical with total_height_mm 76.0, which cannot fit any guitar-plausible blank: stacked, the assembly is 58 mm before lid clearance, against a 44.45 mm body. No stated length or width exists in any source, so both are derived. min_floor 8.0 mm is an engineering estimate awaiting structural review."
+      }
+    },
+    {
+      "cavity_id": "TEENSY_IO_POCKET",
+      "description": "Rear-access pocket for the Teensy 4.1 I/O coprocessor, sited near the neck pickup for a short analog lead",
+      "surface": "back",
+      "layout": "single",
+      "component_ids": ["TEENSY_4_1"],
+      "inter_component_margin_mm": 0.0,
+      "min_floor_mm": 8.0,
+      "stated_length_mm": 70.0,
+      "stated_width_mm": 25.0,
+      "stated_depth_mm": 20.0,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.teensy_4_1.pocket_mm",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "luthiers-toolbox states the same 70 x 25 x 20 mm pocket, so the two sources agree here."
+      }
+    },
+    {
+      "cavity_id": "BATTERY_CHAMBER",
+      "description": "Chamber for the 4x 18650 pack and BMS, with power routed to the pod via the spine channel",
+      "surface": "back",
+      "layout": "single",
+      "component_ids": ["BATTERY_PACK"],
+      "inter_component_margin_mm": 0.0,
+      "min_floor_mm": 8.0,
+      "stated_depth_mm": 30.48,
+      "provenance": {
+        "source": "vendored_snapshot",
+        "source_ref": "sg-spec smart_guitar_cavity_map.json cavities.bass_chamber (battery_pack.location)",
+        "snapshot_date": "2026-07-26",
+        "confidence": "draft",
+        "note": "Modelled as its own chamber because the battery is a separate cavity in sg-spec. Its plan POSITION is unresolved: sg-spec sites it in a bass chamber that a solid body does not have. Depth and footprint are still valid regardless of where it lands. See conflict CONF-BATTERY-PLACEMENT."
+      }
+    }
+  ],
+  "conflicts": [
+    {
+      "conflict_id": "CONF-POD-LAYOUT",
+      "field": "cavities.electronics_pod.electronics_stack.layout",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: layout stacked_vertical, total_height_mm 76.0, pod depth 30.48 mm",
+        "luthiers-toolbox smart_guitar_v1.json: rear_electronics_cavity 95 x 65 x 22 mm, HiFiBerry absent from contents",
+        "derived: stacked assembly is 58 mm before lid clearance, against a 44.45 mm blank"
+      ],
+      "status": "ruled",
+      "ruling": "Side-by-side. Stacking is geometrically impossible at any guitar-plausible thickness. The stacked_vertical note and its 76.0 mm figure are stale and should be retired at source.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-FAN-INTRUSION",
+      "field": "electronics_components.fan_40mm.mounting",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: mounting surface pod_lid, standoff 0, 'requires vents in lid'",
+        "no source states whether the fan body sits inside the cavity or protrudes through the cover"
+      ],
+      "status": "unresolved",
+      "ruling": "Modelled as venting outward and consuming no cavity depth. This is an ASSUMPTION. If the fan must sit inside, required blank thickness becomes 51.0 mm and the specified 44.45 mm body fails by 6.55 mm. Needs a decision before any machining estimate is trusted.",
+      "ruled_by": "unresolved — engineering decision required"
+    },
+    {
+      "conflict_id": "CONF-PI5-HEIGHT",
+      "field": "electronics_components.pi5.height",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: 18.0 mm",
+        "luthiers-toolbox smart_guitar_v1.json: 17.0 mm"
+      ],
+      "status": "ruled",
+      "ruling": "18.0 mm per sg-spec, which the owner ruled canonical for the electrical stack and its cavity dimensions. The 1 mm difference does not change any fit verdict.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-BATTERY-PLACEMENT",
+      "field": "electronics_components.battery_pack.location",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: bass_chamber, pack 80 x 45 x 18 mm",
+        "luthiers-toolbox smart_guitar_v1.json: inside rear_electronics_cavity beside the Pi 5, single 6000 mAh cell 65 x 18.3 mm"
+      ],
+      "status": "unresolved",
+      "ruling": "Pack dimensions taken from sg-spec. Plan position left unresolved: sg-spec sites the battery in a bass chamber, but the body was ruled a solid Explorer-derived blank with through-body ergonomic voids rather than internal chambers. Depth and footprint hold either way; position does not.",
+      "ruled_by": "unresolved — depends on whether the body is chambered"
+    },
+    {
+      "conflict_id": "CONF-NVME-PLACEMENT",
+      "field": "rear_electronics_cavity.contains[NVMe SSD]",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json: NVMe M.2 2280 sited 'under Pi 5'",
+        "sg-spec smart_guitar_cavity_map.json: no NVMe in electronics_components"
+      ],
+      "status": "unresolved",
+      "ruling": "Registered but not placed. Sitting it in the Pi's 6 mm standoff gap is plausible and would add no depth, but nothing in either source establishes it. Left out of the derivation rather than assumed into it.",
+      "ruled_by": "unresolved — needs mechanical confirmation"
+    },
+    {
+      "conflict_id": "CONF-HIZ-SPLITTER-DIMS",
+      "field": "signal_chain.components.splitter",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json signal_chain: 'active buffered Hi-Z 1MOhm input' is required by both audio paths",
+        "no source anywhere gives the splitter a physical dimension"
+      ],
+      "status": "unresolved",
+      "ruling": "Omitted from the register entirely rather than given invented dimensions. A required in-body component with no known size is a genuine gap, and the derived pod footprint is therefore a LOWER BOUND.",
+      "ruled_by": "unresolved — component not yet selected"
+    },
+    {
+      "conflict_id": "CONF-USB-INTERFACE-LOCATION",
+      "field": "signal_chain.components.usb_interface",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json signal_chain: 'Focusrite Scarlett Solo 4th Gen (primary) or IK AXE IO ONE (alt)' feeding the Pi 5 USB",
+        "physical: a Scarlett Solo is roughly 143 x 97 x 47 mm and cannot fit a 44.45 mm body"
+      ],
+      "status": "unresolved",
+      "ruling": "Treated as EXTERNAL to the instrument and excluded from the register. The canonical signal chain implies it is in the audio path but never states whether it is onboard. If it must be onboard, the named parts are impossible and a different Hi-Z front end is required.",
+      "ruled_by": "unresolved — architecture decision required"
+    },
+    {
+      "conflict_id": "CONF-FRET-COUNT",
+      "field": "neck.fret_count",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json: 24",
+        "sg-spec sg_spec/schemas/smart_guitar.py quarantine note, 2026-07-21: 'fret_count=24 (canon: 22)'",
+        "sg-spec docs/SMART_GUITAR_SPEC.md: no fret count"
+      ],
+      "status": "ruled",
+      "ruling": "24 frets. The 2026-07-21 quarantine note asserting canon 22 is itself wrong. Recorded here because it is a live contradiction in a file that presents itself as a cleanup, and does not affect cavity geometry.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-BASE-MODEL",
+      "field": "base_model / body outline lineage",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: base_model Gibson Les Paul, outline from LesPaul_body.dxf, generated 2026-01-29",
+        "luthiers-toolbox smart_guitar_v1.json: Explorer-derived ergonomic outline, original design, v1.1 2026-03-08"
+      ],
+      "status": "ruled",
+      "ruling": "The 2026-01-29 Les Paul reference is stale. Body outline and lineage come from luthiers-toolbox; cavity dimensions come from sg-spec. Cavity POSITIONS inherited from a Les Paul outline are therefore not trustworthy and are excluded from this record.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-PICKUP-TYPE",
+      "field": "hardware.pickups / signal_chain.path_a_dry",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json hardware.pickups: dual humbucker, 92 x 40 x 19 mm routes",
+        "sg-spec smart_guitar_cavity_map.json signal_chain: both audio paths begin 'P90 -> buffered_splitter'"
+      ],
+      "status": "unresolved",
+      "ruling": "Not resolved here because it does not affect electronics cavity geometry. Flagged because it will affect pickup route dimensions and component cost downstream.",
+      "ruled_by": "unresolved — deferred to the budget model"
+    }
+  ],
+  "provenance": {
+    "source": "vendored_snapshot",
+    "source_ref": "sg-spec smart_guitar_cavity_map.json (signal_chain v2.1, 2026-03-25) + luthiers-toolbox smart_guitar_v1.json (v1.1, 2026-03-08)",
+    "snapshot_date": "2026-07-26",
+    "confidence": "draft",
+    "note": "SMART-GUITAR-CAVITY-GEOMETRY-1. Dated read-only snapshot: values were copied here so the derivation stays reproducible if the source repositories change, which they are expected to."
+  },
+  "notes": [
+    "INTERNAL physical geometry record. Contains no cost, price, or manufacturing-time fields by design.",
+    "Every cavity dimension in the paired geometry record is DERIVED from this register. Nothing downstream reads a stated cavity dimension, which is why a stale note like 'total_height_mm: 76.0' cannot propagate.",
+    "stated_* fields exist only so the derivation can be compared against the source specs. They are never inputs.",
+    "The source scan behind this register was BOUNDED and is not exhaustive. It covered sg-spec, luthiers-toolbox instrument_geometry, and tap_tone_pi hardware docs. string_master_v.4.0 was not fully searched. Absence of a conflict record is not evidence that no conflict exists.",
+    "min_floor_mm is 8.0 on every cavity: an engineering estimate, not a structural calculation. The pod sits in the lower bout near the control cavity and the battery routing, so the real minimum should come from a structural review under string tension.",
+    "The derived pod footprint is a LOWER BOUND. The Hi-Z buffered splitter is required by the canonical signal chain and has no dimensions anywhere, so it could not be included.",
+    "This record derives cavity SIZE only. It does not validate cavity POSITION against the body outline, so it cannot detect two cavities colliding in plan or a cavity breaching the perimeter. Plan-level collision checking needs the traced outline and is out of scope."
+  ]
+}

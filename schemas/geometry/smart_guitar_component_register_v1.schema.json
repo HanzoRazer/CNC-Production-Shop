@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "smart_guitar_component_register_v1.schema.json",
+  "title": "SmartGuitarComponentRegisterV1",
+  "description": "Governed dated snapshot of Smart Guitar physical components, cavity plans, and the body blank. Cavity dimensions are DERIVED from this register, never asserted. stated_* fields exist only for comparison against source specs and are never consumed as inputs. Contains no cost, price, or manufacturing-time fields by design.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "register_id",
+    "product_ref",
+    "status",
+    "units",
+    "body",
+    "components",
+    "cavity_plans",
+    "conflicts",
+    "provenance",
+    "notes"
+  ],
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "source_ref", "snapshot_date", "confidence"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "vendored_snapshot",
+            "engineering_estimate",
+            "measured_part",
+            "vendor_datasheet",
+            "owner_confirmed",
+            "calculated"
+          ]
+        },
+        "source_ref": {"type": "string", "minLength": 1},
+        "snapshot_date": {"type": "string", "minLength": 1},
+        "confidence": {"type": "string", "enum": ["draft", "reviewed", "approved"]},
+        "note": {"type": "string"}
+      }
+    },
+    "mm": {"type": "number", "minimum": 0},
+    "optionalMm": {"type": ["number", "null"], "minimum": 0}
+  },
+  "properties": {
+    "register_id": {
+      "type": "string",
+      "pattern": "^SMART-GUITAR-COMPONENT-REGISTER-[A-Z0-9-]+$"
+    },
+    "product_ref": {"type": "string", "minLength": 1},
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "units": {"type": "string", "const": "mm"},
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["body_id", "description", "stated_thickness_mm", "provenance"],
+      "properties": {
+        "body_id": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "stated_thickness_mm": {"type": "number", "exclusiveMinimum": 0},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "component_id",
+          "display_name",
+          "role",
+          "length_mm",
+          "width_mm",
+          "height_mm",
+          "mounting",
+          "standoff_mm",
+          "margin_length_mm",
+          "margin_width_mm",
+          "lid_clearance_mm",
+          "consumes_cavity_depth",
+          "required",
+          "provenance"
+        ],
+        "properties": {
+          "component_id": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+          "display_name": {"type": "string", "minLength": 1},
+          "role": {"type": "string", "minLength": 1},
+          "length_mm": {"$ref": "#/$defs/mm"},
+          "width_mm": {"$ref": "#/$defs/mm"},
+          "height_mm": {"$ref": "#/$defs/mm"},
+          "mounting": {"type": "string", "enum": ["floor", "lid"]},
+          "standoff_mm": {"$ref": "#/$defs/mm"},
+          "margin_length_mm": {"$ref": "#/$defs/mm"},
+          "margin_width_mm": {"$ref": "#/$defs/mm"},
+          "lid_clearance_mm": {"$ref": "#/$defs/mm"},
+          "consumes_cavity_depth": {
+            "type": "boolean",
+            "description": "False for a lid-mounted part that protrudes outward through the cover instead of occupying cavity depth."
+          },
+          "required": {"type": "boolean"},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "cavity_plans": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cavity_id",
+          "description",
+          "surface",
+          "layout",
+          "component_ids",
+          "inter_component_margin_mm",
+          "min_floor_mm",
+          "provenance"
+        ],
+        "properties": {
+          "cavity_id": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+          "description": {"type": "string", "minLength": 1},
+          "surface": {"type": "string", "enum": ["back", "top", "edge"]},
+          "layout": {
+            "type": "string",
+            "enum": ["side_by_side", "stacked", "single"]
+          },
+          "component_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "pattern": "^[A-Z0-9_]+$"}
+          },
+          "inter_component_margin_mm": {"$ref": "#/$defs/mm"},
+          "min_floor_mm": {"$ref": "#/$defs/mm"},
+          "stated_length_mm": {"$ref": "#/$defs/optionalMm"},
+          "stated_width_mm": {"$ref": "#/$defs/optionalMm"},
+          "stated_depth_mm": {"$ref": "#/$defs/optionalMm"},
+          "provenance": {"$ref": "#/$defs/provenance"}
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "description": "Disagreements between source specs. An unresolved conflict is a first-class output, not a defect in the record.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["conflict_id", "field", "sources", "status", "ruling", "ruled_by"],
+        "properties": {
+          "conflict_id": {"type": "string", "pattern": "^CONF-[A-Z0-9-]+$"},
+          "field": {"type": "string", "minLength": 1},
+          "sources": {
+            "type": "array",
+            "minItems": 2,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "status": {"type": "string", "enum": ["ruled", "unresolved"]},
+          "ruling": {"type": "string", "minLength": 1},
+          "ruled_by": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}
