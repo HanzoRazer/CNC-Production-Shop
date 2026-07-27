@@ -1,0 +1,127 @@
+"""Tests for the two Smart Guitar product lines.
+
+Split on 2026-07-27 from a single record that conflated a hollow thin-skin
+practice instrument with a solid-body performance instrument. These tests
+guard the distinctions that were conflated, because each one drives a
+different cost model downstream.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import jsonschema
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+SCHEMA = ROOT / "schemas" / "products" / "instrument_product_v2.schema.json"
+SMART = ROOT / "fixtures" / "products" / "smart_guitar_v1.json"
+KHAYA = ROOT / "fixtures" / "products" / "khaya_solidbody_v1.json"
+
+
+def load(path: Path) -> dict:
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def smart() -> dict:
+    return load(SMART)
+
+
+@pytest.fixture(scope="module")
+def khaya() -> dict:
+    return load(KHAYA)
+
+
+@pytest.mark.parametrize("path", [SMART, KHAYA])
+def test_fixtures_match_schema(path):
+    jsonschema.validate(load(path), load(SCHEMA))
+
+
+def test_the_two_lines_are_distinct_products(smart, khaya):
+    assert smart["product_id"] != khaya["product_id"]
+    assert smart["product_role"] == "practice_instrument"
+    assert khaya["product_role"] == "performance_instrument"
+    assert smart["construction"]["body_type"] == "hollow_thin_skin_box"
+    assert khaya["construction"]["body_type"] == "solid_body"
+
+
+def test_smart_guitar_is_headless_only(smart):
+    """The headed variant belongs to the Khaya line, not this one.
+
+    Conflating them is what the split fixed: the budget model is headless
+    only, so a headed series appearing here would silently widen its scope.
+    """
+    series = smart["series"]
+    assert len(series) == 1
+    assert series[0]["headstock"] == "none_headless"
+
+
+def test_khaya_carries_both_headstock_series(khaya):
+    heads = {s["headstock"] for s in khaya["series"]}
+    assert heads == {"none_headless", "flying_v_inline_6"}
+    primary = [s for s in khaya["series"] if s["status"] == "primary_build_target"]
+    assert len(primary) == 1
+    assert primary[0]["headstock"] == "none_headless"
+
+
+def test_onboard_audio_is_the_functional_difference(smart, khaya):
+    """The HAT is what separates the packages, and it tracks the use case.
+
+    A practice instrument is played through headphones, so it needs the I2S
+    HAT. A performance instrument goes to an amp through the dry jack, so it
+    does not. Same compute host in both.
+    """
+    assert smart["electronics_package"]["onboard_audio_output"] is True
+    assert khaya["electronics_package"]["onboard_audio_output"] is False
+    assert (
+        smart["electronics_package"]["compute_host"]
+        == khaya["electronics_package"]["compute_host"]
+    )
+    assert any("HiFiBerry" in c for c in smart["electronics_package"]["components"])
+    assert not any("HiFiBerry" in c for c in khaya["electronics_package"]["components"])
+
+
+def test_both_lines_are_concept_not_draft(smart, khaya):
+    """Neither instrument has been measured. The status must not overstate it."""
+    for product in (smart, khaya):
+        assert product["status"] == "concept"
+        assert product["provenance"]["confidence"] == "draft"
+    assert "AI-generated" in " ".join(smart["notes"])
+    assert "AI-generated" in " ".join(khaya["notes"])
+
+
+def test_solid_body_package_is_recorded_as_borderline(khaya):
+    """It fits by about 1 cm2. That is not the same as fitting."""
+    notes = " ".join(khaya["notes"])
+    assert "BORDERLINE" in notes
+    assert "1 cm2" in notes
+    assert "unproven" in notes
+    # The configurations that do NOT fit must be recorded, not just the one
+    # that does, or the next person re-derives them.
+    assert "96 cm2 short" in notes and "25 cm2 short" in notes
+
+
+def test_void_edge_cost_is_carried_on_the_thin_skin_line(smart):
+    """The visual identity has a measured price; keep it attached to the product."""
+    notes = " ".join(smart["notes"])
+    assert "3.01 m" in notes
+    assert "deliberately NOT reduced" in notes
+
+
+def test_no_cost_fields_in_a_product_record(smart, khaya):
+    forbidden = {"cost", "unit_cost", "price", "margin", "markup", "msrp"}
+
+    def scan(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                assert key not in forbidden, key
+                scan(value)
+        elif isinstance(node, list):
+            for item in node:
+                scan(item)
+
+    scan(smart)
+    scan(khaya)

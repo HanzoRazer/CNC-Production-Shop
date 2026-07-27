@@ -1,0 +1,73 @@
+{
+  "product_id": "PRODUCT-SMART-GUITAR-V1",
+  "product_name": "Smart Guitar",
+  "product_description": "Headless hollow thin-skin electric guitar with an embedded Linux host, intended as a practice and travel instrument rather than a stage instrument. The modern electric campfire guitar: played with headphones or wirelessly, with onboard effects and a coaching engine.",
+  "product_role": "practice_instrument",
+  "status": "concept",
+  "construction": {
+    "body_type": "hollow_thin_skin_box",
+    "body_architecture_note": "Two composite skins over a hollow wooden core with a structural frame and centre block, in the manner of the Masonite-era Danelectro. The hollow interior is what makes the full electronics package fit; the same stack has no valid placement in a solid body of these dimensions.",
+    "neck_joint": "bolt_on",
+    "neck_sourcing": "shop_machined",
+    "scale_length_mm": 628.65,
+    "fret_count": 24,
+    "string_count": 6,
+    "body_length_mm": 468.5,
+    "body_width_mm": 402.85,
+    "body_thickness_mm": 47.0
+  },
+  "series": [
+    {
+      "series_id": "SMART-HEADLESS",
+      "headstock": "none_headless",
+      "nut_type": "locking_clamp",
+      "status": "primary_build_target",
+      "note": "The only series for this product line. Headless suits a practice and travel instrument: shorter overall length, no headstock to knock, tuning at the bridge."
+    }
+  ],
+  "electronics_package": {
+    "package_id": "SMART-STACK-FULL-V1",
+    "compute_host": "Raspberry Pi 5 (8 GB)",
+    "onboard_audio_output": true,
+    "components": [
+      "Raspberry Pi 5 (8 GB) — JACK + Guitarix/MODEP host and coaching engine",
+      "HiFiBerry DAC+ADC — I2S audio out and headphone jack",
+      "Teensy 4.1 — I/O coprocessor, control only, no audio path",
+      "Battery pack + BMS (4x 18650), USB-C PD 20 W charging",
+      "40 mm cooling fan, lid-mounted, venting outward",
+      "GPIO ribbon between the Pi and the HAT"
+    ],
+    "rationale": "The full stack including the HiFiBerry HAT, because the headphone jack is the point of a practice instrument. The hollow box provides the volume: the same package is 96 cm2 short of fitting a solid body of these dimensions."
+  },
+  "materials": {
+    "body": "hollow wooden core, species not yet selected",
+    "skins": "composite / hardboard, thickness not yet selected",
+    "neck": "hard maple",
+    "fingerboard": "ebony",
+    "finish_system": "not yet selected"
+  },
+  "configuration": {
+    "pickup_layout": "dual_humbucker",
+    "bridge_type": "headless_fixed_with_fine_tuners",
+    "control_layout": "two_knob_one_rotary"
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-27",
+    "confidence": "draft",
+    "references": [
+      "fixtures/geometry/smart_guitar_cavity_geometry_v1.json",
+      "external:luthiers-toolbox smart_guitar_v1.json@v1.1"
+    ],
+    "note": "Split from a single conflated product record on 2026-07-27, when the practice and performance lines were separated."
+  },
+  "notes": [
+    "STATUS IS 'concept', NOT 'draft'. The Smart Guitar is still an AI-generated photograph. Every dimension derived so far is real arithmetic performed on an imagined object: the outline is corroborated for proportion across three artifacts but has never been measured against a physical blank, and the cavity datum is an engineering fit rather than a measurement.",
+    "This is explicitly NOT a performance instrument. It is a practice and travel instrument, so headphone output matters and stage ergonomics do not.",
+    "Body construction changes the economics as well as the packing. Thin-skin over a hollow core weighs about 48% of solid Khaya at the same dimensions, so body size is not constrained by weight here.",
+    "The through-body ergonomic voids are the visual identity of this instrument and are deliberately NOT reduced. They double the finished edge length, from 1.51 m of outer perimeter to 3.01 m including void edges on both faces, which lands directly on the edge-cleanup and edge-sealing operations already identified as the cost risk in the thin-skin estimate. Roughly 48 minutes and $23 per unit, and worth paying.",
+    "Core species, skin material and thickness, and the finish system are all unselected. They are the remaining inputs to the budget model, not settled facts.",
+    "Contains no cost, price, or margin fields by design."
+  ]
+}

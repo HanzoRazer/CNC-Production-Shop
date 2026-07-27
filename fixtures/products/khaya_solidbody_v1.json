@@ -1,0 +1,77 @@
+{
+  "product_id": "PRODUCT-KHAYA-SOLIDBODY-V1",
+  "product_name": "Khaya Solid Body",
+  "product_description": "Solid Khaya (African mahogany) electric guitar in headless and headed series, carrying a reduced embedded electronics package. A performance instrument: amplified through the dry output jack, with wireless monitoring and onboard effects.",
+  "product_role": "performance_instrument",
+  "status": "concept",
+  "construction": {
+    "body_type": "solid_body",
+    "body_architecture_note": "Solid Khaya blank with routed cavities. Cavity placement is materially harder than in the hollow sibling: each pocket needs wall thickness to its neighbours, which is what forces the reduced electronics package.",
+    "neck_joint": "bolt_on",
+    "neck_sourcing": "shop_machined",
+    "scale_length_mm": 628.65,
+    "fret_count": 24,
+    "string_count": 6,
+    "body_length_mm": 468.5,
+    "body_width_mm": 402.85,
+    "body_thickness_mm": 47.0
+  },
+  "series": [
+    {
+      "series_id": "KHAYA-HEADLESS",
+      "headstock": "none_headless",
+      "nut_type": "locking_clamp",
+      "status": "primary_build_target",
+      "note": "Shares the headless bridge and locking nut with the Smart Guitar."
+    },
+    {
+      "series_id": "KHAYA-HEADED",
+      "headstock": "flying_v_inline_6",
+      "nut_type": "bone_or_tusq",
+      "status": "concept_defined",
+      "note": "Flying V profile headstock with 6-inline locking tuners for straight string pull. Adds roughly 190 mm of overall length and replaces the headless bridge tuners with conventional ones. Body, neck, and cavities are otherwise identical to the headless series."
+    }
+  ],
+  "electronics_package": {
+    "package_id": "SMART-STACK-REDUCED-V1",
+    "compute_host": "Raspberry Pi 5 (8 GB)",
+    "onboard_audio_output": false,
+    "components": [
+      "Raspberry Pi 5 (8 GB) — JACK + Guitarix/MODEP host and coaching engine",
+      "Teensy 4.1 — I/O coprocessor, control only, no audio path",
+      "Battery pack + BMS (2x 18650), USB-C PD charging",
+      "40 mm cooling fan, lid-mounted, venting outward"
+    ],
+    "rationale": "Full Pi 5 compute is retained; the HiFiBerry HAT is dropped. The canonical signal chain already takes audio IN through a Hi-Z USB interface, so the HAT contributes only I2S output and a headphone jack — and a performance instrument goes to an amplifier through the dry jack, with wireless monitoring. Dropping it, plus a 2x 18650 pack in place of 4x, is what brings the package within the solid body's usable area."
+  },
+  "materials": {
+    "body": "khaya (African mahogany)",
+    "neck": "hard maple",
+    "fingerboard": "ebony",
+    "finish_system": "natural blonde amber"
+  },
+  "configuration": {
+    "pickup_layout": "dual_humbucker",
+    "bridge_type": "headless_fixed_with_fine_tuners",
+    "control_layout": "two_knob_one_rotary"
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-27",
+    "confidence": "draft",
+    "references": [
+      "fixtures/geometry/smart_guitar_cavity_geometry_v1.json",
+      "external:luthiers-toolbox smart_guitar_v1.json@v1.1"
+    ],
+    "note": "Split from a single conflated product record on 2026-07-27. This line carries BOTH headstock series; the Smart Guitar line is headless only."
+  },
+  "notes": [
+    "STATUS IS 'concept'. Like its sibling, this instrument exists as an AI-generated image and a set of derived dimensions, not as a measured object.",
+    "The reduced electronics package is BORDERLINE, not comfortable. With the HAT dropped and a 2x 18650 pack it lands within about 1 cm2 of the available area, which closes only if part margins tighten from 4 mm to 3 mm. Treat it as unproven until a real layout is packed and checked.",
+    "Configurations that do NOT fit a solid body of these dimensions: the full stack including the HiFiBerry HAT (96 cm2 short), and the full stack with a 4x 18650 pack (25 cm2 short). A Raspberry Pi Zero 2 W with a HiFiBerry Zero fits comfortably (+31 cm2) but costs roughly five times the compute.",
+    "The headed series is concept_defined and gated behind the headless first article, so its extra hardware is a documented delta rather than a costed variant.",
+    "onboard_audio_output false is the single functional difference from the Smart Guitar and is a use-case decision, not a compromise: a stage instrument does not need a headphone jack.",
+    "Contains no cost, price, or margin fields by design."
+  ]
+}
