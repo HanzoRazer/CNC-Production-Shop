@@ -219,7 +219,7 @@
       ],
       "status": "ruled",
       "ruling": "Stated width 368.3 mm is the outlier and is treated as stale. Taking the official CAD length with the traced topology gives a single uniform scale k = 468.5/290.79 = 1.611128 and a derived width of 402.85 mm, against which the stated 368.3 mm is 34.55 mm (9.38%) short. The cross-check is decisive: trusting the stated width instead derives a body length of 428.32 mm, 40.18 mm short of the official CAD. Corroborated by the spec's own design_heritage.explorer.reference_body_mm of 420 x 460 mm, which the derived 402.85 x 468.5 resembles and the stated 368.3 x 444.5 does not. Note also that 368.3, 444.5, and 438.15 are all exact round inch values (14.50, 17.50, 17.25) which read as assumptions, while 468.5 (18.44 in) is not and reads as measured. DERIVED WIDTH 402.85 mm IS A PREDICTION, not a measurement: it must be verified against a physical blank in SMART-GUITAR-PLAN-COLLISION-1 phase 1.",
-      "ruled_by": "owner ruling on CAD length, 2026-07-26; width derived and pending physical verification"
+      "ruled_by": "owner ruling, 2026-07-26. CORROBORATED INDEPENDENTLY: the owner's own separate calculation also arrives at 402.85 mm, so the figure no longer rests solely on the traced aspect ratio. The official CAD declares no width \u2014 the drawing is on hold and will produce a comparable width according to shape \u2014 so 402.85 mm stands as the governed derived width. CONF-TRACE-REGISTRATION concerns void POSITIONS and does not impugn the silhouette aspect; the two are separable claims."
     },
     {
       "conflict_id": "CONF-LENGTH-DATUM",
@@ -229,9 +229,21 @@
         "luthiers-toolbox smart_guitar_v1.json: every cavity y_from_top computed against a 444.5 mm body",
         "luthiers-toolbox smart_guitar_v1.json neck.neck_length.body_length_mm: 438.15 mm, itself 'corrected from 444.5'"
       ],
+      "status": "ruled",
+      "ruling": "RESOLVED: the extra 24.0 mm is at the TAIL, below the bridge. Every cavity y_from_top is therefore preserved unchanged, because the datum is the neck end of the body and the growth is entirely below the bridge line. The bridge at y_from_top 320.0 remains fixed by scale length (628.65 mm nut to saddle) and is unaffected. The 438.15 mm figure in the same file's neck block remains stale. This unblocks plan-level Y positions, which were the binding constraint on SMART-GUITAR-PLAN-COLLISION-1.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-TRACE-REGISTRATION",
+      "field": "traced outline void positions vs spec cavity positions",
+      "sources": [
+        "traced outline smart_guitar_back_v1.json: V4 'control_cavity' centroid sits 0.5707 of body length from the neck end, at x -9.57 mm; V6 'neck_bolt_plate_area' sits at 0.2703",
+        "luthiers-toolbox smart_guitar_v1.json: control_cavity y_from_top 317.0 (0.7132 of a 444.5 body, 0.6766 of a 468.5 body) at x_center +25.0; neck_pocket y_from_top 53.3 (0.1199 / 0.1138)",
+        "trace provenance: 'hand-traced from AI render back view, 2026-03-26'"
+      ],
       "status": "unresolved",
-      "ruling": "The body is 24.0 mm longer than the datum every cavity position was measured from, and a third length (438.15 mm) exists in the same file. Whether the stated y_from_top values survive depends entirely on WHERE the extra 24.0 mm sits. The bridge at y_from_top 320.0 is fixed by scale length (628.65 mm nut to saddle), not by body length, so if the growth is at the tail the positions hold, and if it is at the neck end every cavity shifts by 24.0 mm. No source states which. Blocks all plan-level position work.",
-      "ruled_by": "unresolved \u2014 needs the official CAD datum"
+      "ruling": "SCOPE: this concerns the trace's internal VOID POSITIONS only. It does NOT impugn the traced silhouette's aspect ratio, which is independently corroborated under CONF-BODY-WIDTH. The two are separable: an AI render can place voids decoratively while the outline proportion it was traced from remains faithful. FINDING: the trace's V4 and V6 cannot be reconciled with the spec's cavity positions by any similarity transform. V4 sits higher than the spec expects while V6 sits lower \u2014 opposite directions, so no single scale or offset fits, and the X sign disagrees too. The trace's own provenance explains it: an AI render's voids are drawn, not dimensioned. CONSEQUENCE: the outline-to-spec frame transform is deterministic once body length is known and needs no landmarks, but V4 and V6 were the only landmarks available to VERIFY it, so that alignment stays unverified. Mitigation: use the trace for the body silhouette and the through-body voids V1, V2, V3, V5 only, and take every cavity position from the spec. Never read a cavity position out of the trace.",
+      "ruled_by": "unresolved \u2014 frame alignment is unverifiable until a dimensioned CAD outline exists; residual risk, not a blocker"
     },
     {
       "conflict_id": "CONF-OPPOSED-FACE-WEB",

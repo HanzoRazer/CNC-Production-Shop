@@ -106,7 +106,7 @@ larger than 162 × 64 mm by however much that part needs.
 
 ## Reconciliation record
 
-Fourteen conflicts found: five ruled, nine open. Recorded in the register and
+Fifteen conflicts found: six ruled, nine open. Recorded in the register and
 propagated verbatim into the derived record, with a test enforcing that they
 match, so a reviewer reading only the derived file cannot see fewer conflicts
 than exist.
@@ -118,7 +118,8 @@ than exist.
 | `CONF-POD-LAYOUT` | pod layout | Side-by-side. Stacking is impossible at any guitar-plausible thickness; the `stacked_vertical` note and its 76.0 mm figure are stale and should be retired at source. |
 | `CONF-PI5-HEIGHT` | Pi 5 height | 18.0 mm per sg-spec, which was ruled canonical. luthiers-toolbox says 17.0 mm. The 1 mm changes no verdict. |
 | `CONF-BASE-MODEL` | body outline lineage | The 2026-01-29 Les Paul reference is stale. Outline from luthiers-toolbox, cavity dimensions from sg-spec. Cavity *positions* inherited from a Les Paul outline are therefore untrustworthy and excluded. |
-| `CONF-BODY-WIDTH` | body width | Official CAD length is **468.5 mm**, superseding 444.5. With the traced topology that gives a uniform scale k = 1.611128 and a derived width of **402.85 mm**; the stated 368.3 mm is 34.55 mm short and treated as stale. Cross-check: trusting the width instead derives a 428.32 mm length, 40.18 mm short of the CAD. Derived width is a **prediction pending physical measurement**. |
+| `CONF-BODY-WIDTH` | body width | Official CAD length is **468.5 mm**, superseding 444.5. With the traced topology that gives k = 1.611128 and a derived width of **402.85 mm**; the stated 368.3 mm is 34.55 mm short and treated as stale. The CAD declares no width (drawing on hold). **Independently corroborated**: the owner's separate calculation reaches the same 402.85 mm, so the figure does not rest on the traced aspect alone. |
+| `CONF-LENGTH-DATUM` | cavity `y_from_top` | The extra **24.0 mm sits at the tail, below the bridge**, so every `y_from_top` is preserved: the datum is the neck end and the growth is entirely below the bridge line. The bridge is fixed by scale length regardless. The 438.15 mm in the neck block remains stale. This was the binding constraint on plan-level work and is now cleared. |
 | `CONF-FRET-COUNT` | fret count | 24. The 2026-07-21 sg-spec quarantine note asserting "canon: 22" is itself wrong. No effect on cavity geometry; recorded because it sits in a file presenting itself as a cleanup. |
 
 ### Open
@@ -132,7 +133,7 @@ than exist.
 | `CONF-NVME-PLACEMENT` | NVMe SSD | Sited "under Pi 5", where it would fit inside the 6 mm standoff gap and add nothing. Plausible, unestablished, so registered but not placed. |
 | `CONF-PICKUP-TYPE` | pickup type | **Intra-file**, not cross-repo: luthiers-toolbox says dual humbucker in `hardware.pickups` and P90 in its own `signal_chain` marked `canonical: true` (lines 449–450). sg-spec contains no P90 reference at all. No effect on electronics cavities; decides route size and pickup cost. |
 | `CONF-PICKUP-ROUTE-DIMS` | pickup route size | Both sources say humbucker and disagree on the route: sg-spec 82 × 38 × 19.05 (r4.0), luthiers-toolbox 92 × 40 × 19.0 (r3.0). Blocked on `CONF-PICKUP-TYPE`, since a P90 route is different again. |
-| `CONF-LENGTH-DATUM` | cavity `y_from_top` | The body is **24.0 mm longer** than the datum every cavity position was measured from, and a third length (438.15 mm) sits in the same file. The bridge is fixed by scale length, not body length, so growth at the tail preserves the positions and growth at the neck end shifts all of them. 24 mm is ~2× the rim minimum, so it dominates every clearance. Blocks all plan-level position work. |
+| `CONF-TRACE-REGISTRATION` | trace void positions | The trace's V4 (0.5707 from the neck end) and V6 (0.2703) do not match the spec's control cavity (0.6766) or neck pocket (0.1138) — opposite directions, so no similarity transform fits. Its provenance is a hand-trace from an AI render, whose voids are drawn not dimensioned. **Scoped to void positions; does not impugn the silhouette aspect**, which is corroborated independently. The frame transform is deterministic but now unverifiable. Use the trace for the silhouette and through-body voids only. |
 | `CONF-OPPOSED-FACE-WEB` | top routes vs back pod | On stated positions the bridge route (19 mm, top) overlaps the rear cavity in plan. 19 + 33 = 52 mm through a 44.45 mm blank is a 7.55 mm breach. The source's own `structural_analysis` only measured floor-to-front-face. Unresolvable here — needs plan-level checking. |
 
 ## Scope and limits

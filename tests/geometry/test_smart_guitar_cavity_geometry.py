@@ -474,25 +474,71 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
         "CONF-PICKUP-TYPE",
         "CONF-PICKUP-ROUTE-DIMS",
         "CONF-OPPOSED-FACE-WEB",
-        "CONF-LENGTH-DATUM",
+        "CONF-TRACE-REGISTRATION",
     } <= unresolved
 
 
-def test_body_width_ruling_is_a_prediction_not_a_measurement():
-    """402.85 mm follows from the CAD length plus traced topology.
+def test_length_datum_is_resolved_and_preserves_cavity_positions():
+    """The extra 24 mm sits at the tail, so every y_from_top survives.
 
-    It must stay flagged as unverified: one caliper reading on a physical
-    blank confirms or refutes the entire outline calibration, and a prediction
-    that quietly becomes a fact is how a 34.55 mm error would get built.
+    This was the binding constraint on plan-level work: growth at the neck end
+    would have shifted every cavity by 24 mm, roughly twice the rim minimum.
     """
     conflict = next(
-        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-BODY-WIDTH"
+        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-LENGTH-DATUM"
     )
     assert conflict["status"] == "ruled"
-    assert "468.5" in conflict["ruling"]
-    assert "402.85" in conflict["ruling"]
-    assert "PREDICTION" in conflict["ruling"]
-    assert "pending physical verification" in conflict["ruled_by"]
+    assert "TAIL" in conflict["ruling"]
+    assert "preserved" in conflict["ruling"]
+    assert "owner ruling" in conflict["ruled_by"]
+
+
+def test_body_width_is_independently_corroborated():
+    """402.85 mm is confirmed by a second, separate derivation.
+
+    The CAD declares no width, so a figure resting only on the traced aspect
+    would be thin evidence. An independent calculation reaching the same
+    number is what makes it governed rather than provisional.
+    """
+    width = next(
+        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-BODY-WIDTH"
+    )
+    assert width["status"] == "ruled"
+    assert "468.5" in width["ruling"]
+    assert "402.85" in width["ruling"]
+    assert "CORROBORATED INDEPENDENTLY" in width["ruled_by"]
+
+
+def test_registration_finding_is_scoped_to_void_positions_only():
+    """The void-position failure must not be read as impugning the aspect.
+
+    These are separable claims: a render can place voids decoratively while
+    the silhouette it was traced from stays proportionally faithful. Conflating
+    them would discard a corroborated width for no reason.
+    """
+    conflicts = {c["conflict_id"]: c for c in load_json(GEOMETRY)["conflicts"]}
+    reg = conflicts["CONF-TRACE-REGISTRATION"]
+
+    assert reg["status"] == "unresolved"
+    assert "VOID POSITIONS only" in reg["ruling"]
+    assert "does NOT impugn" in reg["ruling"]
+    assert "0.5707" in reg["sources"][0]
+
+    # The width ruling must survive it, and say so.
+    assert conflicts["CONF-BODY-WIDTH"]["status"] == "ruled"
+    assert "separable" in conflicts["CONF-BODY-WIDTH"]["ruled_by"]
+
+
+def test_registration_finding_states_its_mitigation():
+    """An unverifiable frame is a residual risk only if the trace is used narrowly."""
+    reg = next(
+        c
+        for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-TRACE-REGISTRATION"
+    )
+    assert "V1, V2, V3, V5 only" in reg["ruling"]
+    assert "Never read a cavity position out of the trace" in reg["ruling"]
+    assert "residual risk, not a blocker" in reg["ruled_by"]
 
 
 def test_body_dimensions_are_not_consumed_by_any_derivation():

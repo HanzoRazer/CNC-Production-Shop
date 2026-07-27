@@ -64,12 +64,14 @@ Three things corroborate that:
 
 Recorded as `CONF-BODY-WIDTH`, ruled.
 
-**Phase 1 therefore shrinks to a single measurement.** The derived 402.85 mm is
-a *prediction*, not a fact. One caliper across the widest point of a physical
-blank confirms or refutes the whole calibration. If it measures 402.85 ± a few
-mm, the outline is calibrated at k = 1.611128 and phase 3 can report real
-millimetres. If it measures 368.3, the traced topology is distorted after all
-and the Dev Order reverts to topology-only.
+**Gate 1 is cleared.** The official CAD declares no width — the drawing is on
+hold and will produce a comparable width according to shape — and an
+independent calculation by the owner arrives at the same 402.85 mm. Two
+derivations from different starting points agreeing is what promotes the figure
+from provisional to governed. The outline is calibrated at k = 1.611128 and
+phase 3 can report real millimetres.
+
+Recorded as `CONF-BODY-WIDTH`, ruled and corroborated.
 
 ## Gate 2: the length datum — new, and now the binding constraint
 
@@ -99,9 +101,42 @@ Growth at the tail leaves every position valid. Growth at the neck end shifts
 all of them by 24.0 mm. No source states which, and a 24 mm error is roughly
 twice the 12.7 mm rim minimum, so it dominates every clearance result.
 
-Recorded as `CONF-LENGTH-DATUM`, unresolved. **This is now the gating unknown
-rather than outline scale.** It needs the official CAD's own datum, which is a
-lookup rather than a research problem.
+**Gate 2 is cleared.** The extra 24.0 mm is at the **tail, below the bridge**.
+Every `y_from_top` is therefore preserved unchanged: the datum is the neck end,
+the growth is entirely below the bridge line, and the bridge itself is fixed by
+scale length regardless. The 438.15 mm figure in the neck block remains stale.
+
+Recorded as `CONF-LENGTH-DATUM`, ruled.
+
+## Residual risk: the outline cannot be registration-checked
+
+Both gates are cleared, but one verification is unavailable. The trace's
+labelled cavity landmarks do not sit where the spec's cavities sit:
+
+| Landmark | Trace, frac from neck end | Spec /444.5 | Spec /468.5 |
+|---|---:|---:|---:|
+| V4 `control_cavity` | 0.5707 | 0.7132 | 0.6766 |
+| V6 `neck_bolt_plate` | 0.2703 | 0.1199 | 0.1138 |
+
+V4 sits higher than expected and V6 lower — opposite directions, so no scale or
+offset reconciles them, and V4's X sign disagrees too. The trace's provenance
+explains it: *"hand-traced from AI render back view"*, and a render's voids are
+drawn rather than dimensioned.
+
+**This does not affect the width.** Void placement and silhouette proportion are
+separable claims, and the width is corroborated independently.
+
+**What it does affect** is verification. The outline-to-spec transform is
+deterministic once body length is known and needs no landmarks — but V4 and V6
+were the only landmarks available to *check* it, so the alignment stays
+unverified.
+
+Mitigation, and a standing rule for phase 2: use the trace for the body
+silhouette and the through-body voids V1, V2, V3, V5 **only**, and take every
+cavity position from the spec. Never read a cavity position out of the trace.
+
+Recorded as `CONF-TRACE-REGISTRATION`, unresolved — residual risk, not a
+blocker.
 
 ## Phases
 
@@ -113,24 +148,15 @@ length datum, or establish that neither exists yet.
 - Vendor a dated snapshot of `smart_guitar_back_v1.json` (78 points, 7 voids)
   the way the component register vendors spec values
 - Recompute extents from the points rather than trusting the stated `extent_mm`
-- Apply the governed uniform scale k = 468.5 / recomputed height
-- **Verify the derived width against a physical blank** — one caliper
-  measurement confirms or refutes the entire calibration
-- **Resolve the length datum**: locate the extra 24.0 mm relative to the
-  neck-end reference, from the official CAD
-- Record both bases and their confidence
+- Apply the governed uniform scale k = 468.5 / recomputed height = 1.611128
+- Assert the derived width against the governed 402.85 mm
+- Apply the ruled datum: growth at the tail, `y_from_top` preserved
+- Record both bases, their confidence, and the unverified-registration caveat
 
-Phase 1 has three honest outcomes, and the Dev Order must be willing to stop at
-any of them:
-
-1. **Calibrated** — the blank measures ~402.85 mm and the CAD datum is known;
-   proceed to phase 2 with real clearances
-2. **Scale calibrated, datum unknown** — clearances valid in X, all Y-dependent
-   results carrying a ±24.0 mm band, which exceeds the rim minimum and
-   therefore blocks C1, C2, C5, and C6 in practice
-3. **Topology only** — the blank does not measure 402.85 mm, so the traced
-   topology is distorted; containment and overlap run on adjacency alone and no
-   millimetre clearance is reported
+Both calibration gates are ruled, so phase 1 is now a short implementation step
+rather than an open question. It should still **fail loudly** if the recomputed
+extents drift from 250.04 × 290.79, since that would mean the vendored snapshot
+no longer matches the outline these rulings were made against.
 
 ### Phase 2 — Coordinate reconciliation
 
