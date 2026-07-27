@@ -104,12 +104,26 @@ def test_blockers_are_the_ones_that_define_the_product(spec):
     }
 
 
-def test_mcu_absorption_records_why_it_is_required(spec):
-    """It is not tidiness — it is what makes the solid body close."""
+def test_mcu_absorption_does_not_overclaim(spec):
+    """It reduces the pocket count. It does NOT make the solid body close.
+
+    An earlier rationale said it did, on the strength of an area budget that
+    later failed a real packing test. The correction is kept in the record so
+    the claim cannot quietly return.
+    """
     req = next(
         r for r in spec["requirements"] if r["requirement_id"] == "REQ-MCU-ONBOARD"
     )
-    assert "37 cm2 short" in req["rationale"]
+    assert "CORRECTED 2026-07-27" in req["rationale"]
+    assert "cannot coexist at all" in req["rationale"]
+    assert "reduces the shortfall without closing it" in req["rationale"]
+
+
+def test_khaya_block_is_a_product_decision_not_a_board_defect(spec):
+    """The board is fine; the line that carries it may not be."""
+    questions = " ".join(spec["open_questions"])
+    assert "BLOCKED ON A PRODUCT DECISION, not on this board" in questions
+    assert "hollow Smart Guitar is not affected" in questions
 
 
 def test_spec_defers_circuit_design_to_the_designer(spec):

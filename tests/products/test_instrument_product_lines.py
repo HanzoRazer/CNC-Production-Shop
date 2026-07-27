@@ -93,6 +93,21 @@ def test_both_lines_are_concept_not_draft(smart, khaya):
     assert "AI-generated" in " ".join(khaya["notes"])
 
 
+def test_khaya_packing_failure_supersedes_the_area_claim(khaya):
+    """An area budget said it fits; a real packing test says it does not.
+
+    Both are recorded, because the superseded figure is why the line was
+    taken self-contained in the first place.
+    """
+    notes = " ".join(khaya["notes"])
+    assert "PACKING DOES NOT CLOSE" in notes
+    assert "123 cm2 spare" in notes and "supersedes" in notes
+    assert "cannot coexist" in notes
+    q = khaya["electronics_package"]["open_question"]
+    assert "WHETHER THIS LINE CARRIES ONBOARD COMPUTE AT ALL" in q
+    assert "product decision, not an engineering one" in q
+
+
 def test_khaya_records_why_the_hat_was_dropped_not_just_that_it_was(khaya):
     """A ruling that records only its outcome invites the same question again.
 
@@ -133,12 +148,11 @@ def test_no_embedded_third_party_consumer_products(smart, khaya):
 
 def test_front_end_is_scoped_as_custom_with_its_cost_class(smart, khaya):
     """NRE and certification are not unit cost, and must not be folded into it."""
-    for product in (smart, khaya):
-        q = product["electronics_package"]["open_question"]
-        assert "CUSTOM SUBASSEMBLY" in q
-        assert "non-recurring engineering" in q
-        assert "EMC certification" in q
-        assert "separate lines rather than folding them into unit cost" in q
+    q = smart["electronics_package"]["open_question"]
+    assert "CUSTOM SUBASSEMBLY" in q
+    assert "non-recurring engineering" in q
+    assert "EMC certification" in q
+    assert "separate lines rather than folding them into unit cost" in q
 
 
 def test_smart_guitar_audio_front_end_is_open(smart):

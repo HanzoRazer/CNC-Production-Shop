@@ -97,7 +97,7 @@
     {
       "requirement_id": "REQ-MCU-ONBOARD",
       "requirement": "The board shall carry the I/O microcontroller functions on-board rather than as a separate module: footswitches, panel controls, LEDs, BMS telemetry and bypass control.",
-      "rationale": "Absorbing the separate Teensy module removes its pocket from the body. Combined with keeping the Pi and this board adjacent, that is what makes the electronics fit the SOLID body at all \u2014 the alternative is 37 cm2 short.",
+      "rationale": "Absorbing the separate Teensy module removes its pocket from the body, which matters in both product lines. CORRECTED 2026-07-27: an earlier version of this rationale claimed it is 'what makes the electronics fit the solid body'. That was wrong. In a solid body the Pi pocket and this board's pocket cannot coexist at all \u2014 see CONF-SOLID-BODY-PACKING \u2014 so removing the MCU module reduces the shortfall without closing it. The requirement stands on its own merits: fewer pockets, fewer connectors, no second module to service through a cavity cover.",
       "criticality": "high"
     },
     {
@@ -158,7 +158,8 @@
     "Deliverables and IP ownership are NOT stated: what is handed over \u2014 schematics, layout source, gerbers, BOM, firmware \u2014 and who owns it. Commercial rather than engineering, but a tender is not complete without it.",
     "MCU firmware and any device-tree overlay work are not scoped. State whether they are the contractor's or ours before NRE is quoted.",
     "QUANTITY AND SCHEDULE ARE NOT STATED and cannot be derived here. Both change who bids and what they charge, and asking for BOM at 50/250/1000 units implies volumes the document never commits to. Supply an annual volume, a first-article date, and whether production assembly is in scope.",
-    "SINGLE-COIL EXPOSURE IS AN INSTRUMENT-LEVEL RISK, not a board question, and its SIZE depends on how single-coil tone is obtained. A true single coil has no common-mode rejection at any time, and sits in the same cavity as a Pi 5 radiating at 2.4 GHz alongside switching supplies. A coil-split humbucker loses rejection only in the split position, and a stacked noiseless single coil hum-cancels by construction \u2014 both reduce the worst case from a permanent condition to one switch setting or none. Owner direction on 2026-07-27 favours splittable pickups. Needs a shielded mock-up measurement in the WORST mode before pickups are chosen, because the answer may constrain pickup selection rather than the other way round."
+    "SINGLE-COIL EXPOSURE IS AN INSTRUMENT-LEVEL RISK, not a board question, and its SIZE depends on how single-coil tone is obtained. A true single coil has no common-mode rejection at any time, and sits in the same cavity as a Pi 5 radiating at 2.4 GHz alongside switching supplies. A coil-split humbucker loses rejection only in the split position, and a stacked noiseless single coil hum-cancels by construction \u2014 both reduce the worst case from a permanent condition to one switch setting or none. Owner direction on 2026-07-27 favours splittable pickups. Needs a shielded mock-up measurement in the WORST mode before pickups are chosen, because the answer may constrain pickup selection rather than the other way round.",
+    "THE KHAYA SOLID LINE IS BLOCKED ON A PRODUCT DECISION, not on this board. Its Pi pocket and this board's pocket cannot both be routed into a solid body (CONF-SOLID-BODY-PACKING). The board is unaffected as a design; what is unresolved is whether that line carries onboard compute at all. The hollow Smart Guitar is not affected."
   ],
   "provenance": {
     "source": "engineering_estimate",
