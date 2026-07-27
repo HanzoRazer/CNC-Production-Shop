@@ -550,7 +550,30 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
     assert {
         "CONF-PICKUP-TYPE",
         "CONF-PICKUP-ROUTE-DIMS",
+        "CONF-SINGLE-PICKUP-EMC",
     } <= unresolved
+
+
+def test_pickup_emc_conflict_awaits_measurement_not_derivation():
+    """The one question the register cannot answer by calculating.
+
+    Everything else here is derived from dimensions. This one needs a shielded
+    mock-up on a bench, so it must stay unresolved however tempting the
+    engineering judgement is, and it must point at the procedure that settles
+    it rather than at a number nobody measured.
+    """
+    conflict = next(
+        c
+        for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-SINGLE-PICKUP-EMC"
+    )
+    assert conflict["status"] == "unresolved"
+    assert "CANNOT BE SETTLED BY DERIVATION" in conflict["ruling"]
+    assert "SG_PICKUP_EMC_MOCKUP_PROCEDURE.md" in conflict["ruling"]
+    assert "no measurement has been taken" in conflict["ruling"]
+    # Failing it re-opens the packing that put compute back in the Khaya.
+    assert "CONF-SINGLE-PICKUP-SPACE" in conflict["ruling"]
+    assert "11.6 mm" in conflict["field"]
 
 
 def test_length_datum_is_resolved_and_preserves_cavity_positions():
