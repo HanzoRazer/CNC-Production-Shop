@@ -5,14 +5,14 @@
   "units": "mm",
   "body": {
     "body_id": "SMART-GUITAR-BODY-BLANK-V1",
-    "description": "Smart Guitar body blank, Explorer-derived ergonomic solidbody. Official CAD length 468.5 mm, derived width 402.85 mm. Thickness ENLARGED to 51.0 mm to clear the opposed-face web failures (see CONF-BODY-THICKNESS).",
-    "stated_thickness_mm": 51.0,
+    "description": "Smart Guitar body blank, Explorer-derived ergonomic solidbody. Official CAD length 468.5 mm, derived width 402.85 mm. Thickness 47.0 mm (see CONF-BODY-THICKNESS).",
+    "stated_thickness_mm": 47.0,
     "provenance": {
       "source": "vendored_snapshot",
       "source_ref": "luthiers-toolbox smart_guitar_v1.json v1.1 body.dimensions.thickness_mm",
       "snapshot_date": "2026-07-26",
       "confidence": "draft",
-      "note": "Thickness enlarged from 44.45 mm to 51.0 mm by owner instruction on 2026-07-26 to resolve opposed-face web violations. 51.0 is the binding requirement from antenna_recess (24) against neck_pickup_route (19) at min_web 8.0. Length and width are carried for reference and are consumed by no derivation here."
+      "note": "Thickness set to 47.0 mm on 2026-07-27. Enlarged from 44.45 to clear opposed-face web violations among spec-native cavities; 47.0 is the binding requirement from control_cavity (20) against bridge_pickup_route (19), and teensy_io_pocket (20) against neck_pickup_route (19), at min_web 8.0. Briefly held at 51.0 on the strength of an antenna recess that turned out not to be a body cavity at all."
     }
   },
   "components": [
@@ -381,7 +381,7 @@
         "derived: this register's side-by-side pod is 33.0 mm deep and 162.0 mm long, deeper and far longer than the 95 x 65 x 22 mm cavity those positions were checked against"
       ],
       "status": "unresolved",
-      "ruling": "QUANTIFIED, and it still fails after the thickness enlargement. At the ruled 51.0 mm blank with min_web 8.0: web = 51.0 - 19.0 (bridge route, top face) - 33.0 (pod, back face) = -1.0 mm against a required 8.0 mm, short by 9.0 mm. The web remains NEGATIVE, so the cavities still physically intersect, by 1.0 mm. Passing by thickness alone would need a 60.0 mm blank. ROBUST TO ORIENTATION: the overlap occurs in all three placements tested at the stated position \u2014 the stated 95x65 cavity, the derived pod laid 162 along Y, and laid 162 across X \u2014 so the conclusion does not depend on which cavity dimension runs along which axis. Plan separation is the only viable fix. VIABLE DIRECTION: the bridge sits at y_from_top 320.0 and the body is 468.5 long, leaving 148.5 mm of tail; the pod needs 64 mm in Y if laid 162 across X, fitting below the bridge with 84.5 mm spare before rim inset. The band between the two pickup routes (y 187.6-274.6, 87.0 mm) also accommodates it. NOT POD-SPECIFIC: at the original 44.45 mm blank a full sweep found six of nine overlapping opposed pairs failing, four of them involving only spec-native cavities. The 51.0 mm enlargement cleared those four; the pod is what remains.",
+      "ruling": "QUANTIFIED, and it still fails after the thickness change. At the ruled 47.0 mm blank with min_web 8.0: web = 47.0 - 19.0 (bridge route, top face) - 33.0 (pod, back face) = -5.0 mm against a required 8.0 mm, short by 13.0 mm. The web remains NEGATIVE, so the cavities still physically intersect, by 5.0 mm. Passing by thickness alone would need a 60.0 mm blank. ROBUST TO ORIENTATION: the overlap occurs in all three placements tested at the stated position, so the conclusion does not depend on which cavity dimension runs along which axis. Plan separation is the only viable fix. VIABLE DIRECTION: the bridge sits at y_from_top 320.0 and the body is 468.5 long, leaving 148.5 mm of tail; the pod needs 64 mm in Y if laid 162 across X, fitting below the bridge with 84.5 mm spare before rim inset. The band between the two pickup routes (y 187.6-274.6, 87.0 mm) also accommodates it. NOT POD-SPECIFIC: at 44.45 mm a full sweep found six of nine overlapping opposed pairs failing, four involving only spec-native cavities. The thickness change cleared those; the pod is what remains.",
       "ruled_by": "unresolved \u2014 min_web ruled 8.0 and blank enlarged to 51.0; the pod placement decision belongs to SMART-GUITAR-PLAN-COLLISION-1"
     },
     {
@@ -389,23 +389,24 @@
       "field": "body.dimensions.thickness_mm",
       "sources": [
         "luthiers-toolbox smart_guitar_v1.json and sg-spec cavity map: 44.45 mm (1.75 in), previously agreed by both",
-        "derived: at 44.45 mm, four opposed-face pairs of SPEC-NATIVE cavities breach min_web 8.0 \u2014 antenna_recess x neck_pickup_route (web 1.45), rear_electronics_cavity x bridge_pickup_route (3.45), control_cavity x bridge_pickup_route (5.45), teensy_io_pocket x neck_pickup_route (5.45)"
+        "derived: at 44.45 mm, four opposed-face pairs of SPEC-NATIVE cavities breach min_web 8.0 \u2014 antenna_recess x neck_pickup_route (web 1.45), rear_electronics_cavity x bridge_pickup_route (3.45), control_cavity x bridge_pickup_route (5.45), teensy_io_pocket x neck_pickup_route (5.45)",
+        "owner ruling 2026-07-27: the antenna is mounted outside the body, removing the 51.0 mm driver"
       ],
       "status": "ruled",
-      "ruling": "ENLARGED to 51.0 mm by owner instruction, 2026-07-26. 51.0 is the binding requirement: antenna_recess (24) + neck_pickup_route (19) + min_web (8) = 51.0. At 51.0 all four spec-native web failures clear, with margins of 8.0, 10.0, 12.0 and 12.0. The derived ELECTRONICS_POD at 33.0 deep still fails against a 19 mm pickup route (web -1.0, needs 60.0) and must be RELOCATED rather than accommodated by thickness. CONSEQUENCES: body weight rises from an estimated 7.5 lb to 8.61 lb (+14.7%); pod floor remaining improves from 11.45 to 18.00 mm; sg-spec's max_hollow_depth of 30.48 was set against a 44.45 blank and scales to 34.97, which the 33.0 pod would satisfy, so C9 needs restating against the new thickness rather than assuming it still binds; and the internal-fan counterfactual becomes exactly viable at 51.0 (margin 0.00) where it previously failed by 6.55. LOWER ALTERNATIVE: if CONF-ANTENNA-PARENT resolves in favour of the antenna's own stated parent cavity, the antenna relocates with the pod and the binding requirement drops to 47.0 mm, saving roughly 0.7 lb.",
-      "ruled_by": "owner instruction, 2026-07-26"
+      "ruling": "SET TO 47.0 mm. At the original 44.45 mm, four opposed-face pairs of SPEC-NATIVE cavities breached min_web 8.0. 47.0 is the binding requirement: control_cavity (20) against bridge_pickup_route (19), and teensy_io_pocket (20) against neck_pickup_route (19), both needing 47.0. At 47.0 both clear with exactly 8.0 mm of web. HISTORY: briefly ruled 51.0 on 2026-07-26, driven solely by antenna_recess (24) against neck_pickup_route (19). CONF-ANTENNA-PARENT then established the antenna is mounted OUTSIDE the body, removing that constraint and 4.0 mm of blank. The derived ELECTRONICS_POD at 33.0 deep still fails a 19 mm pickup route by -5.0 mm and must be RELOCATED; thickness alone would need 60.0 mm, so no plausible blank accommodates it in place. CONSEQUENCES at 47.0: estimated body weight 7.5 lb -> 7.93 lb (+5.7%, against +14.7% at 51.0); pod floor remaining 14.0 mm; sg-spec's max_hollow_depth of 30.48 was set against a 44.45 blank and scales to 32.23, which the 33.0 pod still exceeds by 0.77 mm, so C9 continues to bind and needs restating; the internal-fan counterfactual returns to failing, by 4.0 mm.",
+      "ruled_by": "owner instruction 2026-07-26, revised 2026-07-27"
     },
     {
       "conflict_id": "CONF-ANTENNA-PARENT",
-      "field": "cavities.antenna_recess.parent_cavity vs its body_position_mm",
+      "field": "cavities.antenna_recess \u2014 whether it is a body cavity at all",
       "sources": [
         "sg-spec smart_guitar_cavity_map.json antenna_recess: 'Stepped shelf milled into floor of rear_electronics_cavity', parent_cavity 'rear_electronics_cavity', with a 2 mm RF window",
         "luthiers-toolbox smart_guitar_v1.json antenna_recess body_position_mm: x 22.2, y_from_top 202.6, giving a y extent of at most 177.6-227.6",
         "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity: y_from_top 275.7, length 95, giving a y extent of 228.2-323.2"
       ],
-      "status": "unresolved",
-      "ruling": "The antenna is declared a shelf INSIDE the rear electronics cavity but is positioned OUTSIDE it \u2014 the two y extents do not intersect, missing by 0.6 mm at closest. This matters because the antenna is the binding constraint on body thickness. If its stated parent cavity is correct, its position is wrong, it relocates with the pod, and the required blank drops from 51.0 to 47.0 mm. If its position is correct, it is a free-standing recess and 51.0 stands. Also note the RF premise: the design intends a 2 mm wood window, and at 44.45 mm thickness only 1.45 mm separated it from the neck pickup route floor, so the window was effectively the pickup cavity.",
-      "ruled_by": "unresolved \u2014 decides 51.0 vs 47.0 mm of blank"
+      "status": "ruled",
+      "ruling": "RESOLVED: the antenna is MOUNTED OUTSIDE THE BODY. It is not an internal cavity, consumes no cavity depth, and creates no opposed-face conflict. Both stated descriptions were wrong in different ways \u2014 sg-spec called it a stepped shelf milled into the floor of rear_electronics_cavity with a 2 mm RF window, and luthiers-toolbox positioned it at x 22.2, y 202.6, which is neither inside that cavity nor on the lower bout. The internal '2 mm wood window' RF premise is abandoned with it. CONSEQUENCE: the antenna was the sole driver of a 51.0 mm blank; without it the binding requirement is 47.0 mm.",
+      "ruled_by": "owner ruling, 2026-07-27"
     }
   ],
   "provenance": {
