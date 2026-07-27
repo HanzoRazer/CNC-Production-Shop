@@ -225,6 +225,55 @@ So C4 changes character: it is no longer a check to run but a **constraint to
 design against**, and the Dev Order's first deliverable is a pod placement that
 satisfies it.
 
+### Full sweep result: the spec was already non-manufacturable
+
+Running C1, C3, C4, C5, and C9 across every cavity pair, with positions trusted
+(`CONF-LENGTH-DATUM` ruled), width known, and `min_web` = 8.0:
+
+**C4 — six of nine overlapping opposed-face pairs fail.** Four of them involve
+**only spec-native cavities**, with no derived pod anywhere in the pair:
+
+| Pair | Web | Short by | Derived pod involved? |
+|---|---:|---:|:--:|
+| `bridge_pickup_route` × pod | −7.55 | 15.55 | yes |
+| `neck_pickup_route` × pod | −7.55 | 15.55 | yes |
+| `neck_pickup_route` × `antenna_recess` | **1.45** | 6.55 | **no** |
+| `bridge_pickup_route` × `rear_electronics_cavity` | 3.45 | 4.55 | **no** |
+| `bridge_pickup_route` × `control_cavity` | 5.45 | 2.55 | **no** |
+| `neck_pickup_route` × `teensy_io_pocket` | 5.45 | 2.55 | **no** |
+
+This reframes the Dev Order. The enlarged pod did not break the design — **the
+design was already unbuildable**, and the derivation merely made it visible. Any
+fix that only relocates the pod leaves four violations untouched.
+
+The worst spec-native case is the antenna recess: **1.45 mm** of wood between
+the neck pickup route floor and the antenna pocket. The spec's own
+`structural_analysis` records `floor_verdict: safe` on the strength of 20.45 mm
+to the front face — but it only ever measured downward, never against a route
+cutting up from the other side. The antenna's entire premise is a 2 mm RF
+window; at 1.45 mm the window is the pickup cavity.
+
+**C3 — a same-face overlap that is not intentional.** `control_cavity`
+(25.0, 317.0, 100 × 60) and `rear_electronics_cavity` (36.8, 275.7, 95 × 65)
+are both back-face and overlap by **50.7 × 56.2 mm**, yet the spec describes
+them as separate cavities with separate cover plates. Either they are one
+cavity or one is misplaced. The other same-face overlaps are benign: the
+control plate is documented as spanning both pickup and controls, and the
+antenna recess is a stepped shelf inside the rear cavity by design.
+
+**C5 — every back-face cavity crosses the centreline spine band** of ±19.05 mm.
+That constraint came from sg-spec's chambered Les Paul concept, which
+`CONF-BASE-MODEL` retired. It probably does not apply to a solid body, but it
+should be explicitly retired rather than silently ignored, since "carries string
+tension load" is a real concern independent of chambering.
+
+**C1/C6 — containment is inconclusive except for one definite failure.** The
+check used a rectangle bound, which over-estimates the body, so a pass proves
+nothing while a failure is definite. `usb_c_port` at x 216.0 fails against a
+188.73 mm limit. Real containment needs the calibrated outline.
+
+**C9 — only the pod fails**, at 33.0 against 30.48, over by 2.52.
+
 ### C9 may also fail on day one
 
 The derived pod is **33.0 mm** against sg-spec's own `max_hollow_depth` of
