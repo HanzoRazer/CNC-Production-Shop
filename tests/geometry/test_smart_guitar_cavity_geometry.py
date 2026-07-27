@@ -633,20 +633,57 @@ def test_pickup_type_conflict_is_intra_file_not_cross_repo():
     assert "INTRA-FILE" in conflict["ruling"]
 
 
-def test_opposed_face_web_risk_is_recorded_as_out_of_scope():
-    """Top routes cut toward the same plane as back cavities and are excluded.
+def test_opposed_face_web_is_quantified_and_fails():
+    """With min_web ruled at 8.0 mm the check can be evaluated, and it fails.
 
-    19 mm of top-face route plus 33 mm of derived pod is 52 mm through a
-    44.45 mm blank. Whether that matters depends on plan position, which this
-    record deliberately does not model, so the derived thickness is a lower
-    bound and must say so.
+    Arithmetic guarded here because the register cannot compute it — this is a
+    plan-level result — but the numbers must not drift from the cavity depths
+    this record does derive. If the pod depth changes, this test is where the
+    stale conclusion surfaces.
+    """
+    stored = load_json(GEOMETRY)
+    pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
+
+    thickness = stored["body"]["stated_thickness_mm"]
+    bridge_route_depth = 19.0
+    min_web = 8.0
+    web = thickness - bridge_route_depth - pod["derived_depth_mm"]
+
+    assert web == pytest.approx(-7.55)
+    assert web < min_web
+    assert web < 0, "negative web means the cavities intersect, not merely crowd"
+    assert min_web - web == pytest.approx(15.55)
+
+    # Neither dimension can absorb it.
+    assert bridge_route_depth + pod["derived_depth_mm"] + min_web == pytest.approx(60.0)
+    assert thickness - bridge_route_depth - min_web == pytest.approx(17.45)
+
+    conflict = next(
+        c for c in stored["conflicts"] if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
+    )
+    assert "QUANTIFIED, and it fails" in conflict["ruling"]
+    assert "-7.55" in conflict["ruling"]
+    assert "ROBUST TO ORIENTATION" in conflict["ruling"]
+    assert "min_web ruled at 8.0" in conflict["ruled_by"]
+
+
+def test_opposed_face_web_stays_open_as_a_placement_decision():
+    """Quantified but not resolved: choosing a placement is design, not derivation.
+
+    The failure is now arithmetic rather than suspicion, but this register
+    still cannot close it — plan position is out of scope, and the fix is a
+    design choice about where the pod sits.
     """
     stored = load_json(GEOMETRY)
     conflict = next(
         c for c in stored["conflicts"] if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
     )
     assert conflict["status"] == "unresolved"
-    assert "CANNOT RESOLVE" in conflict["ruling"]
+    assert "design decision, not a derivation" in conflict["ruling"]
+    assert "SMART-GUITAR-PLAN-COLLISION-1" in conflict["ruled_by"]
+
+    # The viable direction must be recorded, not just the failure.
+    assert "148.5 mm of tail" in conflict["ruling"]
 
     pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
     assert pod["derived_depth_mm"] + 19.0 > stored["body"]["stated_thickness_mm"]

@@ -181,17 +181,56 @@ mirrored body is not obviously mirrored.
 | C1 | Cavity ⊆ body outline, inset by `rim_min` | sg-spec `rim_min_in` 0.5 → 12.7 mm |
 | C2 | Cavity ∩ through-body void = ∅, with clearance | voids V1, V2, V3, V5 |
 | C3 | Same-face cavities do not overlap unless declared merged | derived |
-| C4 | Opposed-face web: `thickness − top_depth − back_depth ≥ min_web` wherever plan footprints overlap | `CONF-OPPOSED-FACE-WEB` |
+| C4 | Opposed-face web: `thickness − top_depth − back_depth ≥ min_web`, `min_web` = **8.0 mm** (ruled), wherever plan footprints overlap | `CONF-OPPOSED-FACE-WEB` |
 | C5 | No cavity crosses the centreline spine band | sg-spec `spine_width_min_in` 1.5 → 38.1 mm |
 | C6 | Edge clearance from cavity to outline ≥ `rim_min` | sg-spec `body_constraints` |
 | C7 | Fastener positions land in material, not in a void or cavity | cover-plate screws, 4-bolt neck plate |
 | C8 | Wire channels connect their endpoints and stay in material | `rear_wiring_channel` paths |
 | C9 | Back-face cavity depth ≤ `max_hollow_depth` | sg-spec 1.2 in → 30.48 mm |
 
-C4 is the reason the Dev Order exists. C9 is worth noting now: the derived pod
-is **33.0 mm**, against a stated maximum hollow depth of **30.48 mm** — so the
-pod likely violates a constraint sg-spec sets for itself, independently of any
-collision. That check may fail on day one.
+### C4 is already known to fail — the job is to fix it, not to find it
+
+With `min_web` ruled at **8.0 mm** (2026-07-26, matching the floor minimum),
+C4 can be evaluated now, and it fails at the bridge pickup:
+
+```text
+web = 44.45 − 19.0 (bridge route, top) − 33.0 (pod, back) = −7.55 mm
+required ≥ 8.0                              FAIL, short by 15.55 mm
+```
+
+The web is **negative**, so the cavities physically intersect by 7.55 mm rather
+than merely violating a margin.
+
+**Robust to orientation.** The overlap occurs in all three placements tested at
+the stated position, so the result does not depend on which cavity dimension
+runs along which axis:
+
+| Placement | Overlap with bridge route |
+|---|---|
+| Stated 95 × 65 cavity | 41.7 × 40.0 mm |
+| Derived pod, 162 along Y | 41.2 × 40.0 mm |
+| Derived pod, 162 across X | 90.2 × 33.1 mm |
+
+**Neither dimension can absorb it.** Passing by thickness needs a 60.0 mm
+blank; passing by depth needs a 17.5 mm pod when the HiFiBerry alone demands
+30 mm. **Plan separation is the only viable fix**, which is precisely this Dev
+Order's job.
+
+**And there is room.** The bridge sits at `y_from_top` 320.0 on a body now
+468.5 mm long, leaving 148.5 mm of tail. Laid 162 across X, the pod needs 64 mm
+in Y — fitting below the bridge with 84.5 mm spare before rim inset. The 24 mm
+tail extension ruled under `CONF-LENGTH-DATUM` is what creates that room.
+
+So C4 changes character: it is no longer a check to run but a **constraint to
+design against**, and the Dev Order's first deliverable is a pod placement that
+satisfies it.
+
+### C9 may also fail on day one
+
+The derived pod is **33.0 mm** against sg-spec's own `max_hollow_depth` of
+**30.48 mm**, so the pod likely violates a constraint the spec sets for itself,
+independently of any collision. Unlike C4 this one has no plan-level escape:
+it needs either a relaxed constraint or a shallower assembly.
 
 ### Phase 4 — Reporting
 
@@ -254,7 +293,6 @@ phase 1 potentially ending the Dev Order early and legitimately.
 | # | Decision | Why it changes the work |
 |---|---|---|
 | 1 | Where the extra 24.0 mm of body length sits, from the official CAD datum | Gates every Y-dependent check. A 24 mm ambiguity is ~2x the rim minimum, so C1/C2/C5/C6 cannot report until it is known |
-| 2 | `min_web` value between opposing cavities | Directly decides whether C4 passes; needs structural judgement, not a default |
 | 3 | Add `shapely>=2.0` to `pyproject.toml`, or hand-roll polygon predicates | shapely 2.1.2 is present in the environment but undeclared. Hand-rolling avoids a runtime dependency in a repo that currently has five, at the cost of writing and testing point-in-polygon, inset, and intersection ourselves |
 | 4 | Canonical coordinate frame | Everything downstream reads it; changing it later invalidates every stored result |
 | 5 | Does a C9 failure (pod 33.0 mm vs 30.48 mm max hollow) block, or become a ruled conflict | The pod already appears to violate sg-spec's own maximum hollow depth |
