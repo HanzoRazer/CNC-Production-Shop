@@ -119,11 +119,15 @@ def test_mcu_absorption_does_not_overclaim(spec):
     assert "reduces the shortfall without closing it" in req["rationale"]
 
 
-def test_khaya_block_is_a_product_decision_not_a_board_defect(spec):
-    """The board is fine; the line that carries it may not be."""
-    questions = " ".join(spec["open_questions"])
-    assert "BLOCKED ON A PRODUCT DECISION, not on this board" in questions
-    assert "hollow Smart Guitar is not affected" in questions
+def test_board_serves_one_line_and_carries_all_its_nre(spec):
+    """The Khaya reverted to passive, so there is no second line to amortise.
+
+    That is a costing consequence, not a design one, and it belongs on the
+    record before the budget model reads it.
+    """
+    notes = " ".join(spec["notes"])
+    assert "critical path for the SMART GUITAR ONLY" in notes
+    assert "no second line to amortise across" in notes
 
 
 def test_spec_defers_circuit_design_to_the_designer(spec):
@@ -175,7 +179,7 @@ def test_spec_records_that_the_instrument_constrains_the_board(spec):
     notes = " ".join(spec["notes"])
     assert "must be ADJACENT" in notes
     assert "2x 18650" in notes
-    assert "critical path for BOTH product lines" in notes
+    assert "critical path for the SMART GUITAR ONLY" in notes
 
 
 def test_power_architecture_is_stated_not_left_ambiguous(spec):

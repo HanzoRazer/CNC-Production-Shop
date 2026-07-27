@@ -1,7 +1,7 @@
 {
   "product_id": "PRODUCT-KHAYA-SOLIDBODY-V1",
   "product_name": "Khaya Solid Body",
-  "product_description": "Solid Khaya (African mahogany) electric guitar in headless and headed series, carrying a reduced embedded electronics package. A performance instrument: amplified through the dry output jack, with wireless monitoring and onboard effects.",
+  "product_description": "Solid Khaya (African mahogany) electric guitar in headless and headed series, with conventional passive electronics. A performance instrument, amplified through the output jack. Onboard compute was dropped on 2026-07-27 and is deferred, not abandoned.",
   "product_role": "performance_instrument",
   "status": "concept",
   "construction": {
@@ -33,19 +33,16 @@
     }
   ],
   "electronics_package": {
-    "package_id": "SMART-STACK-REDUCED-M2-V1",
-    "compute_host": "Raspberry Pi 5 (8 GB)",
+    "package_id": "KHAYA-PASSIVE-V1",
+    "compute_host": "none \u2014 passive instrument",
     "onboard_audio_output": false,
     "components": [
-      "Raspberry Pi 5 (8 GB) \u2014 JACK + Guitarix/MODEP host and coaching engine",
-      "Teensy 4.1 \u2014 I/O coprocessor, control only, no audio path",
-      "Battery pack + BMS (2x 18650), USB-C PD charging",
-      "40 mm cooling fan, lid-mounted, venting outward",
-      "MOTU M2 USB audio interface \u2014 EXTERNAL, not mounted in the instrument"
+      "Dual pickups, type fluid \u2014 see CONF-PICKUP-TYPE",
+      "Passive volume, tone and selector in the control cavity",
+      "Output jack, body mounted"
     ],
-    "rationale": "Full Pi 5 compute is retained onboard; audio moves entirely to an EXTERNAL MOTU M2. The M2 replaces two components at once \u2014 the Hi-Z USB input interface and the HiFiBerry HAT \u2014 because it provides instrument input, line output and headphone output in one productised unit. That matters beyond convenience: a HiFiBerry is an excellent converter board but solves none of the guitar-specific analog problems. Using it would still require designing a Hi-Z input stage, instrument preamp, gain control, headphone amplifier, protection circuitry and analog filtering. A USB interface has already solved all six. Dropping the HAT and its GPIO ribbon channel frees 148 cm2, taking this line from 25 cm2 short to roughly 123 cm2 spare, so the packing stops being borderline. An external box is appropriate here because this is a performance instrument played at an amplifier or a pedalboard.",
-    "external_components_note": "MOTU M2 measures 190.5 x 108 x 45 mm and weighs 0.61 kg. It CANNOT be mounted internally: 45 mm of height in a 47 mm blank leaves 2 mm for both skins even at zero floor, and its footprint with margins is 283 cm2 against 287 cm2 of usable body area \u2014 99%, which would displace every other component. The M2 remains EXTERNAL and is therefore compatible with the sourcing policy: it is a peripheral the customer connects, not a component designed into the instrument. Were it mounted internally the policy would forbid it regardless of fit.",
-    "open_question": "WHETHER THIS LINE CARRIES ONBOARD COMPUTE AT ALL is now the open question, and it supersedes the earlier one about sharing the Smart Guitar's front-end board. Going fully self-contained was chosen on 2026-07-27 on the strength of a packing figure that has since been shown wrong. A solid body cannot host both the Pi pocket and the front-end pocket. Options: drop onboard compute and move the smart features to a companion unit; use a substantially smaller compute module; or abandon solid construction for this line. This is a product decision, not an engineering one."
+    "rationale": "Onboard compute dropped 2026-07-27. A solid body cannot host both the Pi pocket and the audio front-end pocket \u2014 only one site in the body is large enough for either, and the result held at wall 6 mm, rim 10 mm, voids -10% and body +10% (CONF-SOLID-BODY-PACKING). Rather than shrink the compute or abandon solid construction, this line reverts to a conventional passive instrument. That is not a loss: it decouples the Khaya from the front-end board's schedule and certification entirely, so it ships on wood and hardware alone.",
+    "open_question": "DEFERRED, NOT CLOSED. Smart features may return to this line via a companion unit rather than onboard, or via a body design that creates the space \u2014 chambering, a different cavity arrangement, or a revised outline. Those options are unexplored. What is settled is that the CURRENT solid body with the CURRENT electronics stack cannot carry both pockets."
   },
   "materials": {
     "body": "khaya (African mahogany)",
@@ -71,12 +68,10 @@
   },
   "notes": [
     "STATUS IS 'concept'. Like its sibling, this instrument exists as an AI-generated image and a set of derived dimensions, not as a measured object.",
-    "PACKING DOES NOT CLOSE, and this supersedes an earlier note claiming roughly 123 cm2 spare. That figure was an area budget; the actual placement fails. The Pi pocket and the front-end board pocket each fit alone and each fit alongside the battery, but they cannot coexist: only one site in the body is large enough for either, and the result is unchanged at wall 6 mm, rim 10 mm, voids -10% or body +10%. See CONF-SOLID-BODY-PACKING.",
-    "Configurations that do NOT fit a solid body of these dimensions, retained so they are not re-derived: full stack including the HiFiBerry HAT, 96 cm2 short; same with a 4x 18650 pack, 25 cm2 short. A Raspberry Pi Zero 2 W with a HiFiBerry Zero fits (+31 cm2) but costs roughly five times the compute. The MOTU M2 cannot be internal in any configuration: 45 mm tall in a 47 mm blank.",
+    "This line no longer depends on the audio front-end board, so it is not blocked by that board's design, NRE or certification. It was the argument for dropping compute and it is the main benefit.",
+    "The packing evidence, retained so the decision is not revisited from scratch: POD_PI 93 x 64 has 10 valid sites and POD_HAT 73 x 64.5 has 18, all in the same region; Pi + battery fits, board + battery fits, Pi + board does not; the largest pocket that fits anywhere is 100 x 60. An earlier area budget suggested 123 cm2 spare and was wrong \u2014 area parity does not prove a packing.",
     "The headed series is concept_defined and gated behind the headless first article, so its extra hardware is a documented delta rather than a costed variant.",
-    "onboard_audio_output false is the single functional difference from the Smart Guitar and is a use-case decision, not a compromise: a stage instrument does not need a headphone jack.",
     "Contains no cost, price, or margin fields by design.",
-    "Bus-powering the M2 from the instrument battery costs runtime: about 4.7 h on a 4x 18650 pack versus 6.3 h for the Pi alone, and about 2.3 h on the 2x 18650 pack specified here. If runtime matters, power the M2 from the host rather than the instrument.",
     "SOURCING POLICY \u2014 NO EMBEDDED THIRD-PARTY CONSUMER PRODUCTS. A finished retail product may not be designed into either instrument as an internal component. Embedding one creates OEM licensing and trademark exposure, a single-source dependency on another company's product roadmap, warranty and support ambiguity, and re-certification questions for the finished assembly. This rules out mounting an iRig HD 2, Apogee Jam X, Scarlett Solo or MOTU M2 inside the body, regardless of whether it physically fits. EXTERNAL peripherals are NOT affected: shipping or recommending an interface the customer connects is resale, not embedding."
   ]
 }

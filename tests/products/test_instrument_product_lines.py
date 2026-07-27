@@ -67,21 +67,51 @@ def test_khaya_carries_both_headstock_series(khaya):
     assert primary[0]["headstock"] == "none_headless"
 
 
-def test_onboard_audio_is_the_functional_difference(smart, khaya):
-    """The HAT is what separates the packages, and it tracks the use case.
+def test_compute_is_the_functional_difference_between_the_lines(smart, khaya):
+    """The Khaya reverted to passive; the Smart Guitar carries the compute.
 
-    A practice instrument is played through headphones, so it needs the I2S
-    HAT. A performance instrument goes to an amp through the dry jack, so it
-    does not. Same compute host in both.
+    They no longer differ by an audio HAT. They differ by whether there is a
+    computer in the instrument at all, which is what the packing forced.
     """
-    assert smart["electronics_package"]["onboard_audio_output"] is True
+    assert smart["electronics_package"]["compute_host"].startswith("Raspberry Pi 5")
+    assert khaya["electronics_package"]["compute_host"] == "none — passive instrument"
     assert khaya["electronics_package"]["onboard_audio_output"] is False
-    assert (
-        smart["electronics_package"]["compute_host"]
-        == khaya["electronics_package"]["compute_host"]
+    assert not any(
+        "Raspberry" in c for c in khaya["electronics_package"]["components"]
     )
-    assert any("HiFiBerry" in c for c in smart["electronics_package"]["components"])
-    assert not any("HiFiBerry" in c for c in khaya["electronics_package"]["components"])
+
+
+def test_khaya_decision_is_deferred_not_closed(khaya):
+    """Other body options remain open; only the current one is ruled out."""
+    q = khaya["electronics_package"]["open_question"]
+    assert "DEFERRED, NOT CLOSED" in q
+    assert "chambering" in q
+    assert "CURRENT solid body with the CURRENT electronics stack" in q
+
+
+def test_khaya_retains_the_evidence_behind_the_decision(khaya):
+    """So it is not re-litigated from scratch in six months."""
+    notes = " ".join(khaya["notes"])
+    assert "10 valid sites" in notes
+    assert "largest pocket that fits anywhere is 100 x 60" in notes
+    assert "area parity does not prove a packing" in notes
+
+
+def test_khaya_is_decoupled_from_the_board_schedule(khaya):
+    """The main benefit of dropping compute, stated as such."""
+    notes = " ".join(khaya["notes"])
+    assert "not blocked by that board's design, NRE or certification" in notes
+
+
+def test_smart_guitar_is_the_go_forward_line(smart):
+    """And the hollow box is why it is buildable where its sibling is not."""
+    notes = " ".join(smart["notes"])
+    assert "GO DECISION 2026-07-27" in notes
+    assert "one continuous cavity" in notes
+    assert "NRE and certification now fall ENTIRELY on this line" in notes.replace(
+        "'s non-recurring engineering and certification now fall ENTIRELY on this line",
+        " NRE and certification now fall ENTIRELY on this line",
+    )
 
 
 def test_both_lines_are_concept_not_draft(smart, khaya):
@@ -91,44 +121,6 @@ def test_both_lines_are_concept_not_draft(smart, khaya):
         assert product["provenance"]["confidence"] == "draft"
     assert "AI-generated" in " ".join(smart["notes"])
     assert "AI-generated" in " ".join(khaya["notes"])
-
-
-def test_khaya_packing_failure_supersedes_the_area_claim(khaya):
-    """An area budget said it fits; a real packing test says it does not.
-
-    Both are recorded, because the superseded figure is why the line was
-    taken self-contained in the first place.
-    """
-    notes = " ".join(khaya["notes"])
-    assert "PACKING DOES NOT CLOSE" in notes
-    assert "123 cm2 spare" in notes and "supersedes" in notes
-    assert "cannot coexist" in notes
-    q = khaya["electronics_package"]["open_question"]
-    assert "WHETHER THIS LINE CARRIES ONBOARD COMPUTE AT ALL" in q
-    assert "product decision, not an engineering one" in q
-
-
-def test_khaya_records_why_the_hat_was_dropped_not_just_that_it_was(khaya):
-    """A ruling that records only its outcome invites the same question again.
-
-    The HAT left this line 25 cm2 short, closing only on a margin change. That
-    borderline result is the reason for the decision, so it stays recorded
-    alongside the comfortable configuration that replaced it.
-    """
-    notes = " ".join(khaya["notes"])
-    assert "123 cm2 spare" in notes
-    assert "25 cm2 short" in notes and "96 cm2 short" in notes
-    assert "45 mm tall in a 47 mm blank" in notes
-
-
-def test_m2_is_recorded_as_external_with_its_dimensional_reason(khaya):
-    """External is a conclusion, not a preference, and must carry its evidence."""
-    ep = khaya["electronics_package"]
-    assert ep["onboard_audio_output"] is False
-    assert any("EXTERNAL" in c for c in ep["components"])
-    reason = ep["external_components_note"]
-    assert "190.5 x 108 x 45" in reason
-    assert "99%" in reason
 
 
 def test_no_embedded_third_party_consumer_products(smart, khaya):
