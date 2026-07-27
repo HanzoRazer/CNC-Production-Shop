@@ -93,11 +93,13 @@ of 4.5 mm on length and 3.5 mm on width give 70.0 × 25.0 exactly. A test locks
 this, because an exact reproduction is the evidence that the derivation rules
 match how the original dimensions were actually arrived at.
 
-**4. One unresolved assumption decides whether the body works at all.** The
-40 mm cooling fan is modelled as venting outward through the cover. If it must
-sit inside the cavity depth, required thickness becomes 51.0 mm and the
-specified 44.45 mm body **fails by 6.55 mm**. No source states which. A test
-asserts both outcomes so the consequence stays measured rather than remembered.
+**4. The fan mounting decided whether the body worked at all, and it went the
+right way.** Ruled 2026-07-26: the 40 mm fan vents outward through the cover
+and consumes no cavity depth. Had it been mounted internally, required
+thickness would be 51.0 mm and the specified 44.45 mm body would **fail by
+6.55 mm**. The counterfactual is retained under test — the ruling confirmed the
+model, so without it the cost of the alternative would be invisible and a later
+edit flipping the mounting would pass silently.
 
 **5. The derived pod footprint is a lower bound.** The canonical signal chain
 requires an "active buffered Hi-Z 1 MOhm" splitter that has no dimensions
@@ -106,7 +108,7 @@ larger than 162 × 64 mm by however much that part needs.
 
 ## Reconciliation record
 
-Fifteen conflicts found: six ruled, nine open. Recorded in the register and
+Fifteen conflicts found: seven ruled, eight open. Recorded in the register and
 propagated verbatim into the derived record, with a test enforcing that they
 match, so a reviewer reading only the derived file cannot see fewer conflicts
 than exist.
@@ -120,13 +122,13 @@ than exist.
 | `CONF-BASE-MODEL` | body outline lineage | The 2026-01-29 Les Paul reference is stale. Outline from luthiers-toolbox, cavity dimensions from sg-spec. Cavity *positions* inherited from a Les Paul outline are therefore untrustworthy and excluded. |
 | `CONF-BODY-WIDTH` | body width | Official CAD length is **468.5 mm**, superseding 444.5. With the traced topology that gives k = 1.611128 and a derived width of **402.85 mm**; the stated 368.3 mm is 34.55 mm short and treated as stale. The CAD declares no width (drawing on hold). **Independently corroborated**: the owner's separate calculation reaches the same 402.85 mm, so the figure does not rest on the traced aspect alone. |
 | `CONF-LENGTH-DATUM` | cavity `y_from_top` | The extra **24.0 mm sits at the tail, below the bridge**, so every `y_from_top` is preserved: the datum is the neck end and the growth is entirely below the bridge line. The bridge is fixed by scale length regardless. The 438.15 mm in the neck block remains stale. This was the binding constraint on plan-level work and is now cleared. |
+| `CONF-FAN-INTRUSION` | fan mounting | The fan **vents outward through the lid** and consumes no cavity depth, confirming the modelled configuration. No derived dimension changes, but the thickness verdict stops being provisional: the 3.45 mm margin is real. An internally mounted fan would have demanded 51.0 mm and failed the blank by 6.55 mm; that counterfactual is retained under test. Lid requires vents. |
 | `CONF-FRET-COUNT` | fret count | 24. The 2026-07-21 sg-spec quarantine note asserting "canon: 22" is itself wrong. No effect on cavity geometry; recorded because it sits in a file presenting itself as a cleanup. |
 
 ### Open
 
 | ID | Field | Why it is still open |
 |---|---|---|
-| `CONF-FAN-INTRUSION` | fan mounting | Nothing states whether the fan sits inside the cavity or protrudes. Decides a 6.55 mm blank failure. **Highest priority.** |
 | `CONF-USB-INTERFACE-LOCATION` | Hi-Z USB interface | The signal chain names a Scarlett Solo 4th Gen in the audio path. At roughly 143 × 97 × 47 mm it cannot be onboard. Treated as external; if it must be internal, the named parts are impossible. |
 | `CONF-HIZ-SPLITTER-DIMS` | buffered splitter | Required by both audio paths, dimensioned nowhere. Omitted rather than invented. |
 | `CONF-BATTERY-PLACEMENT` | battery location | sg-spec sites it in a bass chamber; the body was ruled a solid blank with through-body ergonomic voids, which has no such chamber. Depth and footprint hold; position does not. |
@@ -211,6 +213,13 @@ SMART-GUITAR-CHANNEL-PRICING-1
 SMART-GUITAR-COMMERCIAL-BASELINE-1
 ```
 
-`CONF-FAN-INTRUSION` should be closed before the budget model consumes this
-geometry. Every other open conflict can be carried, but that one changes
-whether the instrument is buildable from the specified blank.
+`CONF-FAN-INTRUSION` is closed, so **this geometry is ready for the budget
+model to consume**. Every remaining open conflict can be carried: none of them
+changes whether the instrument is buildable from the specified blank.
+
+The open items now split cleanly by who they block. `CONF-HIZ-SPLITTER-DIMS`
+and `CONF-USB-INTERFACE-LOCATION` bound the pod footprint and the bill of
+materials, so they matter to costing. `CONF-OPPOSED-FACE-WEB`,
+`CONF-TRACE-REGISTRATION`, and `CONF-BATTERY-PLACEMENT` are plan-level and
+belong to `SMART-GUITAR-PLAN-COLLISION-1`. `CONF-PICKUP-TYPE` and
+`CONF-PICKUP-ROUTE-DIMS` block both.

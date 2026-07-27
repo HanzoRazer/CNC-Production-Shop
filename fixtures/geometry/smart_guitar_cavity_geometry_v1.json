@@ -105,9 +105,9 @@
         "sg-spec smart_guitar_cavity_map.json: mounting surface pod_lid, standoff 0, 'requires vents in lid'",
         "no source states whether the fan body sits inside the cavity or protrudes through the cover"
       ],
-      "status": "unresolved",
-      "ruling": "Modelled as venting outward and consuming no cavity depth. This is an ASSUMPTION. If the fan must sit inside, required blank thickness becomes 51.0 mm and the specified 44.45 mm body fails by 6.55 mm. Needs a decision before any machining estimate is trusted.",
-      "ruled_by": "unresolved \u2014 engineering decision required"
+      "status": "ruled",
+      "ruling": "RESOLVED: the fan vents OUTWARD through the lid and consumes no cavity depth. This confirms the configuration already modelled, so no derived dimension changes \u2014 but it converts the body-thickness verdict from provisional to settled. Required thickness stays 41.0 mm against the 44.45 mm blank, a real 3.45 mm margin. The counterfactual is retained in test_internal_fan_would_break_the_blank: an internally mounted fan would demand 51.0 mm and fail the specified body by 6.55 mm. The lid requires vents, per the source note.",
+      "ruled_by": "owner ruling, 2026-07-26"
     },
     {
       "conflict_id": "CONF-PI5-HEIGHT",

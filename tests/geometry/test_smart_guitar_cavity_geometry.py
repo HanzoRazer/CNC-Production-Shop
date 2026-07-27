@@ -434,8 +434,38 @@ def test_teensy_pocket_footprint_reproduces_the_stated_pocket():
     assert pocket["width_delta_mm"] == 0.0
 
 
+def test_fan_venting_is_ruled_not_assumed():
+    """The last blocker on this record. Ruled, and it confirms the model.
+
+    Nothing derived changes, but the body-thickness verdict stops being
+    provisional: the 3.45 mm margin is now real rather than contingent on an
+    unstated mounting choice.
+    """
+    fan = next(
+        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-FAN-INTRUSION"
+    )
+    assert fan["status"] == "ruled"
+    assert "vents OUTWARD" in fan["ruling"]
+    assert "owner ruling" in fan["ruled_by"]
+
+    register = _register()
+    fan_part = next(c for c in register.components if c.component_id == "FAN_40MM")
+    assert fan_part.mounting == "lid"
+    assert fan_part.consumes_cavity_depth is False
+    assert fan_part.depth_demand_mm == 0.0
+
+    stored = load_json(GEOMETRY)
+    assert stored["body"]["verdict"] == VERDICT_SUFFICIENT
+    assert stored["body"]["margin_mm"] == 3.45
+
+
 def test_internal_fan_would_break_the_blank():
-    """The open assumption, quantified: 51 mm required against a 44.45 mm body."""
+    """Counterfactual retained after the ruling: 51 mm against a 44.45 mm body.
+
+    Kept deliberately. The ruling went the way the model assumed, so without
+    this the cost of the alternative would be invisible, and a later edit
+    flipping the mounting would pass silently.
+    """
     register = _register()
     components = [
         replace(c, consumes_cavity_depth=True) if c.component_id == "FAN_40MM" else c
@@ -468,7 +498,6 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
     stored = load_json(GEOMETRY)
     unresolved = {c["conflict_id"] for c in stored["conflicts"] if c["status"] == "unresolved"}
     assert {
-        "CONF-FAN-INTRUSION",
         "CONF-HIZ-SPLITTER-DIMS",
         "CONF-USB-INTERFACE-LOCATION",
         "CONF-PICKUP-TYPE",
