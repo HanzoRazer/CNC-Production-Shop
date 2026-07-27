@@ -441,23 +441,27 @@ def test_wire_channel_is_too_narrow_in_the_spec_for_a_ribbon():
 def test_ribbon_length_constrains_pocket_separation():
     """The channel's derived length IS the maximum pocket separation.
 
-    Shortened to 60 mm once the Khaya went self-contained: at 150 mm the
-    channel alone costs 94 cm2 and that line finishes 37 cm2 short. Adjacency
-    became a constraint rather than a layout preference, and it is expressed
-    as geometry so a future edit fails the derivation instead of quietly
-    assuming a longer cable.
+    Set to 100 mm. It was briefly 60 mm, chosen on an area argument about the
+    channel's own cost — which was geometrically impossible: the pockets need
+    72.25 mm centre-to-centre stacked before their walls clear, so a 60 mm
+    ribbon forbade the layout outright at any body size. A constraint has to be
+    physically achievable to be worth expressing.
     """
     stored = load_json(GEOMETRY)
     channel = next(
         c for c in stored["cavities"] if c["cavity_id"] == "WIRE_CHANNEL_PI_HAT"
     )
-    assert channel["derived_length_mm"] == 60.0
+    assert channel["derived_length_mm"] == 100.0
+    # 60 mm was geometrically impossible: the pockets need 72.25 mm stacked.
+    assert channel["derived_length_mm"] > 72.25
     assert "GPIO_RIBBON" in channel["component_ids"]
 
     register = _register()
     ribbon = next(c for c in register.components if c.component_id == "GPIO_RIBBON")
     assert ribbon.required is True
-    assert "ENGINEERING ESTIMATE" in ribbon.provenance.note
+    assert "stock GPIO extension ribbon" in ribbon.provenance.note
+    assert "geometrically IMPOSSIBLE" in ribbon.provenance.note
+    assert "72.25 mm" in ribbon.provenance.note
 
 
 def test_frontend_board_replaces_both_the_hat_and_the_teensy():

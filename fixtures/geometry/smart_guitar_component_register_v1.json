@@ -130,7 +130,7 @@
       "component_id": "GPIO_RIBBON",
       "display_name": "Pi 5 GPIO to HiFiBerry ribbon/riser",
       "role": "Carries the I2S bus between the Pi 5 and the HiFiBerry HAT once they no longer stack",
-      "length_mm": 60.0,
+      "length_mm": 100.0,
       "width_mm": 26.0,
       "height_mm": 2.0,
       "mounting": "floor",
@@ -145,7 +145,7 @@
         "source_ref": "required by CONF-POD-LAYOUT: side-by-side placement forbids header stacking",
         "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "length_mm 60.0 is a short GPIO extension ribbon between adjacent pockets and is an ENGINEERING ESTIMATE, not a selected part. It is registered as a component so pocket separation is CONSTRAINED rather than described. Reduced from 150.0 on 2026-07-27: the longer ribbon costs 94 cm2 of channel and leaves the solid body 37 cm2 short once that line went self-contained."
+        "note": "length_mm 100.0 is a stock GPIO extension ribbon. CORRECTED from 60.0 on 2026-07-27: 60 mm was geometrically IMPOSSIBLE. POD_PI and POD_HAT need at least 72.25 mm centre-to-centre stacked, or 91.00 mm side by side, before their 8 mm walls clear \u2014 so a 60 mm ribbon forbade the two pockets from coexisting anywhere, at any body size. That length had been chosen on an AREA argument about the channel's own cost, without checking it was long enough to be buildable. It is registered as a component so pocket separation stays constrained, but the constraint has to be physically possible to be worth anything."
       }
     }
   ],
@@ -204,7 +204,7 @@
         "source_ref": "sg-spec rear_wiring_channel (10 x 15 mm) compared against a 40-way ribbon",
         "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "The derived length of this channel IS the maximum permitted separation between POD_PI and POD_HAT. Shortened from a 150 mm ribbon to 60 mm on 2026-07-27: at 150 mm the channel alone costs 94 cm2 and the solid body finishes 37 cm2 short, while at 60 mm it costs 45 cm2 and the line closes with 35 cm2 spare. Adjacency is now a constraint, not a layout preference. Stated dimensions are the spec's generic wiring channel, sized for discrete leads."
+        "note": "The derived length of this channel IS the maximum permitted separation between POD_PI and POD_HAT. Set to 100 mm: the pockets need at least 72.25 mm centre-to-centre stacked before their walls clear, so anything shorter forbids the layout outright. Stated dimensions are the spec's generic wiring channel, sized for discrete leads rather than a 40-way ribbon."
       },
       "stated_length_mm": 150.0
     },
@@ -479,11 +479,24 @@
         "derived: POD_PI 93 x 64 has exactly 10 valid sites, POD_HAT 73 x 64.5 has 18, and every one of them lies in the same region",
         "derived: pairwise test with an 8 mm wall \u2014 POD_PI + BATTERY is possible, POD_HAT + BATTERY is possible, POD_PI + POD_HAT is IMPOSSIBLE",
         "derived: the largest axis-aligned pocket that fits anywhere in the body is 100 x 60 mm; POD_PI needs 93 x 64",
-        "derived: no fit at wall 6 mm, rim 10 mm, voids -10%, or body +10% \u2014 the result is not sensitive to those margins"
+        "derived: no fit at wall 6 mm, rim 10 mm, voids -10%, or body +10% \u2014 the result is not sensitive to those margins",
+        "re-tested 2026-07-27 at 75, 100 and 150 mm ribbon after a 60 mm constraint was found to be geometrically impossible: still no fit with two humbucker routes, so the finding is not an artefact of that error"
       ],
       "status": "ruled",
-      "ruling": "THE SOLID BODY CANNOT HOST BOTH POCKETS. After the rim inset, an 8 mm keep-out from the through-body voids and the five function-driven features, the usable area fragments into seven disjoint pieces and only ONE is large enough for a ~93 x 64 pocket. The Pi and the front-end board both need it. CORRECTS AN EARLIER CLAIM: an area budget showed 287 cm2 free against 218 cm2 of pockets and was read as '+35 cm2 spare'. Area parity never proves a packing \u2014 the free area is there, but not in one usable shape. The claim that the split board 'makes the electronics fit the solid body' was wrong and is withdrawn. NOT AFFECTED: the hollow thin-skin Smart Guitar, where the electronics share one continuous cavity and pocket-to-pocket walls do not apply. This is specific to routing discrete pockets in solid timber.",
+      "ruling": "THE SOLID BODY CANNOT HOST BOTH POCKETS. After the rim inset, an 8 mm keep-out from the through-body voids and the five function-driven features, the usable area fragments into seven disjoint pieces and only ONE is large enough for a ~93 x 64 pocket. The Pi and the front-end board both need it. CORRECTS AN EARLIER CLAIM: an area budget showed 287 cm2 free against 218 cm2 of pockets and was read as '+35 cm2 spare'. Area parity never proves a packing \u2014 the free area is there, but not in one usable shape. The claim that the split board 'makes the electronics fit the solid body' was wrong and is withdrawn. NOT AFFECTED: the hollow thin-skin Smart Guitar, where the electronics share one continuous cavity and pocket-to-pocket walls do not apply. This is specific to routing discrete pockets in solid timber. RE-VERIFIED after correcting a ribbon-length error: the 60 mm channel had itself forbidden the two pockets from coexisting, so the test was repeated at 75, 100 and 150 mm. Two humbucker routes still do not fit. HOWEVER the finding is specific to the DUAL-HUMBUCKER layout: see CONF-SINGLE-PICKUP-SPACE.",
       "ruled_by": "derived 2026-07-27; forces a product decision on the Khaya line"
+    },
+    {
+      "conflict_id": "CONF-SINGLE-PICKUP-SPACE",
+      "field": "whether a single-pickup layout frees enough area for onboard compute in a solid body",
+      "sources": [
+        "derived: replacing two humbucker routes (92 x 40 each) with one Telecaster-style single-coil route (80 x 22) raises free area from 287 to 356 cm2",
+        "derived: POD_PI valid sites rise from 10 to 130, POD_HAT from 18 to 271",
+        "derived: POD_PI, POD_HAT and a 2x18650 battery all pack at a 75 mm ribbon \u2014 PI at x -25 y_from_top 240.0, HAT at x -25 y_from_top 165.0, battery at x +115 y_from_top 350.0, pocket separation 75 mm"
+      ],
+      "status": "ruled",
+      "ruling": "A SINGLE TELECASTER-STYLE PICKUP MAKES THE SOLID BODY WORK. Deleting the neck route and shrinking the bridge route frees 69 cm2 precisely where the pods compete, and the complete electronics set then packs. This does NOT overturn CONF-SOLID-BODY-PACKING, which remains correct for the dual-humbucker layout it was tested against; it identifies the constraint as the PICKUP LAYOUT rather than the body. CONSEQUENCE: onboard compute in the Khaya is no longer ruled out by geometry. Whether to restore it is a product decision \u2014 the line was reverted to passive on 2026-07-27 on the strength of the dual-humbucker result, and that reasoning no longer applies unchanged.",
+      "ruled_by": "derived 2026-07-27 from the owner's single-pickup proposal"
     }
   ],
   "provenance": {

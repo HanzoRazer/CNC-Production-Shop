@@ -81,20 +81,39 @@ def test_compute_is_the_functional_difference_between_the_lines(smart, khaya):
     )
 
 
-def test_khaya_decision_is_deferred_not_closed(khaya):
-    """Other body options remain open; only the current one is ruled out."""
+def test_khaya_single_pickup_reopens_onboard_compute(khaya):
+    """The constraint was the pickup layout, not the body.
+
+    Compute was dropped against a dual-humbucker layout. One Telecaster-style
+    pickup frees 69 cm2 exactly where the pockets competed, and the set packs.
+    That makes restoring compute a product decision again, not an impossibility.
+    """
+    assert khaya["configuration"]["pickup_layout"] == (
+        "single_bridge_single_coil_telecaster_style"
+    )
     q = khaya["electronics_package"]["open_question"]
-    assert "DEFERRED, NOT CLOSED" in q
-    assert "chambering" in q
-    assert "CURRENT solid body with the CURRENT electronics stack" in q
+    assert "NO LONGER RULED OUT BY GEOMETRY" in q
+    assert "287 to 356 cm2" in q
+    assert "CONF-SINGLE-PICKUP-SPACE" in q
 
 
-def test_khaya_retains_the_evidence_behind_the_decision(khaya):
-    """So it is not re-litigated from scratch in six months."""
+def test_khaya_retains_both_packing_results(khaya):
+    """Two humbuckers fail, one single coil packs. Keep both, or the decision
+    gets re-litigated from whichever half is remembered."""
     notes = " ".join(khaya["notes"])
-    assert "10 valid sites" in notes
-    assert "largest pocket that fits anywhere is 100 x 60" in notes
-    assert "area parity does not prove a packing" in notes
+    assert "TWO HUMBUCKERS the solid body cannot host both pockets" in notes
+    assert "With ONE single coil it packs" in notes
+    assert "constraint was the pickup layout, not the body" in notes
+
+
+def test_khaya_records_the_single_pickup_refactor(khaya):
+    """Deleting the neck route is where the space came from."""
+    notes = " ".join(khaya["notes"])
+    assert "single Telecaster-style bridge single coil" in notes
+    assert "frees 69 cm2" in notes
+    # Single-coil hum only matters if compute returns; say so rather than
+    # carrying an EMC warning on a passive instrument.
+    assert "does not arise" in notes
 
 
 def test_khaya_is_decoupled_from_the_board_schedule(khaya):
