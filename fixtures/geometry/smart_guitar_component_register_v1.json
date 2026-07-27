@@ -492,22 +492,35 @@
       "sources": [
         "derived: replacing two humbucker routes (92 x 40 each) with one Telecaster-style single-coil route (80 x 22) raises free area from 287 to 356 cm2",
         "derived: POD_PI valid sites rise from 10 to 130, POD_HAT from 18 to 271",
-        "derived: POD_PI, POD_HAT and a 2x18650 battery all pack at a 75 mm ribbon — PI at x -25 y_from_top 240.0, HAT at x -25 y_from_top 165.0, battery at x +115 y_from_top 350.0, pocket separation 75 mm"
+        "derived: POD_PI, POD_HAT and a 2x18650 battery all pack at a 75 mm ribbon — PI at x -25 y_from_top 240.0, HAT at x -25 y_from_top 165.0, battery at x +115 y_from_top 350.0, pocket separation 75 mm - SUPERSEDED by CONF-POD-EMC-CLEARANCE, which keeps the feasibility finding but replaces these coordinates"
       ],
       "status": "ruled",
-      "ruling": "A SINGLE TELECASTER-STYLE PICKUP MAKES THE SOLID BODY WORK. Deleting the neck route and shrinking the bridge route frees 69 cm2 precisely where the pods compete, and the complete electronics set then packs. This does NOT overturn CONF-SOLID-BODY-PACKING, which remains correct for the dual-humbucker layout it was tested against; it identifies the constraint as the PICKUP LAYOUT rather than the body. CONSEQUENCE: onboard compute in the Khaya is no longer ruled out by geometry. Whether to restore it is a product decision — the line was reverted to passive on 2026-07-27 on the strength of the dual-humbucker result, and that reasoning no longer applies unchanged.",
+      "ruling": "A SINGLE TELECASTER-STYLE PICKUP MAKES THE SOLID BODY WORK. Deleting the neck route and shrinking the bridge route frees 69 cm2 precisely where the pods compete, and the complete electronics set then packs. This does NOT overturn CONF-SOLID-BODY-PACKING, which remains correct for the dual-humbucker layout it was tested against; it identifies the constraint as the PICKUP LAYOUT rather than the body. CONSEQUENCE: onboard compute in the Khaya is no longer ruled out by geometry. Whether to restore it is a product decision — the line was reverted to passive on 2026-07-27 on the strength of the dual-humbucker result, and that reasoning no longer applies unchanged. PLACEMENT SUPERSEDED: the coordinates quoted above were the first packing found, not the best one, and they left POD_PI 11.6 mm from the pickup. CONF-POD-EMC-CLEARANCE re-solved the same problem for clearance and moved all three pockets. The FEASIBILITY conclusion here is unchanged and still stands; only the coordinates are stale.",
       "ruled_by": "derived 2026-07-27 from the owner's single-pickup proposal"
     },
     {
-      "conflict_id": "CONF-SINGLE-PICKUP-EMC",
-      "field": "whether a single coil is viable 11.6 mm from a Raspberry Pi 5",
+      "conflict_id": "CONF-POD-EMC-CLEARANCE",
+      "field": "back-face pocket placement, ranked by clearance rather than by fit",
       "sources": [
-        "derived: in the solved Khaya layout POD_PI (x -71.5..21.5, y -322.0..-258.0, back face 27 deep) and the Telecaster route (x -55.0..25.0, y -355.6..-333.6, top face 19 deep) overlap fully in X and are separated by 11.6 mm in Y",
-        "derived: at their respective depths only 1.0 mm of stock separates the pocket ceiling from the route floor, so the layout sits 11.6 mm from an opposed-face web violation against min_web 8.0",
-        "engineering judgement: a single coil has no common-mode rejection, and the Pi's 2.4 GHz radio and switching supplies sit 12-15 mm away"
+        "derived: the placement ruled in CONF-SINGLE-PICKUP-SPACE left POD_PI 11.6 mm from the pickup route and 10.75 mm from POD_HAT",
+        "derived: re-solving the same packing with clearance as the objective reaches POD_PI 74.1 mm from the route and 48.3 mm from POD_HAT, with the whole set still packing",
+        "derived: at the new placement POD_PI is bound by the upper bass-side ergonomic void at 8.01 mm, not by the pickup, so 74.1 mm is the ceiling this outline allows",
+        "scripts/solve_khaya_pocket_layout.py, front_v5 outline, 2.5 mm grid, min_web 8.0, rim 12.7, ribbon 100.0"
+      ],
+      "status": "ruled",
+      "ruling": "POCKETS RELOCATED. POD_PI x +9.410 y_from_top 177.5, POD_HAT x +121.910 y_from_top 280.0, BATTERY_CHAMBER x +2.910 y_from_top 245.0. This is STRICTLY BETTER than the placement it replaces on both coupling axes - the Pi's nearest victim goes from 10.75 mm to 48.3 mm - so there is no trade to weigh. The Pi moves up into the space the deleted neck pickup vacated, which is the same 69 cm2 that made CONF-SINGLE-PICKUP-SPACE resolvable; the front-end board moves DOWN toward the bridge, shortening the analog run to the pickup rather than lengthening it. NOTE the objective matters: maximising POD_PI's distance from the pickup ALONE lands the Pi 8.5 mm from POD_HAT, trading the pickup coil for the more sensitive analog board. The ruled placement maximises distance to the NEAREST victim instead. This does NOT resolve CONF-SINGLE-PICKUP-EMC; it improves the geometry the measurement will be taken on.",
+      "ruled_by": "derived 2026-07-27 from the owner's instruction to move the Pi pocket further from the pickup"
+    },
+    {
+      "conflict_id": "CONF-SINGLE-PICKUP-EMC",
+      "field": "whether a single coil is viable 74.1 mm from a Raspberry Pi 5",
+      "sources": [
+        "derived: as first solved, POD_PI sat 11.6 mm from the Telecaster route, fully overlapping it in X, with only 1.0 mm of stock between the pocket ceiling and the route floor at their respective depths",
+        "derived: after CONF-POD-EMC-CLEARANCE the gap is 74.1 mm to the route and 48.3 mm to POD_HAT, and no plan overlap remains",
+        "engineering judgement: a single coil has no common-mode rejection, and the Pi's 2.4 GHz radio and switching supplies remain inside the same cavity set"
       ],
       "status": "unresolved",
-      "ruling": "CANNOT BE SETTLED BY DERIVATION. This is the first question in the program that needs a physical measurement rather than a calculation. Procedure written at docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md; no measurement has been taken. The comparison is against a conventional single-coil guitar's ambient floor, NOT against silence, and discrete switching tones are weighted above broadband hiss. CONSEQUENCE IF IT FAILS: a hum-cancelling pickup changes the route dimensions, which re-opens the packing ruled in CONF-SINGLE-PICKUP-SPACE. Moving the Pi pocket further from the pickup is the cheaper mitigation and there is now room for it.",
+      "ruling": "CANNOT BE SETTLED BY DERIVATION. This is the first question in the program that needs a physical measurement rather than a calculation. Procedure written at docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md; no measurement has been taken. The comparison is against a conventional single-coil guitar's ambient floor, NOT against silence, and discrete switching tones are weighted above broadband hiss. GEOMETRY IMPROVED but the question stands: CONF-POD-EMC-CLEARANCE took the separation from 11.6 mm to 74.1 mm, which is the most this outline allows, and distance alone does not establish a pass. CONSEQUENCE IF IT FAILS: a hum-cancelling pickup changes the route dimensions, which re-opens the packing ruled in CONF-SINGLE-PICKUP-SPACE. Cavity shielding is now the leading mitigation, because the cheap geometric one has been spent.",
       "ruled_by": "unresolved - awaits a shielded mock-up measurement"
     }
   ],

@@ -1,34 +1,34 @@
 # Pickup EMC mock-up — measurement procedure
 
 **Status:** procedure only. No measurement has been taken.
-**Answers:** `CONF-SINGLE-PICKUP-EMC` — whether a single coil is viable 11.6 mm
+**Answers:** `CONF-SINGLE-PICKUP-EMC` — whether a single coil is viable 74.1 mm
 from a Raspberry Pi 5.
 **Applies to:** `PRODUCT-KHAYA-SOLIDBODY-V1` (the harder case) and, by
 inference, `PRODUCT-SMART-GUITAR-V1`.
 
 ## Why this is not a desk exercise
 
-The solved Khaya layout puts the Pi closer to the pickup than any figure in the
-program so far:
+The layout has already been moved once on account of this question. As first
+solved, the Khaya put the Pi 11.6 mm from the pickup and 10.75 mm from the
+analog front-end board — the packing search that produced it asked only whether
+the set fit, never how much room was left. Re-solving for clearance
+(`CONF-POD-EMC-CLEARANCE`) reached:
 
 ```text
-POD_PI       x  −71.5 ..  21.5    y  −322.0 .. −258.0    back face, 27 deep
-PU route     x  −55.0 ..  25.0    y  −355.6 .. −333.6    top face,  19 deep
-
-plan separation, edge to edge     11.6 mm   (fully overlapping in X)
-wood through the thickness         1.0 mm   at their respective depths
-closest 3D approach                11.6 mm
+                              was      now
+POD_PI to pickup route      11.6 mm   74.1 mm
+POD_PI to POD_HAT           10.8 mm   48.3 mm
 ```
 
-The pockets are **fully overlapped in X** and separated by 11.6 mm in Y only.
-They do not overlap in plan, so no opposed-face web violation exists — but the
-layout sits **11.6 mm away from one**, and the Pi's PCB sits 3–27 mm into that
-pocket. A single coil with no common-mode rejection will be within roughly
-12–15 mm of a 2.4 GHz radio and its switching supplies.
+**That is the ceiling this outline allows.** POD_PI is now bound by the upper
+bass-side ergonomic void at 8.01 mm, not by the pickup — pushing it further
+means changing the body, not the layout. The cheap geometric mitigation has
+been spent, so if the measurement goes badly the next moves are cavity
+shielding, then a hum-cancelling pickup.
 
-Cheapest mitigation, if the measurement goes badly: move the Pi pocket further
-from the pickup. There is room now that the single-pickup layout freed 69 cm².
-Take that measurement before committing the layout, not after.
+One thing the relocation does not fix: the Pi's radio and switching supplies
+are still inside the same cavity set as a pickup with no common-mode rejection.
+Distance helps. It does not establish a pass.
 
 ## The comparison that matters
 
@@ -71,7 +71,12 @@ noise floor, not the instrument.
 | **C** | Pi powered, idle, WiFi **on**. |
 | **D** | Pi under DSP load — JACK and Guitarix running. WiFi on. **Worst realistic.** |
 | **E** | As D, with the cavity shielded and the shield grounded. |
-| **F** | As E, with the Pi pocket moved further from the pickup. |
+| **F** | As E, with the pickup temporarily at the pre-relocation distance (11.6 mm). |
+
+Configuration F is deliberately backwards. The layout has already been moved
+to its geometric limit, so there is no further-away case left to test — but a
+close case still tells you how much the 62 mm bought. If F and E measure the
+same, distance was never the mechanism and shielding is the whole answer.
 
 Run A0 and D at minimum. B and C separate the radio from the switching
 supplies, which decides which mitigation is worth paying for.
@@ -114,8 +119,9 @@ everything else so far is `engineering_estimate`.
 
 If the answer forces a hum-cancelling pickup — a stacked noiseless single coil
 or a splittable humbucker — the pickup route dimensions change, and the packing
-that made the Khaya layout possible must be re-tested. That re-test is cheap;
-discovering it after a body is cut is not.
+that made the Khaya layout possible must be re-tested. Re-run
+`scripts/solve_khaya_pocket_layout.py` with the new route; that re-test is
+cheap, and discovering it after a body is cut is not.
 
 ## What this procedure does not cover
 

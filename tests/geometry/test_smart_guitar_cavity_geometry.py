@@ -11,6 +11,7 @@ in a source spec cannot propagate into anything downstream.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -49,6 +50,15 @@ VALIDATE = ROOT / "scripts" / "validate_smart_guitar_geometry.py"
 DOC = ROOT / "docs" / "geometry" / "SMART_GUITAR_CAVITY_GEOMETRY_V1.md"
 
 BODY_THICKNESS_MM = 47.0
+
+
+def load_module_by_path(path: Path):
+    """Import a script that lives outside any package."""
+    spec = importlib.util.spec_from_file_location(path.stem, path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def load_json(path: Path) -> dict:
@@ -573,7 +583,69 @@ def test_pickup_emc_conflict_awaits_measurement_not_derivation():
     assert "no measurement has been taken" in conflict["ruling"]
     # Failing it re-opens the packing that put compute back in the Khaya.
     assert "CONF-SINGLE-PICKUP-SPACE" in conflict["ruling"]
-    assert "11.6 mm" in conflict["field"]
+    assert "74.1 mm" in conflict["field"]
+    # Moving the pockets improved the geometry; it did not answer the question.
+    assert "GEOMETRY IMPROVED but the question stands" in conflict["ruling"]
+
+
+def test_pocket_relocation_improved_both_coupling_axes():
+    """The relocation had to beat the old layout on the analog board too.
+
+    Maximising POD_PI's distance from the pickup alone lands it 8.5 mm from
+    POD_HAT, which swaps the pickup coil for the more sensitive analog front
+    end. The ruled placement maximises distance to the nearest victim, so it
+    dominates the old layout rather than trading against it.
+    """
+    conflict = next(
+        c
+        for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-POD-EMC-CLEARANCE"
+    )
+    assert conflict["status"] == "ruled"
+    assert "STRICTLY BETTER" in conflict["ruling"]
+    assert "10.75 mm to 48.3 mm" in conflict["ruling"]
+    assert "NEAREST victim" in conflict["ruling"]
+    # The ceiling is set by the ergonomic void, not by the pickup: without this
+    # the next reader will assume there is more room to buy.
+    assert any("bass-side ergonomic void at 8.01 mm" in s for s in conflict["sources"])
+    assert "does NOT resolve CONF-SINGLE-PICKUP-EMC" in conflict["ruling"]
+
+
+def test_relocated_pockets_still_pack_against_every_keepout():
+    """Re-derive the ruled placement rather than trusting the prose.
+
+    The placement lives in a conflict ruling, which no validator recomputes, so
+    this is the only thing standing between a typo and a body that cannot be
+    cut.
+    """
+    # Loaded by path, not imported: scripts/ is not a package, and an
+    # importorskip here would turn a broken solver into a silent skip.
+    solver = load_module_by_path(ROOT / "scripts" / "solve_khaya_pocket_layout.py")
+    outline, voids, features = solver.load_body()
+    usable = outline.buffer(-solver.RIM_MIN)
+    route = solver.rect(0.0, 294.6, 80.0, 22.0)
+    placement = {
+        "POD_PI": (9.410, 177.5),
+        "POD_HAT": (121.910, 280.0),
+        "BATTERY_CHAMBER": (2.910, 245.0),
+    }
+    boxes = {
+        name: solver.rect(x, y, *solver.POCKETS[name]) for name, (x, y) in placement.items()
+    }
+    for name, box in boxes.items():
+        assert usable.contains(box), f"{name} breaks the rim minimum"
+        assert box.distance(route) >= solver.MIN_WEB, f"{name} crowds the pickup route"
+        for index, void in enumerate(voids):
+            assert box.distance(void) >= solver.MIN_WEB, f"{name} crowds void {index}"
+        for layer, feature in features:
+            assert box.distance(feature) >= solver.MIN_WEB, f"{name} crowds {layer}"
+    for name, other in ((a, b) for a in boxes for b in boxes if a < b):
+        assert boxes[name].distance(boxes[other]) >= solver.MIN_WEB
+
+    assert boxes["POD_PI"].distance(route) == pytest.approx(74.1, abs=0.1)
+    ribbon = boxes["POD_PI"].distance(boxes["POD_HAT"])
+    assert ribbon == pytest.approx(48.3, abs=0.1)
+    assert ribbon <= solver.RIBBON_LENGTH
 
 
 def test_length_datum_is_resolved_and_preserves_cavity_positions():
