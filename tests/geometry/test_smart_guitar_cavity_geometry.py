@@ -474,7 +474,52 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
         "CONF-PICKUP-TYPE",
         "CONF-PICKUP-ROUTE-DIMS",
         "CONF-OPPOSED-FACE-WEB",
+        "CONF-LENGTH-DATUM",
     } <= unresolved
+
+
+def test_body_width_ruling_is_a_prediction_not_a_measurement():
+    """402.85 mm follows from the CAD length plus traced topology.
+
+    It must stay flagged as unverified: one caliper reading on a physical
+    blank confirms or refutes the entire outline calibration, and a prediction
+    that quietly becomes a fact is how a 34.55 mm error would get built.
+    """
+    conflict = next(
+        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-BODY-WIDTH"
+    )
+    assert conflict["status"] == "ruled"
+    assert "468.5" in conflict["ruling"]
+    assert "402.85" in conflict["ruling"]
+    assert "PREDICTION" in conflict["ruling"]
+    assert "pending physical verification" in conflict["ruled_by"]
+
+
+def test_body_dimensions_are_not_consumed_by_any_derivation():
+    """Only thickness feeds the derivation, so the width dispute is inert here.
+
+    This is why CONF-BODY-WIDTH and CONF-LENGTH-DATUM can sit unresolved
+    without invalidating a single derived cavity dimension.
+    """
+    register = _register()
+    assert register.body.stated_thickness_mm == BODY_THICKNESS_MM
+
+    stored = load_json(GEOMETRY)
+    # No length or width of the BODY appears anywhere in the derived record.
+    assert set(stored["body"]) == {
+        "stated_thickness_mm",
+        "required_thickness_mm",
+        "governing_cavity_id",
+        "margin_mm",
+        "verdict",
+    }
+    # Changing the blank thickness must move the verdict; nothing else can.
+    thinner = derive_cavity_geometry(
+        replace(register, body=replace(register.body, stated_thickness_mm=38.0)),
+        register_ref="x",
+        effective_date="2026-07-26",
+    )
+    assert thinner.body.verdict == VERDICT_INSUFFICIENT
 
 
 def test_pickups_are_recorded_as_conflicts_but_not_modelled():

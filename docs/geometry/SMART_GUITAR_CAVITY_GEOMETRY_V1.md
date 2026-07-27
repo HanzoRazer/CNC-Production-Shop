@@ -106,7 +106,7 @@ larger than 162 × 64 mm by however much that part needs.
 
 ## Reconciliation record
 
-Twelve conflicts found: four ruled, eight open. Recorded in the register and
+Fourteen conflicts found: five ruled, nine open. Recorded in the register and
 propagated verbatim into the derived record, with a test enforcing that they
 match, so a reviewer reading only the derived file cannot see fewer conflicts
 than exist.
@@ -118,6 +118,7 @@ than exist.
 | `CONF-POD-LAYOUT` | pod layout | Side-by-side. Stacking is impossible at any guitar-plausible thickness; the `stacked_vertical` note and its 76.0 mm figure are stale and should be retired at source. |
 | `CONF-PI5-HEIGHT` | Pi 5 height | 18.0 mm per sg-spec, which was ruled canonical. luthiers-toolbox says 17.0 mm. The 1 mm changes no verdict. |
 | `CONF-BASE-MODEL` | body outline lineage | The 2026-01-29 Les Paul reference is stale. Outline from luthiers-toolbox, cavity dimensions from sg-spec. Cavity *positions* inherited from a Les Paul outline are therefore untrustworthy and excluded. |
+| `CONF-BODY-WIDTH` | body width | Official CAD length is **468.5 mm**, superseding 444.5. With the traced topology that gives a uniform scale k = 1.611128 and a derived width of **402.85 mm**; the stated 368.3 mm is 34.55 mm short and treated as stale. Cross-check: trusting the width instead derives a 428.32 mm length, 40.18 mm short of the CAD. Derived width is a **prediction pending physical measurement**. |
 | `CONF-FRET-COUNT` | fret count | 24. The 2026-07-21 sg-spec quarantine note asserting "canon: 22" is itself wrong. No effect on cavity geometry; recorded because it sits in a file presenting itself as a cleanup. |
 
 ### Open
@@ -131,6 +132,7 @@ than exist.
 | `CONF-NVME-PLACEMENT` | NVMe SSD | Sited "under Pi 5", where it would fit inside the 6 mm standoff gap and add nothing. Plausible, unestablished, so registered but not placed. |
 | `CONF-PICKUP-TYPE` | pickup type | **Intra-file**, not cross-repo: luthiers-toolbox says dual humbucker in `hardware.pickups` and P90 in its own `signal_chain` marked `canonical: true` (lines 449–450). sg-spec contains no P90 reference at all. No effect on electronics cavities; decides route size and pickup cost. |
 | `CONF-PICKUP-ROUTE-DIMS` | pickup route size | Both sources say humbucker and disagree on the route: sg-spec 82 × 38 × 19.05 (r4.0), luthiers-toolbox 92 × 40 × 19.0 (r3.0). Blocked on `CONF-PICKUP-TYPE`, since a P90 route is different again. |
+| `CONF-LENGTH-DATUM` | cavity `y_from_top` | The body is **24.0 mm longer** than the datum every cavity position was measured from, and a third length (438.15 mm) sits in the same file. The bridge is fixed by scale length, not body length, so growth at the tail preserves the positions and growth at the neck end shifts all of them. 24 mm is ~2× the rim minimum, so it dominates every clearance. Blocks all plan-level position work. |
 | `CONF-OPPOSED-FACE-WEB` | top routes vs back pod | On stated positions the bridge route (19 mm, top) overlaps the rear cavity in plan. 19 + 33 = 52 mm through a 44.45 mm blank is a 7.55 mm breach. The source's own `structural_analysis` only measured floor-to-front-face. Unresolvable here — needs plan-level checking. |
 
 ## Scope and limits

@@ -19,65 +19,118 @@ that motivated this Dev Order: on the stated positions, the bridge pickup route
 and the rear electronics cavity overlap in plan, and 19.0 mm of top-face route
 plus the 33.0 mm derived pod is 52.0 mm through a 44.45 mm blank.
 
-## Gate: the outline is not calibrated, and cannot be used until it is
+## Gate 1: outline scale — resolved in principle by the official CAD length
 
-The traced outline carries its own warning:
+**Revised 2026-07-26.** The official CAD gives a body length of **468.5 mm**,
+superseding the 444.5 mm in the spec. That converts an unsolvable
+two-constraint problem into a single scale factor and one falsifiable
+prediction.
+
+Forcing both stated dimensions never worked, and the official length makes it
+strictly worse:
 
 ```text
-"Traced at reduced zoom. Shape topology is correct.
- Scale factor TBD against physical blank."
+traced extent  250.04 x 290.79 mm   aspect 0.859865
+
+                       width scale   length scale   anisotropy
+spec length 444.5        1.4730         1.5286         3.78%
+CAD  length 468.5        1.4730         1.6111         9.38%
 ```
 
-Its extents do not scale uniformly to the stated body dimensions:
+Trusting the CAD length **and the traced topology** — which the trace's own
+note says is correct, while disclaiming only its scale — removes the conflict
+by construction:
 
 ```text
-traced extent    250.04 x 290.79 mm
-stated body      368.30 x 444.50 mm
-
-width  scale     368.30 / 250.04 = 1.4730
-length scale     444.50 / 290.79 = 1.5286     -> 3.78% apart
+k = 468.5 / 290.79 = 1.611128          anisotropy 0.00%
+derived width = 250.04 x k = 402.85 mm   (15.86 in)
+stated  width =              368.30 mm   (14.50 in)
+disagreement  =               34.55 mm   (9.38% of stated)
 ```
 
-No single scale factor satisfies both axes. Either the trace is
-aspect-distorted (it was hand-traced from an AI render), or the stated width
-and length are not both true extents of this outline.
+**The cross-check settles which figure is wrong.** Trusting the stated width
+instead derives a body length of 428.32 mm — 40.18 mm short of the official
+CAD. The width is the outlier, not the length.
 
-**The consequence is decisive.** A 3.78% ambiguity on the 368 mm axis is
-±13.9 mm. The rim minimum this Dev Order is supposed to enforce is 12.7 mm.
-The measurement error would exceed the clearance being measured, so every
-containment and edge-clearance result would be noise wearing the costume of a
-number. Calibration is therefore **phase 1 and a hard gate**: no collision
-check runs, and no result is published, until the outline is calibrated or
-explicitly declared topology-only.
+Three things corroborate that:
 
-This is also why the Dev Order cannot be quietly folded into the budget model.
-An uncalibrated outline produces confident, wrong clearances.
+- The spec's own `design_heritage.explorer.reference_body_mm` is **420 x 460 mm**.
+  Derived 402.85 x 468.5 belongs to that family; stated 368.3 x 444.5 does not.
+- Every disputed figure is an exact round inch — 368.3 = 14.50 in,
+  444.5 = 17.50 in, 438.15 = 17.25 in — which reads as assumption. The CAD's
+  468.5 mm = 18.44 in is not round, which reads as measured.
+- 368.3 mm is a common generic body width and looks carried in rather than
+  derived from this outline.
+
+Recorded as `CONF-BODY-WIDTH`, ruled.
+
+**Phase 1 therefore shrinks to a single measurement.** The derived 402.85 mm is
+a *prediction*, not a fact. One caliper across the widest point of a physical
+blank confirms or refutes the whole calibration. If it measures 402.85 ± a few
+mm, the outline is calibrated at k = 1.611128 and phase 3 can report real
+millimetres. If it measures 368.3, the traced topology is distorted after all
+and the Dev Order reverts to topology-only.
+
+## Gate 2: the length datum — new, and now the binding constraint
+
+The body is **24.0 mm longer** than the datum every cavity position was
+measured against, and a third length (438.15 mm, "corrected from 444.5") sits
+in the same file.
+
+```text
+official CAD   468.5 mm
+spec body      444.5 mm     every cavity y_from_top measured from this
+spec neck block 438.15 mm   "corrected from 444.5"
+```
+
+Whether the stated positions survive depends entirely on **where the extra
+24.0 mm sits**. The bridge at `y_from_top` 320.0 is fixed by scale length
+(628.65 mm nut to saddle), not by body length:
+
+| Cavity | `y_from_top` | % of 444.5 | % of 468.5 |
+|---|---:|---:|---:|
+| Neck pocket | 53.3 | 12.0% | 11.4% |
+| Neck pickup | 167.6 | 37.7% | 35.8% |
+| Rear cavity | 275.7 | 62.0% | 58.8% |
+| Bridge pickup | 294.6 | 66.3% | 62.9% |
+| Bridge | 320.0 | 72.0% | 68.3% |
+
+Growth at the tail leaves every position valid. Growth at the neck end shifts
+all of them by 24.0 mm. No source states which, and a 24 mm error is roughly
+twice the 12.7 mm rim minimum, so it dominates every clearance result.
+
+Recorded as `CONF-LENGTH-DATUM`, unresolved. **This is now the gating unknown
+rather than outline scale.** It needs the official CAD's own datum, which is a
+lookup rather than a research problem.
 
 ## Phases
 
-### Phase 1 — Outline calibration (gate)
+### Phase 1 — Calibration and datum (gate)
 
-Establish a trustworthy outline in real millimetres, or establish that one does
-not yet exist.
+Establish a trustworthy outline in real millimetres **and** a trustworthy
+length datum, or establish that neither exists yet.
 
 - Vendor a dated snapshot of `smart_guitar_back_v1.json` (78 points, 7 voids)
   the way the component register vendors spec values
 - Recompute extents from the points rather than trusting the stated `extent_mm`
-- Derive per-axis scale factors against the stated body dimensions
-- Report anisotropy; fail the gate if it exceeds a governed tolerance
-- Record the calibration basis and its confidence
+- Apply the governed uniform scale k = 468.5 / recomputed height
+- **Verify the derived width against a physical blank** — one caliper
+  measurement confirms or refutes the entire calibration
+- **Resolve the length datum**: locate the extra 24.0 mm relative to the
+  neck-end reference, from the official CAD
+- Record both bases and their confidence
 
-Phase 1 has three possible honest outcomes, and the Dev Order must be willing
-to stop at any of them:
+Phase 1 has three honest outcomes, and the Dev Order must be willing to stop at
+any of them:
 
-1. **Calibrated** — a measurement of the physical blank resolves the scale;
+1. **Calibrated** — the blank measures ~402.85 mm and the CAD datum is known;
    proceed to phase 2 with real clearances
-2. **Uniform-scale approximation** — anisotropy accepted as trace error, scale
-   taken from one governed axis, and every downstream clearance carries the
-   residual as an explicit uncertainty band
-3. **Topology only** — the outline is trusted for *ordering and adjacency* but
-   not for distance; phase 2 runs containment and overlap checks but reports no
-   millimetre clearances at all
+2. **Scale calibrated, datum unknown** — clearances valid in X, all Y-dependent
+   results carrying a ±24.0 mm band, which exceeds the rim minimum and
+   therefore blocks C1, C2, C5, and C6 in practice
+3. **Topology only** — the blank does not measure 402.85 mm, so the traced
+   topology is distorted; containment and overlap run on adjacency alone and no
+   millimetre clearance is reported
 
 ### Phase 2 — Coordinate reconciliation
 
@@ -125,12 +178,14 @@ loudly and does not fail.**
 
 | Input | Source | Status |
 |---|---|---|
-| Body outline, 78 pts + 7 voids | luthiers-toolbox `traced_outlines/smart_guitar_back_v1.json` | exists, **uncalibrated** |
+| Body outline, 78 pts + 7 voids | luthiers-toolbox `traced_outlines/smart_guitar_back_v1.json` | exists, scale now derivable at k = 1.611128 |
+| Official CAD body length 468.5 mm | owner, 2026-07-26 | **supersedes** the spec's 444.5 mm |
+| Physical blank width, predicted 402.85 mm | — | **does not exist**, one measurement gates phase 1 |
+| Official CAD length datum | — | **does not exist**, gates all Y positions |
 | Cavity sizes | `fixtures/geometry/smart_guitar_cavity_geometry_v1.json` | exists, derived |
 | Cavity positions | luthiers-toolbox `body_position_mm` per cavity | exists, frame unreconciled |
 | Body constraints | sg-spec `body_constraints` | exists |
 | `min_web` | — | **does not exist**, needs a ruling |
-| Physical blank measurement | — | **does not exist**, gates phase 1 |
 | Pickup route size | — | **blocked** on `CONF-PICKUP-TYPE` and `CONF-PICKUP-ROUTE-DIMS` |
 
 The pickup dependency matters: C4 cannot produce a final answer for the bridge
@@ -172,7 +227,7 @@ phase 1 potentially ending the Dev Order early and legitimately.
 
 | # | Decision | Why it changes the work |
 |---|---|---|
-| 1 | Calibration basis: measure a physical blank, accept uniform-scale approximation, or run topology-only | Determines whether phase 3 reports millimetres or only adjacency, and whether the Dev Order can finish at all |
+| 1 | Where the extra 24.0 mm of body length sits, from the official CAD datum | Gates every Y-dependent check. A 24 mm ambiguity is ~2x the rim minimum, so C1/C2/C5/C6 cannot report until it is known |
 | 2 | `min_web` value between opposing cavities | Directly decides whether C4 passes; needs structural judgement, not a default |
 | 3 | Add `shapely>=2.0` to `pyproject.toml`, or hand-roll polygon predicates | shapely 2.1.2 is present in the environment but undeclared. Hand-rolling avoids a runtime dependency in a repo that currently has five, at the cost of writing and testing point-in-polygon, inset, and intersection ourselves |
 | 4 | Canonical coordinate frame | Everything downstream reads it; changing it later invalidates every stored result |
@@ -181,11 +236,11 @@ phase 1 potentially ending the Dev Order early and legitimately.
 
 ## Risks
 
-**The outline may not be salvageable.** It was hand-traced from an AI render at
-reduced zoom with a 3.78% aspect inconsistency. If phase 1 concludes it cannot
-be calibrated, the honest deliverable is a record saying so — which is worth
-having, because it would mean no plan-level claim about this instrument is
-currently supportable.
+**The derived width is a prediction, not a measurement.** 402.85 mm follows
+from trusting the traced topology and the CAD length together. If a physical
+blank measures 368.3 mm instead, the topology is distorted and the outline
+reverts to topology-only, meaning no plan-level claim about this instrument is
+currently supportable. One caliper reading decides it.
 
 **A confident wrong answer is the main hazard.** Every check in phase 3 emits
 millimetres, and millimetres read as fact. The uncertainty band from phase 1
