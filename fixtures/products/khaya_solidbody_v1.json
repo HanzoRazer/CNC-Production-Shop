@@ -33,16 +33,18 @@
     }
   ],
   "electronics_package": {
-    "package_id": "SMART-STACK-REDUCED-V1",
+    "package_id": "SMART-STACK-REDUCED-M2-V1",
     "compute_host": "Raspberry Pi 5 (8 GB)",
     "onboard_audio_output": false,
     "components": [
-      "Raspberry Pi 5 (8 GB) — JACK + Guitarix/MODEP host and coaching engine",
-      "Teensy 4.1 — I/O coprocessor, control only, no audio path",
+      "Raspberry Pi 5 (8 GB) \u2014 JACK + Guitarix/MODEP host and coaching engine",
+      "Teensy 4.1 \u2014 I/O coprocessor, control only, no audio path",
       "Battery pack + BMS (2x 18650), USB-C PD charging",
-      "40 mm cooling fan, lid-mounted, venting outward"
+      "40 mm cooling fan, lid-mounted, venting outward",
+      "MOTU M2 USB audio interface \u2014 EXTERNAL, not mounted in the instrument"
     ],
-    "rationale": "Full Pi 5 compute is retained; the HiFiBerry HAT is dropped. The canonical signal chain already takes audio IN through a Hi-Z USB interface, so the HAT contributes only I2S output and a headphone jack — and a performance instrument goes to an amplifier through the dry jack, with wireless monitoring. Dropping it, plus a 2x 18650 pack in place of 4x, is what brings the package within the solid body's usable area."
+    "rationale": "Full Pi 5 compute is retained onboard; audio moves entirely to an EXTERNAL MOTU M2. The M2 replaces two components at once \u2014 the Hi-Z USB input interface and the HiFiBerry HAT \u2014 because it provides instrument input, line output and headphone output in one productised unit. That matters beyond convenience: a HiFiBerry is an excellent converter board but solves none of the guitar-specific analog problems. Using it would still require designing a Hi-Z input stage, instrument preamp, gain control, headphone amplifier, protection circuitry and analog filtering. A USB interface has already solved all six. Dropping the HAT and its GPIO ribbon channel frees 148 cm2, taking this line from 25 cm2 short to roughly 123 cm2 spare, so the packing stops being borderline. An external box is appropriate here because this is a performance instrument played at an amplifier or a pedalboard.",
+    "external_components_note": "MOTU M2 measures 190.5 x 108 x 45 mm and weighs 0.61 kg. It CANNOT be mounted internally: 45 mm of height in a 47 mm blank leaves 2 mm for both skins even at zero floor, and its footprint with margins is 283 cm2 against 287 cm2 of usable body area \u2014 99%, which would displace every other component."
   },
   "materials": {
     "body": "khaya (African mahogany)",
@@ -68,10 +70,11 @@
   },
   "notes": [
     "STATUS IS 'concept'. Like its sibling, this instrument exists as an AI-generated image and a set of derived dimensions, not as a measured object.",
-    "The reduced electronics package is BORDERLINE, not comfortable. With the HAT dropped and a 2x 18650 pack it lands within about 1 cm2 of the available area, which closes only if part margins tighten from 4 mm to 3 mm. Treat it as unproven until a real layout is packed and checked.",
-    "Configurations that do NOT fit a solid body of these dimensions: the full stack including the HiFiBerry HAT (96 cm2 short), and the full stack with a 4x 18650 pack (25 cm2 short). A Raspberry Pi Zero 2 W with a HiFiBerry Zero fits comfortably (+31 cm2) but costs roughly five times the compute.",
+    "Packing is comfortable in this configuration, roughly 123 cm2 spare, because audio is external. It was NOT comfortable before: carrying the HiFiBerry HAT onboard left the line 25 cm2 short with a 2x 18650 pack and within about 1 cm2 only if part margins tightened from 4 mm to 3 mm. That borderline case is the reason the HAT was dropped, not an argument that it could have stayed.",
+    "Configurations that do NOT fit a solid body of these dimensions, retained so they are not re-derived: full stack including the HiFiBerry HAT, 96 cm2 short; same with a 4x 18650 pack, 25 cm2 short. A Raspberry Pi Zero 2 W with a HiFiBerry Zero fits (+31 cm2) but costs roughly five times the compute. The MOTU M2 cannot be internal in any configuration: 45 mm tall in a 47 mm blank.",
     "The headed series is concept_defined and gated behind the headless first article, so its extra hardware is a documented delta rather than a costed variant.",
     "onboard_audio_output false is the single functional difference from the Smart Guitar and is a use-case decision, not a compromise: a stage instrument does not need a headphone jack.",
-    "Contains no cost, price, or margin fields by design."
+    "Contains no cost, price, or margin fields by design.",
+    "Bus-powering the M2 from the instrument battery costs runtime: about 4.7 h on a 4x 18650 pack versus 6.3 h for the Pi alone, and about 2.3 h on the 2x 18650 pack specified here. If runtime matters, power the M2 from the host rather than the instrument."
   ]
 }

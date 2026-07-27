@@ -30,14 +30,15 @@
     "compute_host": "Raspberry Pi 5 (8 GB)",
     "onboard_audio_output": true,
     "components": [
-      "Raspberry Pi 5 (8 GB) — JACK + Guitarix/MODEP host and coaching engine",
-      "HiFiBerry DAC+ADC — I2S audio out and headphone jack",
-      "Teensy 4.1 — I/O coprocessor, control only, no audio path",
+      "Raspberry Pi 5 (8 GB) \u2014 JACK + Guitarix/MODEP host and coaching engine",
+      "HiFiBerry DAC+ADC \u2014 I2S audio out and headphone jack",
+      "Teensy 4.1 \u2014 I/O coprocessor, control only, no audio path",
       "Battery pack + BMS (4x 18650), USB-C PD 20 W charging",
       "40 mm cooling fan, lid-mounted, venting outward",
       "GPIO ribbon between the Pi and the HAT"
     ],
-    "rationale": "The full stack including the HiFiBerry HAT, because the headphone jack is the point of a practice instrument. The hollow box provides the volume: the same package is 96 cm2 short of fitting a solid body of these dimensions."
+    "rationale": "The full stack including the HiFiBerry HAT, because the headphone jack is the point of a practice instrument. The hollow box provides the volume: the same package is 96 cm2 short of fitting a solid body of these dimensions.",
+    "open_question": "AUDIO FRONT END UNRESOLVED. The canonical signal chain routes input through an external Hi-Z USB interface, so this instrument has never actually been self-contained \u2014 the HiFiBerry HAT provides output only. Replacing the HAT with a converter board plus a discrete front end is NOT a cheap substitution: it would require designing a Hi-Z input stage, instrument preamp, gain control, headphone amplifier, protection circuitry and analog filtering, all of which a USB interface already solves. The question for a practice and campfire instrument is therefore not whether to use an interface but whether one small enough to mount INSIDE the body exists. Derived envelope: about 150 x 70 x 36 mm and under roughly 120 cm2 of pocket footprint. Height is the hard limit at 36 mm \u2014 47 mm blank less 8 mm floor and 3 mm lid clearance. The MOTU M2 at 45 mm and the Scarlett Solo at 47 mm both exceed it; a compact two-input class device at around 105 x 45 x 25 mm would fit comfortably in either product line."
   },
   "materials": {
     "body": "hollow wooden core, species not yet selected",
@@ -68,6 +69,7 @@
     "Body construction changes the economics as well as the packing. Thin-skin over a hollow core weighs about 48% of solid Khaya at the same dimensions, so body size is not constrained by weight here.",
     "The through-body ergonomic voids are the visual identity of this instrument and are deliberately NOT reduced. They double the finished edge length, from 1.51 m of outer perimeter to 3.01 m including void edges on both faces, which lands directly on the edge-cleanup and edge-sealing operations already identified as the cost risk in the thin-skin estimate. Roughly 48 minutes and $23 per unit, and worth paying.",
     "Core species, skin material and thickness, and the finish system are all unselected. They are the remaining inputs to the budget model, not settled facts.",
-    "Contains no cost, price, or margin fields by design."
+    "Contains no cost, price, or margin fields by design.",
+    "The 'campfire guitar' premise depends on an onboard audio interface. With an external box this instrument is a desk practice tool, not a travel one. That is a product decision, not an engineering one, and it is unresolved."
   ]
 }

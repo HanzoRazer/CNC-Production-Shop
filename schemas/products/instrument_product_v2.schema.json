@@ -22,7 +22,10 @@
     "provenance": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source", "confidence"],
+      "required": [
+        "source",
+        "confidence"
+      ],
       "properties": {
         "source": {
           "type": "string",
@@ -36,45 +39,125 @@
             "calculated"
           ]
         },
-        "confidence": {"type": "string", "enum": ["draft", "reviewed", "approved"]},
-        "captured_by": {"type": "string"},
-        "capture_date": {"type": "string"},
-        "references": {"type": "array", "items": {"type": "string"}},
-        "note": {"type": "string"}
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "reviewed",
+            "approved"
+          ]
+        },
+        "captured_by": {
+          "type": "string"
+        },
+        "capture_date": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "note": {
+          "type": "string"
+        }
       }
     }
   },
   "properties": {
-    "product_id": {"type": "string", "pattern": "^PRODUCT-[A-Z0-9-]+$"},
-    "product_name": {"type": "string", "minLength": 1},
-    "product_description": {"type": "string", "minLength": 1},
+    "product_id": {
+      "type": "string",
+      "pattern": "^PRODUCT-[A-Z0-9-]+$"
+    },
+    "product_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "product_description": {
+      "type": "string",
+      "minLength": 1
+    },
     "product_role": {
       "type": "string",
-      "enum": ["practice_instrument", "performance_instrument"],
+      "enum": [
+        "practice_instrument",
+        "performance_instrument"
+      ],
       "description": "Drives which compromises are acceptable. A practice instrument is played with headphones; a performance instrument goes to an amplifier."
     },
     "status": {
       "type": "string",
-      "enum": ["concept", "draft", "reviewed", "approved", "superseded", "retired"]
+      "enum": [
+        "concept",
+        "draft",
+        "reviewed",
+        "approved",
+        "superseded",
+        "retired"
+      ]
     },
     "construction": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["body_type", "neck_joint", "neck_sourcing", "scale_length_mm", "fret_count", "string_count"],
+      "required": [
+        "body_type",
+        "neck_joint",
+        "neck_sourcing",
+        "scale_length_mm",
+        "fret_count",
+        "string_count"
+      ],
       "properties": {
         "body_type": {
           "type": "string",
-          "enum": ["hollow_thin_skin_box", "solid_body", "chambered"]
+          "enum": [
+            "hollow_thin_skin_box",
+            "solid_body",
+            "chambered"
+          ]
         },
-        "body_architecture_note": {"type": "string"},
-        "neck_joint": {"type": "string", "enum": ["bolt_on", "set_neck"]},
-        "neck_sourcing": {"type": "string", "enum": ["shop_machined", "purchased_complete"]},
-        "scale_length_mm": {"type": "number", "exclusiveMinimum": 0},
-        "fret_count": {"type": "integer", "minimum": 1},
-        "string_count": {"type": "integer", "minimum": 1},
-        "body_length_mm": {"type": "number", "exclusiveMinimum": 0},
-        "body_width_mm": {"type": "number", "exclusiveMinimum": 0},
-        "body_thickness_mm": {"type": "number", "exclusiveMinimum": 0}
+        "body_architecture_note": {
+          "type": "string"
+        },
+        "neck_joint": {
+          "type": "string",
+          "enum": [
+            "bolt_on",
+            "set_neck"
+          ]
+        },
+        "neck_sourcing": {
+          "type": "string",
+          "enum": [
+            "shop_machined",
+            "purchased_complete"
+          ]
+        },
+        "scale_length_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "fret_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "string_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "body_length_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "body_width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "body_thickness_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       }
     },
     "series": {
@@ -84,57 +167,146 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["series_id", "headstock", "nut_type", "status"],
+        "required": [
+          "series_id",
+          "headstock",
+          "nut_type",
+          "status"
+        ],
         "properties": {
-          "series_id": {"type": "string", "minLength": 1},
-          "headstock": {"type": "string", "enum": ["none_headless", "flying_v_inline_6"]},
-          "nut_type": {"type": "string", "minLength": 1},
+          "series_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "headstock": {
+            "type": "string",
+            "enum": [
+              "none_headless",
+              "flying_v_inline_6"
+            ]
+          },
+          "nut_type": {
+            "type": "string",
+            "minLength": 1
+          },
           "status": {
             "type": "string",
-            "enum": ["primary_build_target", "concept_defined", "retired"]
+            "enum": [
+              "primary_build_target",
+              "concept_defined",
+              "retired"
+            ]
           },
-          "note": {"type": "string"}
+          "note": {
+            "type": "string"
+          }
         }
       }
     },
     "electronics_package": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["package_id", "compute_host", "onboard_audio_output", "components", "rationale"],
+      "required": [
+        "package_id",
+        "compute_host",
+        "onboard_audio_output",
+        "components",
+        "rationale"
+      ],
       "properties": {
-        "package_id": {"type": "string", "minLength": 1},
-        "compute_host": {"type": "string", "minLength": 1},
+        "package_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "compute_host": {
+          "type": "string",
+          "minLength": 1
+        },
         "onboard_audio_output": {
           "type": "boolean",
           "description": "True when an I2S HAT provides a headphone jack. False means output is via the dry jack and wireless only."
         },
-        "components": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-        "rationale": {"type": "string", "minLength": 1}
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external_components_note": {
+          "type": "string",
+          "description": "Why a component is external rather than onboard, with the dimensional reason."
+        },
+        "open_question": {
+          "type": "string",
+          "description": "An unresolved decision that materially affects this package. Present means unresolved."
+        }
       }
     },
     "materials": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["body", "neck", "fingerboard"],
+      "required": [
+        "body",
+        "neck",
+        "fingerboard"
+      ],
       "properties": {
-        "body": {"type": "string", "minLength": 1},
-        "skins": {"type": "string"},
-        "neck": {"type": "string", "minLength": 1},
-        "fingerboard": {"type": "string", "minLength": 1},
-        "finish_system": {"type": "string"}
+        "body": {
+          "type": "string",
+          "minLength": 1
+        },
+        "skins": {
+          "type": "string"
+        },
+        "neck": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fingerboard": {
+          "type": "string",
+          "minLength": 1
+        },
+        "finish_system": {
+          "type": "string"
+        }
       }
     },
     "configuration": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["pickup_layout", "bridge_type", "control_layout"],
+      "required": [
+        "pickup_layout",
+        "bridge_type",
+        "control_layout"
+      ],
       "properties": {
-        "pickup_layout": {"type": "string", "minLength": 1},
-        "bridge_type": {"type": "string", "minLength": 1},
-        "control_layout": {"type": "string", "minLength": 1}
+        "pickup_layout": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bridge_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "control_layout": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
-    "provenance": {"$ref": "#/$defs/provenance"},
-    "notes": {"type": "array", "items": {"type": "string"}}
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
   }
 }

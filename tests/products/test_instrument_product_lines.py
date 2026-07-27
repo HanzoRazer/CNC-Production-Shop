@@ -93,15 +93,41 @@ def test_both_lines_are_concept_not_draft(smart, khaya):
     assert "AI-generated" in " ".join(khaya["notes"])
 
 
-def test_solid_body_package_is_recorded_as_borderline(khaya):
-    """It fits by about 1 cm2. That is not the same as fitting."""
+def test_khaya_records_why_the_hat_was_dropped_not_just_that_it_was(khaya):
+    """A ruling that records only its outcome invites the same question again.
+
+    The HAT left this line 25 cm2 short, closing only on a margin change. That
+    borderline result is the reason for the decision, so it stays recorded
+    alongside the comfortable configuration that replaced it.
+    """
     notes = " ".join(khaya["notes"])
-    assert "BORDERLINE" in notes
-    assert "1 cm2" in notes
-    assert "unproven" in notes
-    # The configurations that do NOT fit must be recorded, not just the one
-    # that does, or the next person re-derives them.
-    assert "96 cm2 short" in notes and "25 cm2 short" in notes
+    assert "123 cm2 spare" in notes
+    assert "25 cm2 short" in notes and "96 cm2 short" in notes
+    assert "45 mm tall in a 47 mm blank" in notes
+
+
+def test_m2_is_recorded_as_external_with_its_dimensional_reason(khaya):
+    """External is a conclusion, not a preference, and must carry its evidence."""
+    ep = khaya["electronics_package"]
+    assert ep["onboard_audio_output"] is False
+    assert any("EXTERNAL" in c for c in ep["components"])
+    reason = ep["external_components_note"]
+    assert "190.5 x 108 x 45" in reason
+    assert "99%" in reason
+
+
+def test_smart_guitar_audio_front_end_is_open(smart):
+    """The interface question is unresolved and must not read as settled.
+
+    A HiFiBerry alone does not replace an interface: the guitar-specific
+    analog work — Hi-Z stage, preamp, gain, headphone amp, protection,
+    filtering — is what a USB interface already solves.
+    """
+    q = smart["electronics_package"]["open_question"]
+    assert "UNRESOLVED" in q
+    assert "Hi-Z input stage" in q and "headphone amplifier" in q
+    assert "150 x 70 x 36 mm" in q
+    assert "campfire" in " ".join(smart["notes"])
 
 
 def test_void_edge_cost_is_carried_on_the_thin_skin_line(smart):
