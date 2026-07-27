@@ -503,7 +503,6 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
         "CONF-USB-INTERFACE-LOCATION",
         "CONF-PICKUP-TYPE",
         "CONF-PICKUP-ROUTE-DIMS",
-        "CONF-TRACE-REGISTRATION",
     } <= unresolved
 
 
@@ -538,36 +537,43 @@ def test_body_width_is_independently_corroborated():
     assert "CORROBORATED INDEPENDENTLY" in width["ruled_by"]
 
 
-def test_registration_finding_is_scoped_to_void_positions_only():
-    """The void-position failure must not be read as impugning the aspect.
+def test_registration_is_diagnosed_as_a_constant_datum_offset():
+    """The outline and the spec positions are compatible after all.
 
-    These are separable claims: a render can place voids decoratively while
-    the silhouette it was traced from stays proportionally faithful. Conflating
-    them would discard a corroborated width for no reason.
+    Six of eight cavity layers in front_v5 imply one body-top datum; the file's
+    own outline sits 109 mm away. That is a generator bug, not incompatible
+    data, and it means (body_top_y - y_from_top) is the correct registration.
     """
     conflicts = {c["conflict_id"]: c for c in load_json(GEOMETRY)["conflicts"]}
     reg = conflicts["CONF-TRACE-REGISTRATION"]
 
-    assert reg["status"] == "unresolved"
-    assert "VOID POSITIONS only" in reg["ruling"]
-    assert "does NOT impugn" in reg["ruling"]
-    assert "0.5707" in reg["sources"][0]
-
-    # The width ruling must survive it, and say so.
+    assert reg["status"] == "ruled"
+    assert "CONSTANT DATUM OFFSET" in reg["ruling"]
+    assert "109.0 mm" in reg["ruling"]
+    assert "(body_top_y - y_from_top)" in reg["ruling"]
+    # It must not be read as impugning the silhouette, which the width rests on.
     assert conflicts["CONF-BODY-WIDTH"]["status"] == "ruled"
-    assert "separable" in conflicts["CONF-BODY-WIDTH"]["ruled_by"]
 
 
-def test_registration_finding_states_its_mitigation():
-    """An unverifiable frame is a residual risk only if the trace is used narrowly."""
+def test_registration_records_the_two_positions_still_suspect():
+    """Removing the offset does not rescue neck pocket or control plate."""
     reg = next(
         c
         for c in load_json(GEOMETRY)["conflicts"]
         if c["conflict_id"] == "CONF-TRACE-REGISTRATION"
     )
-    assert "V1, V2, V3, V5 only" in reg["ruling"]
-    assert "Never read a cavity position out of the trace" in reg["ruling"]
-    assert "residual risk, not a blocker" in reg["ruled_by"]
+    assert "NECK_POCKET and CONTROL_PLATE remain outliers" in reg["ruling"]
+    assert "two cavity positions remain suspect" in reg["ruled_by"]
+
+
+def test_body_width_is_corroborated_by_three_artifacts():
+    """One derivation is a guess; three agreeing artifacts is a measurement."""
+    width = next(
+        c for c in load_json(GEOMETRY)["conflicts"] if c["conflict_id"] == "CONF-BODY-WIDTH"
+    )
+    assert "back_v5" in " ".join(width["sources"])
+    assert "0.8599" in " ".join(width["sources"])
+    assert "Three artifacts now agree" in width["ruled_by"]
 
 
 def test_body_dimensions_are_not_consumed_by_any_derivation():
