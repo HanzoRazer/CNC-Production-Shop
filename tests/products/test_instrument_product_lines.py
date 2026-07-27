@@ -116,6 +116,31 @@ def test_m2_is_recorded_as_external_with_its_dimensional_reason(khaya):
     assert "99%" in reason
 
 
+def test_no_embedded_third_party_consumer_products(smart, khaya):
+    """A finished retail product may not be designed in as an internal part.
+
+    This is a policy, not a rejection of one candidate: it rules out every
+    retail interface regardless of whether it physically fits, and it is the
+    reason the front end became a custom subassembly. External peripherals are
+    deliberately exempt — shipping an interface is resale, not embedding.
+    """
+    for product in (smart, khaya):
+        notes = " ".join(product["notes"])
+        assert "NO EMBEDDED THIRD-PARTY CONSUMER PRODUCTS" in notes
+        assert "iRig HD 2" in notes and "MOTU M2" in notes
+        assert "EXTERNAL peripherals are NOT affected" in notes
+
+
+def test_front_end_is_scoped_as_custom_with_its_cost_class(smart, khaya):
+    """NRE and certification are not unit cost, and must not be folded into it."""
+    for product in (smart, khaya):
+        q = product["electronics_package"]["open_question"]
+        assert "CUSTOM SUBASSEMBLY" in q
+        assert "non-recurring engineering" in q
+        assert "EMC certification" in q
+        assert "separate lines rather than folding them into unit cost" in q
+
+
 def test_smart_guitar_audio_front_end_is_open(smart):
     """The interface question is unresolved and must not read as settled.
 
@@ -125,9 +150,11 @@ def test_smart_guitar_audio_front_end_is_open(smart):
     """
     q = smart["electronics_package"]["open_question"]
     assert "UNRESOLVED" in q
-    assert "Hi-Z input stage" in q and "headphone amplifier" in q
-    assert "150 x 70 x 36 mm" in q
-    assert "campfire" in " ".join(smart["notes"])
+    assert "Hi-Z input impedance" in q and "headphone amplifier" in q
+    # The envelope stopped being the binding constraint once the answer became
+    # a bare board rather than a boxed product.
+    assert "Physical envelope is not the constraint" in q
+    assert "campfire" in q
 
 
 def test_void_edge_cost_is_carried_on_the_thin_skin_line(smart):
