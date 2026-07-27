@@ -1,0 +1,152 @@
+{
+  "spec_id": "SUBASSEMBLY-SG-AUDIO-FRONTEND-V1",
+  "subassembly_name": "Smart Guitar onboard audio front end",
+  "component_id": "SG_AUDIO_FRONTEND",
+  "status": "concept",
+  "units": "mm",
+  "form_factor": {
+    "standard": "Raspberry Pi HAT, 65.0 x 56.5 mm outline, 4 x M2.5 mounting",
+    "mounting": "Four M2.5 standoffs to the cavity floor, 6.0 mm",
+    "stacking": "NOT stacked on the Pi. The board sits BESIDE it, joined by a GPIO ribbon. Stacking was ruled out because a Pi plus standoffs plus a HAT is 58 mm in a 47 mm blank — see CONF-POD-LAYOUT. HAT form factor is retained anyway so a stock GPIO extension ribbon mates without a custom cable.",
+    "authority_note": "Take the exact mounting-hole positions, corner radii and 40-pin connector offset from the official Raspberry Pi HAT mechanical specification, NOT from this record. Matching it exactly is what makes a stock ribbon work."
+  },
+  "envelope": {
+    "board_length_mm": 65.0,
+    "board_width_mm": 56.5,
+    "pcb_thickness_mm": 1.6,
+    "assembly_height_target_mm": 24.0,
+    "assembly_height_max_mm": 30.0,
+    "bottom_side_max_mm": 4.0,
+    "derivation": "Blank 47.0 less structural floor 8.0 less mounting standoff 6.0 less cover clearance 3.0 leaves 30.0 mm of assembly height. The 24.0 mm TARGET is set deliberately below that ceiling: it matches the HiFiBerry DAC+ADC this board replaces, so the derived pocket does not move, and it leaves 6.0 mm of margin before the blank would have to grow. With a 1.6 mm PCB the target gives 22.4 mm of component height above the board. Bottom-side parts are limited to 4.0 mm by the 6.0 mm standoff, keeping 2.0 mm of clearance."
+  },
+  "interfaces": [
+    {
+      "interface_id": "INSTRUMENT_IN",
+      "direction": "in",
+      "connection": "wire_to_board",
+      "description": "Pickup signal from the control cavity, taken AFTER the volume, tone and selector controls. High impedance, millivolt level."
+    },
+    {
+      "interface_id": "AMP_OUT",
+      "direction": "out",
+      "connection": "wire_to_board",
+      "description": "Buffered output to the body-mounted 1/4 inch jack. Carries either the dry signal or the processed signal depending on bypass state."
+    },
+    {
+      "interface_id": "HEADPHONE_OUT",
+      "direction": "out",
+      "connection": "wire_to_board",
+      "description": "To the body-mounted headphone jack. Must drive 32 ohm headphones at useful level — this is the defining feature of the practice instrument."
+    },
+    {
+      "interface_id": "GPIO_HOST",
+      "direction": "bidirectional",
+      "connection": "gpio_header",
+      "description": "40-pin to the Raspberry Pi 5 via ribbon: I2S audio, I2C for codec and gain control, power, and the link to the onboard MCU section."
+    },
+    {
+      "interface_id": "CONTROLS",
+      "direction": "in",
+      "connection": "wire_to_board",
+      "description": "Footswitches and panel controls. Handled by the onboard MCU section, not by the Pi."
+    },
+    {
+      "interface_id": "INDICATORS",
+      "direction": "out",
+      "connection": "wire_to_board",
+      "description": "LED outputs, including fret markers if fitted."
+    },
+    {
+      "interface_id": "BATTERY",
+      "direction": "power",
+      "connection": "wire_to_board",
+      "description": "From the battery chamber: power rails plus BMS telemetry to the MCU section."
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "REQ-BYPASS",
+      "requirement": "An analog bypass path shall carry the buffered dry instrument signal to AMP_OUT whenever the Pi is off, booting, or unresponsive. The path shall default to bypass on loss of power and shall use a latching relay or equivalent so it draws no standing current.",
+      "rationale": "An instrument that is silent for thirty seconds while Linux boots is not shippable, and one that goes silent mid-song is worse. This is a behavioural requirement, not an implementation note.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-HIZ",
+      "requirement": "The instrument input shall present at least 1 megohm input impedance, using a JFET or equivalent high-impedance input topology.",
+      "rationale": "Matches a guitar amplifier input and preserves pickup treble response. A bipolar low-noise part such as the OPA1612 used in the tap_tone_pi measurement rig is the wrong topology here despite its noise figure.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-GAIN-RECALL",
+      "requirement": "Input gain shall be digitally controlled and readable, not set by a mechanical trimmer.",
+      "rationale": "Makes gain recallable per preset, which is what a practice instrument with a coaching engine needs.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-HEADPHONE-DRIVE",
+      "requirement": "The headphone output shall drive 32 ohm loads at a level adequate for practice without an external amplifier.",
+      "rationale": "Headphone output is the reason this instrument exists. Roughly 100 mW into 32 ohm is a reasonable target.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-CODEC-SUPPORTED",
+      "requirement": "The codec shall be silicon that already has a mainline Raspberry Pi device-tree overlay.",
+      "rationale": "This is the single largest de-risking decision on the board. Matching supported silicon turns the software task from writing and maintaining an ALSA driver into reusing an overlay.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-MCU-ONBOARD",
+      "requirement": "The board shall carry the I/O microcontroller functions on-board rather than as a separate module: footswitches, panel controls, LEDs, BMS telemetry and bypass control.",
+      "rationale": "Absorbing the separate Teensy module removes its pocket from the body. Combined with keeping the Pi and this board adjacent, that is what makes the electronics fit the SOLID body at all — the alternative is 37 cm2 short.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-NOISE",
+      "requirement": "Analog and digital grounds shall be separated and joined at a single point, with analog rails on dedicated low-noise regulators.",
+      "rationale": "Millivolt guitar signals run 20 mm from a Raspberry Pi 5 with WiFi active, inside a sealed cavity. Power supply and grounding failures are the usual cause of unusable noise floors in boards of this class.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-LATENCY",
+      "requirement": "Round-trip latency from instrument input to headphone output shall not exceed 5 ms, with 10 ms as the hard maximum.",
+      "rationale": "Carried from the existing signal-chain budget. An all-I2S path is expected to land near 1.9 ms against the 3.1 ms of the previous USB-input path, so this is headroom rather than a constraint.",
+      "criticality": "medium"
+    }
+  ],
+  "environment": [
+    "Sealed wooden cavity with a cover plate, no forced airflow across the board itself.",
+    "Approximately 20 mm from a Raspberry Pi 5 running at 2.4 GHz with WiFi and Bluetooth active.",
+    "Battery powered, so quiescent draw affects runtime directly.",
+    "Cavity shielding is available and already specified for the pickup routes; the board should assume it and not rely on it."
+  ],
+  "certification": [
+    "FCC Part 15 Class B and CE/UKCA apply to the FINISHED ASSEMBLY. The Raspberry Pi's own certification does not transfer to a product containing it.",
+    "UN38.3 for shipping lithium cells and IEC 62133 for the pack.",
+    "Hazard to design against: a battery-powered instrument with an amp output into a mains-powered amplifier, while simultaneously connected to USB-C charging, is a ground-loop and safety path that must be addressed rather than discovered."
+  ],
+  "open_questions": [
+    "I2S versus USB has NOT been settled. I2S is preferred on cost, board area and battery draw, but USB Audio Class 2 is class-compliant and needs no driver or overlay at all, and would let the board work standalone with a phone or laptop. Latency does not decide it: the existing USB path already measures 3.1 ms against a 5 ms target, so the roughly 1.2 ms an all-I2S path would save is headroom, not a requirement.",
+    "Codec selection, and therefore whether REQ-CODEC-SUPPORTED can be met, is unresolved.",
+    "Whether the two pickups are humbuckers or P90s is unresolved upstream and affects the expected input level. See CONF-PICKUP-TYPE.",
+    "Non-recurring engineering and certification cost are not estimated. They are separate lines in the budget model, not unit cost."
+  ],
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-27",
+    "confidence": "draft",
+    "references": [
+      "fixtures/geometry/smart_guitar_component_register_v1.json",
+      "fixtures/products/smart_guitar_v1.json",
+      "fixtures/products/khaya_solidbody_v1.json"
+    ],
+    "note": "Written after the sourcing policy ruled out embedding any finished retail interface. This is the mechanical and system brief that comes FROM the instrument; circuit topology is the PCB designer's."
+  },
+  "notes": [
+    "STATUS IS 'concept'. No schematic exists. This is a brief, not a design.",
+    "Scope boundary: this record carries the envelope, the interfaces and the behavioural requirements. It deliberately does NOT specify circuit topology, part numbers or component values, which are the designer's to choose against these constraints.",
+    "The envelope is TIED TO THE CAVITY. This board appears in the geometry component register as SG_AUDIO_FRONTEND, and the pocket that holds it is derived from those dimensions. Changing the board here changes the pocket there, and a validator fails if the two disagree.",
+    "This subassembly is on the critical path for BOTH product lines. The Smart Guitar cannot be self-contained without it, and the Khaya was made self-contained by owner decision on 2026-07-27, so neither line ships until it exists.",
+    "The instrument constrains this board more than the board constrains the instrument. Two derived facts are already load-bearing: the Pi and this board must be ADJACENT, because a 150 mm ribbon channel costs more body area than the solid body has; and the battery must be the 2x 18650 pack rather than 4x. Those stopped being preferences when the Khaya went self-contained."
+  ]
+}

@@ -39,11 +39,11 @@
       }
     },
     {
-      "component_id": "HIFIBERRY_DAC_ADC",
-      "display_name": "HiFiBerry DAC+ADC",
-      "role": "Audio I/O, 24-bit 48-96 kHz, I2S",
+      "component_id": "SG_AUDIO_FRONTEND",
+      "display_name": "Smart Guitar audio front end (custom HAT)",
+      "role": "Instrument front end, codec, headphone amp, bypass relay and I/O microcontroller on one board",
       "length_mm": 65.0,
-      "width_mm": 56.0,
+      "width_mm": 56.5,
       "height_mm": 24.0,
       "mounting": "floor",
       "standoff_mm": 6.0,
@@ -53,33 +53,11 @@
       "consumes_cavity_depth": true,
       "required": true,
       "provenance": {
-        "source": "vendored_snapshot",
-        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.hifiberry_dac_adc",
-        "snapshot_date": "2026-07-26",
+        "source": "engineering_estimate",
+        "source_ref": "fixtures/subassemblies/sg_audio_frontend_v1.json envelope",
+        "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "standoff_mm is 6.0, NOT the 10.0 in the source. The source value was a stacking standoff for mounting this HAT on the Pi 5 header; under the ruled side-by-side layout it is floor-mounted like the Pi. Requires a ribbon or riser to the Pi 5 GPIO header rather than direct stacking."
-      }
-    },
-    {
-      "component_id": "TEENSY_4_1",
-      "display_name": "Teensy 4.1",
-      "role": "I/O coprocessor \u2014 footswitches, pots, LEDs, BMS telemetry, relay bypass. No audio path.",
-      "length_mm": 61.0,
-      "width_mm": 18.0,
-      "height_mm": 3.0,
-      "mounting": "floor",
-      "standoff_mm": 4.0,
-      "margin_length_mm": 4.5,
-      "margin_width_mm": 3.5,
-      "lid_clearance_mm": 4.5,
-      "consumes_cavity_depth": true,
-      "required": true,
-      "provenance": {
-        "source": "vendored_snapshot",
-        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.teensy_4_1",
-        "snapshot_date": "2026-07-26",
-        "confidence": "draft",
-        "note": "Anisotropic margins are back-derived from the stated 70 x 25 mm pocket: 61 + 2x4.5 = 70 and 18 + 2x3.5 = 25. The source states a single margin of 4.5, which does not reproduce the stated width. lid_clearance 4.5 mm is the source's header_clearance_mm."
+        "note": "Dimensions are the ENVELOPE from SUBASSEMBLY-SG-AUDIO-FRONTEND-V1, not a measured part \u2014 no schematic exists. height_mm is the design TARGET of 24.0, chosen to match the HiFiBerry DAC+ADC it replaces so the pocket does not move; the hard ceiling is 30.0 before the blank must grow. This component also absorbs the Teensy 4.1, which is why no separate MCU pocket remains: that is what makes the electronics fit the solid body."
       }
     },
     {
@@ -152,7 +130,7 @@
       "component_id": "GPIO_RIBBON",
       "display_name": "Pi 5 GPIO to HiFiBerry ribbon/riser",
       "role": "Carries the I2S bus between the Pi 5 and the HiFiBerry HAT once they no longer stack",
-      "length_mm": 150.0,
+      "length_mm": 60.0,
       "width_mm": 26.0,
       "height_mm": 2.0,
       "mounting": "floor",
@@ -167,7 +145,7 @@
         "source_ref": "required by CONF-POD-LAYOUT: side-by-side placement forbids header stacking",
         "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "length_mm 150.0 is a typical 40-way GPIO extension ribbon and is an ENGINEERING ESTIMATE, not a selected part. It is registered as a component so that pocket separation is CONSTRAINED rather than described: the derived WIRE_CHANNEL_PI_HAT length is the maximum the two pockets may be separated by, and moving them further apart fails the derivation instead of quietly stretching a cable that does not exist."
+        "note": "length_mm 60.0 is a short GPIO extension ribbon between adjacent pockets and is an ENGINEERING ESTIMATE, not a selected part. It is registered as a component so pocket separation is CONSTRAINED rather than described. Reduced from 150.0 on 2026-07-27: the longer ribbon costs 94 cm2 of channel and leaves the solid body 37 cm2 short once that line went self-contained."
       }
     }
   ],
@@ -193,11 +171,11 @@
     },
     {
       "cavity_id": "POD_HAT",
-      "description": "Rear-access pocket for the HiFiBerry DAC+ADC, linked to POD_PI by the GPIO ribbon",
+      "description": "Rear-access pocket for the custom audio front-end board, linked to POD_PI by the GPIO ribbon",
       "surface": "back",
       "layout": "single",
       "component_ids": [
-        "HIFIBERRY_DAC_ADC"
+        "SG_AUDIO_FRONTEND"
       ],
       "inter_component_margin_mm": 0.0,
       "min_floor_mm": 8.0,
@@ -206,7 +184,7 @@
         "source_ref": "split from ELECTRONICS_POD, 2026-07-27, per CONF-POD-SPLIT",
         "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "The one-piece 162 x 64 pod had NO valid position anywhere in the body outline once containment, rim inset and through-body voids were checked. Splitting is not a preference; it is what makes the electronics placeable at the governed body size."
+        "note": "Sized from the subassembly envelope rather than from a measured board. Retains the HAT-derived footprint deliberately: matching the part it replaces keeps this pocket stable while the board is still a brief."
       }
     },
     {
@@ -226,29 +204,9 @@
         "source_ref": "sg-spec rear_wiring_channel (10 x 15 mm) compared against a 40-way ribbon",
         "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "The derived length of this channel IS the maximum permitted separation between POD_PI and POD_HAT. Stated dimensions are the spec's generic wiring channel, sized for discrete leads."
-      }
-    },
-    {
-      "cavity_id": "TEENSY_IO_POCKET",
-      "description": "Rear-access pocket for the Teensy 4.1 I/O coprocessor, sited near the neck pickup for a short analog lead",
-      "surface": "back",
-      "layout": "single",
-      "component_ids": [
-        "TEENSY_4_1"
-      ],
-      "inter_component_margin_mm": 0.0,
-      "min_floor_mm": 8.0,
-      "stated_length_mm": 70.0,
-      "stated_width_mm": 25.0,
-      "stated_depth_mm": 20.0,
-      "provenance": {
-        "source": "vendored_snapshot",
-        "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.teensy_4_1.pocket_mm",
-        "snapshot_date": "2026-07-26",
-        "confidence": "draft",
-        "note": "luthiers-toolbox states the same 70 x 25 x 20 mm pocket, so the two sources agree here."
-      }
+        "note": "The derived length of this channel IS the maximum permitted separation between POD_PI and POD_HAT. Shortened from a 150 mm ribbon to 60 mm on 2026-07-27: at 150 mm the channel alone costs 94 cm2 and the solid body finishes 37 cm2 short, while at 60 mm it costs 45 cm2 and the line closes with 35 cm2 spare. Adjacency is now a constraint, not a layout preference. Stated dimensions are the spec's generic wiring channel, sized for discrete leads."
+      },
+      "stated_length_mm": 150.0
     },
     {
       "cavity_id": "BATTERY_CHAMBER",
@@ -334,9 +292,9 @@
         "sg-spec smart_guitar_cavity_map.json signal_chain: 'active buffered Hi-Z 1MOhm input' is required by both audio paths",
         "no source anywhere gives the splitter a physical dimension"
       ],
-      "status": "unresolved",
-      "ruling": "Omitted from the register entirely rather than given invented dimensions. A required in-body component with no known size is a genuine gap, and the derived pod footprint is therefore a LOWER BOUND.",
-      "ruled_by": "unresolved \u2014 component not yet selected"
+      "status": "ruled",
+      "ruling": "RESOLVED by CONF-FRONTEND-CUSTOM. The Hi-Z buffered splitter is no longer a separate undimensioned part: it is an input stage ON the custom front-end board, covered by REQ-HIZ in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1, which requires at least 1 megohm input impedance using a JFET or equivalent topology. The pod footprint is therefore no longer a lower bound waiting on an unknown component \u2014 SG_AUDIO_FRONTEND carries a governed envelope and the cavity derives from it.",
+      "ruled_by": "resolved 2026-07-27 by the custom subassembly decision"
     },
     {
       "conflict_id": "CONF-USB-INTERFACE-LOCATION",
@@ -345,9 +303,9 @@
         "sg-spec smart_guitar_cavity_map.json signal_chain: 'Focusrite Scarlett Solo 4th Gen (primary) or IK AXE IO ONE (alt)' feeding the Pi 5 USB",
         "physical: a Scarlett Solo is roughly 143 x 97 x 47 mm and cannot fit a 44.45 mm body"
       ],
-      "status": "unresolved",
-      "ruling": "Treated as EXTERNAL to the instrument and excluded from the register. The canonical signal chain implies it is in the audio path but never states whether it is onboard. If it must be onboard, the named parts are impossible and a different Hi-Z front end is required.",
-      "ruled_by": "unresolved \u2014 architecture decision required"
+      "status": "ruled",
+      "ruling": "RESOLVED, differently for each product line. SMART GUITAR: no USB interface at all. Audio input, conversion and headphone output are all on the custom front-end board, so the instrument is self-contained and the Scarlett Solo named in the canonical signal chain is retired as vestigial. KHAYA: originally external MOTU M2, then made self-contained by owner decision on 2026-07-27, so it carries the same board. The M2 remains a supported EXTERNAL peripheral rather than a designed-in component, which the sourcing policy permits. Note that the interface could never have been onboard as named: the Scarlett Solo is 47 mm tall and the M2 45 mm, against a 36 mm ceiling.",
+      "ruled_by": "resolved 2026-07-27 by the custom subassembly decision"
     },
     {
       "conflict_id": "CONF-FRET-COUNT",
@@ -501,6 +459,18 @@
       "status": "ruled",
       "ruling": "The datum for y_from_top is NOT the topmost point of the outline. It sits about 50 mm below it, with the centreline about 15 mm off x = 0. The topmost point of the traced silhouette is the tip of the upper horn, which is not the body-top reference the spec measures from. This single offset is the substance of CONF-TRACE-REGISTRATION: applying it takes the four non-negotiable, scale-length-driven features from all-failing to all-passing. dx -15.0 dy -50.0 is recovered from those four features and is an ENGINEERING FIT, not a measured datum \u2014 it should be confirmed against the CAD drawing, since it shifts every cavity in the instrument.",
       "ruled_by": "derived 2026-07-27 from the four scale-length-driven features; confirm against the CAD drawing"
+    },
+    {
+      "conflict_id": "CONF-FRONTEND-CUSTOM",
+      "field": "onboard audio front end \u2014 sourced part or custom subassembly",
+      "sources": [
+        "sourcing policy: no finished retail product may be designed in as an internal component, which rules out the iRig HD 2, Apogee Jam X, Scarlett Solo and MOTU M2 regardless of fit",
+        "a converter board such as the HiFiBerry solves none of the guitar-specific analog problems: Hi-Z input impedance, instrument preamp, gain control, headphone amplifier, protection and anti-alias filtering",
+        "owner decision 2026-07-27: the Khaya line goes fully self-contained, so both product lines now depend on this subassembly"
+      ],
+      "status": "ruled",
+      "ruling": "CUSTOM SUBASSEMBLY, specified in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1. A Raspberry Pi HAT form-factor board carrying the instrument front end, codec, headphone amplifier, analog bypass relay and the I/O microcontroller functions previously assigned to a separate Teensy module. It replaces HIFIBERRY_DAC_ADC and TEENSY_4_1 in this register, and absorbing the MCU is what removes the Teensy pocket and makes the electronics fit the SOLID body. Its dimensions here are the ENVELOPE from that spec, not a measured part: no schematic exists and the status is 'concept'. Cost class differs from a sourced part \u2014 non-recurring engineering and EMC certification are separate budget lines, not unit cost. I2S versus USB is recorded as unresolved in the spec; latency does not decide it, since the existing USB path already meets the 5 ms budget at 3.1 ms.",
+      "ruled_by": "owner decision, 2026-07-27"
     }
   ],
   "provenance": {

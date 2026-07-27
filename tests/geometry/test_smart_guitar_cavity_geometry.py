@@ -309,7 +309,7 @@ def test_component_placed_in_two_cavities_rejected():
 
 def test_unplaced_required_component_rejected():
     register = _register()
-    plans = [p for p in register.cavity_plans if p.cavity_id != "TEENSY_IO_POCKET"]
+    plans = [p for p in register.cavity_plans if p.cavity_id != "BATTERY_CHAMBER"]
     with pytest.raises(ValueError, match="required components are not placed"):
         derive_cavity_geometry(
             replace(register, cavity_plans=tuple(plans)),
@@ -413,14 +413,10 @@ def test_pod_is_split_into_two_pockets_that_both_fit():
     assert "ELECTRONICS_POD" not in by_id
     pi, hat = by_id["POD_PI"], by_id["POD_HAT"]
 
-    assert (pi["derived_length_mm"], pi["derived_width_mm"], pi["derived_depth_mm"]) == (
-        93.0, 64.0, 27.0,
-    )
-    assert (hat["derived_length_mm"], hat["derived_width_mm"], hat["derived_depth_mm"]) == (
-        73.0, 64.0, 33.0,
-    )
-    # Dropping the HAT out of the Pi pocket buys back 6 mm of depth.
-    assert hat["derived_depth_mm"] - pi["derived_depth_mm"] == 6.0
+    assert (pi["derived_length_mm"], pi["derived_depth_mm"]) == (93.0, 27.0)
+    assert (hat["derived_length_mm"], hat["derived_depth_mm"]) == (73.0, 33.0)
+    # The front-end board is 0.5 mm wider than the HAT it replaces.
+    assert hat["derived_width_mm"] == 64.5
     assert pi["fit_ok"] and hat["fit_ok"]
     assert stored["body"]["governing_cavity_id"] == "POD_HAT"
 
@@ -445,14 +441,17 @@ def test_wire_channel_is_too_narrow_in_the_spec_for_a_ribbon():
 def test_ribbon_length_constrains_pocket_separation():
     """The channel's derived length IS the maximum pocket separation.
 
-    Recorded as geometry rather than prose so that moving a pocket too far
-    fails the derivation instead of silently assuming a longer cable.
+    Shortened to 60 mm once the Khaya went self-contained: at 150 mm the
+    channel alone costs 94 cm2 and that line finishes 37 cm2 short. Adjacency
+    became a constraint rather than a layout preference, and it is expressed
+    as geometry so a future edit fails the derivation instead of quietly
+    assuming a longer cable.
     """
     stored = load_json(GEOMETRY)
     channel = next(
         c for c in stored["cavities"] if c["cavity_id"] == "WIRE_CHANNEL_PI_HAT"
     )
-    assert channel["derived_length_mm"] == 150.0
+    assert channel["derived_length_mm"] == 60.0
     assert "GPIO_RIBBON" in channel["component_ids"]
 
     register = _register()
@@ -461,14 +460,25 @@ def test_ribbon_length_constrains_pocket_separation():
     assert "ENGINEERING ESTIMATE" in ribbon.provenance.note
 
 
-def test_teensy_pocket_footprint_reproduces_the_stated_pocket():
-    """Back-derived anisotropic margins must reproduce 70 x 25 exactly."""
-    stored = load_json(GEOMETRY)
-    pocket = next(c for c in stored["cavities"] if c["cavity_id"] == "TEENSY_IO_POCKET")
-    assert pocket["derived_length_mm"] == pocket["stated_length_mm"] == 70.0
-    assert pocket["derived_width_mm"] == pocket["stated_width_mm"] == 25.0
-    assert pocket["length_delta_mm"] == 0.0
-    assert pocket["width_delta_mm"] == 0.0
+def test_frontend_board_replaces_both_the_hat_and_the_teensy():
+    """Absorbing the MCU is what makes the electronics fit the solid body.
+
+    With a separate Teensy module the solid line is 37 cm2 short; with its
+    functions on the front-end board it has 35 cm2 spare.
+    """
+    register = _register()
+    ids = {c.component_id for c in register.components}
+    assert "SG_AUDIO_FRONTEND" in ids
+    assert "HIFIBERRY_DAC_ADC" not in ids
+    assert "TEENSY_4_1" not in ids
+
+    cavities = {c["cavity_id"] for c in load_json(GEOMETRY)["cavities"]}
+    assert "TEENSY_IO_POCKET" not in cavities
+
+    board = next(c for c in register.components if c.component_id == "SG_AUDIO_FRONTEND")
+    assert board.required is True
+    assert "ENVELOPE" in board.provenance.note
+    assert "no schematic exists" in board.provenance.note
 
 
 def test_fan_venting_is_ruled_not_assumed():
@@ -534,8 +544,6 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
     stored = load_json(GEOMETRY)
     unresolved = {c["conflict_id"] for c in stored["conflicts"] if c["status"] == "unresolved"}
     assert {
-        "CONF-HIZ-SPLITTER-DIMS",
-        "CONF-USB-INTERFACE-LOCATION",
         "CONF-PICKUP-TYPE",
         "CONF-PICKUP-ROUTE-DIMS",
     } <= unresolved

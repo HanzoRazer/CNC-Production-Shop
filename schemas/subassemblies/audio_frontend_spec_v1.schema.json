@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "audio_frontend_spec_v1.schema.json",
+  "title": "AudioFrontendSpecV1",
+  "description": "Design brief for a custom onboard audio front-end subassembly, written to be handed to a PCB designer. Carries the mechanical envelope, system interfaces and behavioural requirements that come FROM the instrument; circuit topology is the designer's and is deliberately absent. The envelope is tied to the cavity that holds the board: a validator recomputes the cavity from it, so changing the board changes the pocket rather than silently invalidating it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_id",
+    "subassembly_name",
+    "status",
+    "units",
+    "form_factor",
+    "envelope",
+    "interfaces",
+    "requirements",
+    "environment",
+    "certification",
+    "open_questions",
+    "provenance",
+    "notes"
+  ],
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "engineering_estimate",
+            "owner_confirmed",
+            "vendor_datasheet",
+            "measured_part",
+            "calculated"
+          ]
+        },
+        "confidence": {"type": "string", "enum": ["draft", "reviewed", "approved"]},
+        "captured_by": {"type": "string"},
+        "capture_date": {"type": "string"},
+        "references": {"type": "array", "items": {"type": "string"}},
+        "note": {"type": "string"}
+      }
+    }
+  },
+  "properties": {
+    "spec_id": {"type": "string", "pattern": "^SUBASSEMBLY-[A-Z0-9-]+$"},
+    "subassembly_name": {"type": "string", "minLength": 1},
+    "component_id": {
+      "type": "string",
+      "description": "The component_id this subassembly appears as in the geometry component register. Links the brief to the cavity derivation.",
+      "pattern": "^[A-Z0-9_]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["concept", "draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "units": {"type": "string", "const": "mm"},
+    "form_factor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["standard", "mounting", "stacking"],
+      "properties": {
+        "standard": {"type": "string", "minLength": 1},
+        "mounting": {"type": "string", "minLength": 1},
+        "stacking": {
+          "type": "string",
+          "description": "Whether the board stacks on the host or sits beside it, and why."
+        },
+        "authority_note": {
+          "type": "string",
+          "description": "Where the designer must take exact mechanical detail from, rather than from this record."
+        }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "board_length_mm",
+        "board_width_mm",
+        "pcb_thickness_mm",
+        "assembly_height_target_mm",
+        "assembly_height_max_mm",
+        "bottom_side_max_mm",
+        "derivation"
+      ],
+      "properties": {
+        "board_length_mm": {"type": "number", "exclusiveMinimum": 0},
+        "board_width_mm": {"type": "number", "exclusiveMinimum": 0},
+        "pcb_thickness_mm": {"type": "number", "exclusiveMinimum": 0},
+        "assembly_height_target_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Design target. The cavity is derived from THIS value."
+        },
+        "assembly_height_max_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Hard ceiling before the body blank must grow."
+        },
+        "bottom_side_max_mm": {"type": "number", "minimum": 0},
+        "derivation": {"type": "string", "minLength": 1}
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["interface_id", "direction", "connection", "description"],
+        "properties": {
+          "interface_id": {"type": "string", "minLength": 1},
+          "direction": {"type": "string", "enum": ["in", "out", "bidirectional", "power"]},
+          "connection": {
+            "type": "string",
+            "enum": ["wire_to_board", "gpio_header", "board_mounted"]
+          },
+          "description": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Behavioural requirements. These are what the board must DO, as distinct from what it is made of.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement_id", "requirement", "rationale", "criticality"],
+        "properties": {
+          "requirement_id": {"type": "string", "pattern": "^REQ-[A-Z0-9-]+$"},
+          "requirement": {"type": "string", "minLength": 1},
+          "rationale": {"type": "string", "minLength": 1},
+          "criticality": {
+            "type": "string",
+            "enum": ["shippable_blocker", "high", "medium", "low"]
+          }
+        }
+      }
+    },
+    "environment": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "certification": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "open_questions": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -40,10 +40,10 @@
       "surface": "back",
       "layout": "single",
       "component_ids": [
-        "HIFIBERRY_DAC_ADC"
+        "SG_AUDIO_FRONTEND"
       ],
       "derived_length_mm": 73.0,
-      "derived_width_mm": 64.0,
+      "derived_width_mm": 64.5,
       "derived_depth_mm": 33.0,
       "floor_remaining_mm": 14.0,
       "min_floor_mm": 8.0,
@@ -63,44 +63,22 @@
       "component_ids": [
         "GPIO_RIBBON"
       ],
-      "derived_length_mm": 150.0,
+      "derived_length_mm": 60.0,
       "derived_width_mm": 30.0,
       "derived_depth_mm": 5.0,
       "floor_remaining_mm": 42.0,
       "min_floor_mm": 8.0,
       "fit_ok": true,
-      "stated_length_mm": null,
+      "stated_length_mm": 150.0,
       "stated_width_mm": 10.0,
       "stated_depth_mm": 15.0,
-      "length_delta_mm": null,
+      "length_delta_mm": 90.0,
       "width_delta_mm": -20.0,
       "depth_delta_mm": 10.0,
       "findings": [
+        "stated length 150.0 mm exceeds derived 60.0 mm by 90.0 mm of slack",
         "stated width 10.0 mm is SMALLER than derived 30.0 mm by 20.0 mm: the spec cannot hold its own contents",
         "stated depth 15.0 mm exceeds derived 5.0 mm by 10.0 mm of slack"
-      ]
-    },
-    {
-      "cavity_id": "TEENSY_IO_POCKET",
-      "surface": "back",
-      "layout": "single",
-      "component_ids": [
-        "TEENSY_4_1"
-      ],
-      "derived_length_mm": 70.0,
-      "derived_width_mm": 25.0,
-      "derived_depth_mm": 11.5,
-      "floor_remaining_mm": 35.5,
-      "min_floor_mm": 8.0,
-      "fit_ok": true,
-      "stated_length_mm": 70.0,
-      "stated_width_mm": 25.0,
-      "stated_depth_mm": 20.0,
-      "length_delta_mm": 0.0,
-      "width_delta_mm": 0.0,
-      "depth_delta_mm": 8.5,
-      "findings": [
-        "stated depth 20.0 mm exceeds derived 11.5 mm by 8.5 mm of slack"
       ]
     },
     {
@@ -191,9 +169,9 @@
         "sg-spec smart_guitar_cavity_map.json signal_chain: 'active buffered Hi-Z 1MOhm input' is required by both audio paths",
         "no source anywhere gives the splitter a physical dimension"
       ],
-      "status": "unresolved",
-      "ruling": "Omitted from the register entirely rather than given invented dimensions. A required in-body component with no known size is a genuine gap, and the derived pod footprint is therefore a LOWER BOUND.",
-      "ruled_by": "unresolved \u2014 component not yet selected"
+      "status": "ruled",
+      "ruling": "RESOLVED by CONF-FRONTEND-CUSTOM. The Hi-Z buffered splitter is no longer a separate undimensioned part: it is an input stage ON the custom front-end board, covered by REQ-HIZ in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1, which requires at least 1 megohm input impedance using a JFET or equivalent topology. The pod footprint is therefore no longer a lower bound waiting on an unknown component \u2014 SG_AUDIO_FRONTEND carries a governed envelope and the cavity derives from it.",
+      "ruled_by": "resolved 2026-07-27 by the custom subassembly decision"
     },
     {
       "conflict_id": "CONF-USB-INTERFACE-LOCATION",
@@ -202,9 +180,9 @@
         "sg-spec smart_guitar_cavity_map.json signal_chain: 'Focusrite Scarlett Solo 4th Gen (primary) or IK AXE IO ONE (alt)' feeding the Pi 5 USB",
         "physical: a Scarlett Solo is roughly 143 x 97 x 47 mm and cannot fit a 44.45 mm body"
       ],
-      "status": "unresolved",
-      "ruling": "Treated as EXTERNAL to the instrument and excluded from the register. The canonical signal chain implies it is in the audio path but never states whether it is onboard. If it must be onboard, the named parts are impossible and a different Hi-Z front end is required.",
-      "ruled_by": "unresolved \u2014 architecture decision required"
+      "status": "ruled",
+      "ruling": "RESOLVED, differently for each product line. SMART GUITAR: no USB interface at all. Audio input, conversion and headphone output are all on the custom front-end board, so the instrument is self-contained and the Scarlett Solo named in the canonical signal chain is retired as vestigial. KHAYA: originally external MOTU M2, then made self-contained by owner decision on 2026-07-27, so it carries the same board. The M2 remains a supported EXTERNAL peripheral rather than a designed-in component, which the sourcing policy permits. Note that the interface could never have been onboard as named: the Scarlett Solo is 47 mm tall and the M2 45 mm, against a 36 mm ceiling.",
+      "ruled_by": "resolved 2026-07-27 by the custom subassembly decision"
     },
     {
       "conflict_id": "CONF-FRET-COUNT",
@@ -358,6 +336,18 @@
       "status": "ruled",
       "ruling": "The datum for y_from_top is NOT the topmost point of the outline. It sits about 50 mm below it, with the centreline about 15 mm off x = 0. The topmost point of the traced silhouette is the tip of the upper horn, which is not the body-top reference the spec measures from. This single offset is the substance of CONF-TRACE-REGISTRATION: applying it takes the four non-negotiable, scale-length-driven features from all-failing to all-passing. dx -15.0 dy -50.0 is recovered from those four features and is an ENGINEERING FIT, not a measured datum \u2014 it should be confirmed against the CAD drawing, since it shifts every cavity in the instrument.",
       "ruled_by": "derived 2026-07-27 from the four scale-length-driven features; confirm against the CAD drawing"
+    },
+    {
+      "conflict_id": "CONF-FRONTEND-CUSTOM",
+      "field": "onboard audio front end \u2014 sourced part or custom subassembly",
+      "sources": [
+        "sourcing policy: no finished retail product may be designed in as an internal component, which rules out the iRig HD 2, Apogee Jam X, Scarlett Solo and MOTU M2 regardless of fit",
+        "a converter board such as the HiFiBerry solves none of the guitar-specific analog problems: Hi-Z input impedance, instrument preamp, gain control, headphone amplifier, protection and anti-alias filtering",
+        "owner decision 2026-07-27: the Khaya line goes fully self-contained, so both product lines now depend on this subassembly"
+      ],
+      "status": "ruled",
+      "ruling": "CUSTOM SUBASSEMBLY, specified in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1. A Raspberry Pi HAT form-factor board carrying the instrument front end, codec, headphone amplifier, analog bypass relay and the I/O microcontroller functions previously assigned to a separate Teensy module. It replaces HIFIBERRY_DAC_ADC and TEENSY_4_1 in this register, and absorbing the MCU is what removes the Teensy pocket and makes the electronics fit the SOLID body. Its dimensions here are the ENVELOPE from that spec, not a measured part: no schematic exists and the status is 'concept'. Cost class differs from a sourced part \u2014 non-recurring engineering and EMC certification are separate budget lines, not unit cost. I2S versus USB is recorded as unresolved in the spec; latency does not decide it, since the existing USB path already meets the 5 ms budget at 3.1 ms.",
+      "ruled_by": "owner decision, 2026-07-27"
     }
   ],
   "calculation": {

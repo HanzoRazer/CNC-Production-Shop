@@ -42,6 +42,10 @@ GEOMETRY_SCHEMA = SCHEMAS / "smart_guitar_cavity_geometry_v1.schema.json"
 FIXTURES = ROOT / "fixtures" / "geometry"
 REGISTER = FIXTURES / "smart_guitar_component_register_v1.json"
 GEOMETRY = FIXTURES / "smart_guitar_cavity_geometry_v1.json"
+FRONTEND_SCHEMA = (
+    ROOT / "schemas" / "subassemblies" / "audio_frontend_spec_v1.schema.json"
+)
+FRONTEND_SPEC = ROOT / "fixtures" / "subassemblies" / "sg_audio_frontend_v1.json"
 
 # This is a physical record. Commercial and scheduling concepts belong to other
 # layers and must not leak in.
@@ -88,6 +92,60 @@ def validate_schema(fixture_path: Path, schema_path: Path) -> list[str]:
     for path, key, _value in _walk(data):
         if key in FORBIDDEN_KEYS:
             errors.append(f"FAIL {label}: forbidden non-geometry field {path}")
+    return errors
+
+
+def validate_frontend_spec() -> list[str]:
+    """Keep the subassembly brief and the component register from drifting.
+
+    The board's envelope is what the cavity is derived from, so the two must
+    agree exactly. Without this check the brief could be revised, handed to a
+    designer, and leave the pocket silently sized for the old board.
+    """
+    errors: list[str] = []
+    spec = load_json(FRONTEND_SPEC)
+    register = load_json(REGISTER)
+    env = spec["envelope"]
+
+    component = next(
+        (c for c in register["components"] if c["component_id"] == spec["component_id"]),
+        None,
+    )
+    if component is None:
+        return [
+            f"FAIL {FRONTEND_SPEC.name}: component_id {spec['component_id']!r} "
+            f"is not in the component register"
+        ]
+
+    for spec_key, comp_key in (
+        ("board_length_mm", "length_mm"),
+        ("board_width_mm", "width_mm"),
+        ("assembly_height_target_mm", "height_mm"),
+    ):
+        if not mm_equal(env[spec_key], component[comp_key]):
+            errors.append(
+                f"FAIL frontend envelope {spec_key} {env[spec_key]} != register "
+                f"{comp_key} {component[comp_key]} — the cavity would be derived "
+                f"from a stale board size"
+            )
+
+    if env["assembly_height_target_mm"] > env["assembly_height_max_mm"]:
+        errors.append("FAIL frontend envelope target height exceeds its own maximum")
+
+    # The stated ceiling must actually be what the blank allows.
+    body = load_json(GEOMETRY)["body"]
+    allowed = (
+        body["stated_thickness_mm"]
+        - component["standoff_mm"]
+        - component["lid_clearance_mm"]
+        - min(p["min_floor_mm"] for p in register["cavity_plans"])
+    )
+    if not mm_equal(env["assembly_height_max_mm"], allowed):
+        errors.append(
+            f"FAIL frontend assembly_height_max_mm {env['assembly_height_max_mm']} "
+            f"!= what the blank allows ({allowed}): thickness - standoff - lid - floor"
+        )
+
     return errors
 
 
@@ -257,7 +315,11 @@ def report_unresolved() -> None:
 def main() -> int:
     all_errors: list[str] = []
 
-    for fixture, schema in [(REGISTER, REGISTER_SCHEMA), (GEOMETRY, GEOMETRY_SCHEMA)]:
+    for fixture, schema in [
+        (REGISTER, REGISTER_SCHEMA),
+        (GEOMETRY, GEOMETRY_SCHEMA),
+        (FRONTEND_SPEC, FRONTEND_SCHEMA),
+    ]:
         if not fixture.exists():
             all_errors.append(f"FAIL missing fixture {fixture}")
             continue
@@ -266,6 +328,8 @@ def main() -> int:
         if not errs:
             print(f"PASS {fixture.relative_to(ROOT).as_posix()}")
 
+    if not all_errors:
+        all_errors.extend(validate_frontend_spec())
     if not all_errors:
         all_errors.extend(validate_derivation())
     if not all_errors:
@@ -276,7 +340,7 @@ def main() -> int:
             print(err)
         return 1
 
-    print("PASS derivation, fit verdicts, and conflict propagation")
+    print("PASS derivation, fit verdicts, frontend envelope, and conflict propagation")
     report_unresolved()
     return 0
 
