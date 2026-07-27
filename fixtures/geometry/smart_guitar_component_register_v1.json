@@ -380,9 +380,9 @@
         "luthiers-toolbox smart_guitar_v1.json: rear_electronics_cavity 22.0 mm deep on the BACK face at y_from_top 275.7, x_center 36.8 \u2014 the two overlap in plan on these stated positions",
         "derived: this register's side-by-side pod is 33.0 mm deep and 162.0 mm long, deeper and far longer than the 95 x 65 x 22 mm cavity those positions were checked against"
       ],
-      "status": "unresolved",
-      "ruling": "QUANTIFIED, and it still fails after the thickness change. At the ruled 47.0 mm blank with min_web 8.0: web = 47.0 - 19.0 (bridge route, top face) - 33.0 (pod, back face) = -5.0 mm against a required 8.0 mm, short by 13.0 mm. The web remains NEGATIVE, so the cavities still physically intersect, by 5.0 mm. Passing by thickness alone would need a 60.0 mm blank. ROBUST TO ORIENTATION: the overlap occurs in all three placements tested at the stated position, so the conclusion does not depend on which cavity dimension runs along which axis. Plan separation is the only viable fix. VIABLE DIRECTION: the bridge sits at y_from_top 320.0 and the body is 468.5 long, leaving 148.5 mm of tail; the pod needs 64 mm in Y if laid 162 across X, fitting below the bridge with 84.5 mm spare before rim inset. The band between the two pickup routes (y 187.6-274.6, 87.0 mm) also accommodates it. NOT POD-SPECIFIC: at 44.45 mm a full sweep found six of nine overlapping opposed pairs failing, four involving only spec-native cavities. The thickness change cleared those; the pod is what remains.",
-      "ruled_by": "unresolved \u2014 min_web ruled 8.0 and blank enlarged to 51.0; the pod placement decision belongs to SMART-GUITAR-PLAN-COLLISION-1"
+      "status": "ruled",
+      "ruling": "RESOLVED by relocating the pod to the tail below the bridge, per owner instruction 2026-07-27. GOVERNED PLACEMENT: centre x 74.0, y_from_top 387.0, laid 162 across X and 64 along Y, giving an extent of x -7.0..155.0, y 355.0..419.0. The pod clears every top-face route, so the opposed-face web check no longer applies to it at all \u2014 separation in plan removes the constraint rather than satisfying it. CLEARANCES: 8.0 mm wall to control_cavity (which ends at y 347.0), 14.0 mm to bridge_route, 40.4 mm to bridge_pickup_route, and 36.8 mm of spare between the pod and the tail rim limit at y 455.8. Floor remaining 14.0 mm against a 47.0 mm blank. LATITUDE IS NARROW: the feasible centre-x range is only 61.9..86.2, a 24.3 mm window, because the body narrows toward the tail \u2014 at y 419 the outline spans x -31.8..186.5, leaving 192.9 mm of usable width for a 162 mm pod. Moving the pod more than ~12 mm either way in X pushes it through the rim. ASSUMPTION: the 8.0 mm cavity-to-cavity wall is taken from the ruled floor and web minimums by analogy and has not itself been ruled. OUTSTANDING: at its stated x 110.4 the output jack falls inside the pod footprint, overlapping 12.7 x 12.7. The outline edge at y 391.2 is x 182.2, so as an edge bore the jack belongs there and would clear the pod by 20.9 mm; its stated position is the same class of error as usb_c_port.",
+      "ruled_by": "owner instruction, 2026-07-27"
     },
     {
       "conflict_id": "CONF-BODY-THICKNESS",
@@ -407,6 +407,17 @@
       "status": "ruled",
       "ruling": "RESOLVED: the antenna is MOUNTED OUTSIDE THE BODY. It is not an internal cavity, consumes no cavity depth, and creates no opposed-face conflict. Both stated descriptions were wrong in different ways \u2014 sg-spec called it a stepped shelf milled into the floor of rear_electronics_cavity with a 2 mm RF window, and luthiers-toolbox positioned it at x 22.2, y 202.6, which is neither inside that cavity nor on the lower bout. The internal '2 mm wood window' RF premise is abandoned with it. CONSEQUENCE: the antenna was the sole driver of a 51.0 mm blank; without it the binding requirement is 47.0 mm.",
       "ruled_by": "owner ruling, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-X-SIGN-CONVENTION",
+      "field": "x_center sign convention: which side is treble",
+      "sources": [
+        "traced outline smart_guitar_back_v1.json coordinate_system: 'body_center_origin \u2014 X+ treble, Y+ toward neck', corroborated by its own metadata note that the bass side extends 7.62 mm further and by trace extents x -128.83..121.21",
+        "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity.body_position_mm.notes: 'Offset right (bass side)' for a POSITIVE x_center of 36.8, which under the trace convention is the treble side"
+      ],
+      "status": "unresolved",
+      "ruling": "The two sources disagree on which side positive x denotes. Under the trace convention (+X treble, independently corroborated by the bass overhang and the bass-side void centroids at negative x), a stated x_center of +36.8 is TREBLE, but the spec annotates it 'bass side'. This is the mirror risk: getting it wrong flips every asymmetric feature while still looking plausible, because the body is only 7.62 mm wider on one side overall. THE GOVERNED POD PLACEMENT (centre x +74.0) IS EXPRESSED IN THE TRACE CONVENTION and therefore sits on the TREBLE side. If the spec's annotation is right and the conventions are mirrored, the pod centre is -74.0 and every other x_center flips with it.",
+      "ruled_by": "unresolved \u2014 must be settled before any asymmetric feature is cut"
     }
   ],
   "provenance": {

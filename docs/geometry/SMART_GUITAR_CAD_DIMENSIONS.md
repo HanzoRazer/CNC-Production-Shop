@@ -9,8 +9,8 @@ Generated from the governed geometry record, not transcribed by hand.
 All dimensions **mm**. Origin for positions: **body top (neck end)** for `y`,
 **centreline** for `x`, `x+` toward treble.
 
-> **Read the three MUST-FIX items before drawing the electronics pod.**
-> Two cavities collide and one port falls outside the body.
+> The electronics pod now has a **governed position** (section 3.1).
+> Two edge features still carry positions that fall outside the outline.
 
 ---
 
@@ -65,6 +65,34 @@ Pod layout is **side-by-side**, Pi 5 and HiFiBerry both on the cavity floor,
 the GPIO header. The 40 mm fan mounts on the lid and **vents outward**, so it
 adds no cavity depth; the lid requires vents.
 
+### 3.1 Electronics pod — governed position
+
+Relocated to the tail below the bridge, 2026-07-27.
+
+| | Value |
+|---|---:|
+| Centre x | **74.0** |
+| Centre y from top | **387.0** |
+| Extent x | −7.0 .. 155.0 |
+| Extent y | 355.0 .. 419.0 |
+| Orientation | 162 across X, 64 along Y |
+| Floor remaining | 14.0 |
+
+Clearances: **8.0** wall to `control_cavity` (ends y 347.0), **14.0** to
+`bridge_route`, **40.4** to `bridge_pickup_route`, **36.8** spare to the tail
+rim limit at y 455.8.
+
+The pod clears every top-face route, so no opposed-face web check applies to
+it — separation removes the constraint rather than satisfying it.
+
+**Latitude is narrow.** Feasible centre x is only **61.9 .. 86.2**, a 24.3 mm
+window, because the body narrows toward the tail: at y 419 the outline spans
+x −31.8 .. 186.5, leaving 192.9 of usable width for a 162 pod. More than about
+12 mm of X movement either way pushes it through the rim.
+
+The 8.0 cavity-to-cavity wall is borrowed from the ruled floor and web
+minimums by analogy; it has not itself been ruled.
+
 ## 4. Spec cavities — positions and sizes
 
 Positions carried from the spec. Sizes here are the spec's own, *not* derived.
@@ -86,43 +114,34 @@ Positions carried from the spec. Sizes here are the spec's own, *not* derived.
 **Neck pocket** also carries a 4-bolt pattern at ±22.0, ±28.0 from pocket centre,
 #8-32 screws, 4.0 pilot, 9.5 counterbore 5.0 deep, neck angle 3.5°.
 
-## 5. MUST-FIX before the drawing closes
+## 5. Still to fix before the drawing closes
 
-### 5.1 The electronics pod collides with the bridge pickup route
+### 5.1 Two edge features are positioned off the body
 
-```text
-web = 47.0 − 19.0 (bridge route, TOP) − 33.0 (pod, BACK) = -5.00 mm
-required ≥ 8.0                                FAIL, short by 13.00
-```
+`usb_c_port` at x **216.0** against a half-width of **201.43** — **14.57 outside**.
+`output_jack` at x **110.4**, where the outline edge at y 391.2 is x **182.2** —
+71.8 short of the edge, which also drops it inside the relocated pod footprint.
 
-Negative web means the two cavities **physically intersect by 5.00 mm**.
-The overlap occurs in every orientation tested, so it does not depend on how
-the pod is turned. Neither thickness nor depth can absorb it: passing would
-need a 60.0 blank, or a 20.0 pod when the HiFiBerry alone demands 30.
-
-**The pod must move.** The bridge sits at y 320.0 and the body is now 468.5
-long, leaving **148.5 of tail**. Laid 162 across X, the pod needs 64 in Y and
-fits below the bridge with 84.5 spare before rim inset.
+Both are **edge features**, so neither x should be a fixed number: each must be
+derived from the outline at its own y station. Placed at the edge, the jack
+clears the pod by 20.9.
 
 ### 5.2 The pod exceeds the maximum hollow depth
 
 Derived depth **33.0** against sg-spec's `max_hollow_depth` of **30.48** —
-over by 2.52. Moving it does not help.
+over by 2.52. Relocation does not help.
 
-Note the constraint was set against a 44.45 blank. Scaled to 47.0, it becomes
-**32.23**, which 33.0 satisfies. Restate the limit against the new
-thickness rather than assuming it still binds.
+The constraint was set against a 44.45 blank; scaled to 47.0 it becomes
+**32.23**, which 33.0 still exceeds by 0.77.
+Restate the limit against the new thickness rather than assuming it still binds.
 
-### 5.3 The USB-C port sits outside the body
+### 5.3 Which side is treble
 
-`usb_c_port` is placed at x **216.0**, but the body half-width is **201.43**
-— the port is **14.57 outside the outline**. The spec's own note says
-"Body half-width ~219 mm at this Y", implying a 438-wide body that matches
-neither the stated 368.3 nor the derived 402.85.
-
-Because it is an **edge feature**, its x should not be a fixed number at all:
-it must be derived from the outline at y 239.4, and the body is narrower than
-its maximum at that station.
+The traced outline says **+X is treble**; the spec annotates a positive
+`x_center` of 36.8 as *"bass side"*. They cannot both hold. The pod position
+below is stated in the **trace** convention, so it sits treble. If the spec is
+right instead, the pod centre is **x −74.0** and every asymmetric feature
+mirrors with it. Settle this before cutting anything off-centre.
 
 ## 6. Open items that affect the drawing
 

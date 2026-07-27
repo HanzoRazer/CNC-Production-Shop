@@ -503,8 +503,8 @@ def test_unresolved_conflicts_are_recorded_not_hidden():
         "CONF-USB-INTERFACE-LOCATION",
         "CONF-PICKUP-TYPE",
         "CONF-PICKUP-ROUTE-DIMS",
-        "CONF-OPPOSED-FACE-WEB",
         "CONF-TRACE-REGISTRATION",
+        "CONF-X-SIGN-CONVENTION",
     } <= unresolved
 
 
@@ -634,65 +634,63 @@ def test_pickup_type_conflict_is_intra_file_not_cross_repo():
     assert "INTRA-FILE" in conflict["ruling"]
 
 
-def test_opposed_face_web_is_quantified_and_fails():
-    """With min_web ruled at 8.0 mm the check can be evaluated, and it fails.
+def test_pod_relocation_removes_the_opposed_face_constraint():
+    """Plan separation does not satisfy the web check — it removes it.
 
-    Arithmetic guarded here because the register cannot compute it — this is a
-    plan-level result — but the numbers must not drift from the cavity depths
-    this record does derive. If the pod depth changes, this test is where the
-    stale conclusion surfaces.
+    The pod sits in the tail below the bridge, clear of every top-face route,
+    so there is no opposing pair to measure. Guarded because a future edit
+    that nudges the pod back under a pickup would silently reintroduce a
+    -5.0 mm intersection that no derived field in this record would show.
     """
+    conflict = next(
+        c for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
+    )
+    assert conflict["status"] == "ruled"
+    assert "centre x 74.0, y_from_top 387.0" in conflict["ruling"]
+    assert "clears every top-face route" in conflict["ruling"]
+    assert "owner instruction" in conflict["ruled_by"]
+
+
+def test_pod_placement_records_its_clearances_and_its_narrow_latitude():
+    """A placement is only trustworthy if its margins are written down.
+
+    The feasible centre-x window is 24.3 mm wide because the body narrows
+    toward the tail. Recording that stops the position reading as free choice.
+    """
+    conflict = next(
+        c for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
+    )
+    for marker in ("8.0 mm wall to control_cavity", "36.8 mm of spare",
+                   "61.9..86.2", "LATITUDE IS NARROW"):
+        assert marker in conflict["ruling"], marker
+
+    # Floor must still follow from the governed blank.
     stored = load_json(GEOMETRY)
     pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
+    assert pod["floor_remaining_mm"] == 14.0
+    assert stored["body"]["stated_thickness_mm"] - pod["derived_depth_mm"] == 14.0
 
-    thickness = stored["body"]["stated_thickness_mm"]
-    bridge_route_depth = 19.0
-    min_web = 8.0
-    web = thickness - bridge_route_depth - pod["derived_depth_mm"]
-
-    assert web == pytest.approx(-5.0)
-    assert web < min_web
-    assert web < 0, "negative web means the cavities intersect, not merely crowd"
-    assert min_web - web == pytest.approx(13.0)
-
-    # The enlargement narrowed the gap but did not close it.
-    assert bridge_route_depth + pod["derived_depth_mm"] + min_web == pytest.approx(60.0)
-    assert thickness - bridge_route_depth - min_web == pytest.approx(20.0)
-
-    conflict = next(
-        c for c in stored["conflicts"] if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
-    )
-    assert "still fails after the thickness change" in conflict["ruling"]
-    assert "-5.0" in conflict["ruling"]
-    assert "ROBUST TO ORIENTATION" in conflict["ruling"]
-    assert "min_web ruled 8.0" in conflict["ruled_by"]
+    # The wall figure is borrowed, not ruled, and must say so.
+    assert "has not itself been ruled" in conflict["ruling"]
 
 
-def test_opposed_face_web_stays_open_as_a_placement_decision():
-    """Quantified but not resolved: choosing a placement is design, not derivation.
+def test_x_sign_convention_is_flagged_before_any_asymmetric_cut():
+    """The mirror risk, now that the pod has an asymmetric position.
 
-    The failure is now arithmetic rather than suspicion, but this register
-    still cannot close it — plan position is out of scope, and the fix is a
-    design choice about where the pod sits.
+    The trace says +X is treble; the spec annotates a positive x_center as
+    'bass side'. With the pod at x +74.0 that disagreement decides which half
+    of the instrument it is cut into.
     """
-    stored = load_json(GEOMETRY)
     conflict = next(
-        c for c in stored["conflicts"] if c["conflict_id"] == "CONF-OPPOSED-FACE-WEB"
+        c for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-X-SIGN-CONVENTION"
     )
     assert conflict["status"] == "unresolved"
-    assert "Plan separation is the only viable fix" in conflict["ruling"]
-    assert "SMART-GUITAR-PLAN-COLLISION-1" in conflict["ruled_by"]
-
-    # The viable direction must be recorded, not just the failure.
-    assert "148.5 mm of tail" in conflict["ruling"]
-    # And that the enlargement fixed the spec-native failures but not this one.
-    assert "NOT POD-SPECIFIC" in conflict["ruling"]
-
-    pod = next(c for c in stored["cavities"] if c["cavity_id"] == "ELECTRONICS_POD")
-    assert pod["derived_depth_mm"] + 19.0 > stored["body"]["stated_thickness_mm"]
-
-    notes = " ".join(stored["notes"]).lower()
-    assert "lower bound" in notes
+    assert "TREBLE side" in conflict["ruling"]
+    assert "-74.0" in conflict["ruling"]
+    assert "before any asymmetric feature is cut" in conflict["ruled_by"]
 
 
 def test_ruled_conflicts_name_who_ruled_them():
