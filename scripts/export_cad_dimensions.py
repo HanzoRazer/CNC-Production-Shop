@@ -78,17 +78,17 @@ def render() -> str:
 
     blocking = next(
         (c for c in geometry["conflicts"]
-         if c["conflict_id"] == "CONF-VOID-SET-SOURCE" and c["status"] == "unresolved"),
+         if c["conflict_id"] == "CONF-POD-EMC-CLEARANCE" and c["status"] == "unresolved"),
         None,
     )
     if blocking is not None:
         w("> ## DO NOT CUT FROM THIS SHEET")
         w(">")
-        w("> `CONF-VOID-SET-SOURCE` is open. The back-face pocket positions in")
-        w("> section 2 were solved against `front_v5`, which is missing the")
-        w("> lower-treble void — and `POD_HAT` sits entirely inside it. On the")
-        w("> geometry that `back_v5` and the traced outline agree on, no")
-        w("> electronics pocket fits anywhere.")
+        w("> `CONF-POD-EMC-CLEARANCE` is open. The back-face pocket positions")
+        w("> in section 2 were solved against a stale void set — the design")
+        w("> carries three voids, not four, and what the trace shows as a")
+        w("> fourth is the electronics cavity itself. No valid placement has")
+        w("> been derived since.")
         w(">")
         w("> Everything downstream of those positions — section 4 clearances,")
         w("> section 5 ribbon reach — is invalid with them. Sections 1 and 3")

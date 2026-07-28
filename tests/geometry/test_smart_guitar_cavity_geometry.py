@@ -1032,54 +1032,58 @@ def test_emc_procedure_covers_the_charging_configurations():
     assert "REQ-NOISE-BOUNDARY" in procedure
 
 
-def test_void_set_conflict_blocks_every_pocket_placement():
-    """The finding that invalidated the layout, after the owner closed the escape.
+def test_void_set_is_ruled_from_the_renders_not_the_trace():
+    """The trace is stale, and believing it produced a false blocking finding.
 
-    This conflict originally left one way out: if the voids were blind chambers
-    they would be where the electronics live rather than keep-outs. The owner
-    ruled them through-body cuts on 2026-07-27, so the packing result stands.
+    It plots four through-body voids. The design has three, and what the trace
+    shows as a fourth on the lower treble side is the electronics cavity —
+    visible in the owner's back render as a screwed cover plate. Treating that
+    as a hole is what produced "no pocket fits anywhere".
     """
     conflict = next(
         c
         for c in load_json(GEOMETRY)["conflicts"]
         if c["conflict_id"] == "CONF-VOID-SET-SOURCE"
     )
-    assert conflict["status"] == "unresolved"
-    assert "THROUGH-BODY CUTS" in conflict["ruling"]
-    assert "NO ELECTRONICS POCKET FITS ANYWHERE" in conflict["ruling"]
-    assert "Area was never the test" in conflict["ruling"]
-    # How it happened must stay on the record: the deficient source was the default.
-    assert "three void layers" in conflict["ruling"]
-    assert "stayed the default" in conflict["ruling"]
-    # It hands off rather than dangling.
-    assert "CONF-BODY-CANNOT-HOST-ELECTRONICS" in conflict["ruling"]
+    assert conflict["status"] == "ruled"
+    assert "The traced outline is STALE" in conflict["ruling"]
+    assert "ELECTRONICS CAVITY" in conflict["ruling"]
+    # The reversal must be explicit, not implied by a status flip.
+    assert "THE EARLIER FINDING IS WITHDRAWN" in conflict["ruling"]
+    assert "ALSO WITHDRAWN" in conflict["ruling"]
 
 
-def test_dimension_sheet_warns_while_the_void_set_is_open():
-    """The sheet is what someone takes to CAD. It must not read as good."""
+def test_dimension_sheet_warns_while_no_valid_placement_exists():
+    """The sheet is what someone takes to CAD. It must not read as good.
+
+    Keyed to CONF-POD-EMC-CLEARANCE — whether a valid placement exists — not to
+    any particular diagnosis. The first version keyed on the void-set conflict
+    and would have cleared itself the moment that was ruled, while the
+    coordinates it guards were still wrong.
+    """
     sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
         encoding="utf-8"
     )
     assert "DO NOT CUT FROM THIS SHEET" in sheet
-    assert "CONF-VOID-SET-SOURCE" in sheet
+    assert "CONF-POD-EMC-CLEARANCE" in sheet
 
 
-def test_shrinking_the_voids_is_recorded_as_a_dead_lever():
-    """It is the obvious move and it does not work; say so once, permanently.
+def test_body_cannot_host_conflict_is_withdrawn_not_quietly_flipped():
+    """It asserted the body and the electronics could not both exist.
 
-    A 40% linear shrink removes 64% of the void area and the electronics still
-    do not pack, because the failure is topological: the surviving sites all
-    cluster in one window and the three pockets compete for it.
+    The premise was false three ways: a stale void set, a per-pocket wall
+    requirement that does not apply inside a hollow box, and the control cavity
+    treated as a keep-out rather than part of the same hollow. Correcting the
+    last of those alone took POD_PI from 0 placements to 224. A withdrawn
+    finding has to say it was withdrawn, or the next reader inherits it.
     """
     conflict = next(
         c
         for c in load_json(GEOMETRY)["conflicts"]
         if c["conflict_id"] == "CONF-BODY-CANNOT-HOST-ELECTRONICS"
     )
-    assert conflict["status"] == "unresolved"
-    assert "THE OBVIOUS LEVER IS DEAD" in conflict["ruling"]
-    assert "void TOPOLOGY, not the void SIZE" in conflict["ruling"]
-    # Ribbon length is not the constraint, and must not be proposed as one.
-    assert any("independent of ribbon length" in s for s in conflict["sources"])
-    # Retained so it is not re-proposed.
-    assert "retained only so it is not proposed again" in conflict["ruling"]
+    assert conflict["status"] == "ruled"
+    assert conflict["ruling"].startswith("WITHDRAWN - THE PREMISE WAS FALSE")
+    assert "0 valid placements to 224" in conflict["ruling"]
+    # What replaces it is a different KIND of question.
+    assert "STRUCTURAL, NOT SPATIAL" in conflict["ruling"]

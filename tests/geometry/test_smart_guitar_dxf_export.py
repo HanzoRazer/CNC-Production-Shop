@@ -66,10 +66,12 @@ def test_faces_are_on_separate_layers(doc):
 def test_invalid_placements_are_flagged_in_the_layer_name(doc):
     """A note on a NOTES layer is not a control; annotation gets switched off.
 
-    While CONF-VOID-SET-SOURCE is open the back-face pockets are known wrong —
-    POD_HAT sits inside a void the source file omits — so the warning has to
+    The pockets are known wrong: solved against a stale void set and against
+    constraints that do not apply inside a hollow body. The warning has to
     travel with the entity into the CAD layer panel, not sit in text a reader
-    can hide. This reverts by itself when the conflict closes.
+    can hide. It is keyed to whether a VALID PLACEMENT exists rather than to
+    any one diagnosis, so it survives a change of reason and clears itself only
+    when the layout is re-derived.
     """
     layer = back_face_layer()
     assert layer == "CAV_BACK_INVALID_DO_NOT_CUT", (
