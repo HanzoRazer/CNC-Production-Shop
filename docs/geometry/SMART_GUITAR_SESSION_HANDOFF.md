@@ -1,12 +1,10 @@
 # Smart Guitar — session handoff, 2026-07-28
 
-Branch `guitar-build-estimate-1`, **59 commits ahead of `main`, none pushed**,
-working tree clean. 779 tests, seven validators green, ruff clean.
+Branch **`thin-skin-guitar-build-estimate-1`** — note the name; there is also a
+stale `guitar-build-estimate-1` on origin sitting at an old commit. Pushed and
+verified at `618a2d8`, working tree clean. 779 tests, seven validators green, ruff clean.
 
-## Two things before anything technical
-
-**Push, or verify the commits survived.** A remote exists and nothing has been
-pushed. Fifty-nine commits is a lot to hold locally.
+## Before anything technical
 
 **Name the change contact on the RFI.** `SUBASSEMBLY-SG-AUDIO-FRONTEND-V1` has
 been issued to designers and `document_control.change_contact` still says
