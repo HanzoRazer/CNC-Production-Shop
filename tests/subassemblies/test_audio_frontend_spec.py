@@ -379,8 +379,8 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "C"
-    assert len(dc["revision_history"]) >= 3
+    assert dc["revision"] == "D"
+    assert len(dc["revision_history"]) >= 4
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The contact is not yet named, and must say so rather than be absent.
     assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
@@ -458,3 +458,42 @@ def test_validator_enforces_the_envelope_link():
     assert result.returncode == 0, result.stdout + result.stderr
     assert "sg_audio_frontend_v1.json" in result.stdout
     assert "frontend envelope" in result.stdout
+
+
+def test_hiz_noise_is_demonstrated_from_a_pickup_like_source(spec):
+    """The gap Rev D closes, and the reason it was invisible.
+
+    REQ-NOISE terminates the input in 10 kilohm. That is the right choice for
+    bounding what the BOARD contributes, but it does not stress a
+    high-impedance stage: from a resistive 10 kilohm source the input-referred
+    noise is dominated by voltage noise, while from a pickup at resonance it is
+    dominated by current noise and gate leakage. A JFET stage with excessive
+    gate current passed REQ-HIZ on impedance and REQ-NOISE on a soft source,
+    and failed only once a real pickup was attached.
+    """
+    rows = [a for a in spec["acceptance"] if a["requirement_id"] == "REQ-HIZ"]
+    assert len(rows) == 2, "REQ-HIZ needs both an impedance and a noise acceptance"
+
+    noise = next(r for r in rows if "input-referred noise" in r["method"])
+    # A dummy source is specified so the test is reproducible between vendors.
+    for term in ("2.5 H", "7 kilohm", "500 pF"):
+        assert term in noise["method"], f"dummy pickup source missing {term}"
+    # Relative, not absolute: the comparison IS the diagnosis.
+    assert "10 kilohm" in noise["method"]
+    assert "6 dB" in noise["pass_criterion"]
+    # Catching it early is the whole point, so the stage matters.
+    assert noise["stage"] == "prototype"
+    assert "does NOT require" in noise["pass_criterion"]
+
+    impedance = next(r for r in rows if r is not noise)
+    assert impedance["stage"] == "design_review"
+    assert "100 pA" in impedance["pass_criterion"]
+
+
+def test_hiz_requirement_states_the_noise_clause_not_just_the_acceptance(spec):
+    """An acceptance row without a requirement behind it is unanchored."""
+    req = next(r for r in spec["requirements"] if r["requirement_id"] == "REQ-HIZ")
+    assert "shall not degrade in noise performance" in req["requirement"]
+    assert "100 pA" in req["requirement"]
+    assert req["criticality"] == "shippable_blocker"
+    assert "CURRENT noise and gate leakage" in req["rationale"]

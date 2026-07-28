@@ -72,8 +72,8 @@
     },
     {
       "requirement_id": "REQ-HIZ",
-      "requirement": "The instrument input shall present at least 1 megohm input impedance, using a JFET or equivalent high-impedance input topology.",
-      "rationale": "Matches a guitar amplifier input and preserves pickup treble response. A bipolar low-noise part such as the OPA1612 used in the tap_tone_pi measurement rig is the wrong topology here despite its noise figure.",
+      "requirement": "The instrument input shall present at least 1 megohm input impedance, using a JFET or equivalent high-impedance input topology, and shall not degrade in noise performance when driven from a pickup-like source rather than a low-impedance one. Input bias/gate current shall not exceed 100 pA at 25 C.",
+      "rationale": "A guitar pickup is a high-impedance inductive source, not a resistor, and an input stage that measures well from a low-impedance source can be unusable with a real pickup. THIS CLOSES A GAP: impedance was demonstrated at design review while noise was not demonstrated until REQ-NOISE at first article - and REQ-NOISE is measured with the input terminated in 10 kilohm, which does not stress a high-impedance stage at all. Input-referred noise from a 10 kilohm resistive source is dominated by VOLTAGE noise; from a pickup at resonance, where source impedance rises into the hundreds of kilohms, it is dominated by CURRENT noise and gate leakage. A stage with excessive gate current or a badly chosen bias resistor passes both existing tests and fails in the instrument. The bias-current limit is stated because it is the usual root cause and can be checked from a datasheet before anything is built.",
       "criticality": "shippable_blocker"
     },
     {
@@ -245,8 +245,14 @@
     {
       "requirement_id": "REQ-HIZ",
       "stage": "design_review",
-      "method": "Measure input impedance at 1 kHz; confirm input topology from the schematic.",
-      "pass_criterion": "At least 1 megohm, JFET or equivalent high-impedance input stage."
+      "method": "Measure input impedance at 1 kHz; confirm input topology and the device's bias/gate current from the schematic and datasheet.",
+      "pass_criterion": "At least 1 megohm, JFET or equivalent high-impedance input stage, bias/gate current at most 100 pA at 25 C."
+    },
+    {
+      "requirement_id": "REQ-HIZ",
+      "stage": "prototype",
+      "method": "Measure input-referred noise TWICE at maximum gain, A-weighted, 20 Hz to 20 kHz: once with the input terminated in 10 kilohm resistive, and once from a DUMMY PICKUP SOURCE of 2.5 H series inductance and 7 kilohm series resistance with 500 pF shunt capacitance, all +/-10%, representing a single coil on a typical cable. Report both figures and the difference. Repeat at minimum gain.",
+      "pass_criterion": "The dummy-pickup figure shall not exceed the 10 kilohm figure by more than 6 dB. A larger gap means current noise or gate leakage dominates and the stage will not work with a real pickup, however good its resistive-source number looks. Board-level bench measurement - this one does NOT require the assembled instrument, which is the point: it catches the fault at prototype rather than at first article."
     },
     {
       "requirement_id": "REQ-GAIN-RECALL",
@@ -310,7 +316,7 @@
     }
   ],
   "document_control": {
-    "revision": "C",
+    "revision": "D",
     "issued": "2026-07-27",
     "document_class": "rfi",
     "change_contact": "TO BE NAMED BEFORE ISSUE — no change request can be raised against an unnamed owner.",
@@ -330,6 +336,11 @@
         "revision": "C",
         "date": "2026-07-27",
         "change": "Updated every physical distance against the ruled pocket placement (CONF-POD-EMC-CLEARANCE): the board is 35.75 mm from the Pi and the pickup 71.6 mm from it, not the 20 mm quoted in Rev A and B, which predated the relocation. Added the two neighbours the document never named — the battery pack at 10.0 mm, the board's closest neighbour and a switching noise source, and the pickup route at 17.9 mm. Stated the GPIO ribbon's 89.9 mm header-to-header reach and promoted the 40-pin connector offset to a layout dependency (CONF-RIBBON-REACH). Cross-referenced the instrument-level EMC procedure from REQ-NOISE-BOUNDARY so the boundary points at a real test. Mechanical envelope UNCHANGED — nothing here affects a mechanical quote."
+      },
+      {
+        "revision": "D",
+        "date": "2026-07-27",
+        "change": "Closed a traceability gap on REQ-HIZ. Impedance was demonstrated at design review and noise not until REQ-NOISE at first article, but REQ-NOISE terminates the input in 10 kilohm, which does not stress a high-impedance stage - a JFET input with excessive gate current passes both and fails with a real pickup. REQ-HIZ now carries a noise clause and a 100 pA bias-current limit, plus a prototype-stage acceptance measuring input-referred noise from a defined dummy pickup source against a 10 kilohm reference, passing at no more than 6 dB of degradation. Deliberately a board-level bench test so the fault surfaces at prototype rather than first article."
       }
     ]
   }
