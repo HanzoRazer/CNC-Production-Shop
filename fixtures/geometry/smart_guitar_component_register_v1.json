@@ -62,7 +62,7 @@
     },
     {
       "component_id": "BATTERY_PACK",
-      "display_name": "Battery pack + BMS (4x 18650)",
+      "display_name": "Battery pack + BMS (2x 18650, 2S)",
       "role": "Power supply, USB-C PD 20 W charging",
       "length_mm": 80.0,
       "width_mm": 45.0,
@@ -79,7 +79,7 @@
         "source_ref": "sg-spec smart_guitar_cavity_map.json electronics_components.battery_pack",
         "snapshot_date": "2026-07-26",
         "confidence": "draft",
-        "note": "Pack dimensions per sg-spec. luthiers-toolbox instead lists a single 6000 mAh 18650 cell at 65 x 18.3 mm sited beside the Pi 5. See conflict CONF-BATTERY-PLACEMENT."
+        "note": "Pack dimensions per sg-spec. luthiers-toolbox instead lists a single 6000 mAh 18650 cell at 65 x 18.3 mm sited beside the Pi 5. See conflict CONF-BATTERY-PLACEMENT. LABEL CORRECTED 2026-07-28: this read '4x 18650' while its own dimensions describe a TWO-cell pack. A 4-across block is 74.4 wide against the stated 45.0, and a 2x2 block is 37.2 tall against the stated 18.0. The dimensions were right; the label was not. See CONF-BATTERY-CELL-COUNT."
       }
     },
     {
@@ -604,11 +604,12 @@
       "sources": [
         "component register BATTERY_PACK: 'Battery pack + BMS (4x 18650)', 80.0 x 45.0 x 18.0",
         "SUBASSEMBLY-SG-AUDIO-FRONTEND-V1 notes: 'the battery must be the 2x 18650 pack rather than 4x', stated as a load-bearing derived fact once the Khaya went self-contained",
-        "the front-end spec's electrical envelope gives a 6.0-8.4 V supply range, which follows from TWO cells in series and not four"
+        "the front-end spec's electrical envelope gives a 6.0-8.4 V supply range, which follows from TWO cells in series and not four",
+        "derived: an 18650 is 18.6 dia x 65.2 long. Two cells side by side are 65.2 x 37.2 x 18.6, which fits the recorded 80 x 45 x 18 with 14.8 of length and 7.8 of width left for BMS and wrap. Four across would be 74.4 wide and a 2x2 stack 37.2 tall - neither fits the recorded pack"
       ],
-      "status": "unresolved",
-      "ruling": "TWO RECORDS DISAGREE AND THE ELECTRICAL ENVELOPE SIDES WITH ONE OF THEM. A 6.0-8.4 V range is a 2S pack; four cells would be 2S2P at the same voltage or 4S at roughly 12-16.8 V. So either the register's '4x' means 2S2P - same voltage, double capacity, larger footprint - or one of the two records is simply wrong. THIS IS NOT COSMETIC: BATTERY_CHAMBER is derived from the pack, it appears in the CAD dimension sheet as a figure a modeller is told to build parametrically, and runtime is a headline property of a practice instrument. Settle the cell count and the topology together, not just the number.",
-      "ruled_by": "unresolved - needs the pack specified as cells, series/parallel topology and capacity"
+      "status": "ruled",
+      "ruling": "RULED 2x 18650 IN 2S, owner 2026-07-28. THE CONTRADICTION WAS A LABEL, NOT A DIMENSION: the register said '4x' while its own 80 x 45 x 18 describes a two-cell pack, and the front-end spec's 6.0-8.4 V envelope is a 2S pack. Everything except the label already agreed. BATTERY_CHAMBER at 90 x 55 x 21 is unchanged and correct.\n\nFOUR CELLS REMAIN AVAILABLE AS 2S2P AND THE OWNER HAS ASKED TO REVISIT IT. Wired 2S2P rather than 4S, four cells DOUBLE THE RUNTIME AT THE SAME VOLTAGE, so REQ-POWER-ARCH's 6.0-8.4 V input is untouched and the audio front-end spec needs no revision at all. Laid flat four across, carrying the same BMS and wrap allowances: pack 80.0 x 82.2 x 18.0, cavity 90.0 x 92.2 x 21.0. THE DEPTH DOES NOT MOVE - still 21.0 - so body thickness is unaffected and POD_HAT continues to govern at 33.0. The cost is 37.2 mm of extra WIDTH, plan area 49.5 to 83.0 cm2, and about 94 g of added cell mass. 4S is NOT an option: 12-16.8 V would break the board's stated supply range and force a front-end revision.",
+      "ruled_by": "owner ruling 2026-07-28; the 2S2P option derived the same day and left open"
     }
   ],
   "provenance": {

@@ -46,7 +46,7 @@ drawing them as literals.
 |---|---:|---:|---:|---:|---:|
 | Raspberry Pi 5 (8 GB) | 85.0 | 56.0 | 18.0 | 6.0 | 3.0 |
 | Smart Guitar audio front end (custom HAT) | 65.0 | 56.5 | 24.0 | 6.0 | 3.0 |
-| Battery pack + BMS (4x 18650) | 80.0 | 45.0 | 18.0 | 0.0 | 3.0 |
+| Battery pack + BMS (2x 18650, 2S) | 80.0 | 45.0 | 18.0 | 0.0 | 3.0 |
 | 40 mm cooling fan | 40.0 | 40.0 | 10.0 | 0.0 | 0.0 |
 | NVMe SSD, M.2 2280, 128 GB | 80.0 | 22.0 | 3.5 | 0.0 | 0.0 |
 | Pi 5 GPIO to audio front-end ribbon/riser | 100.0 | 26.0 | 2.0 | 0.0 | 3.0 |
@@ -196,7 +196,7 @@ measurement, not a calculation.
 | **Pickup type and route** | Open upstream; route dimensions follow from it. |
 | **Skin thickness, core species, finish** | Not selected. Skin thickness changes every internal depth. |
 
-7 conflicts remain open against this geometry:
+6 conflicts remain open against this geometry:
 
 - **`CONF-BATTERY-PLACEMENT`** — electronics_components.battery_pack.location
 - **`CONF-NVME-PLACEMENT`** — rear_electronics_cavity.contains[NVMe SSD]
@@ -204,7 +204,6 @@ measurement, not a calculation.
 - **`CONF-PICKUP-ROUTE-DIMS`** — pickup route dimensions
 - **`CONF-POD-EMC-CLEARANCE`** — back-face pocket placement, ranked by clearance rather than by fit
 - **`CONF-SINGLE-PICKUP-EMC`** — whether a single coil is viable in one cavity set with a Raspberry Pi 5
-- **`CONF-BATTERY-CELL-COUNT`** — battery pack cell count, and therefore BATTERY_CHAMBER size
 
 ## 5. Suggested modelling order
 
