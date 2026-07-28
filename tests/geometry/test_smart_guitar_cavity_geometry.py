@@ -451,17 +451,19 @@ def test_wire_channel_is_too_narrow_in_the_spec_for_a_ribbon():
 def test_ribbon_length_constrains_pocket_separation():
     """The channel's derived length IS the maximum pocket separation.
 
-    Set to 100 mm. It was briefly 60 mm, chosen on an area argument about the
-    channel's own cost — which was geometrically impossible: the pockets need
-    72.25 mm centre-to-centre stacked before their walls clear, so a 60 mm
-    ribbon forbade the layout outright at any body size. A constraint has to be
-    physically achievable to be worth expressing.
+    Now 150 mm, lengthened on 2026-07-28 to buy EMC separation: at 100 mm the
+    cable, not the instrument, was holding the Pi 7 mm from the analog front
+    end. It was briefly 60 mm, chosen on an area argument about the channel's
+    own cost — which was geometrically impossible, since the pockets need
+    72.25 mm centre-to-centre stacked before their walls clear. A constraint
+    has to be physically achievable to be worth expressing, and it should be
+    checked for what it costs as well as whether it is met.
     """
     stored = load_json(GEOMETRY)
     channel = next(
         c for c in stored["cavities"] if c["cavity_id"] == "WIRE_CHANNEL_PI_HAT"
     )
-    assert channel["derived_length_mm"] == 100.0
+    assert channel["derived_length_mm"] == 150.0
     # 60 mm was geometrically impossible: the pockets need 72.25 mm stacked.
     assert channel["derived_length_mm"] > 72.25
     assert "GPIO_RIBBON" in channel["component_ids"]

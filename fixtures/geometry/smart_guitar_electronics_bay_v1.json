@@ -24,12 +24,12 @@
     {
       "item_id": "POD_HAT",
       "cavity_ref": "POD_HAT",
-      "x_mm": 100.0,
+      "x_mm": 135.0,
       "y_mm": 0.0,
       "width_mm": 73.0,
       "height_mm": 64.5,
       "depth_mm": 33.0,
-      "note": "Audio front-end board on 6.0 standoffs. Deepest item in the bay. Pushed as far from POD_PI as the GPIO ribbon allows - 7.0 mm of gap for a 90.0 header-to-header span, the 10% slack ruled in CONF-RIBBON-REACH."
+      "note": "Audio front-end board on 6.0 standoffs. Deepest item in the bay. Separated from POD_PI by 42.0 mm - the most the bay allows while keeping 2.0 mm off its edge. Header-to-header span is 125.0 against a 150 mm ribbon, 16.7% slack."
     },
     {
       "item_id": "BATT_A",
@@ -53,9 +53,9 @@
     }
   ],
   "derived": {
-    "width_used_mm": 190.0,
+    "width_used_mm": 208.0,
     "height_used_mm": 122.0,
-    "width_spare_mm": 20.0,
+    "width_spare_mm": 2.0,
     "height_spare_mm": 3.0,
     "deepest_placement_mm": 33.0,
     "verdict": "fits"
@@ -68,12 +68,13 @@
     "note": "Region dimensions are the owner's, taken from the Body Outline Editor against the design as it exists, and PROMOTED TO CANON 2026-07-28 by owner ruling. The body outline around it is still unsettled; this region is not."
   },
   "notes": [
-    "THE WHOLE SET FITS: 190.0 x 122.0 of 210.0 x 125.0. Pods across the top, the two battery modules beneath.",
-    "THE GPIO RIBBON, NOT THE BAY, HOLDS THE PI AND THE ANALOG BOARD TOGETHER. Each 40-pin header sits at its pocket's x centre, so the run is centre to centre and a 100 mm part at 10% slack allows only 90.0 of span - which pins the pods 7.0 mm apart. The bay has room for far more: at the same slack a 150 mm ribbon would allow 44.0 mm of separation, and the bay itself would then be the limit rather than the cable. IF THE EMC MEASUREMENT DEMANDS DISTANCE, A LONGER RIBBON IS THE CHEAPEST LEVER IN THE INSTRUMENT.",
+    "THE WHOLE SET FITS: 208.0 x 122.0 of 210.0 x 125.0. Pods across the top, the two battery modules beneath.",
+    "THE RIBBON NO LONGER HOLDS THE PODS TOGETHER. It did at 100 mm, where 90.0 of span pinned the Pi and the analog board 7.0 mm apart - the worst EMC geometry in the program, set by a cable rather than by the instrument. The part was lengthened to 150 mm on 2026-07-28: span available rises to 135.0, the pods separate to 42.0, and THE BAY WIDTH IS NOW THE LIMIT. Header-to-header is still the measure that counts; a longer part buys real distance because of it, not in spite of it.",
     "MIN_WEB IS ZERO HERE BY DESIGN, and that is not a shortcut. This is ONE HOLLOW CHAMBER, not four routed pockets in solid wood, so there are no inter-item webs to maintain - and every dimension listed is a CAVITY dimension that already carries its own mounting margin. The 8.0 web still governs at the bay boundary, where there is real material.",
     "THE VERTICAL BUDGET IS THE TIGHT ONE. Abutting, the two rows are 122.0 tall, leaving 3.0 mm as the ENTIRE allowance for clearance between them. At 8.0 of separation the set is 127.5 and does NOT fit. 5.0 fits at 124.5, with almost nothing left. Treat 5.5 as the total vertical budget and spend it deliberately.",
     "THE BATTERY IS TWO PACKS, NOT ONE. Four cells in a single row would be 92.2 deep - deeper than either pod, and it would own the full depth of wherever it sat. Two 2-cell chambers at 55.0 are shallower than both pods. Electrically identical: still 2S2P, still 6.0-8.4 V, still double the runtime, no board revision.",
     "The two parallel strings in separate chambers is ordinary in laptop and e-bike packs. At these currents the interconnect difference is negligible, but the BMS must see one 2S2P pack, not two independent 2S packs.",
-    "COORDINATES ARE LOCAL TO THE BAY, which is why this record can exist before the outline does. Positioning the bay is one transform applied to all four placements at once."
+    "COORDINATES ARE LOCAL TO THE BAY, which is why this record can exist before the outline does. Positioning the bay is one transform applied to all four placements at once.",
+    "THE VERTICAL AXIS CANNOT CARRY A BOUNDARY WEB. The two rows are 119.5 tall in a 125 region, so an 8.0 web at the top and bottom edges - 109.0 of usable height - does NOT fit. Horizontally there is room for it. Either the region already excludes its rim, or the bay's vertical edges need a different treatment from its horizontal ones. Worth settling before the bay is positioned on the outline."
   ]
 }

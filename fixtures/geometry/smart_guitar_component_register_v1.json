@@ -130,7 +130,7 @@
       "component_id": "GPIO_RIBBON",
       "display_name": "Pi 5 GPIO to audio front-end ribbon/riser",
       "role": "Carries the I2S bus between the Pi 5 and the SG_AUDIO_FRONTEND board, which sit side by side rather than stacked",
-      "length_mm": 100.0,
+      "length_mm": 150.0,
       "width_mm": 26.0,
       "height_mm": 2.0,
       "mounting": "floor",
@@ -145,7 +145,7 @@
         "source_ref": "required by CONF-POD-LAYOUT: side-by-side placement forbids header stacking",
         "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "length_mm 100.0 is a stock GPIO extension ribbon. CORRECTED from 60.0 on 2026-07-27: 60 mm was geometrically IMPOSSIBLE. POD_PI and POD_HAT need at least 72.25 mm centre-to-centre stacked, or 91.00 mm side by side, before their 8 mm walls clear — so a 60 mm ribbon forbade the two pockets from coexisting anywhere, at any body size. That length had been chosen on an AREA argument about the channel's own cost, without checking it was long enough to be buildable. It is registered as a component so pocket separation stays constrained, but the constraint has to be physically possible to be worth anything. NAME CORRECTED 2026-07-28: this component and its role still referred to a HiFiBerry, which was superseded by the custom board in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1. The stale name read as if an off-the-shelf HAT were still in the design."
+        "note": "length_mm 100.0 is a stock GPIO extension ribbon. CORRECTED from 60.0 on 2026-07-27: 60 mm was geometrically IMPOSSIBLE. POD_PI and POD_HAT need at least 72.25 mm centre-to-centre stacked, or 91.00 mm side by side, before their 8 mm walls clear — so a 60 mm ribbon forbade the two pockets from coexisting anywhere, at any body size. That length had been chosen on an AREA argument about the channel's own cost, without checking it was long enough to be buildable. It is registered as a component so pocket separation stays constrained, but the constraint has to be physically possible to be worth anything. NAME CORRECTED 2026-07-28: this component and its role still referred to a HiFiBerry, which was superseded by the custom board in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1. The stale name read as if an off-the-shelf HAT were still in the design. LENGTHENED TO 150.0 ON 2026-07-28 to buy EMC separation. At 100 mm the ribbon, not the body, held the Pi and the analog board 7.0 mm apart; at 150 the constraint moves to the bay and the gap becomes 42.0. A 40-pin GPIO extension ribbon is a stock item at this length - no custom cable, and the HAT form factor was retained from the start so that would remain true. NOTE the cavity plan already carried 150.0 as its stated channel length; the derived 100.0 came from the shorter part, not from a constraint."
       }
     }
   ],
@@ -519,10 +519,11 @@
         "register: GPIO_RIBBON is a fixed 100.0 mm part",
         "derived: edge-to-edge pocket clearance understates the run badly once the pockets sit diagonally - a layout with a 48.3 mm edge gap needs 118.8 mm of ribbon",
         "derived: the Pi 5's 40-pin header runs along the long edge of the board and the HAT's mates with it, so each header sits at its pocket's x centre on one of the two x-aligned edges; the run is the best of those four pairings",
-        "derived: sweeping usable ribbon length gives POD_PI-to-pickup 74.1 mm at 100, 74.1 at 95, 71.6 at 90, 71.6 at 85, and 11.6 at 80"
+        "derived: sweeping usable ribbon length gives POD_PI-to-pickup 74.1 mm at 100, 74.1 at 95, 71.6 at 90, 71.6 at 85, and 11.6 at 80",
+        "derived 2026-07-28: with the bay canon, a 100 mm part at 10% slack allows 90.0 of span and pins the pods 7.0 mm apart; a 150 mm part allows 135.0 and the BAY WIDTH becomes the limit instead, at 42.0 mm of gap"
       ],
       "status": "ruled",
-      "ruling": "HEADER-TO-HEADER SPAN GOVERNS, NOT EDGE CLEARANCE. This caught a real error: the first relocation was ruled on edge-to-edge clearance and produced a layout needing 118.8 mm of a 100 mm ribbon - not buildable. The corrected placement spans 89.9 mm, holding 10.1 mm of slack. THE SENSITIVITY IS A CLIFF, NOT A SLOPE: anything from 0 to 15% slack keeps the Pi 71-74 mm from the pickup, but at 20% the packing collapses back to the original 11.6 mm layout. 10% was chosen because zero slack allows no bend radius or connector entry and buys only 2.5 mm of extra clearance. IF A LONGER RIBBON IS SOURCED the constraint relaxes and the search should be re-run; nothing here depends on 100 mm being the only option.",
+      "ruling": "HEADER-TO-HEADER SPAN GOVERNS, NOT EDGE CLEARANCE. This caught a real error: the first relocation was ruled on edge-to-edge clearance and produced a layout needing 118.8 mm of a 100 mm ribbon - not buildable. The corrected placement spans 89.9 mm, holding 10.1 mm of slack. THE SENSITIVITY IS A CLIFF, NOT A SLOPE: anything from 0 to 15% slack keeps the Pi 71-74 mm from the pickup, but at 20% the packing collapses back to the original 11.6 mm layout. 10% was chosen because zero slack allows no bend radius or connector entry and buys only 2.5 mm of extra clearance. IF A LONGER RIBBON IS SOURCED the constraint relaxes and the search should be re-run; nothing here depends on 100 mm being the only option.\n\nRIBBON LENGTHENED TO 150 mm, ruled 2026-07-28. The reach question stopped being about whether the cable fits and became about what the cable COSTS: at 100 mm it was holding the Pi 7.0 mm from the analog front end, which is the worst EMC geometry in the program and was set by a cable rather than by the instrument. At 150 mm the span available rises from 90.0 to 135.0, the pods separate to 42.0, and the limit moves to the bay width. A stock 40-pin extension exists at this length, so nothing custom follows. THE HEADER-TO-HEADER MEASURE STILL GOVERNS - that lesson is unchanged, and it is why a longer part buys real distance rather than apparent distance.",
       "ruled_by": "derived 2026-07-27 while exporting the cavity DXF, which exposed the diagonal run"
     },
     {

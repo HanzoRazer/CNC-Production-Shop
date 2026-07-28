@@ -49,7 +49,7 @@ drawing them as literals.
 | Battery module, 2x 18650 (TWO fitted, wired 2S2P) | 80.0 | 45.0 | 18.0 | 0.0 | 3.0 |
 | 40 mm cooling fan | 40.0 | 40.0 | 10.0 | 0.0 | 0.0 |
 | NVMe SSD, M.2 2280, 128 GB | 80.0 | 22.0 | 3.5 | 0.0 | 0.0 |
-| Pi 5 GPIO to audio front-end ribbon/riser | 100.0 | 26.0 | 2.0 | 0.0 | 3.0 |
+| Pi 5 GPIO to audio front-end ribbon/riser | 150.0 | 26.0 | 2.0 | 0.0 | 3.0 |
 
 ### 2.2 Cavities — sizes only
 
@@ -61,7 +61,7 @@ margins. Cut depths and faces are in **section 3**; positions are in
 |---|---:|---:|---:|
 | `POD_PI` | 93.0 | 64.0 | 27.0 |
 | `POD_HAT` | 73.0 | 64.5 | 33.0 |
-| `WIRE_CHANNEL_PI_HAT` | 100.0 | 30.0 | 5.0 |
+| `WIRE_CHANNEL_PI_HAT` | 150.0 | 30.0 | 5.0 |
 | `BATTERY_CHAMBER` | 90.0 | 55.0 | 21.0 |
 
 Deepest cavity plus floor needs **41.0** of the **47.0** blank, governed by `POD_HAT` — margin **6.0**.
@@ -105,17 +105,18 @@ outline is one transform applied to all four items at once.
 | Item | x | y | L | W | D |
 |---|---:|---:|---:|---:|---:|
 | `POD_PI` | 0.0 | 0.0 | 93.0 | 64.0 | 27.0 |
-| `POD_HAT` | 100.0 | 0.0 | 73.0 | 64.5 | 33.0 |
+| `POD_HAT` | 135.0 | 0.0 | 73.0 | 64.5 | 33.0 |
 | `BATT_A` | 0.0 | 67.0 | 90.0 | 55.0 | 21.0 |
 | `BATT_B` | 100.0 | 67.0 | 90.0 | 55.0 | 21.0 |
 
-**190.0 × 122.0 used of 210.0 × 125.0** — 20.0 spare across, 3.0 down.
+**208.0 × 122.0 used of 210.0 × 125.0** — 2.0 spare across, 3.0 down.
 
-> The **GPIO ribbon**, not the bay, holds the Pi and the analog board
-> 7.0 mm apart: the headers sit at each board's centre, so a 100 mm part
-> at 10% slack allows 90.0 mm of run. The bay has room for 44 mm with a
-> 150 mm ribbon. If the EMC measurement demands distance, cable length is
-> the cheapest lever in the instrument.
+> **POD_PI to POD_HAT is 42.0 mm** — the Pi to the analog front end.
+> The GPIO ribbon spans 125.0 mm header to header against a 150 mm
+> part (17% slack). Headers sit at each board's
+> centre, so the run is centre to centre, not edge to edge — which is why
+> a longer cable buys real distance. At 100 mm the ribbon held these two
+> boards 7.0 mm apart; the bay is now the limit rather than the cable.
 
 ### 3.1 Back face — electronics
 
@@ -125,7 +126,7 @@ Cut from the REAR. Depths are from the rear surface.
 |---|---:|---:|---:|---:|---|
 | `POD_PI` | 93.0 | 64.0 | 27.0 | 3.175 | Pi 5 on 6.0 standoffs |
 | `POD_HAT` | 73.0 | 64.5 | 33.0 | 3.175 | audio front-end board on 6.0 standoffs |
-| `WIRE_CHANNEL_PI_HAT` | 100.0 | 30.0 | 5.0 | 3.175 | GPIO ribbon between the two pods |
+| `WIRE_CHANNEL_PI_HAT` | 150.0 | 30.0 | 5.0 | 3.175 | GPIO ribbon between the two pods |
 | `BATTERY_CHAMBER` | 90.0 | 55.0 | 21.0 | 3.175 | pack + BMS |
 
 The channel is a **shallow surface groove**, not a pocket: 5.0 deep against

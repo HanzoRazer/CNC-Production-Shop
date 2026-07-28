@@ -183,11 +183,21 @@ def render() -> str:
       f"{reg['width_mm']} × {reg['height_mm']}** — {bd['width_spare_mm']} spare across, "
       f"{bd['height_spare_mm']} down.")
     w("")
-    w("> The **GPIO ribbon**, not the bay, holds the Pi and the analog board")
-    w("> 7.0 mm apart: the headers sit at each board's centre, so a 100 mm part")
-    w("> at 10% slack allows 90.0 mm of run. The bay has room for 44 mm with a")
-    w("> 150 mm ribbon. If the EMC measurement demands distance, cable length is")
-    w("> the cheapest lever in the instrument.")
+    # Derived, not typed: this sentence went stale the moment the ribbon
+    # changed last time.
+    by_id = {i["item_id"]: i for i in bay["placements"]}
+    pi, hat = by_id["POD_PI"], by_id["POD_HAT"]
+    gap = hat["x_mm"] - (pi["x_mm"] + pi["width_mm"])
+    span = (hat["x_mm"] + hat["width_mm"] / 2) - (pi["x_mm"] + pi["width_mm"] / 2)
+    ribbon = next(
+        c for c in register["components"] if c["component_id"] == "GPIO_RIBBON"
+    )["length_mm"]
+    w(f"> **POD_PI to POD_HAT is {gap:.1f} mm** — the Pi to the analog front end.")
+    w(f"> The GPIO ribbon spans {span:.1f} mm header to header against a {ribbon:.0f} mm")
+    w(f"> part ({(ribbon - span) / ribbon * 100:.0f}% slack). Headers sit at each board's")
+    w("> centre, so the run is centre to centre, not edge to edge — which is why")
+    w("> a longer cable buys real distance. At 100 mm the ribbon held these two")
+    w("> boards 7.0 mm apart; the bay is now the limit rather than the cable.")
     w("")
     w("### 3.1 Back face — electronics")
     w("")

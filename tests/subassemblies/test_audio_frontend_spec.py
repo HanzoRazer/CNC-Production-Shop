@@ -379,8 +379,8 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "H"
-    assert len(dc["revision_history"]) >= 8
+    assert dc["revision"] == "I"
+    assert len(dc["revision_history"]) >= 9
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The contact is not yet named, and must say so rather than be absent.
     assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
@@ -474,10 +474,10 @@ def test_withdrawn_distances_are_not_quoted_as_fact(spec):
     against is not decoration, so a wrong one is worse than none.
     """
     env = " ".join(spec["environment"])
-    assert "RESTORED" in env and "7.0 mm from the Raspberry Pi 5" in env
-    assert "WORSE THAN THE ONE IT REPLACES" in env
+    assert "42.0 mm from the Raspberry Pi 5" in env
+    assert "LENGTHENED TO 150 mm" in env
     # The figures survive only inside the sentence that retracts them.
-    restoring = next(e for e in spec["environment"] if "RESTORED" in e)
+    restoring = next(e for e in spec["environment"] if "35.75" in e)
     # 35.75 survives only inside the sentence that explains it was replaced.
     assert "35.75" in restoring
     assert not any(
@@ -488,7 +488,7 @@ def test_withdrawn_distances_are_not_quoted_as_fact(spec):
     # The withdrawn 89.9 must not come back; the canon figure is 90.0.
     gpio = next(i for i in spec["interfaces"] if i["interface_id"] == "GPIO_HOST")
     assert "89.9" not in gpio["description"]
-    assert "90.0 mm header to header" in gpio["description"]
+    assert "125.0 mm header to header" in gpio["description"]
 
 
 def test_rev_f_kept_the_obligation_even_though_it_dropped_the_numbers(spec):
@@ -567,7 +567,7 @@ def test_no_withdrawn_figure_survives_outside_its_retraction(spec):
         for figure in figures
         if figure in text
         and "WITHDRAWN" not in text
-        and "RESTORED" not in text
+        and "35.75" not in text
         and "revision_history" not in path
     ]
     assert not live, f"withdrawn figures still stated as fact: {live}"

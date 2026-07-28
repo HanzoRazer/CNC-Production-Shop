@@ -63,7 +63,7 @@
       "component_ids": [
         "GPIO_RIBBON"
       ],
-      "derived_length_mm": 100.0,
+      "derived_length_mm": 150.0,
       "derived_width_mm": 30.0,
       "derived_depth_mm": 5.0,
       "floor_remaining_mm": 42.0,
@@ -72,11 +72,10 @@
       "stated_length_mm": 150.0,
       "stated_width_mm": 10.0,
       "stated_depth_mm": 15.0,
-      "length_delta_mm": 50.0,
+      "length_delta_mm": 0.0,
       "width_delta_mm": -20.0,
       "depth_delta_mm": 10.0,
       "findings": [
-        "stated length 150.0 mm exceeds derived 100.0 mm by 50.0 mm of slack",
         "stated width 10.0 mm is SMALLER than derived 30.0 mm by 20.0 mm: the spec cannot hold its own contents",
         "stated depth 15.0 mm exceeds derived 5.0 mm by 10.0 mm of slack"
       ]
@@ -396,10 +395,11 @@
         "register: GPIO_RIBBON is a fixed 100.0 mm part",
         "derived: edge-to-edge pocket clearance understates the run badly once the pockets sit diagonally - a layout with a 48.3 mm edge gap needs 118.8 mm of ribbon",
         "derived: the Pi 5's 40-pin header runs along the long edge of the board and the HAT's mates with it, so each header sits at its pocket's x centre on one of the two x-aligned edges; the run is the best of those four pairings",
-        "derived: sweeping usable ribbon length gives POD_PI-to-pickup 74.1 mm at 100, 74.1 at 95, 71.6 at 90, 71.6 at 85, and 11.6 at 80"
+        "derived: sweeping usable ribbon length gives POD_PI-to-pickup 74.1 mm at 100, 74.1 at 95, 71.6 at 90, 71.6 at 85, and 11.6 at 80",
+        "derived 2026-07-28: with the bay canon, a 100 mm part at 10% slack allows 90.0 of span and pins the pods 7.0 mm apart; a 150 mm part allows 135.0 and the BAY WIDTH becomes the limit instead, at 42.0 mm of gap"
       ],
       "status": "ruled",
-      "ruling": "HEADER-TO-HEADER SPAN GOVERNS, NOT EDGE CLEARANCE. This caught a real error: the first relocation was ruled on edge-to-edge clearance and produced a layout needing 118.8 mm of a 100 mm ribbon - not buildable. The corrected placement spans 89.9 mm, holding 10.1 mm of slack. THE SENSITIVITY IS A CLIFF, NOT A SLOPE: anything from 0 to 15% slack keeps the Pi 71-74 mm from the pickup, but at 20% the packing collapses back to the original 11.6 mm layout. 10% was chosen because zero slack allows no bend radius or connector entry and buys only 2.5 mm of extra clearance. IF A LONGER RIBBON IS SOURCED the constraint relaxes and the search should be re-run; nothing here depends on 100 mm being the only option.",
+      "ruling": "HEADER-TO-HEADER SPAN GOVERNS, NOT EDGE CLEARANCE. This caught a real error: the first relocation was ruled on edge-to-edge clearance and produced a layout needing 118.8 mm of a 100 mm ribbon - not buildable. The corrected placement spans 89.9 mm, holding 10.1 mm of slack. THE SENSITIVITY IS A CLIFF, NOT A SLOPE: anything from 0 to 15% slack keeps the Pi 71-74 mm from the pickup, but at 20% the packing collapses back to the original 11.6 mm layout. 10% was chosen because zero slack allows no bend radius or connector entry and buys only 2.5 mm of extra clearance. IF A LONGER RIBBON IS SOURCED the constraint relaxes and the search should be re-run; nothing here depends on 100 mm being the only option.\n\nRIBBON LENGTHENED TO 150 mm, ruled 2026-07-28. The reach question stopped being about whether the cable fits and became about what the cable COSTS: at 100 mm it was holding the Pi 7.0 mm from the analog front end, which is the worst EMC geometry in the program and was set by a cable rather than by the instrument. At 150 mm the span available rises from 90.0 to 135.0, the pods separate to 42.0, and the limit moves to the bay width. A stock 40-pin extension exists at this length, so nothing custom follows. THE HEADER-TO-HEADER MEASURE STILL GOVERNS - that lesson is unchanged, and it is why a longer part buys real distance rather than apparent distance.",
       "ruled_by": "derived 2026-07-27 while exporting the cavity DXF, which exposed the diagonal run"
     },
     {
