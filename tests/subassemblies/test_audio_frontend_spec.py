@@ -379,8 +379,8 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "J"
-    assert len(dc["revision_history"]) >= 10
+    assert dc["revision"] == "K"
+    assert len(dc["revision_history"]) >= 11
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The document HAS been issued, so an unnamed contact is no longer a
     # placeholder — it is a live gap, and the record has to read that way.
