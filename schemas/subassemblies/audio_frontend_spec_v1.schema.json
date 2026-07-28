@@ -542,6 +542,14 @@
               }
             }
           }
+        },
+        "issued_status": {
+          "enum": [
+            "not_issued",
+            "issued_to_designers",
+            "issued_as_tender"
+          ],
+          "description": "Whether this document has left the building. Once it has, every later revision changes something already in someone else's hands, and a named change contact stops being optional."
         }
       }
     }

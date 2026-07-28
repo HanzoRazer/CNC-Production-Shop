@@ -156,11 +156,12 @@
       "field": "rear_electronics_cavity.contains[NVMe SSD]",
       "sources": [
         "luthiers-toolbox smart_guitar_v1.json: NVMe M.2 2280 sited 'under Pi 5'",
-        "sg-spec smart_guitar_cavity_map.json: no NVMe in electronics_components"
+        "sg-spec smart_guitar_cavity_map.json: no NVMe in electronics_components",
+        "owner ruling 2026-07-28: the NVMe is dropped; the Pi 5 boots from microSD"
       ],
-      "status": "unresolved",
-      "ruling": "Registered but not placed. Sitting it in the Pi's 6 mm standoff gap is plausible and would add no depth, but nothing in either source establishes it. Left out of the derivation rather than assumed into it.",
-      "ruled_by": "unresolved — needs mechanical confirmation"
+      "status": "ruled",
+      "ruling": "NVMe DROPPED, owner 2026-07-28. The Pi 5 boots from microSD, so the drive is removed from the component register rather than carried unplaced. It was never sited by either source - luthiers-toolbox put it 'under Pi 5', sg-spec did not list it at all - and the electronics bay has 2.0 x 3.0 mm spare, nowhere near enough for an 80 x 22 M.2 2280. A part with no home and no agreed source is better removed than kept as a placeholder.\n\nNOTHING ELSE MOVES. It was never in a cavity plan, so no cavity changes; POD_HAT still governs body thickness at 33.0; the audio front-end spec never referenced it.\n\nCARRIED FORWARD AS A PRODUCT RISK, NOT A GEOMETRY ONE: microSD wears out under sustained writes, and a coaching engine that logs practice sessions or records audio writes continuously. If the software turns out to write more than occasionally, this decision comes back - and it comes back as a placement problem, because the bay is full. Size the card generously and keep writes off the boot volume.",
+      "ruled_by": "owner ruling 2026-07-28"
     },
     {
       "conflict_id": "CONF-HIZ-SPLITTER-DIMS",

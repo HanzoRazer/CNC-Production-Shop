@@ -379,11 +379,13 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "I"
-    assert len(dc["revision_history"]) >= 9
+    assert dc["revision"] == "J"
+    assert len(dc["revision_history"]) >= 10
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
-    # The contact is not yet named, and must say so rather than be absent.
-    assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
+    # The document HAS been issued, so an unnamed contact is no longer a
+    # placeholder — it is a live gap, and the record has to read that way.
+    assert dc["issued_status"] == "issued_to_designers"
+    assert "ISSUED WITHOUT A NAMED CONTACT" in dc["change_contact"]
 
 
 def test_quantity_and_schedule_are_recorded_as_missing(spec):

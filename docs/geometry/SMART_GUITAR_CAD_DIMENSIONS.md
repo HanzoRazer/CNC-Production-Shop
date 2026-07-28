@@ -48,7 +48,6 @@ drawing them as literals.
 | Smart Guitar audio front end (custom HAT) | 65.0 | 56.5 | 24.0 | 6.0 | 3.0 |
 | Battery module, 2x 18650 (TWO fitted, wired 2S2P) | 80.0 | 45.0 | 18.0 | 0.0 | 3.0 |
 | 40 mm cooling fan | 40.0 | 40.0 | 10.0 | 0.0 | 0.0 |
-| NVMe SSD, M.2 2280, 128 GB | 80.0 | 22.0 | 3.5 | 0.0 | 0.0 |
 | Pi 5 GPIO to audio front-end ribbon/riser | 150.0 | 26.0 | 2.0 | 0.0 | 3.0 |
 
 ### 2.2 Cavities — sizes only
@@ -219,9 +218,8 @@ measurement, not a calculation.
 | **Pickup type and route** | Open upstream; route dimensions follow from it. |
 | **Skin thickness, core species, finish** | Not selected. Skin thickness changes every internal depth. |
 
-4 conflicts remain open against this geometry:
+3 conflicts remain open against this geometry:
 
-- **`CONF-NVME-PLACEMENT`** — rear_electronics_cavity.contains[NVMe SSD]
 - **`CONF-PICKUP-TYPE`** — luthiers-toolbox smart_guitar_v1.json: hardware.pickups vs cavities.teensy_io_pocket.signal_chain
 - **`CONF-PICKUP-ROUTE-DIMS`** — pickup route dimensions
 - **`CONF-SINGLE-PICKUP-EMC`** — whether a single coil is viable in one cavity set with a Raspberry Pi 5

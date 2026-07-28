@@ -105,28 +105,6 @@
       }
     },
     {
-      "component_id": "NVME_SSD",
-      "display_name": "NVMe SSD, M.2 2280, 128 GB",
-      "role": "Storage (optional)",
-      "length_mm": 80.0,
-      "width_mm": 22.0,
-      "height_mm": 3.5,
-      "mounting": "floor",
-      "standoff_mm": 0.0,
-      "margin_length_mm": 4.0,
-      "margin_width_mm": 4.0,
-      "lid_clearance_mm": 0.0,
-      "consumes_cavity_depth": false,
-      "required": false,
-      "provenance": {
-        "source": "vendored_snapshot",
-        "source_ref": "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity.contains[NVMe SSD]",
-        "snapshot_date": "2026-07-26",
-        "confidence": "draft",
-        "note": "Deliberately NOT placed in any cavity plan. The source sites it 'under Pi 5', where its 3.5 mm would fit inside the Pi's 6 mm standoff gap and consume no additional depth or plan area. That is an assumption, not a derivation, so the part is registered and left unplaced rather than modelled falsely. See conflict CONF-NVME-PLACEMENT."
-      }
-    },
-    {
       "component_id": "GPIO_RIBBON",
       "display_name": "Pi 5 GPIO to audio front-end ribbon/riser",
       "role": "Carries the I2S bus between the Pi 5 and the SG_AUDIO_FRONTEND board, which sit side by side rather than stacked",
@@ -280,11 +258,12 @@
       "field": "rear_electronics_cavity.contains[NVMe SSD]",
       "sources": [
         "luthiers-toolbox smart_guitar_v1.json: NVMe M.2 2280 sited 'under Pi 5'",
-        "sg-spec smart_guitar_cavity_map.json: no NVMe in electronics_components"
+        "sg-spec smart_guitar_cavity_map.json: no NVMe in electronics_components",
+        "owner ruling 2026-07-28: the NVMe is dropped; the Pi 5 boots from microSD"
       ],
-      "status": "unresolved",
-      "ruling": "Registered but not placed. Sitting it in the Pi's 6 mm standoff gap is plausible and would add no depth, but nothing in either source establishes it. Left out of the derivation rather than assumed into it.",
-      "ruled_by": "unresolved — needs mechanical confirmation"
+      "status": "ruled",
+      "ruling": "NVMe DROPPED, owner 2026-07-28. The Pi 5 boots from microSD, so the drive is removed from the component register rather than carried unplaced. It was never sited by either source - luthiers-toolbox put it 'under Pi 5', sg-spec did not list it at all - and the electronics bay has 2.0 x 3.0 mm spare, nowhere near enough for an 80 x 22 M.2 2280. A part with no home and no agreed source is better removed than kept as a placeholder.\n\nNOTHING ELSE MOVES. It was never in a cavity plan, so no cavity changes; POD_HAT still governs body thickness at 33.0; the audio front-end spec never referenced it.\n\nCARRIED FORWARD AS A PRODUCT RISK, NOT A GEOMETRY ONE: microSD wears out under sustained writes, and a coaching engine that logs practice sessions or records audio writes continuously. If the software turns out to write more than occasionally, this decision comes back - and it comes back as a placement problem, because the bay is full. Size the card generously and keep writes off the boot volume.",
+      "ruled_by": "owner ruling 2026-07-28"
     },
     {
       "conflict_id": "CONF-HIZ-SPLITTER-DIMS",

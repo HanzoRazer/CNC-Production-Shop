@@ -329,12 +329,41 @@ def test_unplaced_required_component_rejected():
 
 
 def test_unplaced_optional_component_is_allowed():
-    """The NVMe is registered but deliberately not placed."""
-    register = _register()
-    placed = {cid for p in register.cavity_plans for cid in p.component_ids}
-    assert "NVME_SSD" not in placed
-    nvme = next(c for c in register.components if c.component_id == "NVME_SSD")
-    assert nvme.required is False
+    """A component may be registered without a cavity, if it is optional.
+
+    The NVMe used to be the live example — registered, deliberately unplaced,
+    because neither source agreed where it went. It was dropped on 2026-07-28,
+    so the capability is tested directly rather than through a part that no
+    longer exists.
+    """
+    registry = {
+        "PLACED": _component("PLACED", 50, 40, 10),
+        "SPARE": _component("SPARE", 30, 20, 5, required=False),
+    }
+    plan = _plan("POCKET", ("PLACED",), "single")
+    result = derive_cavity(plan, registry, BODY_THICKNESS_MM)
+    assert "SPARE" not in plan.component_ids
+    assert result.derived_length_mm == 50.0
+
+
+def test_the_nvme_is_gone_from_the_register():
+    """Dropped, not left as a placeholder.
+
+    Neither source ever sited it — luthiers-toolbox said "under Pi 5", sg-spec
+    omitted it — and the bay has 2.0 x 3.0 mm spare against an 80 x 22 M.2. A
+    part with no home and no agreed source is better removed than carried.
+    """
+    register = load_json(REGISTER)
+    assert all(c["component_id"] != "NVME_SSD" for c in register["components"])
+
+    conflict = next(
+        c for c in register["conflicts"] if c["conflict_id"] == "CONF-NVME-PLACEMENT"
+    )
+    assert conflict["status"] == "ruled"
+    assert "NVMe DROPPED" in conflict["ruling"]
+    # The risk it leaves behind is a product one and must not vanish with it.
+    assert "microSD wears out" in conflict["ruling"]
+    assert "the bay is full" in conflict["ruling"]
 
 
 def test_duplicate_cavity_id_rejected():
