@@ -947,3 +947,62 @@ def test_dimension_sheet_carries_the_ruled_clearances():
     assert "162.0" not in tables, "the pre-split one-piece pod is back"
     assert "TEENSY" not in tables.upper()
     assert "PU_NECK" not in tables, "the deleted neck pickup is back"
+
+
+def test_battery_placement_is_forced_not_chosen():
+    """The pack sits 8.60 mm from the coil because nowhere else is legal.
+
+    Read cold, that number looks like carelessness — the pack was fitted last,
+    wherever it fit. It is worth pinning that with the Pi and board where they
+    are ruled, the search has exactly one battery site, so the figure is
+    forced. If a future change opens a second site, this fails and the ruling
+    in CONF-BATTERY-AGGRESSOR has to be revisited rather than assumed.
+    """
+    solver = load_module_by_path(ROOT / "scripts" / "solve_khaya_pocket_layout.py")
+    outline, voids, features = solver.load_body()
+    usable = outline.buffer(-solver.RIM_MIN)
+    keepout = [v.buffer(solver.MIN_WEB) for v in voids]
+    keepout += [p.buffer(solver.MIN_WEB) for _, p in features]
+    route = solver.rect(0.0, 294.6, 80.0, 22.0)
+    route_keepout = route.buffer(solver.MIN_WEB)
+    pi = solver.rect(11.910, 180.0, *solver.POCKETS["POD_PI"])
+    hat = solver.rect(94.410, 280.0, *solver.POCKETS["POD_HAT"])
+
+    width, height = solver.POCKETS["BATTERY_CHAMBER"]
+    minx, _, maxx, _ = usable.bounds
+    legal = []
+    x = minx + width / 2
+    while x <= maxx - width / 2:
+        y = solver.Y_MIN
+        while y <= solver.Y_MAX:
+            box = solver.rect(x, y, width, height)
+            if (
+                usable.contains(box)
+                and not any(box.intersects(k) for k in keepout)
+                and not box.intersects(route_keepout)
+                and box.distance(pi) >= solver.MIN_WEB
+                and box.distance(hat) >= solver.MIN_WEB
+            ):
+                legal.append((x, y, box.distance(route)))
+            y += 2.5
+        x += 2.5
+
+    assert len(legal) == 1, f"battery now has {len(legal)} legal sites, not 1"
+    x, y, coil_gap = legal[0]
+    assert (round(x, 3), y) == (2.910, 247.5)
+    assert coil_gap == pytest.approx(8.60, abs=0.01)
+
+
+def test_battery_aggressor_ruling_records_the_binary_choice():
+    """Not a continuum: one pocket gets the space the neck pickup vacated."""
+    conflict = next(
+        c
+        for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-BATTERY-AGGRESSOR"
+    )
+    assert conflict["status"] == "ruled"
+    assert "NO CHANGE TO THE LAYOUT" in conflict["ruling"]
+    assert "BINARY, NOT A CONTINUUM" in conflict["ruling"]
+    # The mitigation is local, not geometric — that is the whole point.
+    assert "MITIGATED LOCALLY" in conflict["ruling"]
+    assert any("EXACTLY ONE legal site" in s for s in conflict["sources"])

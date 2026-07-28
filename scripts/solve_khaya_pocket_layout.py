@@ -159,7 +159,9 @@ def _header_span(a: Polygon, b: Polygon) -> float:
     )
 
 
-def solve(step: float, ribbon_metric: str = "header") -> dict[str, Any]:
+def solve(
+    step: float, ribbon_metric: str = "header", battery_floor: float = MIN_WEB
+) -> dict[str, Any]:
     outline, voids, features = load_body()
     usable = outline.buffer(-RIM_MIN)
     keepout = [v.buffer(MIN_WEB) for v in voids]
@@ -238,16 +240,62 @@ def solve(step: float, ribbon_metric: str = "header") -> dict[str, Any]:
             )
 
     def with_battery(cands: list[dict[str, Any]]) -> dict[str, Any] | None:
+        # battery_floor treats the pack as a WEAK aggressor: hold it a stated
+        # distance off both victims, then spend everything else on the Pi.
+        # Ranking the two as equals instead (objective C) trades 54 mm of
+        # Pi-to-coil for 7 mm of pack-to-coil, which no physics supports.
         for cand in cands:
             for bx, by, bbox in bat_sites:
                 if (
                     bbox.distance(cand["_pi"]) >= MIN_WEB
-                    and bbox.distance(cand["_hat"]) >= MIN_WEB
+                    and bbox.distance(cand["_hat"]) >= max(MIN_WEB, battery_floor)
+                    and bbox.distance(route) >= battery_floor
                 ):
                     out = {k: v for k, v in cand.items() if not k.startswith("_")}
                     out["BATTERY_CHAMBER"] = (bx, by)
+                    out["battery_route_gap"] = bbox.distance(route)
+                    out["battery_hat_gap"] = bbox.distance(cand["_hat"])
                     return out
         return None
+
+    def best_two_aggressor() -> dict[str, Any] | None:
+        """Treat the battery pack as an aggressor alongside the Pi.
+
+        A pack carries its own protection and charging electronics, so it
+        switches. Placing it last "wherever it fits" put it 8.60 mm from the
+        pickup coil — nearer than anything else in the instrument — while the
+        search congratulated itself on holding the Pi 71.6 mm away.
+
+        Four aggressor/victim pairs now, and the layout is only as good as the
+        worst of them:  Pi/coil, Pi/board, pack/coil, pack/board.
+        """
+        # Battery-to-coil is fixed per site, so it caps that site's score and
+        # can be precomputed. Sorting by it lets the inner loop stop early.
+        ranked = sorted(
+            ((bbox.distance(route), bx, by, bbox) for bx, by, bbox in bat_sites),
+            key=lambda item: -item[0],
+        )
+        best: dict[str, Any] | None = None
+        # A pair can never score above its own worst half, so once the pairs
+        # are sorted the first one that cannot beat the incumbent ends it.
+        for cand in sorted(pairs, key=lambda c: -c["nearest_victim"]):
+            if best is not None and cand["nearest_victim"] <= best["min_separation"]:
+                break
+            pbox, hbox = cand["_pi"], cand["_hat"]
+            for bat_route, bx, by, bbox in ranked:
+                if best is not None and bat_route <= best["min_separation"]:
+                    break
+                if bbox.distance(pbox) < MIN_WEB or bbox.distance(hbox) < MIN_WEB:
+                    continue
+                bat_hat = bbox.distance(hbox)
+                score = min(cand["nearest_victim"], bat_route, bat_hat)
+                if best is None or score > best["min_separation"]:
+                    best = {k: v for k, v in cand.items() if not k.startswith("_")}
+                    best["BATTERY_CHAMBER"] = (bx, by)
+                    best["battery_route_gap"] = bat_route
+                    best["battery_hat_gap"] = bat_hat
+                    best["min_separation"] = score
+        return best
 
     return {
         "site_counts": {
@@ -260,6 +308,8 @@ def solve(step: float, ribbon_metric: str = "header") -> dict[str, Any]:
         "max_pickup_gap": with_battery(sorted(pairs, key=lambda c: -c["pi_gap"])),
         # What the physics asks for: push the Pi off whatever is nearest.
         "max_nearest_victim": with_battery(sorted(pairs, key=lambda c: -c["nearest_victim"])),
+        # Both aggressors, both victims, ranked on the worst of the four.
+        "max_min_separation": best_two_aggressor(),
     }
 
 
@@ -288,13 +338,15 @@ def main() -> int:
     print(f"  {result['pairs']} feasible POD_PI/POD_HAT pairs within ribbon reach")
     print()
 
-    if result["max_pickup_gap"] is None or result["max_nearest_victim"] is None:
+    objectives = ("max_pickup_gap", "max_nearest_victim", "max_min_separation")
+    if any(result[k] is None for k in objectives):
         print("NO PACKING FOUND")
         return 1
 
     for label, key in (
         ("A  maximise POD_PI clearance from the pickup route", "max_pickup_gap"),
         ("B  maximise POD_PI clearance from its NEAREST victim", "max_nearest_victim"),
+        ("C  maximise the WORST aggressor/victim gap (Pi AND battery)", "max_min_separation"),
     ):
         best = result[key]
         print(label)
@@ -302,7 +354,11 @@ def main() -> int:
         print(f"     POD_PI to POD_HAT    {best['ribbon_gap']:6.1f} mm  (ribbon {RIBBON_LENGTH})")
         print(f"     POD_HAT to route     {best['hat_gap']:6.1f} mm")
         print(f"     ribbon span          {best['ribbon_span']:6.1f} mm")
-        print(f"     nearest victim       {best['nearest_victim']:6.1f} mm")
+        print(f"     BATTERY to route     {best['battery_route_gap']:6.1f} mm")
+        print(f"     BATTERY to POD_HAT   {best['battery_hat_gap']:6.1f} mm")
+        worst = min(best["pi_gap"], best["ribbon_gap"],
+                    best["battery_route_gap"], best["battery_hat_gap"])
+        print(f"     WORST of the four    {worst:6.1f} mm")
         for pocket in POCKETS:
             x, y = best[pocket]
             print(f"       {pocket:16s} x {x:8.3f}  y_from_top {y:7.3f}")
