@@ -379,57 +379,11 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "E"
-    assert len(dc["revision_history"]) >= 5
+    assert dc["revision"] == "F"
+    assert len(dc["revision_history"]) >= 6
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The contact is not yet named, and must say so rather than be absent.
     assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
-
-
-def test_stated_distances_match_the_ruled_pocket_placement():
-    """The document tells a bidder how far the noise sources are. Re-derive it.
-
-    Rev A and B both said 20 mm, which was true of neither the board nor the
-    pickup after CONF-POD-EMC-CLEARANCE moved the pockets. A distance quoted in
-    a document that a contractor prices EMC work against is not decoration, so
-    it is recomputed here rather than trusted.
-    """
-    solver = load_module_by_path(ROOT / "scripts" / "solve_khaya_pocket_layout.py")
-    placement = {
-        "POD_PI": (11.910, 180.0),
-        "POD_HAT": (94.410, 280.0),
-        "BATTERY_CHAMBER": (2.910, 247.5),
-    }
-    boxes = {
-        name: solver.rect(x, y, *solver.POCKETS[name]) for name, (x, y) in placement.items()
-    }
-    route = solver.rect(0.0, 294.6, 80.0, 22.0)
-
-    stated = {
-        "35.75 mm from a Raspberry Pi 5": boxes["POD_HAT"].distance(boxes["POD_PI"]),
-        "10.0 mm from the battery pack": boxes["POD_HAT"].distance(boxes["BATTERY_CHAMBER"]),
-        "17.9 mm from the pickup route": boxes["POD_HAT"].distance(route),
-    }
-    text = " ".join(load(SPEC)["environment"])
-    for claim, derived in stated.items():
-        assert claim in text, f"environment no longer states {claim!r}"
-        quoted = float(claim.split(" mm")[0])
-        assert derived == pytest.approx(quoted, abs=0.05), f"{claim!r} drifted"
-
-    # The ribbon reach is what an earlier layout got wrong; it must be stated.
-    span = solver._header_span(boxes["POD_PI"], boxes["POD_HAT"])
-    assert span == pytest.approx(89.9, abs=0.1)
-    assert "89.9 mm" in load(SPEC)["form_factor"]["stacking"]
-
-
-def test_the_superseded_20mm_figure_is_gone(spec):
-    """Rev C exists to remove it; a stale distance overstates the risk."""
-    haystack = json.dumps(spec)
-    for field in ("environment", "requirements", "form_factor"):
-        assert "20 mm from a Raspberry Pi 5" not in json.dumps(spec[field])
-    # It survives only where the revision history and open questions explain
-    # that it was superseded, which is the point of keeping a history.
-    assert "20 mm" in haystack
 
 
 def test_quantity_and_schedule_are_recorded_as_missing(spec):
@@ -510,3 +464,80 @@ def test_pickup_question_does_not_assume_one_configuration(spec):
     assert "the two pickups" not in questions
     assert "NO LONGER CARRY THE SAME PICKUPS" in questions
     assert "REQ-INPUT-HEADROOM" in questions
+
+
+def test_withdrawn_distances_are_not_quoted_as_fact(spec):
+    """Rev F pulled every separation; none may read as a live figure.
+
+    They all derive from a pocket layout solved against a body outline missing
+    its largest through-body void. A distance a contractor prices EMC work
+    against is not decoration, so a wrong one is worse than none.
+    """
+    env = " ".join(spec["environment"])
+    assert "WITHDRAWN" in env
+    assert "CONF-BODY-CANNOT-HOST-ELECTRONICS" in env
+    # The figures survive only inside the sentence that retracts them.
+    withdrawing = next(e for e in spec["environment"] if "WITHDRAWN" in e)
+    for figure in ("35.75 mm", "10.0 mm", "17.9 mm"):
+        assert figure in withdrawing
+        assert not any(
+            figure in e for e in spec["environment"] if e is not withdrawing
+        ), f"{figure} still stated as fact"
+
+    # And nowhere else in the document either.
+    for req in spec["requirements"]:
+        assert "35.75 mm" not in req["rationale"]
+    assert "89.9 mm" not in spec["interfaces"][0].get("description", "")
+    gpio = next(i for i in spec["interfaces"] if i["interface_id"] == "GPIO_HOST")
+    assert "89.9" not in gpio["description"]
+
+
+def test_rev_f_kept_the_obligation_even_though_it_dropped_the_numbers(spec):
+    """A bid still has to be priceable, so say what did NOT change.
+
+    REQ-NOISE is accepted in the assembled instrument. That fixes the
+    contractor's obligation by the venue of the measurement rather than by any
+    distance, which is why withdrawing the distances costs a bidder nothing.
+    """
+    env = " ".join(spec["environment"])
+    assert "REQ-NOISE is accepted IN THE ASSEMBLED INSTRUMENT" in env
+    assert "the acceptance condition is the contract" in env
+
+    # No requirement may have changed: the pocket derives from the board.
+    assert len(spec["requirements"]) == 12
+    assert len([r for r in spec["requirements"]
+                if r["criticality"] == "shippable_blocker"]) == 5
+    assert spec["envelope"]["board_length_mm"] == 65.0
+    assert spec["envelope"]["assembly_height_target_mm"] == 24.0
+    latest = spec["document_control"]["revision_history"][-1]
+    assert "NO REQUIREMENT CHANGED" in latest["change"]
+
+
+def test_no_withdrawn_figure_survives_outside_its_retraction(spec):
+    """Sweep the whole record, not the places I remembered to look.
+
+    Rev F's first pass missed the ribbon reach in form_factor because the
+    replacement matched a hyphen where the text had an em dash — a silent
+    no-op. Scanning every string is the only version of this check that works.
+    """
+    figures = ("35.75", "89.9", "71.6", "17.9 mm", "10.0 mm", "10.1 mm")
+
+    def strings(node, path=""):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                yield from strings(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for index, value in enumerate(node):
+                yield from strings(value, f"{path}[{index}]")
+        elif isinstance(node, str):
+            yield path, node
+
+    live = [
+        (path, figure)
+        for path, text in strings(spec)
+        for figure in figures
+        if figure in text
+        and "WITHDRAWN" not in text
+        and "revision_history" not in path
+    ]
+    assert not live, f"withdrawn figures still stated as fact: {live}"
