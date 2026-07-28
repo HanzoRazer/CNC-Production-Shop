@@ -144,11 +144,12 @@
       "field": "electronics_components.battery_pack.location",
       "sources": [
         "sg-spec smart_guitar_cavity_map.json: bass_chamber, pack 80 x 45 x 18 mm",
-        "luthiers-toolbox smart_guitar_v1.json: inside rear_electronics_cavity beside the Pi 5, single 6000 mAh cell 65 x 18.3 mm"
+        "luthiers-toolbox smart_guitar_v1.json: inside rear_electronics_cavity beside the Pi 5, single 6000 mAh cell 65 x 18.3 mm",
+        "SG-ELECTRONICS-BAY-V1, ruled 2026-07-28: two battery modules placed in the bay at 0.0/67.0 and 100.0/67.0, beneath the pods"
       ],
-      "status": "unresolved",
-      "ruling": "Pack dimensions taken from sg-spec. Plan position left unresolved: sg-spec sites the battery in a bass chamber, but the body was ruled a solid Explorer-derived blank with through-body ergonomic voids rather than internal chambers. Depth and footprint hold either way; position does not.",
-      "ruled_by": "unresolved — depends on whether the body is chambered"
+      "status": "ruled",
+      "ruling": "ANSWERED BY SG-ELECTRONICS-BAY-V1, closed 2026-07-28. The question was whether the pack sits in a bass chamber, per sg-spec, or beside the Pi, per luthiers-toolbox. NEITHER SOURCE WAS RIGHT because both described a pack that no longer exists: it is now TWO 2-cell modules, not one, and they sit BENEATH the pods in the electronics bay at bay-local 0.0/67.0 and 100.0/67.0.\n\nThe original obstruction is also gone. This conflict was left open because the body had been ruled a solid blank with through-body voids rather than internal chambers, so a bass chamber could not exist. The body is a hollow thin-skin box, and the bay is that hollow.\n\nABSOLUTE POSITION STILL FOLLOWS THE BAY, whose body_position is null. What is settled is the modules' position RELATIVE to the electronics, which is what this conflict actually asked.",
+      "ruled_by": "answered by SG-ELECTRONICS-BAY-V1, 2026-07-28"
     },
     {
       "conflict_id": "CONF-NVME-PLACEMENT",
@@ -382,11 +383,12 @@
         "derived: re-solving the same packing for clearance reaches POD_PI 71.6 mm from the route and 35.75 mm from POD_HAT, with the whole set still packing",
         "derived: at the new placement POD_PI is bound by the upper bass-side ergonomic void, not by the pickup, so this is close to the ceiling this outline allows",
         "derived: the GPIO ribbon must span 89.9 mm header to header, leaving 10.1 mm of a 100 mm part as slack - see CONF-RIBBON-REACH for why that constraint, not edge-to-edge clearance, governs",
-        "scripts/solve_khaya_pocket_layout.py --ribbon-metric header, front_v5 outline, 2.5 mm grid, min_web 8.0, rim 12.7"
+        "scripts/solve_khaya_pocket_layout.py --ribbon-metric header, front_v5 outline, 2.5 mm grid, min_web 8.0, rim 12.7",
+        "SG-ELECTRONICS-BAY-V1, ruled 2026-07-28: the pods are placed in bay-local coordinates, 42.0 mm apart, and the bay is internally verified"
       ],
-      "status": "unresolved",
-      "ruling": "PLACEMENT INVALIDATED 2026-07-27 by CONF-VOID-SET-SOURCE - it was solved against front_v5, which is missing the lower-treble void, and POD_HAT sits entirely inside that void. The reasoning below stands and should be re-applied once the void set is ruled; the COORDINATES do not. DO NOT CUT FROM THEM.\n\nPOCKETS RELOCATED. POD_PI x +11.910 y_from_top 180.0, POD_HAT x +94.410 y_from_top 280.0, BATTERY_CHAMBER x +2.910 y_from_top 247.5. STRICTLY BETTER than the placement it replaces on both coupling axes - the Pi's nearest victim goes from 10.75 mm to 35.75 mm - so there is no trade to weigh. The Pi moves up into the space the deleted neck pickup vacated, which is the same 69 cm2 that made CONF-SINGLE-PICKUP-SPACE resolvable; the front-end board moves DOWN toward the bridge, shortening the analog run to the pickup rather than lengthening it. NOTE the objective matters: maximising POD_PI's distance from the pickup ALONE lands the Pi 8.5 mm from POD_HAT, trading the pickup coil for the more sensitive analog board. This placement maximises distance to the NEAREST victim instead. It also assumes 10% ribbon slack; see CONF-RIBBON-REACH, where the sensitivity is sharp. This does NOT resolve CONF-SINGLE-PICKUP-EMC; it improves the geometry the measurement will be taken on.",
-      "ruled_by": "derived 2026-07-27 from the owner's instruction to move the Pi pocket further from the pickup"
+      "status": "ruled",
+      "ruling": "SUPERSEDED BY SG-ELECTRONICS-BAY-V1, closed 2026-07-28. This conflict carried a placement solved against a stale void set, withdrawn once the renders showed three voids rather than four. The bay replaces it outright: POD_PI at bay-local 0.0/0.0 and POD_HAT at 135.0/0.0, 42.0 mm apart, packed and re-checked by a validator.\n\nWHAT CARRIED FORWARD is the reasoning rather than the numbers. The objective is still the Pi's distance from its nearest victim, not from any one thing - and in the bay that victim is the analog front end at 42.0 mm, since the pickup is outside the bay. The separation is set by the GPIO ribbon, which is why lengthening it to 150 mm was the lever that moved this from 7.0 to 42.0.\n\nWHAT IS STILL UNKNOWN moved with it and is now tracked where it belongs: the bay's body_position is null, so the pods' absolute positions on the instrument remain unknown until the outline is settled. The DO NOT CUT guards on the DXF and the dimension sheet key on that field, not on this conflict.",
+      "ruled_by": "superseded by SG-ELECTRONICS-BAY-V1, 2026-07-28"
     },
     {
       "conflict_id": "CONF-RIBBON-REACH",

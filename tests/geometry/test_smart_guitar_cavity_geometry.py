@@ -593,32 +593,39 @@ def test_pickup_emc_conflict_awaits_measurement_not_derivation():
     assert any("THEN WITHDRAWN" in x for x in conflict["sources"])
 
 
-def test_pocket_relocation_improved_both_coupling_axes():
-    """The relocation had to beat the old layout on the analog board too.
+def test_pocket_relocation_is_superseded_by_the_bay():
+    """Closed against SG-ELECTRONICS-BAY-V1, but the reasoning has to survive.
 
-    Maximising POD_PI's distance from the pickup alone lands it 8.5 mm from
-    POD_HAT, which swaps the pickup coil for the more sensitive analog front
-    end. The ruled placement maximises distance to the nearest victim, so it
-    dominates the old layout rather than trading against it.
+    The coordinates here were solved against a stale void set and withdrawn.
+    What must not be lost is the objective behind them: rank the Pi by its
+    distance from the NEAREST victim, not from any one thing. In the bay that
+    victim is the analog front end, because the pickup sits outside it.
     """
     conflict = next(
         c
         for c in load_json(GEOMETRY)["conflicts"]
         if c["conflict_id"] == "CONF-POD-EMC-CLEARANCE"
     )
-    # Invalidated by CONF-VOID-SET-SOURCE: the REASONING stands and should be
-    # re-applied once the void set is ruled, but the coordinates must not be
-    # readable as good.
-    assert conflict["status"] == "unresolved"
-    assert conflict["ruling"].startswith("PLACEMENT INVALIDATED")
-    assert "DO NOT CUT FROM THEM" in conflict["ruling"]
-    assert "STRICTLY BETTER" in conflict["ruling"]
-    assert "10.75 mm to 35.75 mm" in conflict["ruling"]
-    assert "NEAREST victim" in conflict["ruling"]
-    # The ceiling is set by the ergonomic void, not by the pickup: without this
-    # the next reader will assume there is more room to buy.
-    assert any("bass-side ergonomic void" in s for s in conflict["sources"])
-    assert "does NOT resolve CONF-SINGLE-PICKUP-EMC" in conflict["ruling"]
+    assert conflict["status"] == "ruled"
+    assert conflict["ruling"].startswith("SUPERSEDED BY SG-ELECTRONICS-BAY-V1")
+    assert "nearest victim" in conflict["ruling"]
+    # The unknown that outlived it must be tracked, not dropped.
+    assert "body_position is null" in conflict["ruling"]
+
+
+def test_battery_placement_is_answered_by_the_bay():
+    """Both original sources described a pack that no longer exists."""
+    conflict = next(
+        c
+        for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-BATTERY-PLACEMENT"
+    )
+    assert conflict["status"] == "ruled"
+    assert "NEITHER SOURCE WAS RIGHT" in conflict["ruling"]
+    assert "TWO 2-cell modules" in conflict["ruling"]
+    # It was blocked on the body being solid. It is not.
+    assert "hollow thin-skin box" in conflict["ruling"]
+    assert "ABSOLUTE POSITION STILL FOLLOWS THE BAY" in conflict["ruling"]
 
 
 def test_relocated_pockets_still_pack_against_every_keepout():

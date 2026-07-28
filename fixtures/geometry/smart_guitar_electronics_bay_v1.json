@@ -77,6 +77,8 @@
     "COORDINATES ARE LOCAL TO THE BAY, which is why this record can exist before the outline does. Positioning the bay is one transform applied to all four placements at once.",
     "BOUNDARY BASIS RULED 2026-07-28: THE 210 x 125 IS THE USABLE OPENING. Rim and webs are already excluded, so items may be placed to the boundary and nothing further is deducted. This is what the layout above was written against, so it stands unchanged - see CONF-BAY-BOUNDARY-BASIS.",
     "SEPARATION IS HELD AT 42.0, NOT THE 44.0 THE OPENING ALLOWS. The last 2.0 mm buys nothing measurable in EMC terms and is worth more as edge tolerance: at 44.0 POD_HAT would sit exactly on the bay boundary with nothing in hand.",
-    "IF THE BAY IS EVER REDUCED - by the outline, by the bridge block, by anything - the pods stay and the battery modules go first. POD_PI and POD_HAT are tied to each other by a ribbon and must share a bay; the modules connect by wire and can sit anywhere in the hollow body. Ruled while the boundary was still open, and retained because it will be needed again."
-  ]
+    "IF THE BAY IS EVER REDUCED - by the outline, by the bridge block, by anything - the pods stay and the battery modules go first. POD_PI and POD_HAT are tied to each other by a ribbon and must share a bay; the modules connect by wire and can sit anywhere in the hollow body. Ruled while the boundary was still open, and retained because it will be needed again.",
+    "BODY POSITION IS NULL AND THAT IS THE POINT. The bay is fully specified and internally verified, but it has not been placed on the outline, because the outline is not settled. Until body_position is filled in, every back-face position in the instrument is unknown - which is what the DO NOT CUT guards on the DXF and the dimension sheet now key on. They clear themselves when the bay is placed, and not before."
+  ],
+  "body_position": null
 }

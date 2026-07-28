@@ -219,13 +219,11 @@ measurement, not a calculation.
 | **Pickup type and route** | Open upstream; route dimensions follow from it. |
 | **Skin thickness, core species, finish** | Not selected. Skin thickness changes every internal depth. |
 
-6 conflicts remain open against this geometry:
+4 conflicts remain open against this geometry:
 
-- **`CONF-BATTERY-PLACEMENT`** — electronics_components.battery_pack.location
 - **`CONF-NVME-PLACEMENT`** — rear_electronics_cavity.contains[NVMe SSD]
 - **`CONF-PICKUP-TYPE`** — luthiers-toolbox smart_guitar_v1.json: hardware.pickups vs cavities.teensy_io_pocket.signal_chain
 - **`CONF-PICKUP-ROUTE-DIMS`** — pickup route dimensions
-- **`CONF-POD-EMC-CLEARANCE`** — back-face pocket placement, ranked by clearance rather than by fit
 - **`CONF-SINGLE-PICKUP-EMC`** — whether a single coil is viable in one cavity set with a Raspberry Pi 5
 
 ## 5. Suggested modelling order

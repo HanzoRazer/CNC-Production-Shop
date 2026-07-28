@@ -64,6 +64,7 @@ from ezdxf import units as ezunits
 
 ROOT = Path(__file__).resolve().parent.parent
 REGISTER = ROOT / "fixtures" / "geometry" / "smart_guitar_component_register_v1.json"
+BAY = ROOT / "fixtures" / "geometry" / "smart_guitar_electronics_bay_v1.json"
 LTB = Path("C:/Users/thepr/Downloads/luthiers-toolbox")
 REFS = LTB / "docs/archive/instrument_references/smart_guitar"
 TRACE = (
@@ -282,12 +283,8 @@ def back_face_layer() -> str:
     panel, so while CONF-VOID-SET-SOURCE is open the pockets go somewhere a
     reader cannot fail to see. It reverts by itself when the conflict closes.
     """
-    register = json.loads(REGISTER.read_text(encoding="utf-8"))
-    blocked = any(
-        c["conflict_id"] == "CONF-POD-EMC-CLEARANCE" and c["status"] == "unresolved"
-        for c in register["conflicts"]
-    )
-    return "CAV_BACK_INVALID_DO_NOT_CUT" if blocked else "CAV_BACK"
+    bay = json.loads(BAY.read_text(encoding="utf-8"))
+    return "CAV_BACK" if bay.get("body_position") else "CAV_BACK_INVALID_DO_NOT_CUT"
 
 
 def build_document(version: str, source: str) -> tuple[Any, Profile, float, float]:
@@ -371,11 +368,11 @@ def build_document(version: str, source: str) -> tuple[Any, Profile, float, floa
         "SMART GUITAR BODY V1 - DRAFT, NOT A VERIFIED OUTLINE",
         "",
         "*** DO NOT CUT - CAV_BACK POCKET POSITIONS ARE INVALID ***",
-        "CONF-POD-EMC-CLEARANCE: these placements were solved against a stale",
-        "void set and against constraints that do not apply to a hollow body.",
-        "The design carries THREE voids and an electronics cavity on the lower",
-        "treble side; no valid placement has been derived since. Outline and",
-        "CAV_TOP features are unaffected.",
+        "The electronics bay is specified and verified, but it has NOT been",
+        "positioned on this outline - see SG-ELECTRONICS-BAY-V1, body_position",
+        "is null. These CAV_BACK rectangles are leftovers from a superseded",
+        "layout. Take back-face geometry from the bay record, positioned once",
+        "the outline is settled. Outline and CAV_TOP features are unaffected.",
         "",
         f"outline source: {source}   blank {BODY_LENGTH_MM} x {BODY_WIDTH_MM} "
         f"x {BODY_THICKNESS_MM} mm",
