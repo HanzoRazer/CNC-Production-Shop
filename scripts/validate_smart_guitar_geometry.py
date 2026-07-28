@@ -95,6 +95,67 @@ def validate_schema(fixture_path: Path, schema_path: Path) -> list[str]:
     return errors
 
 
+def validate_bridge_routing() -> list[str]:
+    """Recompute the bridge block from the candidate envelopes.
+
+    A headless instrument terminates every gram of string tension at the
+    bridge, so this block is the one piece of solid material the design cannot
+    trade away. The figures come from two hand-measured vendor sheets, so the
+    derivation is checked rather than trusted: if a candidate is added, or one
+    is finally selected, the block has to move with it.
+    """
+    errors: list[str] = []
+    path = FIXTURES / "headless_bridge_routing_v1.json"
+    doc = load_json(path)
+    cands = doc["candidates"]
+    selected = doc.get("selected_candidate")
+
+    # Unselected means the block is sized for the worst case, so an unmade
+    # decision cannot quietly shrink it.
+    pool = cands if selected is None else [c for c in cands if c["unit_id"] == selected]
+    if not pool:
+        return [f"FAIL {path.name}: selected_candidate {selected!r} is not a candidate"]
+
+    block = doc["derived_block"]
+    margin = doc["screw_margin_mm"]
+    floor = doc["min_floor_mm"]
+    expected = {
+        "rout_width_mm": max(c["rout_width_mm"] for c in pool),
+        "rout_length_mm": max(c["rout_length_mm"] for c in pool),
+        "max_depth_mm": max(c["max_depth_mm"] for c in pool),
+    }
+    expected["block_width_mm"] = as_mm(expected["rout_width_mm"] + 2 * margin)
+    expected["block_length_mm"] = as_mm(expected["rout_length_mm"] + 2 * margin)
+    expected["required_solid_depth_mm"] = as_mm(expected["max_depth_mm"] + floor)
+    for key, want in expected.items():
+        if not mm_equal(block[key], want):
+            errors.append(
+                f"FAIL bridge block {key} {block[key]} != derived {want}"
+            )
+
+    remaining = as_mm(block["blank_thickness_mm"] - block["required_solid_depth_mm"])
+    if not mm_equal(block["remaining_below_mm"], remaining):
+        errors.append("FAIL bridge block remaining_below_mm != blank - required solid depth")
+    verdict = "sufficient" if remaining >= 0 else "insufficient"
+    if block["verdict"] != verdict:
+        errors.append("FAIL bridge block verdict does not follow from the arithmetic")
+
+    for c in cands:
+        if not mm_equal(max(c["levels"]), c["max_depth_mm"]):
+            errors.append(
+                f"FAIL {c['unit_id']}: max_depth_mm {c['max_depth_mm']} is not the deepest level"
+            )
+        if c["levels"] != sorted(c["levels"]):
+            errors.append(f"FAIL {c['unit_id']}: levels are not shallowest-first")
+
+    if not errors:
+        print(f"PASS {path.relative_to(ROOT).as_posix()}")
+        print(f"  bridge block {block['block_width_mm']} x {block['block_length_mm']} x "
+              f"{block['required_solid_depth_mm']} solid, governed by {block['governing_unit_id']}"
+              f" - {block['verdict']}")
+    return errors
+
+
 def validate_frontend_spec() -> list[str]:
     """Keep the subassembly brief and the component register from drifting.
 
@@ -330,6 +391,7 @@ def main() -> int:
 
     if not all_errors:
         all_errors.extend(validate_frontend_spec())
+        all_errors.extend(validate_bridge_routing())
     if not all_errors:
         all_errors.extend(validate_derivation())
     if not all_errors:
