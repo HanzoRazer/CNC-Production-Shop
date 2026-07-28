@@ -1074,7 +1074,8 @@ def test_dimension_sheet_separates_what_can_be_cut_from_what_cannot():
     for heading in (
         "## 1. Fixed — cut geometry from these",
         "## 2. Parametric — right today, derived from a part",
-        "## 3. Not established — cannot be drawn yet",
+        "## 3. Routing schedule — what actually gets cut",
+        "## 4. Not established — cannot be drawn yet",
     ):
         assert heading in sheet, f"missing {heading!r}"
 
@@ -1088,10 +1089,35 @@ def test_dimension_sheet_separates_what_can_be_cut_from_what_cannot():
 
     # The outline itself is not established, and that has to be stated plainly
     # rather than left for the reader to infer from a missing table.
-    open_section = sheet.split("## 3.")[1]
+    open_section = sheet.split("\n## 4. ")[1]
     assert "Body outline curve" in open_section
     assert "Every cavity position" in open_section
     assert "tremolo" in open_section, "the fixed-vs-trem contradiction must be flagged"
+
+
+def test_routing_schedule_covers_every_face_and_the_radius_gap():
+    """A modeller needs cut depths per face, and to know what is missing.
+
+    Only the pickup routes carry a corner radius and the two sources disagree;
+    nothing in the electronics schedule has one at all. That is a real gap for
+    CNC and it must be stated rather than left to be discovered at the machine.
+    """
+    sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
+        encoding="utf-8"
+    )
+    # Anchor to the line start: "## 3." also matches inside "### 3.1".
+    schedule = sheet.split("\n## 3. ")[1].split("\n## 4. ")[0]
+    assert "### 3.1 Back face" in schedule
+    assert "### 3.2 Front face — bridge" in schedule
+    for cavity in ("POD_PI", "POD_HAT", "BATTERY_CHAMBER", "WIRE_CHANNEL_PI_HAT"):
+        assert cavity in schedule, f"{cavity} missing from the routing schedule"
+    # Stepped bridge depths, not just a maximum.
+    for depth in ("16.0", "22.0", "27.0"):
+        assert depth in schedule
+    # The radius gap and its practical resolution.
+    assert "Corner radii" in schedule
+    assert "6.35 mm cutter" in schedule
+    assert "specify the cutter" in schedule
 
 
 def test_dimension_sheet_gives_an_order_that_stops_where_the_data_stops():
@@ -1099,7 +1125,7 @@ def test_dimension_sheet_gives_an_order_that_stops_where_the_data_stops():
     sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
         encoding="utf-8"
     )
-    assert "## 4. Suggested modelling order" in sheet
+    assert "## 5. Suggested modelling order" in sheet
     assert "Stop." in sheet
     # The bridge block is the only positionable feature, because the scale
     # length is settled and everything else depends on the outline.

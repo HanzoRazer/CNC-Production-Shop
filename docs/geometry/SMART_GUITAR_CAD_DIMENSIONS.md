@@ -13,7 +13,8 @@ bear, so nothing here has to be taken on trust:
 |---|---|
 | 1 · Fixed | Ruled or corroborated. Cut geometry from these. |
 | 2 · Parametric | Right today, derived from a part. Drive off variables. |
-| 3 · Not established | Cannot be drawn yet. Listed so nothing gets invented. |
+| 3 · Routing schedule | Every cut, by face, with depths. |
+| 4 · Not established | Cannot be drawn yet. Listed so nothing gets invented. |
 
 ---
 
@@ -48,12 +49,13 @@ drawing them as literals.
 | Battery pack + BMS (4x 18650) | 80.0 | 45.0 | 18.0 | 0.0 | 3.0 |
 | 40 mm cooling fan | 40.0 | 40.0 | 10.0 | 0.0 | 0.0 |
 | NVMe SSD, M.2 2280, 128 GB | 80.0 | 22.0 | 3.5 | 0.0 | 0.0 |
-| Pi 5 GPIO to HiFiBerry ribbon/riser | 100.0 | 26.0 | 2.0 | 0.0 | 3.0 |
+| Pi 5 GPIO to audio front-end ribbon/riser | 100.0 | 26.0 | 2.0 | 0.0 | 3.0 |
 
 ### 2.2 Cavities — sizes only
 
 `depth = standoff + height + lid clearance`; footprint from the parts plus
-margins. **Positions are in section 3** — they are not settled.
+margins. Cut depths and faces are in **section 3**; positions are in
+**section 4** and are not settled.
 
 | Cavity | L | W | D |
 |---|---:|---:|---:|
@@ -64,7 +66,7 @@ margins. **Positions are in section 3** — they are not settled.
 
 Deepest cavity plus floor needs **41.0** of the **47.0** blank, governed by `POD_HAT` — margin **6.0**.
 
-### 2.3 Bridge block
+### 2.3 Bridge block — the solid it needs
 
 A headless terminates all string tension here, so this is solid material
 through the full depth, not a pocket over a hollow.
@@ -88,7 +90,72 @@ Worst case across 2 candidate units, governed by `R_TREM`, plus 15.0 screw margi
 > the screw margin is an engineering estimate. Do not cut to them as though
 > they were toleranced drawings.
 
-## 3. Not established — cannot be drawn yet
+## 3. Routing schedule — what actually gets cut
+
+Every rout in the instrument, by face. Sizes are settled where shown;
+**positions are not** — see section 4.
+
+### 3.1 Back face — electronics
+
+Cut from the REAR. Depths are from the rear surface.
+
+| Rout | L | W | D | Holds |
+|---|---:|---:|---:|---|
+| `POD_PI` | 93.0 | 64.0 | 27.0 | Pi 5 on 6.0 standoffs |
+| `POD_HAT` | 73.0 | 64.5 | 33.0 | audio front-end board on 6.0 standoffs |
+| `WIRE_CHANNEL_PI_HAT` | 100.0 | 30.0 | 5.0 | GPIO ribbon between the two pods |
+| `BATTERY_CHAMBER` | 90.0 | 55.0 | 21.0 | pack + BMS |
+
+The channel is a **shallow surface groove**, not a pocket: 5.0 deep against
+the pods' 27.0 and 33.0. It only has to clear a 2.0 mm ribbon plus dressing.
+
+### 3.2 Front face — bridge
+
+The deepest and most consequential rout in the instrument, and the only one
+that must land on solid material.
+
+**Headless USA R-Trem** — 67.0 × 85.0, max depth 27.0
+
+| Level | Depth |
+|---|---:|
+| 1 | 16.0 |
+| 2 | 22.0 |
+| 3 | 27.0 |
+| Inner pocket | 32.2 × 49.0, on the string centreline |
+
+*Labelled dimensions: A 85.0 overall, C 81.0 and B 50.8 intermediate ledges, D 67.0 across. Depths E 16.0, F 16.0, G 22.0, H 27.0. Spring/pivot pocket M 54.0 overall and L 49.0 inner, with the centre tab J 16.1 either side of the string line and I 27.0 either side to the outer edge. Current product, document dated 2025.*
+
+**Steinberger TransTrem** — 80.8 × 74.5, max depth 23.0
+
+| Level | Depth |
+|---|---:|
+| 1 | 12.0 |
+| 2 | 23.0 |
+| Inner pocket | 26.0 × 58.6, on the string centreline |
+
+*Two-level rout. Outer 80.8 wide x 74.5 long, stepping in to 63.6 at the tail with R6 corners, depth 11.2-12.0. Inner pocket 26.0 x 58.6 on the string centreline with a rounded top, depth 22.7-23.0. Depth ranges are given as ranges in the source; the deeper figure is taken. Vintage unit - availability is a sourcing question, not a geometry one.*
+
+### 3.3 Front face — not established
+
+| Rout | Status |
+|---|---|
+| Pickup route | Two sources: **82.0 × 38.0 × 19.05, r4.0** and **92.0 × 40.0 × 19.0, r3.0**. Both assume humbuckers; pickup type is open. |
+| Neck pocket | Sources disagree on size and position. |
+| Control cavity | Seen in the render under a cover plate; never dimensioned. |
+| Cover-plate rebates | Not specified for any cavity. |
+
+### 3.4 Corner radii — a gap
+
+**Only the pickup routes carry a corner radius, and the two sources disagree**
+(4.0 against 3.0). Nothing in section 3.1 has one.
+
+In practice the electronics pockets will take whatever the tool leaves: a
+6.35 mm cutter gives a 3.175 mm internal radius. That is already absorbed —
+the pockets carry 4.0 mm of clearance per side around each board, so a
+radiused corner against a square PCB corner still clears. Worth stating
+rather than discovering: **specify the cutter, and the radii follow.**
+
+## 4. Not established — cannot be drawn yet
 
 Listed so a modeller does not invent them. Each needs a decision or a
 measurement, not a calculation.
@@ -114,17 +181,17 @@ measurement, not a calculation.
 - **`CONF-SINGLE-PICKUP-EMC`** — whether a single coil is viable in one cavity set with a Raspberry Pi 5
 - **`CONF-BATTERY-CELL-COUNT`** — battery pack cell count, and therefore BATTERY_CHAMBER size
 
-## 4. Suggested modelling order
+## 5. Suggested modelling order
 
 Sequenced so nothing is drawn twice:
 
 1. Blank — length, width, thickness from section 1.
 2. Centreline, placed using the bass overhang. This fixes `x = 0`.
 3. Scale length and the fret plane. These drive the bridge station.
-4. Bridge block from 2.3, positioned from the scale length. It is the only
+4. Bridge block from 3.2, positioned from the scale length. It is the only
    feature whose position follows from something already settled.
 5. Stop. The outline curve and the voids come next, and neither exists yet.
 
-Cavity sizes from 2.2 can be built as parametric bodies off to one side and
+Rout sizes from 3.1 can be built as parametric bodies off to one side and
 positioned later without rework.
 

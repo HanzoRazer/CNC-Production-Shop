@@ -128,8 +128,8 @@
     },
     {
       "component_id": "GPIO_RIBBON",
-      "display_name": "Pi 5 GPIO to HiFiBerry ribbon/riser",
-      "role": "Carries the I2S bus between the Pi 5 and the HiFiBerry HAT once they no longer stack",
+      "display_name": "Pi 5 GPIO to audio front-end ribbon/riser",
+      "role": "Carries the I2S bus between the Pi 5 and the SG_AUDIO_FRONTEND board, which sit side by side rather than stacked",
       "length_mm": 100.0,
       "width_mm": 26.0,
       "height_mm": 2.0,
@@ -145,7 +145,7 @@
         "source_ref": "required by CONF-POD-LAYOUT: side-by-side placement forbids header stacking",
         "snapshot_date": "2026-07-27",
         "confidence": "draft",
-        "note": "length_mm 100.0 is a stock GPIO extension ribbon. CORRECTED from 60.0 on 2026-07-27: 60 mm was geometrically IMPOSSIBLE. POD_PI and POD_HAT need at least 72.25 mm centre-to-centre stacked, or 91.00 mm side by side, before their 8 mm walls clear — so a 60 mm ribbon forbade the two pockets from coexisting anywhere, at any body size. That length had been chosen on an AREA argument about the channel's own cost, without checking it was long enough to be buildable. It is registered as a component so pocket separation stays constrained, but the constraint has to be physically possible to be worth anything."
+        "note": "length_mm 100.0 is a stock GPIO extension ribbon. CORRECTED from 60.0 on 2026-07-27: 60 mm was geometrically IMPOSSIBLE. POD_PI and POD_HAT need at least 72.25 mm centre-to-centre stacked, or 91.00 mm side by side, before their 8 mm walls clear — so a 60 mm ribbon forbade the two pockets from coexisting anywhere, at any body size. That length had been chosen on an AREA argument about the channel's own cost, without checking it was long enough to be buildable. It is registered as a component so pocket separation stays constrained, but the constraint has to be physically possible to be worth anything. NAME CORRECTED 2026-07-28: this component and its role still referred to a HiFiBerry, which was superseded by the custom board in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1. The stale name read as if an off-the-shelf HAT were still in the design."
       }
     }
   ],
