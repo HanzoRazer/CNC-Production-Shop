@@ -1033,19 +1033,26 @@ def test_emc_procedure_covers_the_charging_configurations():
 
 
 def test_void_set_conflict_blocks_every_pocket_placement():
-    """The finding that invalidated the layout, and what it does not settle."""
+    """The finding that invalidated the layout, after the owner closed the escape.
+
+    This conflict originally left one way out: if the voids were blind chambers
+    they would be where the electronics live rather than keep-outs. The owner
+    ruled them through-body cuts on 2026-07-27, so the packing result stands.
+    """
     conflict = next(
         c
         for c in load_json(GEOMETRY)["conflicts"]
         if c["conflict_id"] == "CONF-VOID-SET-SOURCE"
     )
     assert conflict["status"] == "unresolved"
-    assert "BLOCKING" in conflict["ruling"]
+    assert "THROUGH-BODY CUTS" in conflict["ruling"]
     assert "NO ELECTRONICS POCKET FITS ANYWHERE" in conflict["ruling"]
-    # Area was never the test — the same lesson, from the other direction.
-    assert "AREA WAS NEVER THE TEST" in conflict["ruling"]
-    # The owner ruling that unblocks it must not be buried.
-    assert "BLIND CHAMBERS" in conflict["ruling"]
+    assert "Area was never the test" in conflict["ruling"]
+    # How it happened must stay on the record: the deficient source was the default.
+    assert "three void layers" in conflict["ruling"]
+    assert "stayed the default" in conflict["ruling"]
+    # It hands off rather than dangling.
+    assert "CONF-BODY-CANNOT-HOST-ELECTRONICS" in conflict["ruling"]
 
 
 def test_dimension_sheet_warns_while_the_void_set_is_open():
@@ -1055,3 +1062,24 @@ def test_dimension_sheet_warns_while_the_void_set_is_open():
     )
     assert "DO NOT CUT FROM THIS SHEET" in sheet
     assert "CONF-VOID-SET-SOURCE" in sheet
+
+
+def test_shrinking_the_voids_is_recorded_as_a_dead_lever():
+    """It is the obvious move and it does not work; say so once, permanently.
+
+    A 40% linear shrink removes 64% of the void area and the electronics still
+    do not pack, because the failure is topological: the surviving sites all
+    cluster in one window and the three pockets compete for it.
+    """
+    conflict = next(
+        c
+        for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-BODY-CANNOT-HOST-ELECTRONICS"
+    )
+    assert conflict["status"] == "unresolved"
+    assert "THE OBVIOUS LEVER IS DEAD" in conflict["ruling"]
+    assert "void TOPOLOGY, not the void SIZE" in conflict["ruling"]
+    # Ribbon length is not the constraint, and must not be proposed as one.
+    assert any("independent of ribbon length" in s for s in conflict["sources"])
+    # Retained so it is not re-proposed.
+    assert "retained only so it is not proposed again" in conflict["ruling"]

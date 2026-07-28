@@ -97,7 +97,7 @@ layout costs far more ribbon than the pocket gap suggests — see
 
 ## 6. Unresolved
 
-7 conflicts remain open against this geometry:
+8 conflicts remain open against this geometry:
 
 - **`CONF-BATTERY-PLACEMENT`** — electronics_components.battery_pack.location
 - **`CONF-NVME-PLACEMENT`** — rear_electronics_cavity.contains[NVMe SSD]
@@ -106,4 +106,5 @@ layout costs far more ribbon than the pocket gap suggests — see
 - **`CONF-POD-EMC-CLEARANCE`** — back-face pocket placement, ranked by clearance rather than by fit
 - **`CONF-SINGLE-PICKUP-EMC`** — whether a single coil is viable 71.6 mm from a Raspberry Pi 5
 - **`CONF-VOID-SET-SOURCE`** — which artifact carries the true void set, and whether any electronics pocket fits at all
+- **`CONF-BODY-CANNOT-HOST-ELECTRONICS`** — the body as drawn and the electronics as specified cannot both exist
 
