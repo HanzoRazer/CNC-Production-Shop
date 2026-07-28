@@ -22,7 +22,7 @@
       "headstock": "none_headless",
       "nut_type": "locking_clamp",
       "status": "primary_build_target",
-      "note": "The only series for this product line. Headless suits a practice and travel instrument: shorter overall length, no headstock to knock, tuning at the bridge."
+      "note": "The only series for this product line. Headless suits a practice and travel instrument: shorter overall length, no headstock to knock, tuning at the bridge. DESIGN INTENT, owner 2026-07-27: it mimics a HEADLESS CLASSICAL TRAVEL GUITAR DISGUISED AS A HYBRID ELECTRIC. That is the look being aimed at, and it is why the silhouette and the voids are not negotiable to suit the electronics - they are the product."
     }
   ],
   "electronics_package": {
@@ -30,15 +30,15 @@
     "compute_host": "Raspberry Pi 5 (8 GB)",
     "onboard_audio_output": true,
     "components": [
-      "Raspberry Pi 5 (8 GB) \u2014 JACK + Guitarix/MODEP host and coaching engine",
-      "HiFiBerry DAC+ADC \u2014 I2S audio out and headphone jack",
-      "Teensy 4.1 \u2014 I/O coprocessor, control only, no audio path",
+      "Raspberry Pi 5 (8 GB) — JACK + Guitarix/MODEP host and coaching engine",
+      "HiFiBerry DAC+ADC — I2S audio out and headphone jack",
+      "Teensy 4.1 — I/O coprocessor, control only, no audio path",
       "Battery pack + BMS (4x 18650), USB-C PD 20 W charging",
       "40 mm cooling fan, lid-mounted, venting outward",
       "GPIO ribbon between the Pi and the HAT"
     ],
     "rationale": "The full stack including the HiFiBerry HAT, because the headphone jack is the point of a practice instrument. The hollow box provides the volume: the same package is 96 cm2 short of fitting a solid body of these dimensions.",
-    "open_question": "AUDIO FRONT END UNRESOLVED, and it is a BUILD decision rather than a sourcing one. The onboard audio front end is therefore a CUSTOM SUBASSEMBLY, not a sourced product. It is bounded engineering rather than open-ended: a USB audio codec plus a JFET Hi-Z input stage, both of which have vendor reference designs. It still has to solve the six things a converter board does not \u2014 Hi-Z input impedance, instrument preamp, gain control, headphone amplifier, protection and anti-alias filtering. COST CLASS IS DIFFERENT FROM A SOURCED PART: it carries non-recurring engineering for schematic, layout and prototyping, plus EMC certification for the finished assembly, against a per-unit BOM well below any retail interface price. The budget model must carry NRE and certification as separate lines rather than folding them into unit cost. Physical envelope is not the constraint: the 36 mm height limit was derived against retail enclosures, and a bare board is a fraction of that. Until it is designed, this instrument cannot be self-contained, and the campfire premise depends on it: with an external interface the Smart Guitar is a desk practice tool, not a travel one."
+    "open_question": "AUDIO FRONT END UNRESOLVED, and it is a BUILD decision rather than a sourcing one. The onboard audio front end is therefore a CUSTOM SUBASSEMBLY, not a sourced product. It is bounded engineering rather than open-ended: a USB audio codec plus a JFET Hi-Z input stage, both of which have vendor reference designs. It still has to solve the six things a converter board does not — Hi-Z input impedance, instrument preamp, gain control, headphone amplifier, protection and anti-alias filtering. COST CLASS IS DIFFERENT FROM A SOURCED PART: it carries non-recurring engineering for schematic, layout and prototyping, plus EMC certification for the finished assembly, against a per-unit BOM well below any retail interface price. The budget model must carry NRE and certification as separate lines rather than folding them into unit cost. Physical envelope is not the constraint: the 36 mm height limit was derived against retail enclosures, and a bare board is a fraction of that. Until it is designed, this instrument cannot be self-contained, and the campfire premise depends on it: with an external interface the Smart Guitar is a desk practice tool, not a travel one."
   },
   "materials": {
     "body": "hollow wooden core, species not yet selected",
@@ -72,7 +72,9 @@
     "Core species, skin material and thickness, and the finish system are all unselected. They are the remaining inputs to the budget model, not settled facts.",
     "Contains no cost, price, or margin fields by design.",
     "The 'campfire guitar' premise depends on an onboard audio interface. With an external box this instrument is a desk practice tool, not a travel one. That is a product decision, not an engineering one, and it is unresolved.",
-    "SOURCING POLICY \u2014 NO EMBEDDED THIRD-PARTY CONSUMER PRODUCTS. A finished retail product may not be designed into either instrument as an internal component. Embedding one creates OEM licensing and trademark exposure, a single-source dependency on another company's product roadmap, warranty and support ambiguity, and re-certification questions for the finished assembly. This rules out mounting an iRig HD 2, Apogee Jam X, Scarlett Solo or MOTU M2 inside the body, regardless of whether it physically fits. EXTERNAL peripherals are NOT affected: shipping or recommending an interface the customer connects is resale, not embedding.",
-    "The audio front-end board's non-recurring engineering and certification now fall ENTIRELY on this line. With the Khaya reverted to passive, there is no second product to amortise them across, and the budget model must carry them against this volume alone."
+    "SOURCING POLICY — NO EMBEDDED THIRD-PARTY CONSUMER PRODUCTS. A finished retail product may not be designed into either instrument as an internal component. Embedding one creates OEM licensing and trademark exposure, a single-source dependency on another company's product roadmap, warranty and support ambiguity, and re-certification questions for the finished assembly. This rules out mounting an iRig HD 2, Apogee Jam X, Scarlett Solo or MOTU M2 inside the body, regardless of whether it physically fits. EXTERNAL peripherals are NOT affected: shipping or recommending an interface the customer connects is resale, not embedding.",
+    "The audio front-end board's non-recurring engineering and certification now fall ENTIRELY on this line. With the Khaya reverted to passive, there is no second product to amortise them across, and the budget model must carry them against this volume alone.",
+    "THE RENDERS ARE STALE ON THE NECK. The owner confirmed 2026-07-27 that this line is headless and has always been headless, and that no image exists of a Smart Guitar with a traditional headstock. Any render read as showing one is either an old neck fitted for the picture or a misreading of the headless tuner block.",
+    "HEADLESS PUTS THE TUNING HARDWARE AT THE TAIL, which is the same end as the electronics cavity and the hollowed area below the large bass-side void. Whatever the tuner block, string anchors and their access need has first call on that space; the electronics work around it, not the other way round."
   ]
 }
