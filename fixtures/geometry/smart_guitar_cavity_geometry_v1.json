@@ -385,8 +385,8 @@
         "derived: the GPIO ribbon must span 89.9 mm header to header, leaving 10.1 mm of a 100 mm part as slack - see CONF-RIBBON-REACH for why that constraint, not edge-to-edge clearance, governs",
         "scripts/solve_khaya_pocket_layout.py --ribbon-metric header, front_v5 outline, 2.5 mm grid, min_web 8.0, rim 12.7"
       ],
-      "status": "ruled",
-      "ruling": "POCKETS RELOCATED. POD_PI x +11.910 y_from_top 180.0, POD_HAT x +94.410 y_from_top 280.0, BATTERY_CHAMBER x +2.910 y_from_top 247.5. STRICTLY BETTER than the placement it replaces on both coupling axes - the Pi's nearest victim goes from 10.75 mm to 35.75 mm - so there is no trade to weigh. The Pi moves up into the space the deleted neck pickup vacated, which is the same 69 cm2 that made CONF-SINGLE-PICKUP-SPACE resolvable; the front-end board moves DOWN toward the bridge, shortening the analog run to the pickup rather than lengthening it. NOTE the objective matters: maximising POD_PI's distance from the pickup ALONE lands the Pi 8.5 mm from POD_HAT, trading the pickup coil for the more sensitive analog board. This placement maximises distance to the NEAREST victim instead. It also assumes 10% ribbon slack; see CONF-RIBBON-REACH, where the sensitivity is sharp. This does NOT resolve CONF-SINGLE-PICKUP-EMC; it improves the geometry the measurement will be taken on.",
+      "status": "unresolved",
+      "ruling": "PLACEMENT INVALIDATED 2026-07-27 by CONF-VOID-SET-SOURCE - it was solved against front_v5, which is missing the lower-treble void, and POD_HAT sits entirely inside that void. The reasoning below stands and should be re-applied once the void set is ruled; the COORDINATES do not. DO NOT CUT FROM THEM.\n\nPOCKETS RELOCATED. POD_PI x +11.910 y_from_top 180.0, POD_HAT x +94.410 y_from_top 280.0, BATTERY_CHAMBER x +2.910 y_from_top 247.5. STRICTLY BETTER than the placement it replaces on both coupling axes - the Pi's nearest victim goes from 10.75 mm to 35.75 mm - so there is no trade to weigh. The Pi moves up into the space the deleted neck pickup vacated, which is the same 69 cm2 that made CONF-SINGLE-PICKUP-SPACE resolvable; the front-end board moves DOWN toward the bridge, shortening the analog run to the pickup rather than lengthening it. NOTE the objective matters: maximising POD_PI's distance from the pickup ALONE lands the Pi 8.5 mm from POD_HAT, trading the pickup coil for the more sensitive analog board. This placement maximises distance to the NEAREST victim instead. It also assumes 10% ribbon slack; see CONF-RIBBON-REACH, where the sensitivity is sharp. This does NOT resolve CONF-SINGLE-PICKUP-EMC; it improves the geometry the measurement will be taken on.",
       "ruled_by": "derived 2026-07-27 from the owner's instruction to move the Pi pocket further from the pickup"
     },
     {
@@ -428,16 +428,33 @@
       "ruled_by": "unresolved - awaits a shielded mock-up measurement"
     },
     {
+      "conflict_id": "CONF-VOID-SET-SOURCE",
+      "field": "which artifact carries the true void set, and whether any electronics pocket fits at all",
+      "sources": [
+        "front_v5 carries THREE void layers: VOID_UPPER_BASS, VOID_UPPER_TREBLE, VOID_LOWER_BASS. There is no lower-treble void in the file",
+        "back_v5 carries FOUR voids on VOID_CHAMBERS, annotated V1/V2/V3/V5, and the traced outline carries the same four at voids_mm 0/1/2/4 - agreeing to two decimal places",
+        "the void MISSING from front_v5 is the lower treble one, x 43.42..152.81, y_from_top 178.90..366.18, about 205 cm2",
+        "front_v5's three voids are also positioned differently from the other two artifacts, by up to 30 mm",
+        "derived: POD_HAT as ruled (x 57.9..130.9, y 247.8..312.2) sits ENTIRELY INSIDE the missing void",
+        "derived: re-solving on the corrected body at a 2.5 mm grid gives ZERO valid sites for POD_PI, POD_HAT and BATTERY_CHAMBER alike",
+        "derived: 406.7 cm2 remains free after rim, voids, control cavity and 8 mm webs, but it is a thin web - no 90 x 55 rectangle fits anywhere in it"
+      ],
+      "status": "unresolved",
+      "ruling": "BLOCKING. front_v5 is a DEFICIENT SOURCE and the solver defaults to it, so every pocket placement in this program was solved against a body missing its largest void. On the geometry that back_v5 and the trace agree on, NO ELECTRONICS POCKET FITS ANYWHERE - not POD_PI, not POD_HAT, not even the smallest. This invalidates the placement in CONF-POD-EMC-CLEARANCE, the clearances derived from it, the exported DXF, the CAD dimension sheet, and the distances carried into SUBASSEMBLY-SG-AUDIO-FRONTEND-V1 from Rev C onward. It also puts CONF-SINGLE-PICKUP-SPACE back in doubt, since that ruling was reached the same way. AREA WAS NEVER THE TEST - this is the same lesson as CONF-SOLID-BODY-PACKING, arrived at from the other direction: 406.7 cm2 free and nothing fits. WHAT THIS DOES NOT SETTLE, and what the owner must rule before any re-solve: the back_v5 layer is named VOID_CHAMBERS. If those are BLIND CHAMBERS routed from the back rather than through-cuts, they are not keep-outs at all - they are where the electronics were always meant to live, and the problem inverts. Separately, whether PRODUCT-KHAYA-SOLIDBODY-V1 carries these voids at all is unstated: it is specified as a SOLID body, and this outline is the Smart Guitar's.",
+      "ruled_by": "unresolved - blocks all pocket geometry pending an owner ruling on the void set"
+    },
+    {
       "conflict_id": "CONF-CONTROL-PLATE-POSITION",
       "field": "control cavity position, which decides whether POD_HAT clears it",
       "sources": [
-        "front_v5 CONTROL_PLATE layer, both scale errors undone: x 5.2..106.1, y_from_top 320.6..370.0",
-        "the DXF export's own cavity table: centred x 25.0, y_from_top 317.0, 100 x 60 mm",
-        "derived: POD_HAT at the ruled placement spans x 57.9..130.9, y_from_top 247.8..312.2 - it clears the first by 8.4 mm and OVERLAPS the second"
+        "smart_guitar_back_v5.dxf, layer CONTROL_CAVITY, annotated 'CTRL CAVITY': x -48.34..16.11, y_from_top 202.60..331.49",
+        "traced outline smart_guitar_back_v1.json, voids_mm index 3: identical to two decimal places",
+        "SUPERSEDED candidate A - front_v5 CONTROL_PLATE with both scale errors undone: x 5.2..106.1, y_from_top 320.6..370.0",
+        "SUPERSEDED candidate B - the DXF export's own cavity table: centred x 25.0, y_from_top 317.0, 100 x 60"
       ],
-      "status": "unresolved",
-      "ruling": "The two available positions disagree by about 30 mm in both axes, and POD_HAT clears one but not the other. CONTROL_PLATE is also one of the two front_v5 layers that would not calibrate against the datum, so its derived position carries less weight than the six that did. The ruled pocket layout uses the derived position. IF THE EXPORT TABLE'S POSITION IS CORRECT, POD_HAT COLLIDES WITH THE CONTROL CAVITY and the layout must be re-solved. Cheap to settle from the CAD file; expensive to discover after a body is cut.",
-      "ruled_by": "unresolved - needs the control cavity position confirmed against CAD"
+      "status": "ruled",
+      "ruling": "SETTLED FROM CAD. The control cavity is x -48.34..+16.11, y_from_top 202.60..331.49, i.e. 64.45 x 128.89 mm, sitting in the CENTRAL SPINE between the two lower voids rather than on the treble side. back_v5 carries it on a labelled CONTROL_CAVITY layer and the traced outline carries the same rectangle at voids_mm index 3, agreeing to two decimal places - two independent artifacts, one answer. NEITHER PRIOR CANDIDATE WAS CORRECT: both were roughly half the height and on the wrong side. It does NOT collide with POD_HAT, which was the specific worry this conflict was opened to settle. It DOES collide with POD_PI and BATTERY_CHAMBER - but that is moot, because CONF-VOID-SET-SOURCE invalidates those placements outright.",
+      "ruled_by": "derived 2026-07-27 from back_v5 and the traced outline, which agree exactly"
     }
   ],
   "calculation": {

@@ -601,7 +601,12 @@ def test_pocket_relocation_improved_both_coupling_axes():
         for c in load_json(GEOMETRY)["conflicts"]
         if c["conflict_id"] == "CONF-POD-EMC-CLEARANCE"
     )
-    assert conflict["status"] == "ruled"
+    # Invalidated by CONF-VOID-SET-SOURCE: the REASONING stands and should be
+    # re-applied once the void set is ruled, but the coordinates must not be
+    # readable as good.
+    assert conflict["status"] == "unresolved"
+    assert conflict["ruling"].startswith("PLACEMENT INVALIDATED")
+    assert "DO NOT CUT FROM THEM" in conflict["ruling"]
     assert "STRICTLY BETTER" in conflict["ruling"]
     assert "10.75 mm to 35.75 mm" in conflict["ruling"]
     assert "NEAREST victim" in conflict["ruling"]
@@ -1025,3 +1030,28 @@ def test_emc_procedure_covers_the_charging_configurations():
     assert "pulse-skipping or burst mode" in procedure
     # Charging failures are a product decision, not an audio-board defect.
     assert "REQ-NOISE-BOUNDARY" in procedure
+
+
+def test_void_set_conflict_blocks_every_pocket_placement():
+    """The finding that invalidated the layout, and what it does not settle."""
+    conflict = next(
+        c
+        for c in load_json(GEOMETRY)["conflicts"]
+        if c["conflict_id"] == "CONF-VOID-SET-SOURCE"
+    )
+    assert conflict["status"] == "unresolved"
+    assert "BLOCKING" in conflict["ruling"]
+    assert "NO ELECTRONICS POCKET FITS ANYWHERE" in conflict["ruling"]
+    # Area was never the test — the same lesson, from the other direction.
+    assert "AREA WAS NEVER THE TEST" in conflict["ruling"]
+    # The owner ruling that unblocks it must not be buried.
+    assert "BLIND CHAMBERS" in conflict["ruling"]
+
+
+def test_dimension_sheet_warns_while_the_void_set_is_open():
+    """The sheet is what someone takes to CAD. It must not read as good."""
+    sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
+        encoding="utf-8"
+    )
+    assert "DO NOT CUT FROM THIS SHEET" in sheet
+    assert "CONF-VOID-SET-SOURCE" in sheet

@@ -14,6 +14,18 @@ All dimensions **mm**. Origin: body **top edge** for `y`, instrument
 
 ---
 
+> ## DO NOT CUT FROM THIS SHEET
+>
+> `CONF-VOID-SET-SOURCE` is open. The back-face pocket positions in
+> section 2 were solved against `front_v5`, which is missing the
+> lower-treble void — and `POD_HAT` sits entirely inside it. On the
+> geometry that `back_v5` and the traced outline agree on, no
+> electronics pocket fits anywhere.
+>
+> Everything downstream of those positions — section 4 clearances,
+> section 5 ribbon reach — is invalid with them. Sections 1 and 3
+> are unaffected.
+
 ## 1. Body
 
 | Dimension | Value |
@@ -85,12 +97,13 @@ layout costs far more ribbon than the pocket gap suggests — see
 
 ## 6. Unresolved
 
-6 conflicts remain open against this geometry:
+7 conflicts remain open against this geometry:
 
 - **`CONF-BATTERY-PLACEMENT`** — electronics_components.battery_pack.location
 - **`CONF-NVME-PLACEMENT`** — rear_electronics_cavity.contains[NVMe SSD]
 - **`CONF-PICKUP-TYPE`** — luthiers-toolbox smart_guitar_v1.json: hardware.pickups vs cavities.teensy_io_pocket.signal_chain
 - **`CONF-PICKUP-ROUTE-DIMS`** — pickup route dimensions
+- **`CONF-POD-EMC-CLEARANCE`** — back-face pocket placement, ranked by clearance rather than by fit
 - **`CONF-SINGLE-PICKUP-EMC`** — whether a single coil is viable 71.6 mm from a Raspberry Pi 5
-- **`CONF-CONTROL-PLATE-POSITION`** — control cavity position, which decides whether POD_HAT clears it
+- **`CONF-VOID-SET-SOURCE`** — which artifact carries the true void set, and whether any electronics pocket fits at all
 

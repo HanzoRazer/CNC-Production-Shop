@@ -348,6 +348,14 @@ def build_document(version: str, source: str) -> tuple[Any, Profile, float, floa
 
     notes = [
         "SMART GUITAR BODY V1 - DRAFT, NOT A VERIFIED OUTLINE",
+        "",
+        "*** DO NOT CUT - CAV_BACK POCKET POSITIONS ARE INVALID ***",
+        "CONF-VOID-SET-SOURCE: this outline source (front_v5) is missing the",
+        "lower-treble void. POD_HAT as drawn sits INSIDE that void. back_v5 and",
+        "the traced outline both carry four voids and agree exactly; on that",
+        "geometry no electronics pocket fits anywhere. Outline and CAV_TOP",
+        "features are unaffected.",
+        "",
         f"outline source: {source}   blank {BODY_LENGTH_MM} x {BODY_WIDTH_MM} "
         f"x {BODY_THICKNESS_MM} mm",
         "origin: body TOP edge, x=0 centreline  +X TREBLE  +Y toward neck  mm",
