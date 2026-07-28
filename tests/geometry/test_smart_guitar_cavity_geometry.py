@@ -583,9 +583,12 @@ def test_pickup_emc_conflict_awaits_measurement_not_derivation():
     assert "no measurement has been taken" in conflict["ruling"]
     # Failing it re-opens the packing that put compute back in the Khaya.
     assert "CONF-SINGLE-PICKUP-SPACE" in conflict["ruling"]
-    assert "71.6 mm" in conflict["field"]
+    # The field no longer quotes a separation: every one was withdrawn.
+    assert "71.6" not in conflict["field"]
+    assert "one cavity set with a Raspberry Pi 5" in conflict["field"]
     # Moving the pockets improved the geometry; it did not answer the question.
     assert "GEOMETRY IMPROVED but the question stands" in conflict["ruling"]
+    assert any("THEN WITHDRAWN" in x for x in conflict["sources"])
 
 
 def test_pocket_relocation_improved_both_coupling_axes():
@@ -938,22 +941,6 @@ def test_cad_dimension_sheet_is_not_stale():
     )
 
 
-def test_dimension_sheet_carries_the_ruled_clearances():
-    """The numbers a reader will take to CAD, spot-checked against the ruling."""
-    sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
-        encoding="utf-8"
-    )
-    for value in ("71.60", "35.75", "17.91", "89.91"):
-        assert value in sheet, f"{value} missing from the dimension sheet"
-    # Superseded features must not reappear in the DIMENSION tables. The
-    # conflict list below them legitimately names the historical teensy pocket,
-    # because CONF-PICKUP-TYPE is a dispute about that very record.
-    tables = sheet.split("## 6. Unresolved")[0]
-    assert "162.0" not in tables, "the pre-split one-piece pod is back"
-    assert "TEENSY" not in tables.upper()
-    assert "PU_NECK" not in tables, "the deleted neck pickup is back"
-
-
 def test_battery_placement_is_forced_not_chosen():
     """The pack sits 8.60 mm from the coil because nowhere else is legal.
 
@@ -1053,21 +1040,6 @@ def test_void_set_is_ruled_from_the_renders_not_the_trace():
     assert "ALSO WITHDRAWN" in conflict["ruling"]
 
 
-def test_dimension_sheet_warns_while_no_valid_placement_exists():
-    """The sheet is what someone takes to CAD. It must not read as good.
-
-    Keyed to CONF-POD-EMC-CLEARANCE — whether a valid placement exists — not to
-    any particular diagnosis. The first version keyed on the void-set conflict
-    and would have cleared itself the moment that was ruled, while the
-    coordinates it guards were still wrong.
-    """
-    sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
-        encoding="utf-8"
-    )
-    assert "DO NOT CUT FROM THIS SHEET" in sheet
-    assert "CONF-POD-EMC-CLEARANCE" in sheet
-
-
 def test_body_cannot_host_conflict_is_withdrawn_not_quietly_flipped():
     """It asserted the body and the electronics could not both exist.
 
@@ -1087,3 +1059,49 @@ def test_body_cannot_host_conflict_is_withdrawn_not_quietly_flipped():
     assert "0 valid placements to 224" in conflict["ruling"]
     # What replaces it is a different KIND of question.
     assert "STRUCTURAL, NOT SPATIAL" in conflict["ruling"]
+
+
+def test_dimension_sheet_separates_what_can_be_cut_from_what_cannot():
+    """The sheet is read by someone starting CAD on an unfinished design.
+
+    Grouping by confidence is the whole contract: a figure that is ruled and a
+    figure that was solved against a stale outline must not sit in the same
+    table looking alike.
+    """
+    sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
+        encoding="utf-8"
+    )
+    for heading in (
+        "## 1. Fixed — cut geometry from these",
+        "## 2. Parametric — right today, derived from a part",
+        "## 3. Not established — cannot be drawn yet",
+    ):
+        assert heading in sheet, f"missing {heading!r}"
+
+    fixed = sheet.split("## 2.")[0]
+    for value in ("468.5", "402.85", "47.0", "628.65"):
+        assert value in fixed, f"{value} missing from the fixed section"
+
+    # Withdrawn placements must not reappear anywhere, in any section.
+    for coord in ("11.910", "94.410", "2.910", "71.6", "35.75", "89.9"):
+        assert coord not in sheet, f"withdrawn figure {coord} is back in the sheet"
+
+    # The outline itself is not established, and that has to be stated plainly
+    # rather than left for the reader to infer from a missing table.
+    open_section = sheet.split("## 3.")[1]
+    assert "Body outline curve" in open_section
+    assert "Every cavity position" in open_section
+    assert "tremolo" in open_section, "the fixed-vs-trem contradiction must be flagged"
+
+
+def test_dimension_sheet_gives_an_order_that_stops_where_the_data_stops():
+    """Telling someone where to STOP is the useful part."""
+    sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
+        encoding="utf-8"
+    )
+    assert "## 4. Suggested modelling order" in sheet
+    assert "Stop." in sheet
+    # The bridge block is the only positionable feature, because the scale
+    # length is settled and everything else depends on the outline.
+    assert "positioned from the scale length" in sheet
+

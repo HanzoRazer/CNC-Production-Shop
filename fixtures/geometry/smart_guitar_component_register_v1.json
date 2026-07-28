@@ -540,10 +540,10 @@
     },
     {
       "conflict_id": "CONF-SINGLE-PICKUP-EMC",
-      "field": "whether a single coil is viable 71.6 mm from a Raspberry Pi 5",
+      "field": "whether a single coil is viable in one cavity set with a Raspberry Pi 5",
       "sources": [
         "derived: as first solved, POD_PI sat 11.6 mm from the Telecaster route, fully overlapping it in X, with only 1.0 mm of stock between the pocket ceiling and the route floor at their respective depths",
-        "derived: after CONF-POD-EMC-CLEARANCE the gap is 71.6 mm to the route and 35.75 mm to POD_HAT, and no plan overlap remains",
+        "derived, THEN WITHDRAWN: separations of 71.6 mm to the route and 35.75 mm to POD_HAT were computed against a stale outline and no longer hold. No separation is currently established",
         "engineering judgement: a single coil has no common-mode rejection, and the Pi's 2.4 GHz radio and switching supplies remain inside the same cavity set"
       ],
       "status": "unresolved",
@@ -597,6 +597,18 @@
       "status": "ruled",
       "ruling": "SETTLED FROM CAD. The control cavity is x -48.34..+16.11, y_from_top 202.60..331.49, i.e. 64.45 x 128.89 mm, sitting in the CENTRAL SPINE between the two lower voids rather than on the treble side. back_v5 carries it on a labelled CONTROL_CAVITY layer and the traced outline carries the same rectangle at voids_mm index 3, agreeing to two decimal places - two independent artifacts, one answer. NEITHER PRIOR CANDIDATE WAS CORRECT: both were roughly half the height and on the wrong side. It does NOT collide with POD_HAT, which was the specific worry this conflict was opened to settle. It DOES collide with POD_PI and BATTERY_CHAMBER - but that is moot, because CONF-VOID-SET-SOURCE invalidates those placements outright.",
       "ruled_by": "derived 2026-07-27 from back_v5 and the traced outline, which agree exactly"
+    },
+    {
+      "conflict_id": "CONF-BATTERY-CELL-COUNT",
+      "field": "battery pack cell count, and therefore BATTERY_CHAMBER size",
+      "sources": [
+        "component register BATTERY_PACK: 'Battery pack + BMS (4x 18650)', 80.0 x 45.0 x 18.0",
+        "SUBASSEMBLY-SG-AUDIO-FRONTEND-V1 notes: 'the battery must be the 2x 18650 pack rather than 4x', stated as a load-bearing derived fact once the Khaya went self-contained",
+        "the front-end spec's electrical envelope gives a 6.0-8.4 V supply range, which follows from TWO cells in series and not four"
+      ],
+      "status": "unresolved",
+      "ruling": "TWO RECORDS DISAGREE AND THE ELECTRICAL ENVELOPE SIDES WITH ONE OF THEM. A 6.0-8.4 V range is a 2S pack; four cells would be 2S2P at the same voltage or 4S at roughly 12-16.8 V. So either the register's '4x' means 2S2P - same voltage, double capacity, larger footprint - or one of the two records is simply wrong. THIS IS NOT COSMETIC: BATTERY_CHAMBER is derived from the pack, it appears in the CAD dimension sheet as a figure a modeller is told to build parametrically, and runtime is a headline property of a practice instrument. Settle the cell count and the topology together, not just the number.",
+      "ruled_by": "unresolved - needs the pack specified as cells, series/parallel topology and capacity"
     }
   ],
   "provenance": {
