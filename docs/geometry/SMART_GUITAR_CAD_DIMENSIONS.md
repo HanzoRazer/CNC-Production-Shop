@@ -95,6 +95,28 @@ Worst case across 2 candidate units, governed by `R_TREM`, plus 15.0 screw margi
 Every rout in the instrument, by face. Sizes are settled where shown;
 **positions are not** — see section 4.
 
+### 3.0 Electronics bay — 210.0 × 125.0
+
+The interior space below the largest void, measured from the instrument mid-line. Where this region sits on the outline is deliberately not a number here - the outline is not settled, and every placement below is local to the bay, so the bay can be positioned later without any of them moving.
+
+Coordinates below are **local to the bay**. Positioning the bay on the
+outline is one transform applied to all four items at once.
+
+| Item | x | y | L | W | D |
+|---|---:|---:|---:|---:|---:|
+| `POD_PI` | 0.0 | 0.0 | 93.0 | 64.0 | 27.0 |
+| `POD_HAT` | 100.0 | 0.0 | 73.0 | 64.5 | 33.0 |
+| `BATT_A` | 0.0 | 67.0 | 90.0 | 55.0 | 21.0 |
+| `BATT_B` | 100.0 | 67.0 | 90.0 | 55.0 | 21.0 |
+
+**190.0 × 122.0 used of 210.0 × 125.0** — 20.0 spare across, 3.0 down.
+
+> The **GPIO ribbon**, not the bay, holds the Pi and the analog board
+> 7.0 mm apart: the headers sit at each board's centre, so a 100 mm part
+> at 10% slack allows 90.0 mm of run. The bay has room for 44 mm with a
+> 150 mm ribbon. If the EMC measurement demands distance, cable length is
+> the cheapest lever in the instrument.
+
 ### 3.1 Back face — electronics
 
 Cut from the REAR. Depths are from the rear surface.

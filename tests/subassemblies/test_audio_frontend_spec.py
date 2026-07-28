@@ -379,8 +379,8 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "G"
-    assert len(dc["revision_history"]) >= 7
+    assert dc["revision"] == "H"
+    assert len(dc["revision_history"]) >= 8
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The contact is not yet named, and must say so rather than be absent.
     assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
@@ -474,22 +474,21 @@ def test_withdrawn_distances_are_not_quoted_as_fact(spec):
     against is not decoration, so a wrong one is worse than none.
     """
     env = " ".join(spec["environment"])
-    assert "WITHDRAWN" in env
-    assert "CONF-BODY-CANNOT-HOST-ELECTRONICS" in env
+    assert "RESTORED" in env and "7.0 mm from the Raspberry Pi 5" in env
+    assert "WORSE THAN THE ONE IT REPLACES" in env
     # The figures survive only inside the sentence that retracts them.
-    withdrawing = next(e for e in spec["environment"] if "WITHDRAWN" in e)
-    for figure in ("35.75 mm", "10.0 mm", "17.9 mm"):
-        assert figure in withdrawing
-        assert not any(
-            figure in e for e in spec["environment"] if e is not withdrawing
-        ), f"{figure} still stated as fact"
-
-    # And nowhere else in the document either.
+    restoring = next(e for e in spec["environment"] if "RESTORED" in e)
+    # 35.75 survives only inside the sentence that explains it was replaced.
+    assert "35.75" in restoring
+    assert not any(
+        "35.75" in e for e in spec["environment"] if e is not restoring
+    ), "35.75 still stated as fact"
     for req in spec["requirements"]:
-        assert "35.75 mm" not in req["rationale"]
-    assert "89.9 mm" not in spec["interfaces"][0].get("description", "")
+        assert "35.75" not in req["rationale"]
+    # The withdrawn 89.9 must not come back; the canon figure is 90.0.
     gpio = next(i for i in spec["interfaces"] if i["interface_id"] == "GPIO_HOST")
     assert "89.9" not in gpio["description"]
+    assert "90.0 mm header to header" in gpio["description"]
 
 
 def test_rev_f_kept_the_obligation_even_though_it_dropped_the_numbers(spec):
@@ -545,8 +544,12 @@ def test_no_withdrawn_figure_survives_outside_its_retraction(spec):
     Rev F's first pass missed the ribbon reach in form_factor because the
     replacement matched a hyphen where the text had an em dash — a silent
     no-op. Scanning every string is the only version of this check that works.
+
+    Rev H restored the board-to-Pi separation from the canon bay, so 7.0 and
+    90.0 are live figures now. The ones listed here are the ones that never
+    came back, and they may appear only where they are explained away.
     """
-    figures = ("35.75", "89.9", "71.6", "17.9 mm", "10.0 mm", "10.1 mm")
+    figures = ("35.75", "89.9", "71.6", "17.9 mm", "10.1 mm")
 
     def strings(node, path=""):
         if isinstance(node, dict):
@@ -564,6 +567,7 @@ def test_no_withdrawn_figure_survives_outside_its_retraction(spec):
         for figure in figures
         if figure in text
         and "WITHDRAWN" not in text
+        and "RESTORED" not in text
         and "revision_history" not in path
     ]
     assert not live, f"withdrawn figures still stated as fact: {live}"

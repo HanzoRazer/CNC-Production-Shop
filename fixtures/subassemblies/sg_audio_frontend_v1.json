@@ -7,7 +7,7 @@
   "form_factor": {
     "standard": "Raspberry Pi HAT, 65.0 x 56.5 mm outline, 4 x M2.5 mounting",
     "mounting": "Four M2.5 standoffs to the cavity floor, 6.0 mm",
-    "stacking": "NOT stacked on the Pi. The board sits BESIDE it, joined by a GPIO ribbon. Stacking was ruled out because a Pi plus standoffs plus a HAT is 58 mm in a 47 mm blank — see CONF-POD-LAYOUT. HAT form factor is retained anyway so a stock GPIO extension ribbon mates without a custom cable. REQUIRED RIBBON REACH IS UNDER REVISION with the body arrangement; the figures quoted in Rev C to E are withdrawn. What holds regardless: the run is measured HEADER TO HEADER, not between pocket edges, and a diagonal layout costs far more ribbon than the pocket gap suggests.",
+    "stacking": "NOT stacked on the Pi. The board sits BESIDE it, joined by a GPIO ribbon. Stacking was ruled out because a Pi plus standoffs plus a HAT is 58 mm in a 47 mm blank — see CONF-POD-LAYOUT. HAT form factor is retained anyway so a stock GPIO extension ribbon mates without a custom cable. REQUIRED RIBBON REACH IS 90.0 mm HEADER TO HEADER against a 100 mm part, from the canon bay layout. Note what that costs: it is what holds this board 7.0 mm from the Pi. What holds regardless: the run is measured HEADER TO HEADER, not between pocket edges, and a diagonal layout costs far more ribbon than the pocket gap suggests.",
     "authority_note": "Take the exact mounting-hole positions, corner radii and 40-pin connector offset from the official Raspberry Pi HAT mechanical specification, NOT from this record. Matching it exactly is what makes a stock ribbon work. THE 40-PIN CONNECTOR OFFSET IS NOW LOAD-BEARING ON THE INSTRUMENT, not just on mating: the cavity layout was solved assuming the header sits where the HAT specification puts it, and moving it changes how far the ribbon must travel. See CONF-RIBBON-REACH, where a layout ruled on the wrong measure needed 118.8 mm of a 100 mm ribbon."
   },
   "envelope": {
@@ -42,7 +42,7 @@
       "interface_id": "GPIO_HOST",
       "direction": "bidirectional",
       "connection": "gpio_header",
-      "description": "40-pin to the Raspberry Pi 5 via ribbon: I2S audio, I2C for codec and gain control, power, and the link to the onboard MCU section. Ribbon run is header to header, not pocket edge to pocket edge; the length is under revision with the body arrangement."
+      "description": "40-pin to the Raspberry Pi 5 via ribbon: I2S audio, I2C for codec and gain control, power, and the link to the onboard MCU section. Ribbon run is 90.0 mm header to header, not pocket edge to pocket edge. A longer part would buy separation from the Pi; see the operating environment."
     },
     {
       "interface_id": "CONTROLS",
@@ -103,7 +103,7 @@
     {
       "requirement_id": "REQ-NOISE",
       "requirement": "Separated analog and digital grounds joined at a single point, with analog rails on dedicated low-noise regulators. Demonstrated by ADC-path SNR of at least 95 dB A-weighted under the stated measurement conditions.",
-      "rationale": "Millivolt guitar signals share a sealed cavity set with a Raspberry Pi 5 running WiFi and with a battery pack that switches while charging. Exact separations are UNDER REVISION - see the operating environment - but every candidate arrangement puts both far closer than a conventional instrument would. Power supply and grounding failures are the usual cause of unusable noise floors in boards of this class. The requirement is bounded deliberately: it governs noise the BOARD contributes, measured from its own input onward.",
+      "rationale": "Millivolt guitar signals run 7.0 mm from a Raspberry Pi 5 with WiFi active, in one sealed chamber that also holds a switching battery pack. That separation is set by the GPIO ribbon's reach, not by available space, and it is the hardest case this board will meet. Power supply and grounding failures are the usual cause of unusable noise floors in boards of this class. The requirement is bounded deliberately: it governs noise the BOARD contributes, measured from its own input onward.",
       "criticality": "high"
     },
     {
@@ -139,10 +139,11 @@
   ],
   "environment": [
     "Sealed wooden cavity with a cover plate, no forced airflow across the board itself.",
-    "UNDER REVISION - CONF-BODY-CANNOT-HOST-ELECTRONICS. Earlier revisions of this document gave the board's distance to the Raspberry Pi as 35.75 mm, to the battery pack as 10.0 mm and to the pickup route as 17.9 mm. THOSE FIGURES ARE WITHDRAWN. They derive from a pocket layout solved against a body outline missing its largest through-body void, and on the corrected geometry no electronics pocket places at all. The body arrangement is being reworked and the distances cannot be restated until it is settled.",
+    "7.0 mm from the Raspberry Pi 5, which runs at 2.4 GHz with WiFi and Bluetooth active. RESTORED 2026-07-28 from SG-ELECTRONICS-BAY-V1, now canon. Rev C to E quoted 35.75 mm from a layout that was later withdrawn, and Rev F withdrew the figure entirely rather than restate a wrong one. THIS NUMBER IS WORSE THAN THE ONE IT REPLACES and it is not a packing accident: each 40-pin header sits at its board's centre, so a 100 mm GPIO ribbon at 10% slack allows 90 mm of run and pins the two boards 7.0 mm apart. The bay has room for 44 mm if a 150 mm ribbon is used. Price the design for 7 mm and treat anything more as relief.",
+    "The battery sits in the same bay, two 2-cell modules 67.0 mm below the boards, wired 2S2P. A pack with protection and charging electronics switches, so it is a second noise source in the same chamber - closer than in any conventional instrument, though further off than the Pi.",
     "What has NOT changed, and what a bid should be priced against: the board sits inside one sealed cavity set with a Raspberry Pi 5 running at 2.4 GHz with WiFi and Bluetooth active, and with a battery pack whose protection and charging electronics switch. Both are close - closer than in any conventional instrument. REQ-NOISE is accepted IN THE ASSEMBLED INSTRUMENT with the Pi powered, so the obligation is fixed by the venue of the measurement rather than by any distance quoted here. The numbers were context; the acceptance condition is the contract, and it is unaffected.",
     "Battery powered, so quiescent draw affects runtime directly.",
-    "Cavity shielding is available and already specified for the pickup routes; the board should assume it and not rely on it. Note it has been promoted to the leading instrument-level mitigation under CONF-SINGLE-PICKUP-EMC, because the geometric mitigation is spent — the pockets have already been moved as far apart as this body allows.",
+    "Cavity shielding is available and already specified for the pickup routes; the board should assume it and not rely on it. It is the leading instrument-level mitigation under CONF-SINGLE-PICKUP-EMC, because the geometric one is spent: the pods sit as far apart as the GPIO RIBBON permits, and only a longer ribbon would buy more.",
     "Pickup type may include single-coil operation. A true single coil has no common-mode rejection; a coil-split humbucker loses it only while split; a stacked noiseless single coil retains it. Whichever is chosen, an instrument with an onboard computer is a harder EMC problem than a conventional one, and it is solved at instrument level — shielding, pickup placement, distance from the Pi — not on this board."
   ],
   "certification": [
@@ -317,7 +318,7 @@
     }
   ],
   "document_control": {
-    "revision": "G",
+    "revision": "H",
     "issued": "2026-07-27",
     "document_class": "rfi",
     "change_contact": "TO BE NAMED BEFORE ISSUE — no change request can be raised against an unnamed owner.",
@@ -357,6 +358,11 @@
         "revision": "G",
         "date": "2026-07-28",
         "change": "Battery pack moved from 2x 18650 to 4x wired 2S2P by owner ruling. A note in section 10 asserted the pack MUST be 2x rather than 4x, which held only while the body was modelled as solid; the hollow body removed that constraint. NOTHING ELECTRICAL CHANGES - 2S2P doubles capacity at the same 6.0-8.4 V, so the supply range and REQ-POWER-ARCH are untouched and no requirement moved. Added a note that the BMS is now a 2S2P part balancing two series groups at roughly double the charge current, which bears on peak draw if the charging path shares this board's input."
+      },
+      {
+        "revision": "H",
+        "date": "2026-07-28",
+        "change": "Restored the board-to-Pi separation, withdrawn in Rev F, from SG-ELECTRONICS-BAY-V1 now that the bay is canon. IT IS 7.0 mm, NOT THE 35.75 QUOTED IN REV C TO E - materially worse, and not a packing accident: the 40-pin headers sit at each board's centre, so a 100 mm ribbon at 10% slack allows 90 mm of run and pins the boards together. The bay has room for 44 mm with a 150 mm ribbon, which makes cable length the cheapest EMC lever available. Also restored the battery as a second in-chamber noise source, 67 mm below. Ribbon reach restated as 90.0 in the form factor and on GPIO_HOST. No requirement changed."
       }
     ]
   }

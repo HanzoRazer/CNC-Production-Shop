@@ -29,6 +29,7 @@ GEOMETRY = ROOT / "fixtures" / "geometry" / "smart_guitar_cavity_geometry_v1.jso
 REGISTER = ROOT / "fixtures" / "geometry" / "smart_guitar_component_register_v1.json"
 BRIDGE = ROOT / "fixtures" / "geometry" / "headless_bridge_routing_v1.json"
 TOOLING = ROOT / "fixtures" / "geometry" / "routing_tooling_v1.json"
+BAY = ROOT / "fixtures" / "geometry" / "smart_guitar_electronics_bay_v1.json"
 PRODUCT = ROOT / "fixtures" / "products" / "smart_guitar_v1.json"
 OUT = ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md"
 
@@ -46,6 +47,7 @@ def render() -> str:
     register = json.loads(REGISTER.read_text(encoding="utf-8"))
     bridge = json.loads(BRIDGE.read_text(encoding="utf-8"))
     tooling = json.loads(TOOLING.read_text(encoding="utf-8"))
+    bay = json.loads(BAY.read_text(encoding="utf-8"))
     product = json.loads(PRODUCT.read_text(encoding="utf-8"))
     solver = _module("solve_khaya_pocket_layout")
     dxf = solver.load_export_module()
@@ -162,6 +164,30 @@ def render() -> str:
     w("")
     w("Every rout in the instrument, by face. Sizes are settled where shown;")
     w("**positions are not** — see section 4.")
+    w("")
+    reg, bd = bay["region"], bay["derived"]
+    w(f"### 3.0 Electronics bay — {reg['width_mm']} × {reg['height_mm']}")
+    w("")
+    w(f"{reg['datum']}")
+    w("")
+    w("Coordinates below are **local to the bay**. Positioning the bay on the")
+    w("outline is one transform applied to all four items at once.")
+    w("")
+    w("| Item | x | y | L | W | D |")
+    w("|---|---:|---:|---:|---:|---:|")
+    for it in bay["placements"]:
+        w(f"| `{it['item_id']}` | {it['x_mm']} | {it['y_mm']} | {it['width_mm']} "
+          f"| {it['height_mm']} | {it['depth_mm']} |")
+    w("")
+    w(f"**{bd['width_used_mm']} × {bd['height_used_mm']} used of "
+      f"{reg['width_mm']} × {reg['height_mm']}** — {bd['width_spare_mm']} spare across, "
+      f"{bd['height_spare_mm']} down.")
+    w("")
+    w("> The **GPIO ribbon**, not the bay, holds the Pi and the analog board")
+    w("> 7.0 mm apart: the headers sit at each board's centre, so a 100 mm part")
+    w("> at 10% slack allows 90.0 mm of run. The bay has room for 44 mm with a")
+    w("> 150 mm ribbon. If the EMC measurement demands distance, cable length is")
+    w("> the cheapest lever in the instrument.")
     w("")
     w("### 3.1 Back face — electronics")
     w("")
