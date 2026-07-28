@@ -219,7 +219,7 @@ measurement, not a calculation.
 | **Pickup type and route** | Open upstream; route dimensions follow from it. |
 | **Skin thickness, core species, finish** | Not selected. Skin thickness changes every internal depth. |
 
-7 conflicts remain open against this geometry:
+6 conflicts remain open against this geometry:
 
 - **`CONF-BATTERY-PLACEMENT`** — electronics_components.battery_pack.location
 - **`CONF-NVME-PLACEMENT`** — rear_electronics_cavity.contains[NVMe SSD]
@@ -227,7 +227,6 @@ measurement, not a calculation.
 - **`CONF-PICKUP-ROUTE-DIMS`** — pickup route dimensions
 - **`CONF-POD-EMC-CLEARANCE`** — back-face pocket placement, ranked by clearance rather than by fit
 - **`CONF-SINGLE-PICKUP-EMC`** — whether a single coil is viable in one cavity set with a Raspberry Pi 5
-- **`CONF-BAY-BOUNDARY-BASIS`** — whether the 210 x 125 electronics bay already excludes its own rim and webs
 
 ## 5. Suggested modelling order
 

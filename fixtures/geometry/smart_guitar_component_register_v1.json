@@ -619,11 +619,12 @@
       "sources": [
         "owner measurement 2026-07-28 via the Body Outline Editor: the space below the largest void, measured from the mid-line, is 210 x 125",
         "derived: the four items abut at 119.5 tall. With an 8.0 web top and bottom the usable height is 109.0 and the batteries overflow by 10.5; with 8.0 to the void above and a 12.7 rim below it is 104.3 and they overflow by 15.2",
-        "derived: side webs cost 16.0 of width, dropping the maximum pod separation from 44.0 to 28.0"
+        "derived: side webs cost 16.0 of width, dropping the maximum pod separation from 44.0 to 28.0",
+        "owner ruling 2026-07-28: the region IS the usable opening"
       ],
-      "status": "unresolved",
-      "ruling": "THE CONSEQUENCE IS SETTLED EVEN THOUGH THE BASIS IS NOT. Whether the measurement was taken to the material edges or to the usable opening is the owner's to state; it cannot be derived. But under EVERY reading the pods alone fit the bay comfortably and it is the BATTERIES that overflow, so the priority rule is ruled regardless: THE BAY IS FOR THE PODS, AND THE BATTERY MODULES ARE ITS FIRST-OUT TENANTS. POD_PI and POD_HAT are tied together by a ribbon and must share a bay; the battery modules connect by wire and can sit anywhere in the hollow body.\n\nSG-ELECTRONICS-BAY-V1 AS RULED ASSUMES THE OPENING READING - four items, 42.0 mm of pod separation. If the rim reading is correct instead, two things follow and neither is fatal: the batteries relocate, and pod separation drops from 42.0 to 28.0. Answer the basis question and the layout follows without re-solving.",
-      "ruled_by": "consequence ruled 2026-07-28; the measurement basis awaits the owner"
+      "status": "ruled",
+      "ruling": "RULED READING A, owner 2026-07-28: THE 210 x 125 IS THE USABLE OPENING. Its rim and webs are already excluded, so items may be placed to the boundary and no further margin is deducted. Usable area is the full 210.0 x 125.0.\n\nSG-ELECTRONICS-BAY-V1 STANDS AS RULED. It was written against this reading: all four items in the bay, pods 42.0 mm apart, 208.0 x 122.0 used. Nothing moves.\n\nThe priority rule ruled alongside it is retained even though it is no longer needed: THE BAY IS FOR THE PODS AND THE BATTERY MODULES ARE ITS FIRST-OUT TENANTS, because the pods are ribbon-tied to each other and the modules connect by wire. If the bay is ever reduced - by the outline, by the bridge block, by anything - that is the order things leave in, and it does not need re-deriving.\n\nSeparation is held at 42.0 rather than the 44.0 the opening would allow. The last 2.0 mm buys nothing measurable in EMC terms and is worth more as edge tolerance, since POD_HAT would otherwise sit exactly on the bay boundary.",
+      "ruled_by": "owner ruling 2026-07-28"
     }
   ],
   "provenance": {
