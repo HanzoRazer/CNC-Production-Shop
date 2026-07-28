@@ -243,6 +243,91 @@ def validate_routing_tooling() -> list[str]:
     return errors
 
 
+def validate_electronics_bay() -> list[str]:
+    """Re-pack the bay rather than trusting its coordinates.
+
+    A placement record is only worth the check behind it: every item inside the
+    region, every pair separated by the minimum web, and the pod footprints
+    still matching the cavities they are derived from. Coordinates typed once
+    and never re-checked are how a layout drifts from the parts it holds.
+    """
+    errors: list[str] = []
+    path = FIXTURES / "smart_guitar_electronics_bay_v1.json"
+    doc = load_json(path)
+    region = doc["region"]
+    web = doc["min_web_mm"]
+    items = doc["placements"]
+
+    for it in items:
+        if it["x_mm"] < 0 or it["y_mm"] < 0:
+            errors.append(f"FAIL {it['item_id']}: negative origin")
+        if it["x_mm"] + it["width_mm"] > region["width_mm"] + 1e-6:
+            errors.append(f"FAIL {it['item_id']}: runs past the bay width")
+        if it["y_mm"] + it["height_mm"] > region["height_mm"] + 1e-6:
+            errors.append(f"FAIL {it['item_id']}: runs past the bay height")
+
+    for i, a in enumerate(items):
+        for b in items[i + 1 :]:
+            gap_x = max(a["x_mm"] - (b["x_mm"] + b["width_mm"]),
+                        b["x_mm"] - (a["x_mm"] + a["width_mm"]))
+            gap_y = max(a["y_mm"] - (b["y_mm"] + b["height_mm"]),
+                        b["y_mm"] - (a["y_mm"] + a["height_mm"]))
+            gap = max(gap_x, gap_y)
+            if gap < web - 1e-6:
+                errors.append(
+                    f"FAIL {a['item_id']} to {b['item_id']}: {gap:.2f} apart, "
+                    f"minimum web is {web}"
+                )
+
+    # Placements that name a cavity must match the cavity they name.
+    cavities = {c["cavity_id"]: c for c in load_json(GEOMETRY)["cavities"]}
+    for it in items:
+        ref = it.get("cavity_ref")
+        if not ref:
+            continue
+        cav = cavities.get(ref)
+        if cav is None:
+            errors.append(f"FAIL {it['item_id']}: cavity_ref {ref!r} is not a derived cavity")
+            continue
+        for key, cav_key in (
+            ("width_mm", "derived_length_mm"),
+            ("height_mm", "derived_width_mm"),
+            ("depth_mm", "derived_depth_mm"),
+        ):
+            if not mm_equal(it[key], cav[cav_key]):
+                errors.append(
+                    f"FAIL {it['item_id']}: {key} {it[key]} != {ref} {cav_key} {cav[cav_key]}"
+                )
+
+    derived = doc["derived"]
+    width_used = max(i["x_mm"] + i["width_mm"] for i in items)
+    height_used = max(i["y_mm"] + i["height_mm"] for i in items)
+    for key, want in (
+        ("width_used_mm", width_used),
+        ("height_used_mm", height_used),
+        ("width_spare_mm", region["width_mm"] - width_used),
+        ("height_spare_mm", region["height_mm"] - height_used),
+        ("deepest_placement_mm", max(i["depth_mm"] for i in items)),
+    ):
+        if not mm_equal(derived[key], as_mm(want)):
+            errors.append(f"FAIL bay {key} {derived[key]} != {as_mm(want)}")
+    verdict = (
+        "fits"
+        if width_used <= region["width_mm"] and height_used <= region["height_mm"]
+        else "does_not_fit"
+    )
+    if derived["verdict"] != verdict:
+        errors.append("FAIL bay verdict does not follow from the packing")
+
+    if not errors:
+        print(f"PASS {path.relative_to(ROOT).as_posix()}")
+        print(f"  {len(items)} items in {region['width_mm']} x {region['height_mm']}: "
+              f"{derived['width_used_mm']} x {derived['height_used_mm']} used, "
+              f"{derived['width_spare_mm']} x {derived['height_spare_mm']} spare - "
+              f"{derived['verdict']}")
+    return errors
+
+
 def validate_frontend_spec() -> list[str]:
     """Keep the subassembly brief and the component register from drifting.
 
@@ -480,6 +565,7 @@ def main() -> int:
         all_errors.extend(validate_frontend_spec())
         all_errors.extend(validate_bridge_routing())
         all_errors.extend(validate_routing_tooling())
+        all_errors.extend(validate_electronics_bay())
     if not all_errors:
         all_errors.extend(validate_derivation())
     if not all_errors:

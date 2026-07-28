@@ -195,7 +195,7 @@ def test_spec_records_that_the_instrument_constrains_the_board(spec):
     """Adjacency and pack size stopped being preferences; say so."""
     notes = " ".join(spec["notes"])
     assert "must be ADJACENT" in notes
-    assert "2x 18650" in notes
+    assert "BATTERY CONSTRAINT HAS BEEN LIFTED" in notes
     assert "critical path for BOTH product lines again" in notes
 
 
@@ -379,8 +379,8 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "F"
-    assert len(dc["revision_history"]) >= 6
+    assert dc["revision"] == "G"
+    assert len(dc["revision_history"]) >= 7
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The contact is not yet named, and must say so rather than be absent.
     assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
@@ -509,8 +509,34 @@ def test_rev_f_kept_the_obligation_even_though_it_dropped_the_numbers(spec):
                 if r["criticality"] == "shippable_blocker"]) == 5
     assert spec["envelope"]["board_length_mm"] == 65.0
     assert spec["envelope"]["assembly_height_target_mm"] == 24.0
-    latest = spec["document_control"]["revision_history"][-1]
-    assert "NO REQUIREMENT CHANGED" in latest["change"]
+    rev_f = next(
+        h for h in spec["document_control"]["revision_history"] if h["revision"] == "F"
+    )
+    assert "NO REQUIREMENT CHANGED" in rev_f["change"]
+
+
+def test_rev_g_moved_the_pack_without_moving_anything_electrical(spec):
+    """Four cells in 2S2P is capacity, not voltage.
+
+    The constraint it lifted was structural — the pack had to be small while
+    the body was modelled as solid — so the note that enforced it had to go,
+    but the supply range it was written beside did not move at all.
+    """
+    rev_g = next(
+        h for h in spec["document_control"]["revision_history"] if h["revision"] == "G"
+    )
+    assert "2S2P" in rev_g["change"]
+    assert "NOTHING ELECTRICAL CHANGES" in rev_g["change"]
+
+    supply = spec["electrical"]["supply"]
+    assert supply["input_min_v"] == 6.0 and supply["input_max_v"] == 8.4
+    power = next(r for r in spec["requirements"] if r["requirement_id"] == "REQ-POWER-ARCH")
+    assert "6.0 to 8.4 V" in power["requirement"]
+
+    # The new BMS topology is a real handover item, not a footnote.
+    notes = " ".join(spec["notes"])
+    assert "BMS TOPOLOGY IS NOW 2S2P" in notes
+    assert "peak-draw" in notes
 
 
 def test_no_withdrawn_figure_survives_outside_its_retraction(spec):

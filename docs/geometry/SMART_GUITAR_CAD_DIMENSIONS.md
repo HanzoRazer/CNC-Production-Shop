@@ -46,7 +46,7 @@ drawing them as literals.
 |---|---:|---:|---:|---:|---:|
 | Raspberry Pi 5 (8 GB) | 85.0 | 56.0 | 18.0 | 6.0 | 3.0 |
 | Smart Guitar audio front end (custom HAT) | 65.0 | 56.5 | 24.0 | 6.0 | 3.0 |
-| Battery pack + BMS (2x 18650, 2S) | 80.0 | 45.0 | 18.0 | 0.0 | 3.0 |
+| Battery module, 2x 18650 (TWO fitted, wired 2S2P) | 80.0 | 45.0 | 18.0 | 0.0 | 3.0 |
 | 40 mm cooling fan | 40.0 | 40.0 | 10.0 | 0.0 | 0.0 |
 | NVMe SSD, M.2 2280, 128 GB | 80.0 | 22.0 | 3.5 | 0.0 | 0.0 |
 | Pi 5 GPIO to audio front-end ribbon/riser | 100.0 | 26.0 | 2.0 | 0.0 | 3.0 |

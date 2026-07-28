@@ -1,0 +1,78 @@
+{
+  "bay_id": "SG-ELECTRONICS-BAY-V1",
+  "product_ref": "PRODUCT-SMART-GUITAR-V1",
+  "status": "draft",
+  "units": "mm",
+  "region": {
+    "width_mm": 210.0,
+    "height_mm": 125.0,
+    "origin": "top-left of the region, +x across the body, +y toward the tail",
+    "datum": "The interior space below the largest void, measured from the instrument mid-line. Where this region sits on the outline is deliberately not a number here - the outline is not settled, and every placement below is local to the bay, so the bay can be positioned later without any of them moving."
+  },
+  "min_web_mm": 0.0,
+  "placements": [
+    {
+      "item_id": "POD_PI",
+      "cavity_ref": "POD_PI",
+      "x_mm": 0.0,
+      "y_mm": 0.0,
+      "width_mm": 93.0,
+      "height_mm": 64.0,
+      "depth_mm": 27.0,
+      "note": "Pi 5 on 6.0 standoffs. Cavity dimensions - the 4.0 clearance per side around the board is already inside them."
+    },
+    {
+      "item_id": "POD_HAT",
+      "cavity_ref": "POD_HAT",
+      "x_mm": 95.0,
+      "y_mm": 0.0,
+      "width_mm": 73.0,
+      "height_mm": 64.5,
+      "depth_mm": 33.0,
+      "note": "Audio front-end board on 6.0 standoffs. Deepest item in the bay; still governs body thickness."
+    },
+    {
+      "item_id": "BATT_A",
+      "cavity_ref": "BATTERY_CHAMBER",
+      "x_mm": 0.0,
+      "y_mm": 67.0,
+      "width_mm": 90.0,
+      "height_mm": 55.0,
+      "depth_mm": 21.0,
+      "note": "Two 18650 cells - one parallel string of the 2S2P pack."
+    },
+    {
+      "item_id": "BATT_B",
+      "cavity_ref": "BATTERY_CHAMBER",
+      "x_mm": 95.0,
+      "y_mm": 67.0,
+      "width_mm": 90.0,
+      "height_mm": 55.0,
+      "depth_mm": 21.0,
+      "note": "Two 18650 cells - the other parallel string, wired to BATT_A."
+    }
+  ],
+  "derived": {
+    "width_used_mm": 185.0,
+    "height_used_mm": 122.0,
+    "width_spare_mm": 25.0,
+    "height_spare_mm": 3.0,
+    "deepest_placement_mm": 33.0,
+    "verdict": "fits"
+  },
+  "provenance": {
+    "source": "owner_measurement",
+    "source_ref": "Body Outline Editor, owner-supplied 2026-07-28",
+    "snapshot_date": "2026-07-28",
+    "confidence": "draft",
+    "note": "Region dimensions are the owner's, taken from the Body Outline Editor against the design as it exists. Marked draft because the body OUTLINE is unsettled, not because the figure is doubted."
+  },
+  "notes": [
+    "THE WHOLE SET FITS: 185.0 x 122.0 of 210.0 x 125.0. Pods across the top, the two battery packs beneath.",
+    "MIN_WEB IS ZERO HERE BY DESIGN, and that is not a shortcut. This is ONE HOLLOW CHAMBER, not four routed pockets in solid wood, so there are no inter-item webs to maintain - and every dimension listed is a CAVITY dimension that already carries its own mounting margin. The 8.0 web still governs at the bay boundary, where there is real material.",
+    "THE VERTICAL BUDGET IS THE TIGHT ONE. Abutting, the two rows are 122.0 tall, leaving 3.0 mm as the ENTIRE allowance for clearance between them. At 8.0 of separation the set is 127.5 and does NOT fit. 5.0 fits at 124.5, with almost nothing left. Treat 5.5 as the total vertical budget and spend it deliberately.",
+    "THE BATTERY IS TWO PACKS, NOT ONE. Four cells in a single row would be 92.2 deep - deeper than either pod, and it would own the full depth of wherever it sat. Two 2-cell chambers at 55.0 are shallower than both pods. Electrically identical: still 2S2P, still 6.0-8.4 V, still double the runtime, no board revision.",
+    "The two parallel strings in separate chambers is ordinary in laptop and e-bike packs. At these currents the interconnect difference is negligible, but the BMS must see one 2S2P pack, not two independent 2S packs.",
+    "COORDINATES ARE LOCAL TO THE BAY, which is why this record can exist before the outline does. Positioning the bay is one transform applied to all four placements at once."
+  ]
+}

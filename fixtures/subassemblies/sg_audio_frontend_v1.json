@@ -180,9 +180,10 @@
     "Scope boundary: this record carries the envelope, the interfaces and the behavioural requirements. It deliberately does NOT specify circuit topology, part numbers or component values, which are the designer's to choose against these constraints.",
     "The envelope is TIED TO THE CAVITY. This board appears in the geometry component register as SG_AUDIO_FRONTEND, and the pocket that holds it is derived from those dimensions. Changing the board here changes the pocket there, and a validator fails if the two disagree.",
     "This subassembly is on the critical path for BOTH product lines again. The Khaya briefly reverted to passive on 2026-07-27 when the dual-humbucker solid body could not host both pockets, then restored compute the same day once a single Telecaster-style pickup freed the space. NRE and certification therefore amortise across two lines rather than one — materially better for the budget model than the single-line case.",
-    "The instrument constrains this board more than the board constrains the instrument. Two derived facts are already load-bearing: the Pi and this board must be ADJACENT, because a 150 mm ribbon channel costs more body area than the solid body has; and the battery must be the 2x 18650 pack rather than 4x. Those stopped being preferences when the Khaya went self-contained.",
+    "The instrument constrains this board more than the board constrains the instrument. The Pi and this board must be ADJACENT, because the ribbon reach is measured header to header and a diagonal layout costs far more cable than the pocket gap suggests. THE BATTERY CONSTRAINT HAS BEEN LIFTED: this note previously said the pack must be 2x 18650 rather than 4x, which was true only while the body was modelled as solid. The owner ruled 4x on 2026-07-28, wired 2S2P. THAT CHANGES NOTHING ELECTRICAL - 2S2P doubles capacity at the same 6.0-8.4 V, so the supply range in section 3 and REQ-POWER-ARCH both stand unaltered.",
     "The electrical envelope was added on 2026-07-27 after review of the Rev A tender document, which carried the mechanical brief without any electrical specification. Every value in that block is an engineering estimate awaiting confirmation, and the brief marks them as such.",
-    "DOCUMENT CLASS IS 'rfi', NOT A TENDER. The record status is 'concept': codec unselected, quantity and schedule unstated, several electrical values proposed rather than confirmed. Those are the right conditions for shortlisting designers and costing the work, and the wrong conditions for buying a design. Commercial terms including IP transfer are therefore OUT of scope at this revision — asking a contractor to price IP transfer against an unresolved specification produces either a padded number or an argument. Move to 'tender' once the codec is named, the quantity is committed and the electrical values are confirmed."
+    "DOCUMENT CLASS IS 'rfi', NOT A TENDER. The record status is 'concept': codec unselected, quantity and schedule unstated, several electrical values proposed rather than confirmed. Those are the right conditions for shortlisting designers and costing the work, and the wrong conditions for buying a design. Commercial terms including IP transfer are therefore OUT of scope at this revision — asking a contractor to price IP transfer against an unresolved specification produces either a padded number or an argument. Move to 'tender' once the codec is named, the quantity is committed and the electrical values are confirmed.",
+    "BMS TOPOLOGY IS NOW 2S2P, not 2S. The pack balances two series groups at roughly double the charge current. Ordinary, but it is a different part from a 2S BMS, and if the charging path shares this board's input it bears on the peak-draw figure in section 3. Raise it if your power design assumes a 2S charger."
   ],
   "electrical": {
     "power_architecture": {
@@ -232,7 +233,7 @@
       "captured_by": "engineering",
       "capture_date": "2026-07-27",
       "confidence": "draft",
-      "note": "EVERY VALUE IN THIS BLOCK IS PROPOSED, NOT CONFIRMED. They were derived from the instrument's context rather than measured or specified by the owner, and each needs confirmation before tender. The load-bearing ones: input_full_scale_vpp is 4.0 and is NO LONGER blocked on CONF-PICKUP-TYPE: the owner confirmed on 2026-07-27 that pickups are fluid, so the input is specified as headroom plus gain range rather than as a level, making the board indifferent to the pickup decision; adc_snr_db_a_weighted 95 is a demanding but achievable figure for this environment and is the number a bid will be priced against; supply range 6.0-8.4 V follows from a 2x 18650 pack in series and changes entirely if the BMS presents a regulated rail instead; io_provision counts are a guess at the control layout, with an addressable channel included so fret markers do not force a connector change later."
+      "note": "EVERY VALUE IN THIS BLOCK IS PROPOSED, NOT CONFIRMED. They were derived from the instrument's context rather than measured or specified by the owner, and each needs confirmation before tender. The load-bearing ones: input_full_scale_vpp is 4.0 and is NO LONGER blocked on CONF-PICKUP-TYPE: the owner confirmed on 2026-07-27 that pickups are fluid, so the input is specified as headroom plus gain range rather than as a level, making the board indifferent to the pickup decision; adc_snr_db_a_weighted 95 is a demanding but achievable figure for this environment and is the number a bid will be priced against; supply range 6.0-8.4 V follows from TWO CELLS IN SERIES and is unchanged by the 2026-07-28 move to a 4x pack, because that pack is 2S2P - four cells, still two in series - so the range is set by the series count and not the cell count; it changes entirely if the BMS presents a regulated rail instead; io_provision counts are a guess at the control layout, with an addressable channel included so fret markers do not force a connector change later."
     }
   },
   "acceptance": [
@@ -316,7 +317,7 @@
     }
   ],
   "document_control": {
-    "revision": "F",
+    "revision": "G",
     "issued": "2026-07-27",
     "document_class": "rfi",
     "change_contact": "TO BE NAMED BEFORE ISSUE — no change request can be raised against an unnamed owner.",
@@ -351,6 +352,11 @@
         "revision": "F",
         "date": "2026-07-27",
         "change": "WITHDREW every physical separation. The distances introduced in Rev C - 35.75 mm to the Pi, 10.0 mm to the battery, 17.9 mm to the pickup route - and the 89.9 mm ribbon reach all derive from a pocket layout solved against a body outline missing its largest through-body void. On the corrected geometry no electronics pocket places at all. Replaced them with what is still true and still priceable: the board shares a sealed cavity set with a Pi 5 and a switching battery pack, and REQ-NOISE is accepted in the assembled instrument, so the obligation is fixed by the venue of the measurement rather than by any quoted distance. NO REQUIREMENT CHANGED. The envelope, interfaces and acceptance matrix are untouched - the pocket is derived from the board, not the board from the pocket."
+      },
+      {
+        "revision": "G",
+        "date": "2026-07-28",
+        "change": "Battery pack moved from 2x 18650 to 4x wired 2S2P by owner ruling. A note in section 10 asserted the pack MUST be 2x rather than 4x, which held only while the body was modelled as solid; the hollow body removed that constraint. NOTHING ELECTRICAL CHANGES - 2S2P doubles capacity at the same 6.0-8.4 V, so the supply range and REQ-POWER-ARCH are untouched and no requirement moved. Added a note that the BMS is now a 2S2P part balancing two series groups at roughly double the charge current, which bears on peak draw if the charging path shares this board's input."
       }
     ]
   }
