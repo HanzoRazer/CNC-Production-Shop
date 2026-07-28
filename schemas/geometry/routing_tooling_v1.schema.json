@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "routing_tooling_v1.schema.json",
+  "title": "Routing tooling and derived corner radii",
+  "description": "The cutter is specified once and every internal corner radius follows from it. Recorded because the alternative is a modeller inventing radii and a machinist discovering they cannot be cut. Reach is checked as well as radius: a corner radius is free, a cut depth beyond the tool's flute length is not.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tooling_id",
+    "product_ref",
+    "status",
+    "units",
+    "cutter_diameter_mm",
+    "derived",
+    "cavities",
+    "provenance"
+  ],
+  "properties": {
+    "tooling_id": { "type": "string", "pattern": "^[A-Z0-9-]+$" },
+    "product_ref": { "type": "string" },
+    "status": { "enum": ["concept", "draft", "ruled"] },
+    "units": { "const": "mm" },
+    "cutter_diameter_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Finishing cutter. Owner-specified; everything else here is derived from it."
+    },
+    "standard_cut_length_mm": {
+      "type": "number",
+      "description": "Flute length of a stock cutter at this diameter."
+    },
+    "long_series_cut_length_mm": {
+      "type": "number",
+      "description": "Flute length available in long series at this diameter."
+    },
+    "part_clearance_per_side_mm": {
+      "type": "number",
+      "description": "Clearance carried around each board, against which the corner intrusion is checked."
+    },
+    "derived": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "internal_corner_radius_mm",
+        "square_corner_intrusion_diagonal_mm",
+        "square_corner_intrusion_per_axis_mm",
+        "clearance_verdict"
+      ],
+      "properties": {
+        "internal_corner_radius_mm": { "type": "number" },
+        "square_corner_intrusion_diagonal_mm": {
+          "type": "number",
+          "description": "How far the leftover material reaches from the true corner toward the pocket, r*(sqrt(2)-1)."
+        },
+        "square_corner_intrusion_per_axis_mm": { "type": "number" },
+        "clearance_verdict": { "enum": ["absorbed", "encroaches"] }
+      }
+    },
+    "cavities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cavity_id",
+          "depth_mm",
+          "min_plan_dimension_mm",
+          "corner_radius_mm",
+          "tool_entry",
+          "reach_class"
+        ],
+        "properties": {
+          "cavity_id": { "type": "string" },
+          "depth_mm": { "type": "number" },
+          "min_plan_dimension_mm": { "type": "number" },
+          "corner_radius_mm": { "type": "number" },
+          "tool_entry": {
+            "enum": ["fits", "will_not_enter"],
+            "description": "Whether the cutter is narrower than the pocket's smallest plan dimension."
+          },
+          "reach_class": {
+            "enum": ["standard", "long_series", "beyond_long_series"]
+          },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "snapshot_date", "confidence"],
+      "properties": {
+        "source": { "type": "string" },
+        "source_ref": { "type": "string" },
+        "snapshot_date": { "type": "string" },
+        "confidence": { "enum": ["draft", "estimate", "confirmed"] },
+        "note": { "type": "string" }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

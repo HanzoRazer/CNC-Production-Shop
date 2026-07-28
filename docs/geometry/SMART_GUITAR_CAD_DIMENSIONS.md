@@ -99,12 +99,12 @@ Every rout in the instrument, by face. Sizes are settled where shown;
 
 Cut from the REAR. Depths are from the rear surface.
 
-| Rout | L | W | D | Holds |
-|---|---:|---:|---:|---|
-| `POD_PI` | 93.0 | 64.0 | 27.0 | Pi 5 on 6.0 standoffs |
-| `POD_HAT` | 73.0 | 64.5 | 33.0 | audio front-end board on 6.0 standoffs |
-| `WIRE_CHANNEL_PI_HAT` | 100.0 | 30.0 | 5.0 | GPIO ribbon between the two pods |
-| `BATTERY_CHAMBER` | 90.0 | 55.0 | 21.0 | pack + BMS |
+| Rout | L | W | D | Corner r | Holds |
+|---|---:|---:|---:|---:|---|
+| `POD_PI` | 93.0 | 64.0 | 27.0 | 3.175 | Pi 5 on 6.0 standoffs |
+| `POD_HAT` | 73.0 | 64.5 | 33.0 | 3.175 | audio front-end board on 6.0 standoffs |
+| `WIRE_CHANNEL_PI_HAT` | 100.0 | 30.0 | 5.0 | 3.175 | GPIO ribbon between the two pods |
+| `BATTERY_CHAMBER` | 90.0 | 55.0 | 21.0 | 3.175 | pack + BMS |
 
 The channel is a **shallow surface groove**, not a pocket: 5.0 deep against
 the pods' 27.0 and 33.0. It only has to clear a 2.0 mm ribbon plus dressing.
@@ -144,16 +144,41 @@ that must land on solid material.
 | Control cavity | Seen in the render under a cover plate; never dimensioned. |
 | Cover-plate rebates | Not specified for any cavity. |
 
-### 3.4 Corner radii — a gap
+### 3.4 Tooling — cutter 6.35, radius 3.175
 
-**Only the pickup routes carry a corner radius, and the two sources disagree**
-(4.0 against 3.0). Nothing in section 3.1 has one.
+**Finishing cutter is 6.35 mm**, owner-specified. Every
+internal corner in 3.1 is therefore **r3.175** — derived,
+not chosen per pocket. Change the cutter and every radius moves with it.
 
-In practice the electronics pockets will take whatever the tool leaves: a
-6.35 mm cutter gives a 3.175 mm internal radius. That is already absorbed —
-the pockets carry 4.0 mm of clearance per side around each board, so a
-radiused corner against a square PCB corner still clears. Worth stating
-rather than discovering: **specify the cutter, and the radii follow.**
+| | Value |
+|---|---:|
+| Cutter diameter | **6.35** |
+| Internal corner radius | **3.175** |
+| Square-corner intrusion, diagonal | 1.315 |
+| — per axis | 0.93 |
+| Clearance carried per side | 4.0 |
+| Verdict | **absorbed** |
+
+A square PCB corner cannot reach into a radiused pocket corner, but the
+leftover material only reaches 0.93 per axis against 4.0 of clearance.
+**No corner relief is needed and none should be added.**
+
+**Reach is the real constraint, not radius.**
+
+| Rout | Depth | Cutter needed |
+|---|---:|---|
+| `POD_PI` | 27.0 | **long series** |
+| `POD_HAT` | 33.0 | **long series** |
+| `WIRE_CHANNEL_PI_HAT` | 5.0 | stock |
+| `BATTERY_CHAMBER` | 21.0 | stock |
+
+Stock flute length at this diameter is about 25.4, long series about 38.1. `POD_PI` and `POD_HAT` exceed the first.
+A 6.35 tool at that stickout deflects, so rough with something larger and
+leave the 6.35 a finishing pass.
+
+The bridge rout is **excluded** — its radii come from the vendor drawing,
+which gives R6 for the TransTrem. A casting sits in its own designed
+pocket, not in whatever the shop's cutter leaves.
 
 ## 4. Not established — cannot be drawn yet
 

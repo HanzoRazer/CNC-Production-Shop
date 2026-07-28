@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parent.parent
 GEOMETRY = ROOT / "fixtures" / "geometry" / "smart_guitar_cavity_geometry_v1.json"
 REGISTER = ROOT / "fixtures" / "geometry" / "smart_guitar_component_register_v1.json"
 BRIDGE = ROOT / "fixtures" / "geometry" / "headless_bridge_routing_v1.json"
+TOOLING = ROOT / "fixtures" / "geometry" / "routing_tooling_v1.json"
 PRODUCT = ROOT / "fixtures" / "products" / "smart_guitar_v1.json"
 OUT = ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md"
 
@@ -44,6 +45,7 @@ def render() -> str:
     geometry = json.loads(GEOMETRY.read_text(encoding="utf-8"))
     register = json.loads(REGISTER.read_text(encoding="utf-8"))
     bridge = json.loads(BRIDGE.read_text(encoding="utf-8"))
+    tooling = json.loads(TOOLING.read_text(encoding="utf-8"))
     product = json.loads(PRODUCT.read_text(encoding="utf-8"))
     solver = _module("solve_khaya_pocket_layout")
     dxf = solver.load_export_module()
@@ -165,8 +167,9 @@ def render() -> str:
     w("")
     w("Cut from the REAR. Depths are from the rear surface.")
     w("")
-    w("| Rout | L | W | D | Holds |")
-    w("|---|---:|---:|---:|---|")
+    radii = {c["cavity_id"]: c for c in tooling["cavities"]}
+    w("| Rout | L | W | D | Corner r | Holds |")
+    w("|---|---:|---:|---:|---:|---|")
     holds = {
         "POD_PI": "Pi 5 on 6.0 standoffs",
         "POD_HAT": "audio front-end board on 6.0 standoffs",
@@ -174,8 +177,10 @@ def render() -> str:
         "WIRE_CHANNEL_PI_HAT": "GPIO ribbon between the two pods",
     }
     for c in geometry["cavities"]:
+        t = radii[c["cavity_id"]]
         w(f"| `{c['cavity_id']}` | {c['derived_length_mm']} | {c['derived_width_mm']} "
-          f"| {c['derived_depth_mm']} | {holds.get(c['cavity_id'], '')} |")
+          f"| {c['derived_depth_mm']} | {t['corner_radius_mm']} "
+          f"| {holds.get(c['cavity_id'], '')} |")
     w("")
     w("The channel is a **shallow surface groove**, not a pocket: 5.0 deep against")
     w("the pods' 27.0 and 33.0. It only has to clear a 2.0 mm ribbon plus dressing.")
@@ -209,16 +214,48 @@ def render() -> str:
     w("| Control cavity | Seen in the render under a cover plate; never dimensioned. |")
     w("| Cover-plate rebates | Not specified for any cavity. |")
     w("")
-    w("### 3.4 Corner radii — a gap")
+    d = tooling["derived"]
+    deep = [c for c in tooling["cavities"] if c["reach_class"] != "standard"]
+    w(f"### 3.4 Tooling — cutter {tooling['cutter_diameter_mm']}, "
+      f"radius {d['internal_corner_radius_mm']}")
     w("")
-    w("**Only the pickup routes carry a corner radius, and the two sources disagree**")
-    w("(4.0 against 3.0). Nothing in section 3.1 has one.")
+    w(f"**Finishing cutter is {tooling['cutter_diameter_mm']} mm**, owner-specified. Every")
+    w(f"internal corner in 3.1 is therefore **r{d['internal_corner_radius_mm']}** — derived,")
+    w("not chosen per pocket. Change the cutter and every radius moves with it.")
     w("")
-    w("In practice the electronics pockets will take whatever the tool leaves: a")
-    w("6.35 mm cutter gives a 3.175 mm internal radius. That is already absorbed —")
-    w("the pockets carry 4.0 mm of clearance per side around each board, so a")
-    w("radiused corner against a square PCB corner still clears. Worth stating")
-    w("rather than discovering: **specify the cutter, and the radii follow.**")
+    w("| | Value |")
+    w("|---|---:|")
+    w(f"| Cutter diameter | **{tooling['cutter_diameter_mm']}** |")
+    w(f"| Internal corner radius | **{d['internal_corner_radius_mm']}** |")
+    w(f"| Square-corner intrusion, diagonal | {d['square_corner_intrusion_diagonal_mm']} |")
+    w(f"| — per axis | {d['square_corner_intrusion_per_axis_mm']} |")
+    w(f"| Clearance carried per side | {tooling['part_clearance_per_side_mm']} |")
+    w(f"| Verdict | **{d['clearance_verdict']}** |")
+    w("")
+    w("A square PCB corner cannot reach into a radiused pocket corner, but the")
+    w(f"leftover material only reaches {d['square_corner_intrusion_per_axis_mm']} per axis "
+      f"against {tooling['part_clearance_per_side_mm']} of clearance.")
+    w("**No corner relief is needed and none should be added.**")
+    w("")
+    if deep:
+        w("**Reach is the real constraint, not radius.**")
+        w("")
+        w("| Rout | Depth | Cutter needed |")
+        w("|---|---:|---|")
+        for c in tooling["cavities"]:
+            need = {"standard": "stock", "long_series": "**long series**",
+                    "beyond_long_series": "**beyond long series**"}[c["reach_class"]]
+            w(f"| `{c['cavity_id']}` | {c['depth_mm']} | {need} |")
+        w("")
+        w(f"Stock flute length at this diameter is about {tooling['standard_cut_length_mm']}, "
+          f"long series about {tooling['long_series_cut_length_mm']}. "
+          f"{' and '.join('`' + c['cavity_id'] + '`' for c in deep)} exceed the first.")
+        w("A 6.35 tool at that stickout deflects, so rough with something larger and")
+        w("leave the 6.35 a finishing pass.")
+        w("")
+    w("The bridge rout is **excluded** — its radii come from the vendor drawing,")
+    w("which gives R6 for the TransTrem. A casting sits in its own designed")
+    w("pocket, not in whatever the shop's cutter leaves.")
     w("")
 
     w("## 4. Not established — cannot be drawn yet")

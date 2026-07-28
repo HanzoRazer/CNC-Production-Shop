@@ -1095,12 +1095,12 @@ def test_dimension_sheet_separates_what_can_be_cut_from_what_cannot():
     assert "tremolo" in open_section, "the fixed-vs-trem contradiction must be flagged"
 
 
-def test_routing_schedule_covers_every_face_and_the_radius_gap():
-    """A modeller needs cut depths per face, and to know what is missing.
+def test_routing_schedule_covers_every_face_and_the_tooling():
+    """A modeller needs cut depths per face, and the radii that follow.
 
-    Only the pickup routes carry a corner radius and the two sources disagree;
-    nothing in the electronics schedule has one at all. That is a real gap for
-    CNC and it must be stated rather than left to be discovered at the machine.
+    The cutter was specified on 2026-07-28, so the radius column is no longer a
+    gap — but reach is, and the sheet has to say which pockets a stock cutter
+    will not reach rather than leaving it to be found at the machine.
     """
     sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
         encoding="utf-8"
@@ -1114,10 +1114,15 @@ def test_routing_schedule_covers_every_face_and_the_radius_gap():
     # Stepped bridge depths, not just a maximum.
     for depth in ("16.0", "22.0", "27.0"):
         assert depth in schedule
-    # The radius gap and its practical resolution.
-    assert "Corner radii" in schedule
-    assert "6.35 mm cutter" in schedule
-    assert "specify the cutter" in schedule
+    # Tooling is specified, so radii are stated rather than deferred.
+    assert "cutter 6.35" in schedule
+    assert "r3.175" in schedule
+    assert "No corner relief is needed" in schedule
+    # Reach is the constraint that survives specifying the cutter.
+    assert "Reach is the real constraint" in schedule
+    assert "long series" in schedule
+    for cavity in ("POD_PI", "POD_HAT"):
+        assert cavity in schedule.split("Reach is the real constraint")[1]
 
 
 def test_dimension_sheet_gives_an_order_that_stops_where_the_data_stops():

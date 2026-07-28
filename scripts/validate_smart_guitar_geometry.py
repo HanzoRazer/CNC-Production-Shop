@@ -18,6 +18,7 @@ this record, and suppressing them would defeat the point.
 from __future__ import annotations
 
 import json
+import math
 import sys
 from dataclasses import asdict
 from pathlib import Path
@@ -153,6 +154,92 @@ def validate_bridge_routing() -> list[str]:
         print(f"  bridge block {block['block_width_mm']} x {block['block_length_mm']} x "
               f"{block['required_solid_depth_mm']} solid, governed by {block['governing_unit_id']}"
               f" - {block['verdict']}")
+    return errors
+
+
+def validate_routing_tooling() -> list[str]:
+    """Recompute every corner radius and reach class from the cutter.
+
+    One decision — the cutter diameter — sets every internal radius in the
+    instrument. Recomputing rather than trusting means changing the cutter
+    cannot leave a stale radius behind in a document someone cuts from.
+
+    Radii are compared at THREE decimals, not through as_mm. The geometry
+    convention rounds to 2 dp, which turns 3.175 — exactly 1/8 inch — into
+    3.17. That is fine for a pocket wall and wrong for a cutter radius.
+    """
+    errors: list[str] = []
+    path = FIXTURES / "routing_tooling_v1.json"
+    doc = load_json(path)
+    cutter = doc["cutter_diameter_mm"]
+    std = doc["standard_cut_length_mm"]
+    long_series = doc["long_series_cut_length_mm"]
+    clearance = doc["part_clearance_per_side_mm"]
+    derived = doc["derived"]
+
+    radius = round(cutter / 2, 3)
+    if abs(derived["internal_corner_radius_mm"] - radius) > 0.0005:
+        errors.append(
+            f"FAIL corner radius {derived['internal_corner_radius_mm']} != cutter/2 {radius}"
+        )
+    diagonal = radius * (math.sqrt(2) - 1)
+    if abs(derived["square_corner_intrusion_diagonal_mm"] - diagonal) > 0.005:
+        errors.append("FAIL square_corner_intrusion_diagonal_mm is not r*(sqrt(2)-1)")
+    if abs(derived["square_corner_intrusion_per_axis_mm"] - diagonal / math.sqrt(2)) > 0.005:
+        errors.append("FAIL square_corner_intrusion_per_axis_mm is not the diagonal over root 2")
+    verdict = (
+        "absorbed"
+        if derived["square_corner_intrusion_per_axis_mm"] < clearance
+        else "encroaches"
+    )
+    if derived["clearance_verdict"] != verdict:
+        errors.append("FAIL clearance_verdict does not follow from the intrusion")
+
+    geometry = load_json(GEOMETRY)
+    sizes = {c["cavity_id"]: c for c in geometry["cavities"]}
+    listed = {c["cavity_id"] for c in doc["cavities"]}
+    if listed != set(sizes):
+        errors.append(
+            f"FAIL tooling covers {sorted(listed)} but the geometry has {sorted(sizes)}"
+        )
+    for row in doc["cavities"]:
+        cav = sizes.get(row["cavity_id"])
+        if cav is None:
+            continue
+        if abs(row["corner_radius_mm"] - radius) > 0.0005:
+            errors.append(f"FAIL {row['cavity_id']}: corner radius is not cutter/2")
+        if not mm_equal(row["depth_mm"], cav["derived_depth_mm"]):
+            errors.append(f"FAIL {row['cavity_id']}: depth drifted from the derived geometry")
+        smallest = min(cav["derived_length_mm"], cav["derived_width_mm"])
+        if not mm_equal(row["min_plan_dimension_mm"], smallest):
+            errors.append(f"FAIL {row['cavity_id']}: min_plan_dimension_mm is wrong")
+        entry = "fits" if smallest > cutter else "will_not_enter"
+        if row["tool_entry"] != entry:
+            errors.append(f"FAIL {row['cavity_id']}: tool_entry does not follow from the geometry")
+        depth = cav["derived_depth_mm"]
+        reach = (
+            "standard"
+            if depth <= std
+            else ("long_series" if depth <= long_series else "beyond_long_series")
+        )
+        if row["reach_class"] != reach:
+            errors.append(
+                f"FAIL {row['cavity_id']}: reach_class {row['reach_class']} "
+                f"!= {reach} at {depth} deep"
+            )
+        if reach != "standard" and not row.get("note", "").strip():
+            errors.append(
+                f"FAIL {row['cavity_id']}: needs a non-standard cutter and says nothing about it"
+            )
+
+    if not errors:
+        print(f"PASS {path.relative_to(ROOT).as_posix()}")
+        deep = [c["cavity_id"] for c in doc["cavities"] if c["reach_class"] != "standard"]
+        print(f"  cutter {cutter} -> r{radius} in every internal corner, "
+              f"intrusion {derived['square_corner_intrusion_per_axis_mm']} per axis "
+              f"vs {clearance} clearance - {derived['clearance_verdict']}")
+        if deep:
+            print(f"  long-series cutter needed for: {', '.join(deep)}")
     return errors
 
 
@@ -392,6 +479,7 @@ def main() -> int:
     if not all_errors:
         all_errors.extend(validate_frontend_spec())
         all_errors.extend(validate_bridge_routing())
+        all_errors.extend(validate_routing_tooling())
     if not all_errors:
         all_errors.extend(validate_derivation())
     if not all_errors:
