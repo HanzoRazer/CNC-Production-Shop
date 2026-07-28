@@ -63,6 +63,7 @@ import ezdxf
 from ezdxf import units as ezunits
 
 ROOT = Path(__file__).resolve().parent.parent
+REGISTER = ROOT / "fixtures" / "geometry" / "smart_guitar_component_register_v1.json"
 LTB = Path("C:/Users/thepr/Downloads/luthiers-toolbox")
 REFS = LTB / "docs/archive/instrument_references/smart_guitar"
 TRACE = (
@@ -126,6 +127,7 @@ LAYERS: dict[str, tuple[int, int, str]] = {
     "VOID_THROUGH_BODY": (1, 35, "Ergonomic voids, cut through the full thickness"),
     "CAV_TOP": (5, 25, "Cavities cut from the FRONT face"),
     "CAV_BACK": (3, 25, "Cavities cut from the REAR face"),
+    "CAV_BACK_INVALID_DO_NOT_CUT": (1, 40, "INVALID placements - see CONF-VOID-SET-SOURCE"),
     "REF_V5": (9, 9, "front_v5 cavities, datum-corrected, reference only"),
     "REF_CENTERLINE": (8, 13, "Reference only, not geometry"),
     "NOTES": (8, 13, "Annotation"),
@@ -271,6 +273,23 @@ def wire_channel(
     return [(x0 + nx, y0 + ny), (x1 + nx, y1 + ny), (x1 - nx, y1 - ny), (x0 - nx, y0 - ny)]
 
 
+def back_face_layer() -> str:
+    """Where back-face pockets are drawn, given the state of the void set.
+
+    A note on a NOTES layer is not a control: switching annotation off is
+    routine, and the invalid pockets would then read as ordinary geometry on an
+    ordinary layer. The layer NAME travels with the entity into every CAD layer
+    panel, so while CONF-VOID-SET-SOURCE is open the pockets go somewhere a
+    reader cannot fail to see. It reverts by itself when the conflict closes.
+    """
+    register = json.loads(REGISTER.read_text(encoding="utf-8"))
+    blocked = any(
+        c["conflict_id"] == "CONF-VOID-SET-SOURCE" and c["status"] == "unresolved"
+        for c in register["conflicts"]
+    )
+    return "CAV_BACK_INVALID_DO_NOT_CUT" if blocked else "CAV_BACK"
+
+
 def build_document(version: str, source: str) -> tuple[Any, Profile, float, float]:
     outline_raw, voids_raw, refs_raw = load_source(source)
     x0_raw, _, y0, y1 = _bbox(outline_raw)
@@ -328,8 +347,10 @@ def build_document(version: str, source: str) -> tuple[Any, Profile, float, floa
     for _, profile in refs:
         msp.add_lwpolyline(profile, close=True, dxfattribs={"layer": "REF_V5"})
 
+    back_layer = back_face_layer()
     drawn: dict[str, tuple[float, float, float, float]] = {}
     for layer, label, cx, y_from_top, w, h in CAVITIES:
+        layer = back_layer if layer == "CAV_BACK" else layer
         msp.add_lwpolyline(
             rect(cx, y_from_top, w, h, top_y), close=True, dxfattribs={"layer": layer}
         )
@@ -339,7 +360,7 @@ def build_document(version: str, source: str) -> tuple[Any, Profile, float, floa
         drawn[label] = (cx, y_from_top, w, h)
 
     msp.add_lwpolyline(
-        wire_channel(drawn, top_y), close=True, dxfattribs={"layer": "CAV_BACK"}
+        wire_channel(drawn, top_y), close=True, dxfattribs={"layer": back_layer}
     )
 
     msp.add_line(

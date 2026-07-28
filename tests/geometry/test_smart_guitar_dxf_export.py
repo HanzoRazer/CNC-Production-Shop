@@ -25,6 +25,7 @@ from export_smart_guitar_dxf import (  # noqa: E402
     DOCUMENTED_BASS_OVERHANG_MM,
     LAYERS,
     SOURCES,
+    back_face_layer,
     build_document,
     rect,
 )
@@ -59,7 +60,24 @@ def test_faces_are_on_separate_layers(doc):
     """Two-sided part: cutting a back cavity from the front mirrors it."""
     layers = {e.dxf.layer for e in doc.modelspace() if e.dxftype() == "LWPOLYLINE"}
     assert "CAV_TOP" in layers
-    assert "CAV_BACK" in layers
+    assert back_face_layer() in layers
+
+
+def test_invalid_placements_are_flagged_in_the_layer_name(doc):
+    """A note on a NOTES layer is not a control; annotation gets switched off.
+
+    While CONF-VOID-SET-SOURCE is open the back-face pockets are known wrong —
+    POD_HAT sits inside a void the source file omits — so the warning has to
+    travel with the entity into the CAD layer panel, not sit in text a reader
+    can hide. This reverts by itself when the conflict closes.
+    """
+    layer = back_face_layer()
+    assert layer == "CAV_BACK_INVALID_DO_NOT_CUT", (
+        "expected the guarded layer while the void set is unresolved"
+    )
+    used = {e.dxf.layer for e in doc.modelspace() if e.dxftype() == "LWPOLYLINE"}
+    assert "CAV_BACK" not in used, "pockets must not sit on the ordinary back layer"
+    assert layer in used
 
 
 def test_all_profiles_are_closed(doc):
@@ -109,7 +127,7 @@ def test_pods_sit_on_the_treble_side(doc):
     profiles = [
         e
         for e in doc.modelspace()
-        if e.dxftype() == "LWPOLYLINE" and e.dxf.layer == "CAV_BACK"
+        if e.dxftype() == "LWPOLYLINE" and e.dxf.layer == back_face_layer()
     ]
     centres = [
         sum(p[0] for p in e.get_points()) / len(e.get_points()) for e in profiles
