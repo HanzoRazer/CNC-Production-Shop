@@ -9,6 +9,7 @@ designer chooses.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -28,6 +29,15 @@ VALIDATE = ROOT / "scripts" / "validate_smart_guitar_geometry.py"
 def load(path: Path) -> dict:
     with open(path, encoding="utf-8") as f:
         return json.load(f)
+
+
+def load_module_by_path(path: Path):
+    """Import a script that lives outside any package."""
+    spec_ = importlib.util.spec_from_file_location(path.stem, path)
+    assert spec_ is not None and spec_.loader is not None
+    module = importlib.util.module_from_spec(spec_)
+    spec_.loader.exec_module(module)
+    return module
 
 
 @pytest.fixture(scope="module")
@@ -369,11 +379,57 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "B"
-    assert len(dc["revision_history"]) >= 2
+    assert dc["revision"] == "C"
+    assert len(dc["revision_history"]) >= 3
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The contact is not yet named, and must say so rather than be absent.
     assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
+
+
+def test_stated_distances_match_the_ruled_pocket_placement():
+    """The document tells a bidder how far the noise sources are. Re-derive it.
+
+    Rev A and B both said 20 mm, which was true of neither the board nor the
+    pickup after CONF-POD-EMC-CLEARANCE moved the pockets. A distance quoted in
+    a document that a contractor prices EMC work against is not decoration, so
+    it is recomputed here rather than trusted.
+    """
+    solver = load_module_by_path(ROOT / "scripts" / "solve_khaya_pocket_layout.py")
+    placement = {
+        "POD_PI": (11.910, 180.0),
+        "POD_HAT": (94.410, 280.0),
+        "BATTERY_CHAMBER": (2.910, 247.5),
+    }
+    boxes = {
+        name: solver.rect(x, y, *solver.POCKETS[name]) for name, (x, y) in placement.items()
+    }
+    route = solver.rect(0.0, 294.6, 80.0, 22.0)
+
+    stated = {
+        "35.75 mm from a Raspberry Pi 5": boxes["POD_HAT"].distance(boxes["POD_PI"]),
+        "10.0 mm from the battery pack": boxes["POD_HAT"].distance(boxes["BATTERY_CHAMBER"]),
+        "17.9 mm from the pickup route": boxes["POD_HAT"].distance(route),
+    }
+    text = " ".join(load(SPEC)["environment"])
+    for claim, derived in stated.items():
+        assert claim in text, f"environment no longer states {claim!r}"
+        quoted = float(claim.split(" mm")[0])
+        assert derived == pytest.approx(quoted, abs=0.05), f"{claim!r} drifted"
+
+    # The ribbon reach is what an earlier layout got wrong; it must be stated.
+    span = solver._header_span(boxes["POD_PI"], boxes["POD_HAT"])
+    assert span == pytest.approx(89.9, abs=0.1)
+    assert "89.9 mm" in load(SPEC)["form_factor"]["stacking"]
+
+
+def test_the_superseded_20mm_figure_is_gone(spec):
+    """Rev C exists to remove it; a stale distance overstates the risk."""
+    haystack = json.dumps(spec)
+    for field in ("environment", "requirements", "form_factor"):
+        assert "20 mm from a Raspberry Pi 5" not in json.dumps(spec[field])
+    # It survives only where the revision history and open questions explain
+    # that it was superseded, which is the point of keeping a history.
+    assert "20 mm" in haystack
 
 
 def test_quantity_and_schedule_are_recorded_as_missing(spec):
