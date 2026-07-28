@@ -379,8 +379,8 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "K"
-    assert len(dc["revision_history"]) >= 11
+    assert dc["revision"] == "L"
+    assert len(dc["revision_history"]) >= 12
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The document HAS been issued, so an unnamed contact is no longer a
     # placeholder — it is a live gap, and the record has to read that way.
@@ -573,3 +573,30 @@ def test_no_withdrawn_figure_survives_outside_its_retraction(spec):
         and "revision_history" not in path
     ]
     assert not live, f"withdrawn figures still stated as fact: {live}"
+
+
+def test_the_amp_board_substitution_is_not_invited(spec):
+    """Rev K asked whether 25 existing amp boards could serve the output stage.
+
+    It should not have been asked. Those boards are 5 V powered, and this board
+    takes raw pack voltage precisely so it does not inherit a rail shared with
+    a Pi 5 — the substitution would introduce the thing REQ-POWER-ARCH exists
+    to avoid. The question was withdrawn in Rev L and must not drift back,
+    least of all because the company that made those boards is among the
+    recipients of this document.
+    """
+    questions = " ".join(spec["open_questions"])
+    assert "TWENTY-FIVE MINI GUITAR AMPLIFIER" not in questions
+    assert "amplifier boards" not in questions.lower()
+
+    withdrawal = next(
+        h for h in spec["document_control"]["revision_history"] if h["revision"] == "L"
+    )
+    assert "should not have been asked" in withdrawal["change"]
+    assert "5 V powered" in withdrawal["change"]
+    assert "FULLY IN SCOPE AS SPECIFIED" in withdrawal["change"]
+
+    # The power architecture that makes the substitution wrong must still hold.
+    power = next(r for r in spec["requirements"] if r["requirement_id"] == "REQ-POWER-ARCH")
+    assert "6.0 to 8.4 V" in power["requirement"]
+    assert power["criticality"] == "shippable_blocker"
