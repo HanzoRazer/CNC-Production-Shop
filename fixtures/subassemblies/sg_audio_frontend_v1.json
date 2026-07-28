@@ -155,7 +155,7 @@
     "I2S versus USB has NOT been settled. I2S is preferred on cost, board area and battery draw, but USB Audio Class 2 is class-compliant and needs no driver or overlay at all, and would let the board work standalone with a phone or laptop. Latency does not decide it: the existing USB path already measures 3.1 ms against a 5 ms target, so the roughly 1.2 ms an all-I2S path would save is headroom, not a requirement.",
     "Codec selection, and therefore whether REQ-CODEC-SUPPORTED can be met, is unresolved.",
     "Pickup type is FLUID by owner decision and is no longer a blocker on this board: the input is specified as 4.0 Vpp headroom plus 30 dB of gain range rather than as a level. It remains open upstream as CONF-PICKUP-TYPE for pickup ROUTE dimensions, which this board does not touch.",
-    "Whether the two pickups are humbuckers or P90s is unresolved upstream and affects the expected input level. See CONF-PICKUP-TYPE.",
+    "THE TWO PRODUCT LINES NO LONGER CARRY THE SAME PICKUPS, so there is no single expected input level: PRODUCT-KHAYA-SOLIDBODY-V1 is a single bridge Telecaster-style single coil, PRODUCT-SMART-GUITAR-V1 is still dual humbucker. This board is indifferent by design - REQ-INPUT-HEADROOM specifies 4.0 Vpp of headroom plus 30 dB of gain range rather than a level - so neither line forces a board revision. See CONF-PICKUP-TYPE, which remains open upstream for pickup ROUTE dimensions that this board does not touch.",
     "Non-recurring engineering and certification cost are not estimated. They are separate lines in the budget model, not unit cost.",
     "Deliverables and IP ownership are NOT stated: what is handed over — schematics, layout source, gerbers, BOM, firmware — and who owns it. Commercial rather than engineering, but a tender is not complete without it.",
     "MCU firmware and any device-tree overlay work are not scoped. State whether they are the contractor's or ours before NRE is quoted.",
@@ -316,7 +316,7 @@
     }
   ],
   "document_control": {
-    "revision": "D",
+    "revision": "E",
     "issued": "2026-07-27",
     "document_class": "rfi",
     "change_contact": "TO BE NAMED BEFORE ISSUE — no change request can be raised against an unnamed owner.",
@@ -341,6 +341,11 @@
         "revision": "D",
         "date": "2026-07-27",
         "change": "Closed a traceability gap on REQ-HIZ. Impedance was demonstrated at design review and noise not until REQ-NOISE at first article, but REQ-NOISE terminates the input in 10 kilohm, which does not stress a high-impedance stage - a JFET input with excessive gate current passes both and fails with a real pickup. REQ-HIZ now carries a noise clause and a 100 pA bias-current limit, plus a prototype-stage acceptance measuring input-referred noise from a defined dummy pickup source against a 10 kilohm reference, passing at no more than 6 dB of degradation. Deliberately a board-level bench test so the fault surfaces at prototype rather than first article."
+      },
+      {
+        "revision": "E",
+        "date": "2026-07-27",
+        "change": "Corrected an open question that still read 'the two pickups', written before the product split and the single-pickup refactor. The Khaya carries one Telecaster-style single coil and the Smart Guitar still carries dual humbuckers, so there is no single expected input level. The board is unaffected - REQ-INPUT-HEADROOM already specifies headroom plus gain range rather than a level - but the wording would have led a bidder to assume one configuration across both lines."
       }
     ]
   }

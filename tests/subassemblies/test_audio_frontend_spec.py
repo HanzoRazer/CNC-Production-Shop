@@ -379,8 +379,8 @@ def test_document_is_an_rfi_not_a_tender(spec):
 
 def test_document_control_is_complete(spec):
     dc = spec["document_control"]
-    assert dc["revision"] == "D"
-    assert len(dc["revision_history"]) >= 4
+    assert dc["revision"] == "E"
+    assert len(dc["revision_history"]) >= 5
     assert dc["revision_history"][-1]["revision"] == dc["revision"]
     # The contact is not yet named, and must say so rather than be absent.
     assert "TO BE NAMED BEFORE ISSUE" in dc["change_contact"]
@@ -497,3 +497,16 @@ def test_hiz_requirement_states_the_noise_clause_not_just_the_acceptance(spec):
     assert "100 pA" in req["requirement"]
     assert req["criticality"] == "shippable_blocker"
     assert "CURRENT noise and gate leakage" in req["rationale"]
+
+
+def test_pickup_question_does_not_assume_one_configuration(spec):
+    """The lines diverged; a bidder must not read one answer into both.
+
+    The Khaya went to a single Telecaster-style coil while the Smart Guitar
+    stayed dual humbucker, and the open question still said "the two pickups"
+    for several revisions afterwards.
+    """
+    questions = " ".join(spec["open_questions"])
+    assert "the two pickups" not in questions
+    assert "NO LONGER CARRY THE SAME PICKUPS" in questions
+    assert "REQ-INPUT-HEADROOM" in questions
