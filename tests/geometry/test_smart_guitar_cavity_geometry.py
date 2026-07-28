@@ -912,3 +912,38 @@ def test_doc_records_the_ruling_and_the_open_items():
 def test_as_mm_rounds_to_two_places():
     assert as_mm(30.4799999) == 30.48
     assert mm_equal(30.4799999, 30.48)
+
+
+def test_cad_dimension_sheet_is_not_stale():
+    """The sheet says it is generated. It has to actually be.
+
+    The version this replaced carried that claim in its header while being
+    hand-written, and by the time anyone checked it held a 162 mm one-piece pod
+    from before the split, a Teensy pocket for a part no longer in the design,
+    and a superseded position. Regenerating and comparing is the only thing
+    that keeps the claim honest.
+    """
+    exporter = load_module_by_path(ROOT / "scripts" / "export_cad_dimensions.py")
+    written = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
+        encoding="utf-8"
+    )
+    assert written == exporter.render(), (
+        "SMART_GUITAR_CAD_DIMENSIONS.md is stale — "
+        "run scripts/export_cad_dimensions.py"
+    )
+
+
+def test_dimension_sheet_carries_the_ruled_clearances():
+    """The numbers a reader will take to CAD, spot-checked against the ruling."""
+    sheet = (ROOT / "docs" / "geometry" / "SMART_GUITAR_CAD_DIMENSIONS.md").read_text(
+        encoding="utf-8"
+    )
+    for value in ("71.60", "35.75", "17.91", "89.91"):
+        assert value in sheet, f"{value} missing from the dimension sheet"
+    # Superseded features must not reappear in the DIMENSION tables. The
+    # conflict list below them legitimately names the historical teensy pocket,
+    # because CONF-PICKUP-TYPE is a dispute about that very record.
+    tables = sheet.split("## 6. Unresolved")[0]
+    assert "162.0" not in tables, "the pre-split one-piece pod is back"
+    assert "TEENSY" not in tables.upper()
+    assert "PU_NECK" not in tables, "the deleted neck pickup is back"
