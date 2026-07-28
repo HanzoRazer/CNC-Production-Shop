@@ -1006,3 +1006,22 @@ def test_battery_aggressor_ruling_records_the_binary_choice():
     # The mitigation is local, not geometric — that is the whole point.
     assert "MITIGATED LOCALLY" in conflict["ruling"]
     assert any("EXACTLY ONE legal site" in s for s in conflict["sources"])
+    # The ruling asserts the pack is weak without having measured it, and must
+    # say so plus point at the configurations that could falsify it.
+    assert "ENGINEERING JUDGEMENT STANDING IN FOR A MEASUREMENT" in conflict["ruling"]
+    assert "configurations G to I" in conflict["ruling"]
+
+
+def test_emc_procedure_covers_the_charging_configurations():
+    """The pack is 8.6 mm from the coil; charging is when it misbehaves."""
+    procedure = (
+        ROOT / "docs" / "geometry" / "SG_PICKUP_EMC_MOCKUP_PROCEDURE.md"
+    ).read_text(encoding="utf-8")
+    for marker in ("| **G** |", "| **H** |", "| **I** |"):
+        assert marker in procedure, f"configuration {marker} missing"
+    assert "8.60 mm" in procedure
+    # Near-full taper is the counterintuitive case and must not be dropped.
+    assert "Do not skip H for G" in procedure
+    assert "pulse-skipping or burst mode" in procedure
+    # Charging failures are a product decision, not an audio-board defect.
+    assert "REQ-NOISE-BOUNDARY" in procedure
