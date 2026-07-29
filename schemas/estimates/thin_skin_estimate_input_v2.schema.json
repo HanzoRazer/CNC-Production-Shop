@@ -32,7 +32,10 @@
     "provenance": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source", "confidence"],
+      "required": [
+        "source",
+        "confidence"
+      ],
       "properties": {
         "source": {
           "type": "string",
@@ -48,9 +51,15 @@
         },
         "confidence": {
           "type": "string",
-          "enum": ["draft", "reviewed", "approved"]
+          "enum": [
+            "draft",
+            "reviewed",
+            "approved"
+          ]
         },
-        "note": {"type": "string"}
+        "note": {
+          "type": "string"
+        }
       }
     },
     "inputCategory": {
@@ -79,13 +88,32 @@
         "provenance"
       ],
       "properties": {
-        "input_id": {"type": "string", "minLength": 1},
-        "description": {"type": "string", "minLength": 1},
-        "category": {"$ref": "#/$defs/inputCategory"},
-        "quantity": {"type": "number", "exclusiveMinimum": 0},
-        "unit": {"type": "string", "minLength": 1},
-        "unit_cost": {"type": "number", "minimum": 0},
-        "provenance": {"$ref": "#/$defs/provenance"}
+        "input_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "$ref": "#/$defs/inputCategory"
+        },
+        "quantity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit_cost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     }
   },
@@ -94,24 +122,52 @@
       "type": "string",
       "pattern": "^THIN-SKIN-ESTIMATE-INPUT-[A-Z0-9-]+$"
     },
-    "product_id": {"type": "string", "pattern": "^PRODUCT-[A-Z0-9-]+$"},
-    "product_ref": {"type": "string", "minLength": 1},
-    "variant_id": {"type": "string", "pattern": "^VARIANT-[A-Z0-9-]+$"},
-    "variant_description": {"type": "string", "minLength": 1},
+    "product_id": {
+      "type": "string",
+      "pattern": "^PRODUCT-[A-Z0-9-]+$"
+    },
+    "product_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variant_id": {
+      "type": "string",
+      "pattern": "^VARIANT-[A-Z0-9-]+$"
+    },
+    "variant_description": {
+      "type": "string",
+      "minLength": 1
+    },
     "status": {
       "type": "string",
-      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+      "enum": [
+        "draft",
+        "reviewed",
+        "approved",
+        "superseded",
+        "retired"
+      ]
     },
-    "quantity": {"type": "integer", "minimum": 1},
-    "currency": {"type": "string", "minLength": 3},
+    "quantity": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "currency": {
+      "type": "string",
+      "minLength": 3
+    },
     "material_inputs": {
       "type": "array",
       "minItems": 1,
-      "items": {"$ref": "#/$defs/inputLine"}
+      "items": {
+        "$ref": "#/$defs/inputLine"
+      }
     },
     "purchased_component_inputs": {
       "type": "array",
-      "items": {"$ref": "#/$defs/inputLine"}
+      "items": {
+        "$ref": "#/$defs/inputLine"
+      }
     },
     "labor_rate_inputs": {
       "type": "array",
@@ -128,16 +184,30 @@
           "provenance"
         ],
         "properties": {
-          "labor_rate_id": {"type": "string", "minLength": 1},
-          "description": {"type": "string", "minLength": 1},
-          "base_wage_per_hour": {"type": "number", "minimum": 0},
-          "payroll_burden_pct": {"type": "number", "minimum": 0},
+          "labor_rate_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "base_wage_per_hour": {
+            "type": "number",
+            "minimum": 0
+          },
+          "payroll_burden_pct": {
+            "type": "number",
+            "minimum": 0
+          },
           "loaded_rate_per_hour": {
             "type": "number",
             "minimum": 0,
             "description": "Draft internal direct-labor cost. Never a burdened commercial shop rate."
           },
-          "provenance": {"$ref": "#/$defs/provenance"}
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          }
         }
       }
     },
@@ -161,9 +231,18 @@
           "provenance"
         ],
         "properties": {
-          "operation_id": {"type": "string", "minLength": 1},
-          "wbs_code": {"type": "string", "pattern": "^[0-9]{4}$"},
-          "description": {"type": "string", "minLength": 1},
+          "operation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "wbs_code": {
+            "type": "string",
+            "pattern": "^[0-9]{4}$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
           "labor_category": {
             "type": "string",
             "enum": [
@@ -194,30 +273,73 @@
               "elapsed_wait_minutes",
               "rework_minutes"
             ],
-            "description": "Six-field time model. Labor is setup + operator_touch + rework only. Machine runtime, equipment occupancy, and elapsed wait are never labor.",
+            "description": "Six-field time model. Labor is setup + operator_touch + rework only. Machine runtime, equipment occupancy, and elapsed wait are never labor. setup_scope decides whether setup amortises across a run; it is optional and defaults to per_unit.",
             "properties": {
-              "setup_minutes": {"type": "number", "minimum": 0},
-              "operator_touch_minutes": {"type": "number", "minimum": 0},
-              "machine_runtime_minutes": {"type": "number", "minimum": 0},
-              "equipment_occupancy_minutes": {"type": "number", "minimum": 0},
-              "elapsed_wait_minutes": {"type": "number", "minimum": 0},
-              "rework_minutes": {"type": "number", "minimum": 0}
+              "setup_minutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "operator_touch_minutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "machine_runtime_minutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "equipment_occupancy_minutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "elapsed_wait_minutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "rework_minutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "setup_scope": {
+                "enum": [
+                  "per_unit",
+                  "per_batch"
+                ],
+                "description": "Whether setup recurs per unit or once per run. OPTIONAL: omitted means per_unit, which is what every record written before this field existed assumed. Only per_batch is amortisable, and at quantity one the two are identical."
+              }
             }
           },
-          "uses_machine": {"type": "boolean"},
+          "uses_machine": {
+            "type": "boolean"
+          },
           "equipment_id": {
             "type": "string",
             "pattern": "^(EQUIPMENT-[A-Z0-9-]+)?$"
           },
-          "reserve_eligible": {"type": "boolean"},
-          "labor_rate_id": {"type": "string", "minLength": 1},
-          "provenance": {"$ref": "#/$defs/provenance"}
+          "reserve_eligible": {
+            "type": "boolean"
+          },
+          "labor_rate_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          }
         }
       }
     },
-    "machine_profile_ref": {"type": "string", "minLength": 1},
-    "cost_basis_ref": {"type": "string", "minLength": 1},
-    "machine_id": {"type": "string", "pattern": "^MACHINE-[A-Z0-9-]+$"},
+    "machine_profile_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cost_basis_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "machine_id": {
+      "type": "string",
+      "pattern": "^MACHINE-[A-Z0-9-]+$"
+    },
     "cost_basis_id": {
       "type": "string",
       "pattern": "^MACHINE-COST-BASIS-[A-Z0-9-]+$"
@@ -234,9 +356,18 @@
           "cost_basis_id"
         ],
         "properties": {
-          "equipment_id": {"type": "string", "pattern": "^EQUIPMENT-[A-Z0-9-]+$"},
-          "equipment_profile_ref": {"type": "string", "minLength": 1},
-          "cost_basis_ref": {"type": "string", "minLength": 1},
+          "equipment_id": {
+            "type": "string",
+            "pattern": "^EQUIPMENT-[A-Z0-9-]+$"
+          },
+          "equipment_profile_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cost_basis_ref": {
+            "type": "string",
+            "minLength": 1
+          },
           "cost_basis_id": {
             "type": "string",
             "pattern": "^EQUIPMENT-COST-BASIS-[A-Z0-9-]+$"
@@ -247,15 +378,28 @@
     "material_scrap_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["scrap_rate", "eligible_input_ids", "provenance"],
+      "required": [
+        "scrap_rate",
+        "eligible_input_ids",
+        "provenance"
+      ],
       "description": "Narrow allowance on stock material only. Distinct from, and never compounded with, the process yield reserve.",
       "properties": {
-        "scrap_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "scrap_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
         "eligible_input_ids": {
           "type": "array",
-          "items": {"type": "string", "minLength": 1}
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
-        "provenance": {"$ref": "#/$defs/provenance"}
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     },
     "process_yield_reserve_policy": {
@@ -270,17 +414,37 @@
       ],
       "description": "Broader reserve on eligible conversion cost. Labor eligibility is carried per operation by reserve_eligible, not by a category sweep.",
       "properties": {
-        "reserve_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "reserve_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
         "eligible_input_ids": {
           "type": "array",
-          "items": {"type": "string", "minLength": 1}
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
-        "include_machine_time": {"type": "boolean"},
-        "include_equipment_occupancy": {"type": "boolean"},
-        "provenance": {"$ref": "#/$defs/provenance"}
+        "include_machine_time": {
+          "type": "boolean"
+        },
+        "include_equipment_occupancy": {
+          "type": "boolean"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     },
-    "provenance": {"$ref": "#/$defs/provenance"},
-    "notes": {"type": "array", "items": {"type": "string"}}
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
   }
 }

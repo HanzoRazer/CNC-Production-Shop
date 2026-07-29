@@ -48,3 +48,5 @@ jobs:
           python scripts/validate_bid_fixtures.py
           python scripts/validate_bid_summaries.py
           python scripts/validate_proposals.py
+          python scripts/validate_thin_skin_estimates.py
+          python scripts/validate_neck_make_or_buy.py

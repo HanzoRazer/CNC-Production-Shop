@@ -1,0 +1,226 @@
+{
+  "input_id": "NECK-MAKE-OR-BUY-INPUT-V1",
+  "dev_order": "NECK-MAKE-OR-BUY-BATCH-COSTING-1",
+  "product_ref": "PRODUCT-THIN-SKIN-ELECTRIC-GUITAR-BASELINE-V1",
+  "status": "draft",
+  "currency": "USD",
+  "rates": {
+    "loaded_labour_per_hour": 28.75,
+    "machine_per_hour": 28.97,
+    "note": "Both carried unchanged from the V2 baseline. This sprint does not touch either cost basis."
+  },
+  "construction_options": [
+    {
+      "construction_id": "ONE_PIECE",
+      "description": "One-piece neck with angled headstock",
+      "mahogany_board_feet": 2.464,
+      "note": "The billet must swallow the headstock angle, so it is 100 x 76 x 765 mm. Owner-derived from the Explorer spec through the repo board-feet kernel."
+    },
+    {
+      "construction_id": "SCARF_JOINT",
+      "description": "Scarf-jointed shaft with stacked heel",
+      "mahogany_board_feet": 0.995,
+      "note": "A 32 mm shaft plus a stacked heel. 2.5x less timber than one-piece, and the whole difference is the headstock-angle decision. Scarf cut and glue-up labour is NOT yet modelled - see evidence gaps."
+    }
+  ],
+  "wood_prices": {
+    "african_mahogany_per_board_foot": 8.0,
+    "source": "owner_supplied",
+    "confidence": "draft",
+    "snapshot_date": "2026-07-29",
+    "note": "Owner supplier pricing. Supersedes the V2 baseline 26.00 per-piece maple blank, which at these rates overstated a scarf-jointed shaft by 3.3x."
+  },
+  "fretboard_options": [
+    {
+      "fretboard_id": "EBONY_AAA",
+      "description": "Rough AAA ebony fretboard, precut",
+      "cost": 29.0,
+      "source": "owner_supplied",
+      "confidence": "draft",
+      "note": "Owner-priced upper-end spec, and hard to beat at this grade. It is 48% of scarf-construction material cost, which is why it dominates every threshold below."
+    },
+    {
+      "fretboard_id": "SWEPT",
+      "description": "Alternative fretboard stock for the budget build, price swept",
+      "cost": null,
+      "source": "unpriced",
+      "confidence": "unknown",
+      "note": "The budget Smart Guitar is to use cheaper local woods. No source and no price exist yet, so this is swept from 5 to 29 rather than assumed."
+    }
+  ],
+  "yield_policy": {
+    "rate": 0.9,
+    "basis": "18 saleable from 20 started. No rejection history exists for shop-machined necks. Set below 1.0 deliberately, so fixed cost is never divided by units that were never sold.",
+    "source": "engineering_estimate",
+    "confidence": "draft"
+  },
+  "quantities": [1, 5, 10, 20, 40],
+  "materials": [
+    {
+      "material_id": "MAT-NECK-MAHOGANY",
+      "description": "African mahogany neck stock, priced by board foot",
+      "from_state": "M1",
+      "cost_source": "construction_board_feet_x_price"
+    },
+    {
+      "material_id": "MAT-FRETBOARD",
+      "description": "Fretboard blank",
+      "from_state": "M2",
+      "cost_source": "fretboard_option"
+    },
+    {
+      "material_id": "CMP-TRUSS-ROD",
+      "description": "Dual-action truss rod",
+      "from_state": "M2",
+      "cost": 12.5
+    },
+    {
+      "material_id": "CMP-FRETWIRE",
+      "description": "Nickel-silver fretwire, one neck set with waste",
+      "from_state": "M3",
+      "cost": 7.5
+    },
+    {
+      "material_id": "CMP-NUT-BLANK",
+      "description": "Bone nut blank",
+      "from_state": "M4",
+      "cost": 3.25
+    }
+  ],
+  "operations": [
+    {
+      "operation_id": "OP-1300",
+      "description": "Neck staging: pull blank, fretboard and hardware, verify against the bill of materials",
+      "setup_minutes": 0,
+      "touch_minutes": 10,
+      "machine_minutes": 0,
+      "setup_per_batch": false,
+      "from_state": "M1",
+      "is_draft_addition": false,
+      "note": "CLASSIFICATION IMPURITY, ruled 2026-07-29. The baseline operation also stages body hardware and electronics. It is counted wholly to the neck, which overstates neck cost slightly and therefore biases against the make case. Decision 2 forbids splitting an accepted operation in this sprint."
+    },
+    {
+      "operation_id": "OP-4100",
+      "description": "Neck blank preparation and CNC machining including fret slotting",
+      "setup_minutes": 18,
+      "touch_minutes": 12,
+      "machine_minutes": 52,
+      "setup_per_batch": true,
+      "from_state": "M1",
+      "is_draft_addition": false,
+      "note": "THE ONLY OPERATION IN THE ENTIRE NECK THAT CARRIES SETUP. Its 18 minutes are the whole batching opportunity, worth 8.62 per neck at infinite quantity. The 52 machine minutes are per part and do not nest away."
+    },
+    {
+      "operation_id": "OP-4150",
+      "description": "Fretboard installation: glue over the truss rod, clamp, level and radius",
+      "setup_minutes": 0,
+      "touch_minutes": 22,
+      "machine_minutes": 0,
+      "setup_per_batch": false,
+      "from_state": "M2",
+      "is_draft_addition": true,
+      "note": "DRAFT ADDITION. No fretboard-installation operation exists anywhere in the accepted V2 estimate. 22 minutes is an engineering estimate and is unmeasured."
+    },
+    {
+      "operation_id": "OP-4200",
+      "description": "Fret preparation: install, level, crown, polish, dress ends",
+      "setup_minutes": 0,
+      "touch_minutes": 78,
+      "machine_minutes": 0,
+      "setup_per_batch": false,
+      "from_state": "M3",
+      "is_draft_addition": false,
+      "note": "53% of all neck touch time and the dominant sensitivity variable. A fret press with batch jigs is the only credible route to reducing it, and it has nothing to do with the router."
+    },
+    {
+      "operation_id": "OP-4300",
+      "description": "Nut work: fit blank, cut slots to height, shape and polish",
+      "setup_minutes": 0,
+      "touch_minutes": 32,
+      "machine_minutes": 0,
+      "setup_per_batch": false,
+      "from_state": "M4",
+      "is_draft_addition": false
+    },
+    {
+      "operation_id": "OP-4400",
+      "description": "Preliminary neck setup: truss rod tension and initial relief",
+      "setup_minutes": 0,
+      "touch_minutes": 14,
+      "machine_minutes": 0,
+      "setup_per_batch": false,
+      "from_state": "M4",
+      "is_draft_addition": false
+    },
+    {
+      "operation_id": "OP-4500",
+      "description": "Neck finishing: seal, sand, topcoat",
+      "setup_minutes": 0,
+      "touch_minutes": 32,
+      "machine_minutes": 0,
+      "setup_per_batch": false,
+      "from_state": "M4",
+      "is_draft_addition": true,
+      "note": "DRAFT ADDITION. Neck finishing is absent from the ENTIRE accepted product model, not merely the neck - every finish operation in the V2 baseline is body work. Its omission means the baseline neck was never production-ready, so any earlier comparison against a finished purchased neck was not like-for-like."
+    }
+  ],
+  "buy_references": [
+    {
+      "reference_id": "BUY-BOUTIQUE",
+      "description": "Boutique-quality finished neck",
+      "completion_state": "M4",
+      "catalog_price": 125.0,
+      "source": "owner_research",
+      "confidence": "draft",
+      "freight_per_unit": null,
+      "duty_percent": null,
+      "incoming_inspection_minutes": null,
+      "corrective_work_minutes": null,
+      "reject_percent": null,
+      "notes": [
+        "Owner research, 2026-07-29.",
+        "This is the LIKE-FOR-LIKE comparison: quality-matched to a shop-machined neck, and the only purchase reference the make case should be judged against.",
+        "Landed cost is unknown. Domestic or import status is unstated, so neither freight nor duty is assumed."
+      ]
+    },
+    {
+      "reference_id": "BUY-IMPORT-BUDGET",
+      "description": "Budget finished neck, imported, probable composite fingerboard",
+      "completion_state": "M4",
+      "catalog_price": 45.0,
+      "source": "owner_research",
+      "confidence": "draft",
+      "freight_per_unit": null,
+      "duty_percent": null,
+      "incoming_inspection_minutes": null,
+      "corrective_work_minutes": null,
+      "reject_percent": null,
+      "notes": [
+        "NOT A LIKE-FOR-LIKE SUBSTITUTE and must not be compared as one.",
+        "Owner assessment: the workmanship may not pass inspection at all, in which case it is not an option at any price.",
+        "The fingerboard is probably composite, against AAA ebony at 29.00 on the in-house spec it was being compared with.",
+        "EVERY LANDED-COST FIELD IS UNKNOWN. Freight, duty under HTS 9209 plus any Section 301 line which must be verified current, incoming inspection, corrective fretwork and reject rate all sit between 45.00 and a usable neck.",
+        "A modelled hidden-cost structure suggests these roughly double the catalog figure, but nothing in it is measured, which is why no value is recorded here.",
+        "Heel-to-pocket fit is the specific risk for a CNC shop: the neck pocket is repeatable to hundredths of a millimetre and an imported heel is not. That mismatch costs labour on every instrument, not once."
+      ]
+    }
+  ],
+  "sensitivity": {
+    "fretwork_minutes": [78, 65, 55, 45, 35, 25],
+    "fretboard_price": [29, 20, 15, 10, 5],
+    "machine_minutes": [52, 45, 40, 30, 20],
+    "yield_rate": [0.8, 0.85, 0.9, 0.95, 1.0],
+    "note": "A deterministic grid, not an optimiser. Machine minutes remain PER NECK: this sprint does not reinterpret them as a nested batch runtime without measured evidence."
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "confidence": "draft",
+    "snapshot_date": "2026-07-29",
+    "note": "Wood prices and purchase references are owner-supplied research. Every operation time other than the two draft additions is carried from the accepted V2 baseline at commit 1cd74f9 and is not re-derived here."
+  },
+  "notes": [
+    "BATCHING IS THE SMALLEST LEVER ON THE TABLE. Only OP-4100 carries setup, so the entire benefit is 8.62 per neck and it is fully realised by about quantity 10.",
+    "The two real levers are the fretboard price and the fretwork time, and neither has anything to do with the router that prompted this sprint.",
+    "The construction choice is worth 11.75 per neck in timber alone, which is more than everything batching can offer combined."
+  ]
+}

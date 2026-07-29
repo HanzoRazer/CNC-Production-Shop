@@ -71,6 +71,14 @@ ATTENDANCE_MODES: frozenset[str] = frozenset(
     }
 )
 
+# Whether an operation's setup recurs for every unit or once for a whole run.
+# per_unit is the default and the pre-existing behaviour: before this field
+# existed the calculator multiplied setup by quantity, so every record written
+# without it must keep resolving that way.
+SETUP_SCOPE_PER_UNIT = "per_unit"
+SETUP_SCOPE_PER_BATCH = "per_batch"
+SETUP_SCOPES: frozenset[str] = frozenset({SETUP_SCOPE_PER_UNIT, SETUP_SCOPE_PER_BATCH})
+
 
 @dataclass(frozen=True)
 class EstimateProvenanceV2:
@@ -135,6 +143,13 @@ class OperationTimeModelV2:
     Labor is setup + operator_touch + rework. Machine runtime, equipment
     occupancy, and elapsed wait never become labor, and may overlap each
     other or overlap labor freely.
+
+    setup_scope decides whether setup recurs per unit or once per batch. It
+    defaults to per_unit, which is what every record written before it existed
+    assumed, so an omitted value resolves to the prior behaviour and no
+    existing estimate moves. Only an operation that explicitly declares
+    per_batch is treated as amortisable, and at quantity one the two are
+    arithmetically identical.
     """
 
     setup_minutes: float = 0.0
@@ -143,6 +158,7 @@ class OperationTimeModelV2:
     equipment_occupancy_minutes: float = 0.0
     elapsed_wait_minutes: float = 0.0
     rework_minutes: float = 0.0
+    setup_scope: str = SETUP_SCOPE_PER_UNIT
 
     def __post_init__(self) -> None:
         for name in (
@@ -156,13 +172,38 @@ class OperationTimeModelV2:
             value = getattr(self, name)
             if isinstance(value, bool) or value < 0:
                 raise ValueError(f"{name} must be a non-negative number")
+        if self.setup_scope not in SETUP_SCOPES:
+            raise ValueError(
+                f"setup_scope must be one of {sorted(SETUP_SCOPES)}, "
+                f"got {self.setup_scope!r}"
+            )
 
     @property
     def labor_minutes(self) -> float:
-        """Operator-present minutes only."""
+        """Operator-present minutes for ONE unit, setup included.
+
+        Unchanged by setup_scope on purpose. This is the per-unit reading and
+        every existing caller wants it; batch allocation is the calculator's
+        job, not this property's, because only the calculator knows the
+        quantity.
+        """
         return float(
             self.setup_minutes + self.operator_touch_minutes + self.rework_minutes
         )
+
+    def labor_minutes_for(self, quantity: int) -> float:
+        """Operator-present minutes for a run of `quantity` units.
+
+        The one place batch semantics apply. per_unit multiplies everything;
+        per_batch charges setup once and multiplies the rest. At quantity one
+        they agree exactly, which is what keeps existing records still.
+        """
+        if quantity < 1:
+            raise ValueError("quantity must be >= 1")
+        variable = self.operator_touch_minutes + self.rework_minutes
+        if self.setup_scope == SETUP_SCOPE_PER_BATCH:
+            return float(self.setup_minutes + variable * quantity)
+        return float(self.labor_minutes * quantity)
 
 
 @dataclass(frozen=True)

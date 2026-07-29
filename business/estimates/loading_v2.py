@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from business.estimates.models_v2 import (
+    SETUP_SCOPE_PER_UNIT,
     EquipmentRefV2,
     EstimateProvenanceV2,
     LaborRateInputV2,
@@ -39,6 +40,9 @@ def _time_model(data: dict[str, Any]) -> OperationTimeModelV2:
         equipment_occupancy_minutes=float(data.get("equipment_occupancy_minutes", 0.0)),
         elapsed_wait_minutes=float(data.get("elapsed_wait_minutes", 0.0)),
         rework_minutes=float(data.get("rework_minutes", 0.0)),
+        # Omitted resolves to per_unit, which is what every record written
+        # before this field existed already meant.
+        setup_scope=str(data.get("setup_scope", SETUP_SCOPE_PER_UNIT)),
     )
 
 

@@ -1,0 +1,936 @@
+{
+  "result_id": "NECK-MAKE-OR-BUY-RESULT-V1",
+  "input_ref": "NECK-MAKE-OR-BUY-INPUT-V1",
+  "dev_order": "NECK-MAKE-OR-BUY-BATCH-COSTING-1",
+  "status": "draft",
+  "currency": "USD",
+  "decision_authorized": false,
+  "baseline": {
+    "construction": "SCARF_JOINT",
+    "fretboard_price": 29.0,
+    "yield_rate": 0.9,
+    "note": "Scarf construction with the AAA ebony board. The dearest fretboard and the cheapest timber, which is the spec as it stands today."
+  },
+  "make_scenarios": [
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 8.84,
+      "setup_cost": 9.58,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 52.23,
+      "cost_per_saleable": 58.04,
+      "yield_loss_per_saleable": 5.81,
+      "max_competitive_purchase_price": 58.04
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 8.84,
+      "setup_cost": 1.92,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 45.33,
+      "cost_per_saleable": 50.37,
+      "yield_loss_per_saleable": 5.04,
+      "max_competitive_purchase_price": 50.37
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 8.84,
+      "setup_cost": 0.96,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 44.47,
+      "cost_per_saleable": 49.41,
+      "yield_loss_per_saleable": 4.94,
+      "max_competitive_purchase_price": 49.41
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 8.84,
+      "setup_cost": 0.48,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 44.04,
+      "cost_per_saleable": 48.93,
+      "yield_loss_per_saleable": 4.89,
+      "max_competitive_purchase_price": 48.93
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 8.84,
+      "setup_cost": 0.24,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 43.82,
+      "cost_per_saleable": 48.69,
+      "yield_loss_per_saleable": 4.87,
+      "max_competitive_purchase_price": 48.69
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 54.96,
+      "setup_cost": 9.58,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 104.28,
+      "cost_per_saleable": 115.86,
+      "yield_loss_per_saleable": 11.58,
+      "max_competitive_purchase_price": 115.86
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 54.96,
+      "setup_cost": 1.92,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 97.38,
+      "cost_per_saleable": 108.2,
+      "yield_loss_per_saleable": 10.82,
+      "max_competitive_purchase_price": 108.2
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 54.96,
+      "setup_cost": 0.96,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 96.51,
+      "cost_per_saleable": 107.24,
+      "yield_loss_per_saleable": 10.73,
+      "max_competitive_purchase_price": 107.24
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 54.96,
+      "setup_cost": 0.48,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 96.08,
+      "cost_per_saleable": 106.76,
+      "yield_loss_per_saleable": 10.68,
+      "max_competitive_purchase_price": 106.76
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 54.96,
+      "setup_cost": 0.24,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 95.87,
+      "cost_per_saleable": 106.52,
+      "yield_loss_per_saleable": 10.65,
+      "max_competitive_purchase_price": 106.52
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 63.29,
+      "setup_cost": 9.58,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 149.15,
+      "cost_per_saleable": 165.72,
+      "yield_loss_per_saleable": 16.57,
+      "max_competitive_purchase_price": 165.72
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 63.29,
+      "setup_cost": 1.92,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 142.25,
+      "cost_per_saleable": 158.06,
+      "yield_loss_per_saleable": 15.81,
+      "max_competitive_purchase_price": 158.06
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 63.29,
+      "setup_cost": 0.96,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 141.39,
+      "cost_per_saleable": 157.1,
+      "yield_loss_per_saleable": 15.71,
+      "max_competitive_purchase_price": 157.1
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 63.29,
+      "setup_cost": 0.48,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 140.96,
+      "cost_per_saleable": 156.62,
+      "yield_loss_per_saleable": 15.66,
+      "max_competitive_purchase_price": 156.62
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 63.29,
+      "setup_cost": 0.24,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 140.74,
+      "cost_per_saleable": 156.38,
+      "yield_loss_per_saleable": 15.64,
+      "max_competitive_purchase_price": 156.38
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 66.9,
+      "setup_cost": 9.58,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 189.78,
+      "cost_per_saleable": 210.86,
+      "yield_loss_per_saleable": 21.08,
+      "max_competitive_purchase_price": 210.86
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 66.9,
+      "setup_cost": 1.92,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 182.88,
+      "cost_per_saleable": 203.2,
+      "yield_loss_per_saleable": 20.32,
+      "max_competitive_purchase_price": 203.2
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 66.9,
+      "setup_cost": 0.96,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 182.01,
+      "cost_per_saleable": 202.24,
+      "yield_loss_per_saleable": 20.23,
+      "max_competitive_purchase_price": 202.24
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 66.9,
+      "setup_cost": 0.48,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 181.58,
+      "cost_per_saleable": 201.76,
+      "yield_loss_per_saleable": 20.18,
+      "max_competitive_purchase_price": 201.76
+    },
+    {
+      "construction": "SCARF_JOINT",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 66.9,
+      "setup_cost": 0.24,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 181.37,
+      "cost_per_saleable": 201.52,
+      "yield_loss_per_saleable": 20.15,
+      "max_competitive_purchase_price": 201.52
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 21.9,
+      "setup_cost": 9.58,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 63.99,
+      "cost_per_saleable": 71.1,
+      "yield_loss_per_saleable": 7.11,
+      "max_competitive_purchase_price": 71.1
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 21.9,
+      "setup_cost": 1.92,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 57.09,
+      "cost_per_saleable": 63.43,
+      "yield_loss_per_saleable": 6.34,
+      "max_competitive_purchase_price": 63.43
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 21.9,
+      "setup_cost": 0.96,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 56.22,
+      "cost_per_saleable": 62.47,
+      "yield_loss_per_saleable": 6.25,
+      "max_competitive_purchase_price": 62.47
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 21.9,
+      "setup_cost": 0.48,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 55.79,
+      "cost_per_saleable": 61.99,
+      "yield_loss_per_saleable": 6.2,
+      "max_competitive_purchase_price": 61.99
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M1",
+      "completion_description": "CNC-machined shaft, truss rod channel cut, fretboard not attached",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 21.9,
+      "setup_cost": 0.24,
+      "touch_cost": 11.71,
+      "machine_cost": 27.9,
+      "cost_per_started": 55.58,
+      "cost_per_saleable": 61.75,
+      "yield_loss_per_saleable": 6.17,
+      "max_competitive_purchase_price": 61.75
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 68.01,
+      "setup_cost": 9.58,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 116.03,
+      "cost_per_saleable": 128.92,
+      "yield_loss_per_saleable": 12.89,
+      "max_competitive_purchase_price": 128.92
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 68.01,
+      "setup_cost": 1.92,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 109.13,
+      "cost_per_saleable": 121.25,
+      "yield_loss_per_saleable": 12.12,
+      "max_competitive_purchase_price": 121.25
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 68.01,
+      "setup_cost": 0.96,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 108.27,
+      "cost_per_saleable": 120.29,
+      "yield_loss_per_saleable": 12.02,
+      "max_competitive_purchase_price": 120.29
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 68.01,
+      "setup_cost": 0.48,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 107.83,
+      "cost_per_saleable": 119.82,
+      "yield_loss_per_saleable": 11.99,
+      "max_competitive_purchase_price": 119.82
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M2",
+      "completion_description": "Fretboard installed over the truss rod, levelled and radiused",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 68.01,
+      "setup_cost": 0.24,
+      "touch_cost": 23.43,
+      "machine_cost": 27.9,
+      "cost_per_started": 107.62,
+      "cost_per_saleable": 119.58,
+      "yield_loss_per_saleable": 11.96,
+      "max_competitive_purchase_price": 119.58
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 76.35,
+      "setup_cost": 9.58,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 160.9,
+      "cost_per_saleable": 178.78,
+      "yield_loss_per_saleable": 17.88,
+      "max_competitive_purchase_price": 178.78
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 76.35,
+      "setup_cost": 1.92,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 154.0,
+      "cost_per_saleable": 171.11,
+      "yield_loss_per_saleable": 17.11,
+      "max_competitive_purchase_price": 171.11
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 76.35,
+      "setup_cost": 0.96,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 153.14,
+      "cost_per_saleable": 170.16,
+      "yield_loss_per_saleable": 17.02,
+      "max_competitive_purchase_price": 170.16
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 76.35,
+      "setup_cost": 0.48,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 152.71,
+      "cost_per_saleable": 169.68,
+      "yield_loss_per_saleable": 16.97,
+      "max_competitive_purchase_price": 169.68
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M3",
+      "completion_description": "Frets installed, levelled, crowned and dressed",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 76.35,
+      "setup_cost": 0.24,
+      "touch_cost": 64.95,
+      "machine_cost": 27.9,
+      "cost_per_started": 152.49,
+      "cost_per_saleable": 169.44,
+      "yield_loss_per_saleable": 16.95,
+      "max_competitive_purchase_price": 169.44
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 1,
+      "saleable": 0.9,
+      "material_cost": 79.96,
+      "setup_cost": 9.58,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 201.53,
+      "cost_per_saleable": 223.92,
+      "yield_loss_per_saleable": 22.39,
+      "max_competitive_purchase_price": 223.92
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 5,
+      "saleable": 4.5,
+      "material_cost": 79.96,
+      "setup_cost": 1.92,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 194.63,
+      "cost_per_saleable": 216.25,
+      "yield_loss_per_saleable": 21.62,
+      "max_competitive_purchase_price": 216.25
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 10,
+      "saleable": 9.0,
+      "material_cost": 79.96,
+      "setup_cost": 0.96,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 193.77,
+      "cost_per_saleable": 215.29,
+      "yield_loss_per_saleable": 21.52,
+      "max_competitive_purchase_price": 215.29
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 20,
+      "saleable": 18.0,
+      "material_cost": 79.96,
+      "setup_cost": 0.48,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 193.33,
+      "cost_per_saleable": 214.82,
+      "yield_loss_per_saleable": 21.49,
+      "max_competitive_purchase_price": 214.82
+    },
+    {
+      "construction": "ONE_PIECE",
+      "completion_state": "M4",
+      "completion_description": "Nut cut, relief set, neck finished — ready to hang on a body",
+      "quantity": 40,
+      "saleable": 36.0,
+      "material_cost": 79.96,
+      "setup_cost": 0.24,
+      "touch_cost": 106.48,
+      "machine_cost": 27.9,
+      "cost_per_started": 193.12,
+      "cost_per_saleable": 214.58,
+      "yield_loss_per_saleable": 21.46,
+      "max_competitive_purchase_price": 214.58
+    }
+  ],
+  "batching_effect": {
+    "operations_carrying_setup": [
+      "OP-4100"
+    ],
+    "total_setup_minutes": 18.0,
+    "cost_per_saleable_qty_1": 210.86,
+    "cost_per_saleable_qty_40": 201.52,
+    "saving_qty_1_to_40": 9.34,
+    "ceiling_at_infinite_quantity": 9.58,
+    "note": "Only one operation in the neck carries setup, so this is the entire batching opportunity. It is smaller than the construction choice."
+  },
+  "buy_references": [
+    {
+      "reference_id": "BUY-BOUTIQUE",
+      "completion_state": "M4",
+      "catalog_price": 125.0,
+      "landed_cost_per_good": null,
+      "is_fully_landed": false,
+      "unknown_fields": [
+        "freight_per_unit",
+        "duty_percent",
+        "incoming_inspection_minutes",
+        "corrective_work_minutes",
+        "reject_percent"
+      ],
+      "notes": [
+        "Owner research, 2026-07-29.",
+        "This is the LIKE-FOR-LIKE comparison: quality-matched to a shop-machined neck, and the only purchase reference the make case should be judged against.",
+        "Landed cost is unknown. Domestic or import status is unstated, so neither freight nor duty is assumed."
+      ]
+    },
+    {
+      "reference_id": "BUY-IMPORT-BUDGET",
+      "completion_state": "M4",
+      "catalog_price": 45.0,
+      "landed_cost_per_good": null,
+      "is_fully_landed": false,
+      "unknown_fields": [
+        "freight_per_unit",
+        "duty_percent",
+        "incoming_inspection_minutes",
+        "corrective_work_minutes",
+        "reject_percent"
+      ],
+      "notes": [
+        "NOT A LIKE-FOR-LIKE SUBSTITUTE and must not be compared as one.",
+        "Owner assessment: the workmanship may not pass inspection at all, in which case it is not an option at any price.",
+        "The fingerboard is probably composite, against AAA ebony at 29.00 on the in-house spec it was being compared with.",
+        "EVERY LANDED-COST FIELD IS UNKNOWN. Freight, duty under HTS 9209 plus any Section 301 line which must be verified current, incoming inspection, corrective fretwork and reject rate all sit between 45.00 and a usable neck.",
+        "A modelled hidden-cost structure suggests these roughly double the catalog figure, but nothing in it is measured, which is why no value is recorded here.",
+        "Heel-to-pocket fit is the specific risk for a CNC shop: the neck pocket is repeatable to hundredths of a millimetre and an imported heel is not. That mismatch costs labour on every instrument, not once."
+      ]
+    }
+  ],
+  "thresholds": {
+    "BUY-BOUTIQUE": {
+      "target_price": 125.0,
+      "completion_state": "M4",
+      "quantity": 20,
+      "construction": "SCARF_JOINT",
+      "rows": [
+        {
+          "fretboard_price": 29,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 20,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 15,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 10,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 5,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        }
+      ]
+    },
+    "BUY-IMPORT-BUDGET": {
+      "target_price": 45.0,
+      "completion_state": "M4",
+      "quantity": 20,
+      "construction": "SCARF_JOINT",
+      "rows": [
+        {
+          "fretboard_price": 29,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 20,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 15,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 10,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        },
+        {
+          "fretboard_price": 5,
+          "fretwork_minutes_required": null,
+          "reachable": false,
+          "reduction_percent": null
+        }
+      ]
+    }
+  },
+  "sensitivity": {
+    "fretboard_x_fretwork_qty20_M4": [
+      {
+        "fretboard_price": 29,
+        "costs": {
+          "78": 201.76,
+          "65": 194.84,
+          "55": 189.51,
+          "45": 184.19,
+          "35": 178.86,
+          "25": 173.54
+        }
+      },
+      {
+        "fretboard_price": 20,
+        "costs": {
+          "78": 191.76,
+          "65": 184.84,
+          "55": 179.51,
+          "45": 174.19,
+          "35": 168.86,
+          "25": 163.54
+        }
+      },
+      {
+        "fretboard_price": 15,
+        "costs": {
+          "78": 186.2,
+          "65": 179.28,
+          "55": 173.96,
+          "45": 168.63,
+          "35": 163.31,
+          "25": 157.98
+        }
+      },
+      {
+        "fretboard_price": 10,
+        "costs": {
+          "78": 180.65,
+          "65": 173.73,
+          "55": 168.4,
+          "45": 163.08,
+          "35": 157.75,
+          "25": 152.43
+        }
+      },
+      {
+        "fretboard_price": 5,
+        "costs": {
+          "78": 175.09,
+          "65": 168.17,
+          "55": 162.85,
+          "45": 157.52,
+          "35": 152.2,
+          "25": 146.87
+        }
+      }
+    ],
+    "yield_x_fretwork_qty20_M4": [
+      {
+        "yield_rate": 0.8,
+        "costs": {
+          "78": 226.98,
+          "65": 219.19,
+          "55": 213.2,
+          "45": 207.21,
+          "35": 201.22,
+          "25": 195.23
+        }
+      },
+      {
+        "yield_rate": 0.85,
+        "costs": {
+          "78": 213.63,
+          "65": 206.3,
+          "55": 200.66,
+          "45": 195.02,
+          "35": 189.39,
+          "25": 183.75
+        }
+      },
+      {
+        "yield_rate": 0.9,
+        "costs": {
+          "78": 201.76,
+          "65": 194.84,
+          "55": 189.51,
+          "45": 184.19,
+          "35": 178.86,
+          "25": 173.54
+        }
+      },
+      {
+        "yield_rate": 0.95,
+        "costs": {
+          "78": 191.14,
+          "65": 184.58,
+          "55": 179.54,
+          "45": 174.49,
+          "35": 169.45,
+          "25": 164.41
+        }
+      },
+      {
+        "yield_rate": 1.0,
+        "costs": {
+          "78": 181.58,
+          "65": 175.35,
+          "55": 170.56,
+          "45": 165.77,
+          "35": 160.98,
+          "25": 156.19
+        }
+      }
+    ],
+    "machine_runtime_qty20_M4": [
+      {
+        "machine_minutes_per_neck": 52,
+        "cost_per_saleable": 201.76
+      },
+      {
+        "machine_minutes_per_neck": 45,
+        "cost_per_saleable": 198.0
+      },
+      {
+        "machine_minutes_per_neck": 40,
+        "cost_per_saleable": 195.32
+      },
+      {
+        "machine_minutes_per_neck": 30,
+        "cost_per_saleable": 189.96
+      },
+      {
+        "machine_minutes_per_neck": 20,
+        "cost_per_saleable": 184.59
+      }
+    ]
+  },
+  "findings": [
+    {
+      "finding_id": "FINDING-BATCHING-IS-MINOR",
+      "metric": "cost per saleable neck, quantity 1 to 40",
+      "calculated_delta": 9.34,
+      "interpretation": "Only one operation in the neck carries setup, so batching is worth 9.34 per neck and no more. The router capacity that prompted this sprint is not the constraint.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
+      "finding_id": "FINDING-CONSTRUCTION-BEATS-BATCHING",
+      "metric": "one-piece versus scarf-jointed, M4 at quantity 20",
+      "calculated_delta": 13.06,
+      "interpretation": "The headstock-angle decision moves more money than every batching effect combined, and it is a design choice rather than a process one.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
+      "finding_id": "FINDING-FRETWORK-DOMINATES",
+      "metric": "fretwork minutes required to beat the boutique price",
+      "calculated_delta": null,
+      "interpretation": "Fretwork is the largest single operation at 78 minutes, and a fret press with batch jigs is the only credible way to reduce it. But it is no longer sufficient: at a COMPLETE neck, taking fretwork to zero still leaves in-house above the boutique price.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
+      "finding_id": "FINDING-BOTH-LEVERS-INSUFFICIENT",
+      "metric": "cost per saleable at a free fretboard, fretwork unchanged",
+      "calculated_delta": null,
+      "interpretation": "BOTH LEVERS AT THEIR LIMIT STILL MISS. A free fretboard AND zero fretwork together leave in-house above the boutique price at a complete neck. An earlier table suggested otherwise; it costed an UNFINISHED neck against a finished purchased one, before fretboard installation and neck finishing existed in the model. Those two operations and a 90% yield close the gap off.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
+      "finding_id": "FINDING-IMPORT-NOT-COMPARABLE",
+      "metric": "budget import against in-house M4",
+      "calculated_delta": null,
+      "interpretation": "The 45.00 import is not a like-for-like substitute: probable composite fingerboard against AAA ebony, and the owner judges the workmanship may not pass inspection at all. Every landed-cost field is unknown. It is recorded as a reference, not as a comparison.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
+      "finding_id": "FINDING-COMPARISON-CONFIDENCE",
+      "metric": "reachable threshold combinations against the boutique price",
+      "calculated_delta": 0,
+      "interpretation": "In-house does NOT beat a quality-matched purchased neck at a complete state, by any combination of the levers this sprint identified. That conclusion rests on two draft operations that have never been measured, so the measurement that would overturn it is fretboard installation and neck finishing time, not batching.",
+      "confidence": "draft",
+      "decision_authorized": false
+    }
+  ]
+}

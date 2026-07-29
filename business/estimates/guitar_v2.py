@@ -392,7 +392,10 @@ def calculate_thin_skin_build_estimate(
             raise ValueError(f"missing labor_rate_id reference: {op.labor_rate_id}")
         loaded_rate = rates[op.labor_rate_id].loaded_rate_per_hour
 
-        labor_minutes = op.time_model.labor_minutes * quantity
+        # Setup recurs per unit unless the operation declares otherwise. At
+        # quantity one the two scopes agree exactly, so no existing estimate
+        # moves; only a run of more than one unit can tell them apart.
+        labor_minutes = op.time_model.labor_minutes_for(quantity)
         labor_cost = calculate_labor_cost(labor_minutes, loaded_rate)
         machine_minutes = operation_machine_minutes(op, quantity)
         occupancy_minutes = operation_occupancy_minutes(op, quantity)
