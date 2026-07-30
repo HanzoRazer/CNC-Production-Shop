@@ -1125,6 +1125,14 @@
       "decision_authorized": false
     },
     {
+      "finding_id": "FINDING-GAP-IS-RATE-NOT-PROCESS",
+      "metric": "labour minutes affordable against a back-calculated manufacturing cost",
+      "calculated_delta": 23.0,
+      "interpretation": "Working backwards from an observed shelf price puts a manufacturer's cost between 51.30 and 96.19. To meet the typical-channel figure this shop must build a complete neck in about 23 labour minutes against 191 today, or pay about 3.46 an hour against 28.75. Two of the four routes are unreachable on materials and machine time ALONE, before any labour. The gap is labour RATE times CONTENT, and the shop can only move content - which needs an eightfold reduction, not a process tweak.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
       "finding_id": "FINDING-COMPARISON-CONFIDENCE",
       "metric": "reachable threshold combinations against the boutique price",
       "calculated_delta": 1,
@@ -1132,5 +1140,67 @@
       "confidence": "draft",
       "decision_authorized": false
     }
-  ]
+  ],
+  "back_calculation": {
+    "anchor_retail_price": 197.31,
+    "anchor_reference_id": "RETAIL-MIGHTY-MITE-TELE-BIRDSEYE",
+    "manufacturing_cost_low": 51.3,
+    "manufacturing_cost_high": 96.19,
+    "manufacturing_cost_midpoint": 73.32,
+    "shop_current_cost": 160.63,
+    "scenarios": [
+      {
+        "scenario_id": "DIRECT_LEAN",
+        "description": "Manufacturer sells direct to the dealer, thin margins throughout",
+        "manufacturing_cost": 96.19,
+        "shop_material_cost": 41.21,
+        "shop_machine_cost": 27.9,
+        "budget_for_labour": 27.08,
+        "labour_minutes_affordable": 56.5,
+        "implied_labour_rate": 8.51,
+        "reachable": true,
+        "note": "Reachable at 56.5 labour minutes against 191.0 today, or at a labour rate of 8.51 against 28.75."
+      },
+      {
+        "scenario_id": "DIRECT_TYPICAL",
+        "description": "Manufacturer sells direct to the dealer at conventional margins",
+        "manufacturing_cost": 80.11,
+        "shop_material_cost": 41.21,
+        "shop_machine_cost": 27.9,
+        "budget_for_labour": 11.0,
+        "labour_minutes_affordable": 23.0,
+        "implied_labour_rate": 3.46,
+        "reachable": true,
+        "note": "Reachable at 23.0 labour minutes against 191.0 today, or at a labour rate of 3.46 against 28.75."
+      },
+      {
+        "scenario_id": "VIA_DISTRIBUTOR",
+        "description": "A distributor sits between the factory and the dealer",
+        "manufacturing_cost": 65.69,
+        "shop_material_cost": 41.21,
+        "shop_machine_cost": 27.9,
+        "budget_for_labour": -3.42,
+        "labour_minutes_affordable": null,
+        "implied_labour_rate": null,
+        "reachable": false,
+        "note": "Materials and machine time alone exceed the manufacturing cost. No change to labour reaches this target."
+      },
+      {
+        "scenario_id": "DEEP_CHANNEL",
+        "description": "Long channel with generous margins at every stage",
+        "manufacturing_cost": 51.3,
+        "shop_material_cost": 41.21,
+        "shop_machine_cost": 27.9,
+        "budget_for_labour": -17.81,
+        "labour_minutes_affordable": null,
+        "implied_labour_rate": null,
+        "reachable": false,
+        "note": "Materials and machine time alone exceed the manufacturing cost. No change to labour reaches this target."
+      }
+    ],
+    "scenarios_reachable": 2,
+    "scenarios_unreachable_on_materials_and_machine": 2,
+    "tightest_labour_minutes": 23.0,
+    "lowest_implied_labour_rate": 3.46
+  }
 }

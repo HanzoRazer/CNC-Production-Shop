@@ -24,10 +24,13 @@ if str(ROOT) not in sys.path:
 from business.estimates.neck_costing import (  # noqa: E402
     COMPLETION_DESCRIPTIONS,
     COMPLETION_STATES,
+    BackCalculatedTarget,
     BuyReference,
+    ChannelScenario,
     NeckMaterial,
     NeckOperation,
     YieldPolicy,
+    back_calculate_target,
     build_make_scenario,
     fretwork_threshold,
 )
@@ -309,8 +312,82 @@ def build(doc: dict[str, Any]) -> dict[str, Any]:
         mgrid.append({"machine_minutes_per_neck": mm, "cost_per_saleable": s.cost_per_saleable})
     result["sensitivity"]["machine_runtime_qty20_M4"] = mgrid
 
+    result["back_calculation"] = _back_calculation(doc, lab, mach)
     result["findings"] = _findings(result, doc)
     return result
+
+
+def _back_calculation(doc: dict[str, Any], lab: float, mach: float) -> dict[str, Any]:
+    """Solve the shop against a manufacturing cost derived from a known retail price."""
+    bc = doc["back_calculation"]
+    anchor = bc["anchor"]
+    shop = bc["shop_position"]
+    rows: list[dict[str, Any]] = []
+    targets: list[BackCalculatedTarget] = []
+    for raw in bc["channel_scenarios"]:
+        scenario = ChannelScenario(
+            scenario_id=raw["scenario_id"],
+            description=raw["description"],
+            retail_margin=float(raw["retail_margin"]),
+            distributor_margin=float(raw["distributor_margin"]),
+            manufacturer_margin=float(raw["manufacturer_margin"]),
+        )
+        t = back_calculate_target(
+            scenario=scenario,
+            retail_price=float(anchor["retail_price"]),
+            shop_material_cost=float(shop["material_cost"]),
+            shop_machine_minutes=float(shop["machine_minutes"]),
+            shop_labour_minutes=float(shop["labour_minutes"]),
+            loaded_labour_rate=lab,
+            machine_rate=mach,
+        )
+        targets.append(t)
+        rows.append(
+            {
+                "scenario_id": t.scenario_id,
+                "description": scenario.description,
+                "manufacturing_cost": t.manufacturing_cost,
+                "shop_material_cost": t.shop_material_cost,
+                "shop_machine_cost": t.shop_machine_cost,
+                "budget_for_labour": t.budget_for_labour,
+                "labour_minutes_affordable": t.labour_minutes_affordable,
+                "implied_labour_rate": t.implied_labour_rate,
+                "reachable": t.reachable,
+                "note": t.note,
+            }
+        )
+    # Summarise from the typed targets, not from the serialised rows, so the
+    # bracket cannot drift from the objects the validator recomputes.
+    costs = [t.manufacturing_cost for t in targets]
+    minutes = [
+        t.labour_minutes_affordable
+        for t in targets
+        if t.reachable and t.labour_minutes_affordable is not None
+    ]
+    rates = [
+        t.implied_labour_rate
+        for t in targets
+        if t.reachable and t.implied_labour_rate is not None
+    ]
+    reachable = [t for t in targets if t.reachable]
+    return {
+        "anchor_retail_price": anchor["retail_price"],
+        "anchor_reference_id": anchor["reference_id"],
+        "manufacturing_cost_low": min(costs),
+        "manufacturing_cost_high": max(costs),
+        "manufacturing_cost_midpoint": round(sum(costs) / len(costs), 2),
+        "shop_current_cost": round(
+            float(shop["material_cost"])
+            + float(shop["machine_minutes"]) / 60 * mach
+            + float(shop["labour_minutes"]) / 60 * lab,
+            2,
+        ),
+        "scenarios": rows,
+        "scenarios_reachable": len(reachable),
+        "scenarios_unreachable_on_materials_and_machine": len(targets) - len(reachable),
+        "tightest_labour_minutes": min(minutes) if minutes else None,
+        "lowest_implied_labour_rate": min(rates) if rates else None,
+    }
 
 
 def _findings(result: dict[str, Any], doc: dict[str, Any]) -> list[dict[str, Any]]:
@@ -379,6 +456,20 @@ def _findings(result: dict[str, Any], doc: dict[str, Any]) -> list[dict[str, Any
             "composite fingerboard against AAA ebony, and the owner judges the workmanship may "
             "not pass inspection at all. Every landed-cost field is unknown. It is recorded "
             "as a reference, not as a comparison.",
+            "confidence": "draft",
+            "decision_authorized": False,
+        },
+        {
+            "finding_id": "FINDING-GAP-IS-RATE-NOT-PROCESS",
+            "metric": "labour minutes affordable against a back-calculated manufacturing cost",
+            "calculated_delta": result["back_calculation"]["tightest_labour_minutes"],
+            "interpretation": "Working backwards from an observed shelf price puts a "
+            "manufacturer's cost between 51.30 and 96.19. To meet the typical-channel "
+            "figure this shop must build a complete neck in about 23 labour minutes "
+            "against 191 today, or pay about 3.46 an hour against 28.75. Two of the four "
+            "routes are unreachable on materials and machine time ALONE, before any "
+            "labour. The gap is labour RATE times CONTENT, and the shop can only move "
+            "content - which needs an eightfold reduction, not a process tweak.",
             "confidence": "draft",
             "decision_authorized": False,
         },

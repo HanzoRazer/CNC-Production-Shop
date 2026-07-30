@@ -79,11 +79,40 @@ def main() -> int:
     # 3. Nothing commercial may appear anywhere. Matched on WORD BOUNDARIES:
     #    a substring test flags "marginal" and would flag a machining margin
     #    too, which are both legitimate and neither of which is a price.
-    blob = json.dumps(doc).lower() + json.dumps(stored).lower()
+    #
+    #    The back_calculation section is EXEMPT, and the exemption is narrow.
+    #    That section reads a third party's observed shelf price backwards to
+    #    infer THEIR manufacturing cost; channel vocabulary is the method there,
+    #    not a leak. What the original rule forbids is this model pricing the
+    #    shop's own output, so that is asserted separately and specifically in
+    #    3b rather than being dropped along with the exemption.
+    scan_doc = {k: v for k, v in doc.items() if k != "back_calculation"}
+    scan_res = {k: v for k, v in stored.items() if k != "back_calculation"}
+    blob = json.dumps(scan_doc).lower() + json.dumps(scan_res).lower()
     for term in FORBIDDEN:
         pattern = r"\b" + re.escape(term) + r"\b"
         hit = re.search(pattern, blob)
         _fail(errors, hit is None, f"commercial term {term!r} present")
+
+    # 3b. The exempt section may describe another manufacturer's channel. It may
+    #     NOT price this shop's neck, and it may not quietly become a price list.
+    bc_blob = (
+        json.dumps(doc["back_calculation"]).lower()
+        + json.dumps(stored["back_calculation"]).lower()
+    )
+    for term in ("our_price", "sell_price", "selling_price", "quote", "asking"):
+        _fail(
+            errors,
+            re.search(r"\b" + re.escape(term) + r"\b", bc_blob) is None,
+            f"back_calculation prices this shop's output ({term!r}); it may only "
+            f"infer a third party's cost",
+        )
+    _fail(
+        errors,
+        doc["back_calculation"]["anchor"]["is_comparable_product"] is False,
+        "the anchor must declare itself NOT a comparable product: it is a "
+        "conventional headstock neck and this instrument is headless",
+    )
 
     # 4. Governance: draft throughout, no decision authorised.
     _fail(errors, doc["status"] == "draft", "input status is not draft")
@@ -194,11 +223,61 @@ def main() -> int:
     _fail(errors, m4["elapsed_wait_minutes"] > 0, "a complete neck records no cure time at all")
     _fail(errors, m4["occupancy_cost"] > 0, "finishing occupies no equipment")
 
-    # 7. Draft additions must be flagged, because they have never been measured.
+    # 7. The back-calculation must recompute, and must stay a BRACKET. A single
+    #    margin assumption would read as precision the method cannot support.
+    bc_in, bc_out = doc["back_calculation"], stored["back_calculation"]
+    retail = float(bc_in["anchor"]["retail_price"])
+    shop = bc_in["shop_position"]
+    for raw in bc_in["channel_scenarios"]:
+        row = next(r for r in bc_out["scenarios"] if r["scenario_id"] == raw["scenario_id"])
+        expected = (
+            retail
+            * (1 - raw["retail_margin"])
+            * (1 - raw["distributor_margin"])
+            * (1 - raw["manufacturer_margin"])
+        )
+        _fail(
+            errors,
+            abs(row["manufacturing_cost"] - round(expected, 2)) < 0.02,
+            f"{raw['scenario_id']}: manufacturing cost {row['manufacturing_cost']} "
+            f"!= {round(expected, 2)}",
+        )
+        machine_cost = float(shop["machine_minutes"]) / 60 * float(doc["rates"]["machine_per_hour"])
+        budget = expected - float(shop["material_cost"]) - machine_cost
+        _fail(
+            errors,
+            row["reachable"] is (budget > 0),
+            f"{raw['scenario_id']}: reachable flag disagrees with the labour budget",
+        )
+        if budget <= 0:
+            _fail(
+                errors,
+                row["labour_minutes_affordable"] is None
+                and row["implied_labour_rate"] is None,
+                f"{raw['scenario_id']}: unreachable target still reports a labour figure",
+            )
+
+    _fail(
+        errors,
+        len(bc_out["scenarios"]) >= 3,
+        "back-calculation must span several channel routes; one margin is false precision",
+    )
+    _fail(
+        errors,
+        bc_out["manufacturing_cost_high"] > bc_out["manufacturing_cost_low"],
+        "back-calculation collapsed to a point instead of a bracket",
+    )
+    _fail(
+        errors,
+        "rule of thumb" in bc_in["margin_provenance"]["note"].lower(),
+        "margin provenance must say the margins are assumptions, not observations",
+    )
+
+    # 8. Draft additions must be flagged, because they have never been measured.
     drafts = [o["operation_id"] for o in doc["operations"] if o["is_draft_addition"]]
     _fail(errors, set(drafts) == {"OP-4150", "OP-4500"}, f"unexpected draft additions: {drafts}")
 
-    # 8. Unknown buy-side fields must be reported, not silently defaulted.
+    # 9. Unknown buy-side fields must be reported, not silently defaulted.
     for ref in stored["buy_references"]:
         if not ref["is_fully_landed"]:
             _fail(
@@ -212,7 +291,7 @@ def main() -> int:
                 f"{ref['reference_id']} is not fully landed but lists no unknown fields",
             )
 
-    # 9. Only one operation may carry batch setup; the finding depends on it.
+    # 10. Only one operation may carry batch setup; the finding depends on it.
     batch_ops = [o["operation_id"] for o in doc["operations"] if o["setup_per_batch"]]
     _fail(errors, batch_ops == ["OP-4100"], f"unexpected batch-setup operations: {batch_ops}")
 

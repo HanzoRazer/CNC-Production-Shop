@@ -104,9 +104,89 @@ complete neck from $201.76 to $187.88.
 **And the retail listing was misread as a benchmark.** A $197 Mighty Mite neck
 at a retailer contains the manufacturer's, distributor's and retailer's
 margins. Comparing it to a manufacturing cost and calling the agreement
-vindication was a category error. The relevant comparison is the maker's cost,
-plausibly $60-100, which says a commercial manufacturer builds an equivalent
-neck for roughly half what this model shows.
+vindication was a category error. That correction is no longer a caveat — the
+section below solves for the maker's cost instead of estimating it.
+
+## Working the problem backwards
+
+The third correction above left a question rather than an answer: if $197 is a
+shelf price, what did it cost to *make*? That is answerable. The shelf price is
+known, and the channel between a factory and a shelf has a known shape — so the
+manufacturing cost can be solved for instead of guessed at.
+
+The anchor is the Mighty Mite listing at **$197.31**, and it is recorded as
+`is_comparable_product: false`. It has a headstock and a standard nut; the
+Smart Guitar is headless with a clamp nut. It anchors the channel arithmetic
+and nothing else.
+
+Margins compound, they do not add. Four plausible routes:
+
+| Route | Retailer | Distributor | Maker | Manufacturing cost |
+|---|---:|---:|---:|---:|
+| Direct, lean | 35% | — | 25% | **$96.19** |
+| Direct, typical | 42% | — | 30% | **$80.11** |
+| Via distributor | 42% | 18% | 30% | **$65.69** |
+| Deep channel | 50% | 20% | 35% | **$51.30** |
+
+```
+manufacturing cost brackets at    $51.30 - $96.19
+midpoint                          $73.32
+this shop, same neck              $160.63
+```
+
+**The owner's instinct was right and this model was the thing that was wrong.**
+"I cannot believe I can't make a quality guitar neck for less than $75" lands
+inside the bracket, one dollar below the midpoint. A commercial maker builds
+that neck for roughly half what this model shows.
+
+### Solving the shop against the target
+
+The same neck, costed with budget local woods rather than AAA ebony: $41.21 of
+material, 57.8 machine minutes, 191 labour minutes. Subtract material and
+machine from each target and what remains is the labour budget.
+
+```
+route              mfg cost   labour budget   minutes affordable   or $/hr
+direct lean           96.19           27.08                 56.5      8.51
+direct typical        80.11           11.00                 23.0      3.46
+via distributor       65.69           -3.42            unreachable
+deep channel          51.30          -17.81            unreachable
+```
+
+Two of the four routes are **unreachable on materials and machine time alone,
+before a single minute of labour**. No shop-floor change reaches them; the
+model reports them as unreachable rather than emitting a negative budget that
+somebody might read as a gap to close.
+
+The two that are reachable say the same thing from opposite ends. To meet the
+typical-channel figure this shop must build a complete neck in **23 labour
+minutes against 191 today**, or pay **$3.46/hr against $28.75**.
+
+**So the gap is rate × content, and only one of those factors is movable.**
+The loaded labour rate is what it costs to employ someone here; that is not
+negotiable against a factory abroad. What is left is content — 191 minutes must
+become roughly 25, an **eightfold reduction**. That is not a process
+improvement, it is a different manufacturing method, and it is what the volume
+producers actually have.
+
+Two things follow that the batching hypothesis never would have surfaced:
+
+- **A near-$100 manufacturing cost is only reachable on the leanest channel.**
+  If the real Mighty Mite route has a distributor in it, this shop cannot match
+  it at any labour rate, because materials and machine alone overshoot.
+- **The $45 import is now legible.** At these margins a $45 shelf price implies
+  a manufacturing cost in the low twenties. Nothing in this shop's material
+  bill — $41.21 before any labour — fits inside that. The import is not being
+  built more efficiently than this shop; it is being built somewhere else
+  entirely.
+
+### What this section is not
+
+Every margin above is a rule of thumb. None is an observation of this
+manufacturer or this retailer, which is exactly why four are shown instead of
+one. **A single assumed markup would have produced one confident number and
+the confidence would have been fabricated.** One real dealer invoice collapses
+the bracket, and it is the cheapest measurement on the evidence list.
 
 ## What would overturn this
 
@@ -168,6 +248,9 @@ machine runtime per neck            held at 52 min, UNVERIFIED, largest lever
 batch fixture setup                 held at 18 min for 20 necks = 54 sec each,
                                     which is implausible for T-slot fixturing
                                     and probably understates the setup badly
+channel margins on the anchor        rules of thumb, four routes assumed;
+                                     ONE real dealer invoice collapses the
+                                     $51-96 bracket to a number
 purchased neck landed cost           every component unknown
 purchased neck reject rate           unknown
 heel-to-pocket fit variation         unquantified, and specific to a CNC shop
@@ -179,7 +262,11 @@ This is a draft engineering estimate. It does not authorize product selection,
 supplier selection, production investment, or pricing of any kind. Every
 finding carries `decision_authorized: false`.
 
-The honest summary is narrow: **buying wins on cost at a complete neck, and
-batching was never the lever that could change that.** Whether cost is the
-deciding factor — against consistency, lead time, supply risk and the control
-of making your own — is not a question this model answers.
+The honest summary is narrow: **buying wins on cost at a complete neck,
+batching was never the lever that could change that, and working backwards from
+a shelf price shows the gap is labour rate times labour content — of which only
+content can move, and it would have to move eightfold.**
+
+Whether cost is the deciding factor — against consistency, lead time, supply
+risk, and the fact that no purchased neck fits a headless 628.65 mm instrument
+at all — is not a question this model answers.

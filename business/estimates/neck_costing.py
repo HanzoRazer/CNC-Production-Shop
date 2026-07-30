@@ -237,6 +237,113 @@ class BuyReference:
         return as_money((landed + labour) / survivors)
 
 
+@dataclass(frozen=True)
+class ChannelScenario:
+    """One route from a factory to a retail shelf.
+
+    Margins are industry rules of thumb, not observations. Their spread is the
+    point: a single assumed markup would produce a false precision, whereas
+    four plausible routes bracket the manufacturing cost and the bracket is
+    the answer.
+    """
+
+    scenario_id: str
+    description: str
+    retail_margin: float
+    distributor_margin: float
+    manufacturer_margin: float
+
+    def __post_init__(self) -> None:
+        for name in ("retail_margin", "distributor_margin", "manufacturer_margin"):
+            value = getattr(self, name)
+            if not 0.0 <= value < 1.0:
+                raise ValueError(f"{name} must be in [0, 1)")
+
+    def manufacturing_cost(self, retail_price: float) -> float:
+        """Work backwards from the shelf to the factory gate."""
+        if retail_price <= 0:
+            raise ValueError("retail_price must be > 0")
+        wholesale = retail_price * (1 - self.retail_margin)
+        to_distributor = wholesale * (1 - self.distributor_margin)
+        return as_money(to_distributor * (1 - self.manufacturer_margin))
+
+
+@dataclass(frozen=True)
+class BackCalculatedTarget:
+    """What a derived manufacturing cost demands of this shop.
+
+    Reported two ways because they are the same constraint seen from opposite
+    ends: the labour MINUTES that fit the target at the shop's rate, and the
+    labour RATE that fits the target at the shop's current minutes. Neither is
+    a recommendation; together they say whether the gap is process or wages.
+    """
+
+    scenario_id: str
+    retail_price: float
+    manufacturing_cost: float
+    shop_material_cost: float
+    shop_machine_cost: float
+    budget_for_labour: float
+    labour_minutes_affordable: float | None
+    implied_labour_rate: float | None
+    reachable: bool
+    note: str
+
+
+def back_calculate_target(
+    *,
+    scenario: ChannelScenario,
+    retail_price: float,
+    shop_material_cost: float,
+    shop_machine_minutes: float,
+    shop_labour_minutes: float,
+    loaded_labour_rate: float,
+    machine_rate: float,
+) -> BackCalculatedTarget:
+    """Solve the shop against one channel scenario.
+
+    The interesting failure is when materials and machine time alone exceed the
+    manufacturing cost. That is not a labour problem and no shop-floor change
+    reaches it, so it is reported as unreachable rather than as a negative
+    labour budget.
+    """
+    mfg = scenario.manufacturing_cost(retail_price)
+    machine_cost = shop_machine_minutes / 60.0 * machine_rate
+    budget = mfg - shop_material_cost - machine_cost
+
+    if budget <= 0:
+        return BackCalculatedTarget(
+            scenario_id=scenario.scenario_id,
+            retail_price=retail_price,
+            manufacturing_cost=mfg,
+            shop_material_cost=as_money(shop_material_cost),
+            shop_machine_cost=as_money(machine_cost),
+            budget_for_labour=as_money(budget),
+            labour_minutes_affordable=None,
+            implied_labour_rate=None,
+            reachable=False,
+            note="Materials and machine time alone exceed the manufacturing cost. "
+            "No change to labour reaches this target.",
+        )
+
+    minutes = budget / loaded_labour_rate * 60.0
+    rate = budget / (shop_labour_minutes / 60.0) if shop_labour_minutes > 0 else None
+    return BackCalculatedTarget(
+        scenario_id=scenario.scenario_id,
+        retail_price=retail_price,
+        manufacturing_cost=mfg,
+        shop_material_cost=as_money(shop_material_cost),
+        shop_machine_cost=as_money(machine_cost),
+        budget_for_labour=as_money(budget),
+        labour_minutes_affordable=round(minutes, 1),
+        implied_labour_rate=None if rate is None else as_money(rate),
+        reachable=True,
+        note=f"Reachable at {round(minutes, 1)} labour minutes against "
+        f"{shop_labour_minutes} today, or at a labour rate of "
+        f"{as_money(rate) if rate else 0} against {loaded_labour_rate}.",
+    )
+
+
 def _states_up_to(state: str) -> tuple[str, ...]:
     if state not in COMPLETION_STATES:
         raise ValueError(f"unknown completion state {state!r}")

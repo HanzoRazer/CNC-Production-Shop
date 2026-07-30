@@ -54,7 +54,13 @@
     "source": "engineering_estimate",
     "confidence": "draft"
   },
-  "quantities": [1, 5, 10, 20, 40],
+  "quantities": [
+    1,
+    5,
+    10,
+    20,
+    40
+  ],
   "materials": [
     {
       "material_id": "MAT-NECK-MAHOGANY",
@@ -211,11 +217,92 @@
       ]
     }
   ],
+  "back_calculation": {
+    "note": "Anchors on a KNOWN retail price and solves backwards, rather than treating a catalog figure as a cost. The output is a bracket, not a point: the four channel routes are plausible industry structures and their spread is the honest width of the answer.",
+    "anchor": {
+      "reference_id": "RETAIL-MIGHTY-MITE-TELE-BIRDSEYE",
+      "description": "Mighty Mite Tele neck, birdseye maple neck and fingerboard, 22 frets, 25.5 in scale, satin poly finish, pre-slotted nut, 10 mm tuner holes, ready to install",
+      "retail_price": 197.31,
+      "list_price_before_discount": 205.54,
+      "source": "owner_supplied_listing",
+      "confidence": "confirmed",
+      "is_comparable_product": false,
+      "snapshot_date": "2026-07-29",
+      "note": "An observed shelf price at a real retailer, which is why it anchors this. It is NOT a comparable product for the Smart Guitar - it has a headstock and a standard nut against a headless clamp-nut instrument - but the channel arithmetic below is about cost structure, not fit."
+    },
+    "channel_scenarios": [
+      {
+        "scenario_id": "DIRECT_LEAN",
+        "description": "Manufacturer sells direct to the dealer, thin margins throughout",
+        "retail_margin": 0.35,
+        "distributor_margin": 0.0,
+        "manufacturer_margin": 0.25
+      },
+      {
+        "scenario_id": "DIRECT_TYPICAL",
+        "description": "Manufacturer sells direct to the dealer at conventional margins",
+        "retail_margin": 0.42,
+        "distributor_margin": 0.0,
+        "manufacturer_margin": 0.3
+      },
+      {
+        "scenario_id": "VIA_DISTRIBUTOR",
+        "description": "A distributor sits between the factory and the dealer",
+        "retail_margin": 0.42,
+        "distributor_margin": 0.18,
+        "manufacturer_margin": 0.3
+      },
+      {
+        "scenario_id": "DEEP_CHANNEL",
+        "description": "Long channel with generous margins at every stage",
+        "retail_margin": 0.5,
+        "distributor_margin": 0.2,
+        "manufacturer_margin": 0.35
+      }
+    ],
+    "shop_position": {
+      "material_cost": 41.21,
+      "material_basis": "budget local woods: scarf mahogany 7.96, fretboard 10.00, truss rod 12.50, fretwire 7.50, nut 3.25",
+      "machine_minutes": 57.78,
+      "labour_minutes": 191.0,
+      "basis": "the M4 scarf-construction scenario at quantity 20 from this model, per saleable neck"
+    },
+    "margin_provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "EVERY MARGIN HERE IS A RULE OF THUMB, not an observation of this manufacturer or this retailer. They are stated as a spread precisely because no single one is defensible. A real dealer invoice would collapse the bracket and is the measurement worth getting."
+    }
+  },
   "sensitivity": {
-    "fretwork_minutes": [78, 65, 55, 45, 35, 25],
-    "fretboard_price": [29, 20, 15, 10, 5],
-    "machine_minutes": [52, 45, 40, 30, 20],
-    "yield_rate": [0.8, 0.85, 0.9, 0.95, 1.0],
+    "fretwork_minutes": [
+      78,
+      65,
+      55,
+      45,
+      35,
+      25
+    ],
+    "fretboard_price": [
+      29,
+      20,
+      15,
+      10,
+      5
+    ],
+    "machine_minutes": [
+      52,
+      45,
+      40,
+      30,
+      20
+    ],
+    "yield_rate": [
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      1.0
+    ],
     "note": "A deterministic grid, not an optimiser. Machine minutes remain PER NECK: this sprint does not reinterpret them as a nested batch runtime without measured evidence."
   },
   "provenance": {

@@ -28,9 +28,11 @@ from business.estimates.models_v2 import (
 from business.estimates.neck_costing import (
     COMPLETION_STATES,
     BuyReference,
+    ChannelScenario,
     NeckMaterial,
     NeckOperation,
     YieldPolicy,
+    back_calculate_target,
     build_make_scenario,
     fretwork_threshold,
 )
@@ -384,6 +386,155 @@ def test_op_1300_impurity_is_recorded(spec):
     op = next(o for o in spec["operations"] if o["operation_id"] == "OP-1300")
     assert "CLASSIFICATION IMPURITY" in op["note"]
     assert "overstates neck cost" in op["note"]
+
+
+# ------------------------------------------------------- back-calculation
+
+
+def _channel(**kw):
+    base = dict(
+        scenario_id="TEST",
+        description="test route",
+        retail_margin=0.40,
+        distributor_margin=0.0,
+        manufacturer_margin=0.30,
+    )
+    base.update(kw)
+    return ChannelScenario(**base)
+
+
+def test_channel_margins_compound_rather_than_add():
+    """A 40% then 30% cut leaves 42% of the shelf price, not 30%.
+
+    Adding margins is the classic error here and it inflates the derived
+    manufacturing cost, which would flatter the make case.
+    """
+    assert _channel().manufacturing_cost(100.0) == pytest.approx(42.0)
+
+
+def test_channel_margin_must_be_a_fraction_below_one():
+    """A margin of 1.0 implies a zero-cost product; reject it at the boundary."""
+    for bad in (1.0, 1.5, -0.1):
+        with pytest.raises(ValueError):
+            _channel(retail_margin=bad)
+    with pytest.raises(ValueError):
+        _channel().manufacturing_cost(0.0)
+
+
+def test_deeper_channel_implies_a_lower_manufacturing_cost():
+    shallow = _channel(retail_margin=0.35, manufacturer_margin=0.25)
+    deep = _channel(retail_margin=0.50, distributor_margin=0.20, manufacturer_margin=0.35)
+    assert deep.manufacturing_cost(200.0) < shallow.manufacturing_cost(200.0)
+
+
+def _target(**kw):
+    base = dict(
+        scenario=_channel(),
+        retail_price=200.0,
+        shop_material_cost=40.0,
+        shop_machine_minutes=60.0,
+        shop_labour_minutes=180.0,
+        loaded_labour_rate=28.75,
+        machine_rate=28.97,
+    )
+    base.update(kw)
+    return back_calculate_target(**base)
+
+
+def test_back_calculation_reports_minutes_and_rate_as_one_constraint():
+    """Both figures must spend exactly the same labour budget.
+
+    Minutes-at-current-rate and rate-at-current-minutes are two views of one
+    number. If they ever disagree, one of them is telling the shop the gap is
+    smaller than it is.
+    """
+    t = _target()
+    assert t.reachable is True
+    from_minutes = t.labour_minutes_affordable / 60.0 * 28.75
+    from_rate = t.implied_labour_rate * (180.0 / 60.0)
+    assert from_minutes == pytest.approx(t.budget_for_labour, abs=0.05)
+    assert from_rate == pytest.approx(t.budget_for_labour, abs=0.05)
+
+
+def test_unreachable_target_reports_no_labour_figure_at_all():
+    """Materials plus machine exceeding the target is not a labour problem.
+
+    Emitting a negative labour budget would invite someone to read it as a
+    number to close; there is no shop-floor change that reaches it.
+    """
+    t = _target(shop_material_cost=200.0)
+    assert t.reachable is False
+    assert t.budget_for_labour < 0
+    assert t.labour_minutes_affordable is None
+    assert t.implied_labour_rate is None
+    assert "exceed the manufacturing cost" in t.note
+
+
+def test_zero_labour_budget_is_unreachable_not_free():
+    """Exactly zero budget must not be reported as a reachable zero-minute build."""
+    mfg = _channel().manufacturing_cost(200.0)
+    t = _target(shop_material_cost=mfg, shop_machine_minutes=0.0)
+    assert t.budget_for_labour == 0.0
+    assert t.reachable is False
+    assert t.labour_minutes_affordable is None
+
+
+def test_committed_back_calculation_brackets_rather_than_asserts(result):
+    """The published answer must be a spread across routes, not one number."""
+    bc = result["back_calculation"]
+    assert len(bc["scenarios"]) >= 3
+    assert bc["manufacturing_cost_low"] < bc["manufacturing_cost_high"]
+    low = min(s["manufacturing_cost"] for s in bc["scenarios"])
+    high = max(s["manufacturing_cost"] for s in bc["scenarios"])
+    assert bc["manufacturing_cost_low"] == pytest.approx(low)
+    assert bc["manufacturing_cost_high"] == pytest.approx(high)
+
+
+def test_committed_anchor_is_not_claimed_to_be_comparable(spec):
+    """The anchor is a headstock neck; the instrument is headless.
+
+    It anchors channel arithmetic only. Letting it pass as a comparable product
+    is the category error this whole section was built to correct.
+    """
+    anchor = spec["back_calculation"]["anchor"]
+    assert anchor["is_comparable_product"] is False
+    assert anchor["confidence"] == "confirmed"
+
+
+def test_committed_back_calculation_says_the_gap_is_rate_times_content(result):
+    """The shop's own labour must be far outside every reachable target."""
+    bc = result["back_calculation"]
+    assert bc["tightest_labour_minutes"] < 60
+    assert bc["lowest_implied_labour_rate"] < 10
+    assert bc["scenarios_unreachable_on_materials_and_machine"] >= 1
+
+
+def test_report_quotes_the_committed_back_calculation(result):
+    """The prose must carry the fixture's numbers, not a stale earlier draft.
+
+    Every headline figure in this report has been wrong at least once during
+    the sprint. A doc that drifts from the fixture it claims to summarise is
+    the same defect as a fixture that does not recompute.
+    """
+    report = (ROOT / "docs" / "estimates" / "NECK_MAKE_OR_BUY_V1.md").read_text(
+        encoding="utf-8"
+    )
+    bc = result["back_calculation"]
+    for value in (
+        bc["manufacturing_cost_low"],
+        bc["manufacturing_cost_high"],
+        bc["manufacturing_cost_midpoint"],
+        bc["shop_current_cost"],
+        bc["anchor_retail_price"],
+        bc["tightest_labour_minutes"],
+        bc["lowest_implied_labour_rate"],
+    ):
+        assert f"{value:,.2f}" in report or f"{value:g}" in report, (
+            f"{value} is in the fixture but not in the report"
+        )
+    for row in bc["scenarios"]:
+        assert f"{row['manufacturing_cost']:.2f}" in report, row["scenario_id"]
+    assert "unreachable" in report
 
 
 # ------------------------------------------------------------- governance
