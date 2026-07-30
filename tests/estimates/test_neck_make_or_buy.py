@@ -312,8 +312,13 @@ def test_boutique_target_is_unreachable_at_a_complete_neck(result):
     """
     rows = result["thresholds"]["BUY-BOUTIQUE"]["rows"]
     assert rows, "thresholds were not computed"
-    assert all(r["reachable"] is False for r in rows)
-    assert all(r["fretwork_minutes_required"] is None for r in rows)
+    # After the elapsed-wait fix a single combination reaches it, and only by
+    # demanding an 87% fretwork cut on the cheapest board stock. Anything less
+    # extreme misses, which is the honest shape of the result.
+    reachable = [r for r in rows if r["reachable"]]
+    assert len(reachable) == 1
+    assert reachable[0]["fretboard_price"] == 5
+    assert reachable[0]["reduction_percent"] > 80
 
 
 def test_even_a_free_board_and_zero_fretwork_misses_the_target():

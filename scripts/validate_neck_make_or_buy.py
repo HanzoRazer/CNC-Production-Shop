@@ -124,11 +124,81 @@ def main() -> int:
             "cost per saleable must exceed cost per started when necks are rejected",
         )
 
-    # 6. Draft additions must be flagged, because they have never been measured.
+    # 6. Elapsed wait and equipment occupancy must NEVER be labour. The first
+    #    version of this model had no fields for them, so clamp and cure time
+    #    were charged at the loaded rate. Recompute labour from the input and
+    #    assert the stored figure matches setup + touch alone.
+    lab_rate = float(doc["rates"]["loaded_labour_per_hour"])
+    yr_rate = float(doc["yield_policy"]["rate"])
+    order = ["M1", "M2", "M3", "M4"]
+    for s in stored["make_scenarios"]:
+        included = order[: order.index(s["completion_state"]) + 1]
+        saleable = s["quantity"] * yr_rate
+        expected = 0.0
+        wait = 0.0
+        for o in doc["operations"]:
+            if o["from_state"] not in included:
+                continue
+            setup = (
+                o["setup_minutes"] / saleable
+                if o["setup_per_batch"]
+                else o["setup_minutes"] * s["quantity"] / saleable
+            )
+            expected += setup + o["touch_minutes"] * s["quantity"] / saleable
+            wait += o.get("elapsed_wait_minutes", 0.0) * s["quantity"] / saleable
+        _fail(
+            errors,
+            abs(s["labour_minutes"] - expected) < 0.02,
+            f"{s['construction']}/{s['completion_state']}/q{s['quantity']}: labour "
+            f"{s['labour_minutes']} != setup + touch {round(expected, 2)}",
+        )
+        _fail(
+            errors,
+            abs(s["elapsed_wait_minutes"] - wait) < 0.02,
+            f"{s['construction']}/{s['completion_state']}/q{s['quantity']}: elapsed wait drifted",
+        )
+        labour_cost = s["setup_cost"] + s["touch_cost"]
+        _fail(
+            errors,
+            abs(labour_cost - s["labour_minutes"] / 60 * lab_rate) < 0.05,
+            f"{s['completion_state']}/q{s['quantity']}: labour cost is not labour minutes x rate",
+        )
+
+    # The arithmetic check above is necessary but NOT sufficient: it stays true
+    # when the input itself misclassifies, because the result faithfully
+    # reproduces a wrong input. Proven by reintroducing the original bug, which
+    # it did not catch. What actually guards the distinction is naming the
+    # operations that are cure-bound by definition and requiring them to say so.
+    cure_bound = {
+        "OP-4150": "glue must cure under clamps",
+        "OP-4500": "finish must cure between and after coats",
+    }
+    for op_id, why in cure_bound.items():
+        op = next((o for o in doc["operations"] if o["operation_id"] == op_id), None)
+        if op is None:
+            errors.append(f"FAIL {op_id} is missing; it is cure-bound and required")
+            continue
+        _fail(
+            errors,
+            op.get("elapsed_wait_minutes", 0) > 0,
+            f"{op_id} declares no elapsed wait, but {why}. Setting it to zero "
+            f"folds cure time back into operator labour, which is the defect "
+            f"this check exists to prevent.",
+        )
+
+    m4 = next(
+        s
+        for s in stored["make_scenarios"]
+        if s["completion_state"] == "M4" and s["quantity"] == 20
+    )
+    _fail(errors, m4["elapsed_wait_minutes"] > 0, "a complete neck records no cure time at all")
+    _fail(errors, m4["occupancy_cost"] > 0, "finishing occupies no equipment")
+
+    # 7. Draft additions must be flagged, because they have never been measured.
     drafts = [o["operation_id"] for o in doc["operations"] if o["is_draft_addition"]]
     _fail(errors, set(drafts) == {"OP-4150", "OP-4500"}, f"unexpected draft additions: {drafts}")
 
-    # 7. Unknown buy-side fields must be reported, not silently defaulted.
+    # 8. Unknown buy-side fields must be reported, not silently defaulted.
     for ref in stored["buy_references"]:
         if not ref["is_fully_landed"]:
             _fail(
@@ -142,7 +212,7 @@ def main() -> int:
                 f"{ref['reference_id']} is not fully landed but lists no unknown fields",
             )
 
-    # 8. Only one operation may carry batch setup; the finding depends on it.
+    # 9. Only one operation may carry batch setup; the finding depends on it.
     batch_ops = [o["operation_id"] for o in doc["operations"] if o["setup_per_batch"]]
     _fail(errors, batch_ops == ["OP-4100"], f"unexpected batch-setup operations: {batch_ops}")
 

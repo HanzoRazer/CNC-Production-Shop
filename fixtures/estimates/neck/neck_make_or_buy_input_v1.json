@@ -114,12 +114,15 @@
       "operation_id": "OP-4150",
       "description": "Fretboard installation: glue over the truss rod, clamp, level and radius",
       "setup_minutes": 0,
-      "touch_minutes": 22,
+      "touch_minutes": 10,
       "machine_minutes": 0,
+      "equipment_occupancy_minutes": 0,
+      "elapsed_wait_minutes": 45,
+      "equipment_rate_per_hour": 0,
       "setup_per_batch": false,
       "from_state": "M2",
       "is_draft_addition": true,
-      "note": "DRAFT ADDITION. No fretboard-installation operation exists anywhere in the accepted V2 estimate. 22 minutes is an engineering estimate and is unmeasured."
+      "note": "DRAFT ADDITION. No fretboard-installation operation exists anywhere in the accepted V2 estimate. CORRECTED 2026-07-29: this was first written as 22 touch minutes, which charged clamp time as operator labour. Spreading glue and setting clamps is about 10 minutes of touch; the 45 minutes the glue then needs is ELAPSED WAIT and costs nothing. Both figures are unmeasured."
     },
     {
       "operation_id": "OP-4200",
@@ -156,12 +159,15 @@
       "operation_id": "OP-4500",
       "description": "Neck finishing: seal, sand, topcoat",
       "setup_minutes": 0,
-      "touch_minutes": 32,
+      "touch_minutes": 15,
       "machine_minutes": 0,
+      "equipment_occupancy_minutes": 20,
+      "elapsed_wait_minutes": 240,
+      "equipment_rate_per_hour": 4.22,
       "setup_per_batch": false,
       "from_state": "M4",
       "is_draft_addition": true,
-      "note": "DRAFT ADDITION. Neck finishing is absent from the ENTIRE accepted product model, not merely the neck - every finish operation in the V2 baseline is body work. Its omission means the baseline neck was never production-ready, so any earlier comparison against a finished purchased neck was not like-for-like."
+      "note": "DRAFT ADDITION. Neck finishing is absent from the ENTIRE accepted product model, not merely the neck - every finish operation in the V2 baseline is body work. Its omission means the baseline neck was never production-ready, so any earlier comparison against a finished purchased neck was not like-for-like. CORRECTED 2026-07-29: first written as 32 touch minutes, which charged cure time as labour. Spraying and scuff-sanding is about 15 minutes of touch, the booth is occupied 20 at the governed 4.22/hr spray-booth rate, and the 240-minute cure is elapsed wait costing nothing. All three figures are unmeasured."
     }
   ],
   "buy_references": [

@@ -45,6 +45,17 @@ COMPLETION_DESCRIPTIONS: dict[str, str] = {
 class NeckOperation:
     """One operation in the neck subsystem.
 
+    Carries the V2 six-field distinction rather than collapsing it. The first
+    version of this class had only setup, touch and machine, so clamp time and
+    cure time had nowhere to go and were charged as operator labour — 29
+    minutes per neck of somebody watching glue dry at the loaded rate. That is
+    precisely the error the six-field model exists to prevent, and it was
+    introduced while extending that model.
+
+    elapsed_wait_minutes is calendar time and costs nothing at all.
+    equipment_occupancy_minutes costs the equipment rate, never labour.
+    Only setup, touch and rework are ever operator-present.
+
     setup_per_batch is the only route to any batching benefit in this model,
     and exactly one operation uses it.
     """
@@ -54,9 +65,24 @@ class NeckOperation:
     setup_minutes: float = 0.0
     touch_minutes: float = 0.0
     machine_minutes: float = 0.0
+    equipment_occupancy_minutes: float = 0.0
+    elapsed_wait_minutes: float = 0.0
+    equipment_rate_per_hour: float = 0.0
     setup_per_batch: bool = False
     from_state: str = "M1"
     is_draft_addition: bool = False
+
+    def __post_init__(self) -> None:
+        for name in (
+            "setup_minutes",
+            "touch_minutes",
+            "machine_minutes",
+            "equipment_occupancy_minutes",
+            "elapsed_wait_minutes",
+            "equipment_rate_per_hour",
+        ):
+            if getattr(self, name) < 0:
+                raise ValueError(f"{name} must be non-negative")
 
     def labour_minutes(self, quantity: int, saleable: float) -> float:
         """Operator minutes attributable to ONE saleable neck.
@@ -83,6 +109,19 @@ class NeckOperation:
         if saleable <= 0:
             raise ValueError("saleable quantity must be > 0")
         return float(self.machine_minutes * quantity / saleable)
+
+    def occupancy_cost_per_saleable(self, quantity: int, saleable: float) -> float:
+        """Equipment held by the job. A cost, but never a labour cost."""
+        if saleable <= 0:
+            raise ValueError("saleable quantity must be > 0")
+        minutes = self.equipment_occupancy_minutes * quantity / saleable
+        return float(minutes / 60.0 * self.equipment_rate_per_hour)
+
+    def elapsed_wait_per_saleable(self, quantity: int, saleable: float) -> float:
+        """Calendar time. Reported so it is visible, costed at nothing."""
+        if saleable <= 0:
+            raise ValueError("saleable quantity must be > 0")
+        return float(self.elapsed_wait_minutes * quantity / saleable)
 
 
 @dataclass(frozen=True)
@@ -128,9 +167,15 @@ class MakeScenario:
     setup_cost: float
     touch_cost: float
     machine_cost: float
+    occupancy_cost: float
     cost_per_saleable: float
     cost_per_started: float
     yield_loss_per_saleable: float
+    # Reported so the split is auditable: labour must never include the last two.
+    labour_minutes: float
+    machine_minutes: float
+    occupancy_minutes: float
+    elapsed_wait_minutes: float
 
     @property
     def max_competitive_purchase_price(self) -> float:
@@ -216,6 +261,7 @@ def build_make_scenario(
     material_per_saleable = material_total * quantity / saleable
 
     setup_min = touch_min = machine_min = 0.0
+    occupancy_min = wait_min = occupancy_cost = 0.0
     for op in operations:
         if op.from_state not in included:
             continue
@@ -225,11 +271,18 @@ def build_make_scenario(
             setup_min += op.setup_minutes * quantity / saleable
         touch_min += op.touch_minutes * quantity / saleable
         machine_min += op.machine_minutes_per_saleable(quantity, saleable)
+        occupancy_min += op.equipment_occupancy_minutes * quantity / saleable
+        wait_min += op.elapsed_wait_per_saleable(quantity, saleable)
+        occupancy_cost += op.occupancy_cost_per_saleable(quantity, saleable)
 
+    # Labour is setup + touch ONLY. Occupancy and elapsed wait are deliberately
+    # absent from this line and must stay absent.
     setup_cost = setup_min / 60.0 * loaded_labour_rate
     touch_cost = touch_min / 60.0 * loaded_labour_rate
     machine_cost = machine_min / 60.0 * machine_rate
-    per_saleable = material_per_saleable + setup_cost + touch_cost + machine_cost
+    per_saleable = (
+        material_per_saleable + setup_cost + touch_cost + machine_cost + occupancy_cost
+    )
 
     # What the same build would cost if nothing were ever rejected. The gap is
     # the yield loss, and it is reported rather than folded away.
@@ -256,9 +309,14 @@ def build_make_scenario(
         setup_cost=as_money(setup_cost),
         touch_cost=as_money(touch_cost),
         machine_cost=as_money(machine_cost),
+        occupancy_cost=as_money(occupancy_cost),
         cost_per_saleable=as_money(per_saleable),
         cost_per_started=as_money(per_started),
         yield_loss_per_saleable=as_money(per_saleable - per_started),
+        labour_minutes=round(setup_min + touch_min, 2),
+        machine_minutes=round(machine_min, 2),
+        occupancy_minutes=round(occupancy_min, 2),
+        elapsed_wait_minutes=round(wait_min, 2),
     )
 
 
