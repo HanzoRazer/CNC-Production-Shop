@@ -62,19 +62,33 @@ Body blank **47.0 mm** (from 44.45, see `CONF-BODY-THICKNESS`). All dimensions i
 
 | Cavity | Layout | Derived L × W × D | Stated D | Floor left | Fits |
 |---|---|---|---:|---:|:--:|
-| `ELECTRONICS_POD` | side_by_side | 162.0 × 64.0 × 33.0 | 30.48 | 14.00 | yes |
-| `TEENSY_IO_POCKET` | single | 70.0 × 25.0 × 11.5 | 20.0 | 35.50 | yes |
+| `POD_PI` | side_by_side | 93.0 × 64.0 × 27.0 | — | 20.00 | yes |
+| `POD_HAT` | single | 73.0 × 64.5 × 33.0 | — | 14.00 | yes |
+| `WIRE_CHANNEL_PI_HAT` | single | 150.0 × 30.0 × 5.0 | 15.0 | 42.00 | yes |
 | `BATTERY_CHAMBER` | single | 90.0 × 55.0 × 21.0 | 30.48 | 26.00 | yes |
 
 ```text
-required blank thickness   41.0 mm   (governed by ELECTRONICS_POD: 33.0 + 8.0)
+required blank thickness   41.0 mm   (governed by POD_HAT: 33.0 + 8.0)
 stated blank thickness     47.0 mm   (from 44.45)
 margin                      6.0 mm  -> SUFFICIENT
 ```
 
-The blank works side by side with 6.0 mm to spare. It was enlarged to 51.0 not for
+The blank works side by side with 6.0 mm to spare. It was enlarged to 47.0 not for
 the pod, which already fitted, but to clear four opposed-face web failures among
 the spec's own cavities.
+
+**Two cavities in this table were superseded after this Dev Order closed, and
+the figures above are the current ones.** `ELECTRONICS_POD` was a single
+162.0 × 64.0 × 33.0 pod; `CONF-POD-SPLIT` divided it into `POD_PI` and
+`POD_HAT` joined by `WIRE_CHANNEL_PI_HAT`, because the one-piece footprint had
+no valid position anywhere in the outline. `TEENSY_IO_POCKET` is gone entirely
+— the Teensy 4.1 was absorbed into the custom board of
+`SUBASSEMBLY-SG-AUDIO-FRONTEND-V1` under `CONF-FRONTEND-CUSTOM`, so no separate
+MCU pocket remains. The findings below are preserved as written at the time and
+argue from the one-piece pod; they are the reasoning that produced the split,
+not a description of the current design. **Placement of these cavities is not
+here** — it is in `SG-ELECTRONICS-BAY-V1`, which is canon for where anything
+sits.
 
 ## Findings
 
@@ -119,10 +133,19 @@ larger than 162 × 64 mm by however much that part needs.
 
 ## Reconciliation record
 
-Seventeen conflicts found: eight ruled, nine open. Recorded in the register and
-propagated verbatim into the derived record, with a test enforcing that they
-match, so a reviewer reading only the derived file cannot see fewer conflicts
-than exist.
+Conflicts are recorded in the register and propagated verbatim into the derived
+record, with a test enforcing that they match, so a reviewer reading only the
+derived file cannot see fewer conflicts than exist.
+
+**The two tables below are this Dev Order's closing state, not the current
+count.** At close it was fifteen conflicts, seven ruled and eight open. The set
+has since grown to **32: 29 ruled, 3 unresolved**, as later Dev Orders opened
+and settled their own. `fixtures/geometry/smart_guitar_cavity_geometry_v1.json`
+is canonical for the count and the status of any single conflict; that test
+enforces the fixture against the register, not this document against either.
+The only conflicts still unresolved today are `CONF-PICKUP-TYPE`,
+`CONF-PICKUP-ROUTE-DIMS`, and `CONF-SINGLE-PICKUP-EMC` — the last opened after
+this record closed and needs a physical measurement, not a derivation.
 
 ### Ruled
 
@@ -136,7 +159,13 @@ than exist.
 | `CONF-FAN-INTRUSION` | fan mounting | The fan **vents outward through the lid** and consumes no cavity depth, confirming the modelled configuration. No derived dimension changes, but the thickness verdict stops being provisional: the 3.45 mm margin is real. An internally mounted fan would have demanded 51.0 mm and failed the blank by 6.55 mm; that counterfactual is retained under test. Lid requires vents. |
 | `CONF-FRET-COUNT` | fret count | 24. The 2026-07-21 sg-spec quarantine note asserting "canon: 22" is itself wrong. No effect on cavity geometry; recorded because it sits in a file presenting itself as a cleanup. |
 
-### Open
+### Open at close
+
+Six of the eight below have since been **ruled**: `CONF-USB-INTERFACE-LOCATION`,
+`CONF-HIZ-SPLITTER-DIMS`, `CONF-BATTERY-PLACEMENT`, `CONF-NVME-PLACEMENT`,
+`CONF-TRACE-REGISTRATION`, and `CONF-OPPOSED-FACE-WEB`. Only the two pickup
+conflicts remain open from this set. Read the "why it is still open" column as
+the reasoning at the time; the rulings are in the fixture.
 
 | ID | Field | Why it is still open |
 |---|---|---|
@@ -164,8 +193,9 @@ the Les Paul outline that sg-spec's positions were mapped against, plan-level
 validation is genuinely needed and is out of scope here.
 `CONF-OPPOSED-FACE-WEB` is a concrete instance of what that omission hides.
 
-**Only the embedded-electronics cavities are modelled** — the pod, the Teensy
-pocket, and the battery chamber. Pickups, pickup routes, the neck pocket, the
+**Only the embedded-electronics cavities are modelled** — at close, the pod,
+the Teensy pocket, and the battery chamber; today the two pods, the wire
+channel between them, and the battery chamber. Pickups, pickup routes, the neck pocket, the
 bridge, the control cavity, and the output jack are **not** here. Both pickup
 disagreements are recorded as conflicts, but no pickup dimension is derived or
 fit-checked, and a test asserts no pickup appears as a component or cavity so

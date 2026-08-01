@@ -1,6 +1,10 @@
 # SMART-GUITAR-PLAN-COLLISION-1 — Dev Order Scope
 
-**Status:** proposed, not started
+**Status:** in progress — both gates cleared, the full sweep has run, and its
+results are recorded below. Placement is settled **bay-local** in
+`SG-ELECTRONICS-BAY-V1`; what remains is the body outline itself, which is why
+the bay carries no `body_position`. Not done until that is calibrated or
+formally recorded as uncalibratable.
 **Prerequisite:** `SMART-GUITAR-CAVITY-GEOMETRY-1` (complete, commit `4ef8cc3`)
 **Blocks:** `SMART-GUITAR-BUDGET-MODEL-1` only if a collision proves the body
 unbuildable as specified
@@ -375,4 +379,4 @@ the point of running it before the budget model prices the current geometry.
   named ruling and its owner
 - Reported clearances carry the calibration uncertainty band
 - Existing gates stay green: ruff, `mypy business`, pytest, coverage ≥ 90%,
-  and all four validators
+  and every validator wired into CI

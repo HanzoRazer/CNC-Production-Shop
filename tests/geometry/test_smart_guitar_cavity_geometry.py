@@ -951,8 +951,52 @@ def test_validator_script_passes():
 
 def test_doc_records_the_ruling_and_the_open_items():
     text = DOC.read_text(encoding="utf-8")
-    for marker in ("side-by-side", "CONF-FAN-INTRUSION", "162", "33.0", "not exhaustive"):
+    for marker in ("side-by-side", "CONF-FAN-INTRUSION", "33.0", "not exhaustive"):
         assert marker in text, marker
+
+
+def test_doc_derived_geometry_table_matches_the_fixture():
+    """The doc's derived-geometry table has to name the cavities that exist.
+
+    This test used to assert that "162" appeared in the doc, which was true
+    when the pod was one piece. CONF-POD-SPLIT divided it into POD_PI and
+    POD_HAT, and the assertion then held a superseded figure in place as a
+    live one: the table went on presenting a 162 mm pod and a Teensy pocket
+    for a part that had been absorbed into the front-end board. Checking the
+    doc against the fixture is what keeps the table honest as cavities change.
+    """
+    text = DOC.read_text(encoding="utf-8")
+    for cavity in load_json(GEOMETRY)["cavities"]:
+        assert f"`{cavity['cavity_id']}`" in text, (
+            f"{cavity['cavity_id']} is a governed cavity but is absent from "
+            f"{DOC.name} — its derived-geometry table is stale"
+        )
+    rows = [ln for ln in text.splitlines() if ln.startswith("| `")]
+    retired = [ln for ln in rows if "TEENSY_IO_POCKET" in ln or "ELECTRONICS_POD" in ln]
+    assert not retired, (
+        "TEENSY_IO_POCKET and ELECTRONICS_POD were retired under "
+        "CONF-FRONTEND-CUSTOM and CONF-POD-SPLIT; they may be discussed in "
+        f"prose but must not stand as table rows: {retired}"
+    )
+
+
+def test_doc_does_not_understate_the_conflict_count():
+    """A reader must not see fewer conflicts in the doc than the fixture holds.
+
+    The doc's tables are this Dev Order's closing state and are deliberately
+    not rewritten as later orders add conflicts. What it may not do is state a
+    total that is quietly smaller than the governed one.
+    """
+    conflicts = load_json(GEOMETRY)["conflicts"]
+    unresolved = [c["conflict_id"] for c in conflicts if c["status"] == "unresolved"]
+    text = DOC.read_text(encoding="utf-8")
+    assert str(len(conflicts)) in text, (
+        f"the doc does not carry the current conflict total of {len(conflicts)}"
+    )
+    for conflict_id in unresolved:
+        assert conflict_id in text, (
+            f"{conflict_id} is unresolved but is not named in {DOC.name}"
+        )
 
 
 def test_as_mm_rounds_to_two_places():
