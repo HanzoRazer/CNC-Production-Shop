@@ -33,11 +33,14 @@ INPUT = NECK / "neck_make_or_buy_input_v1.json"
 RESULT = NECK / "neck_make_or_buy_result_v1.json"
 
 # The accepted V2 baseline this sprint is forbidden to disturb.
+# Digests are taken over LF-normalised bytes, so they are the same on a CRLF
+# checkout and a LF one. Hashing raw bytes made this validator pass on Windows
+# and fail on every Linux CI runner.
 IMMUTABLE = {
-    "thin_skin_variant_a_input_v1.json": "0adf1d90b304ada8",
-    "thin_skin_variant_a_estimate_v1.json": "a7f8ff63331d3eef",
-    "thin_skin_variant_b_input_v1.json": "1d53aa725d0180ea",
-    "thin_skin_variant_b_estimate_v1.json": "78bfafd58439aa93",
+    "thin_skin_variant_a_input_v1.json": "75252f00d3637d2c",
+    "thin_skin_variant_a_estimate_v1.json": "1c1ff3ff2eefdd07",
+    "thin_skin_variant_b_input_v1.json": "913335de59c3b25f",
+    "thin_skin_variant_b_estimate_v1.json": "223be312c3ced9cf",
 }
 
 FORBIDDEN = (
@@ -73,7 +76,7 @@ def main() -> int:
     # 2. The V2 baseline must be untouched.
     for name, prefix in IMMUTABLE.items():
         path = ROOT / "fixtures" / "estimates" / "guitar" / name
-        actual = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+        actual = hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:16]
         _fail(errors, actual == prefix, f"{name} changed: {actual} != {prefix}")
 
     # 3. Nothing commercial may appear anywhere. Matched on WORD BOUNDARIES:

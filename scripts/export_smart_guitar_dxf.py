@@ -56,6 +56,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -65,17 +66,22 @@ from ezdxf import units as ezunits
 ROOT = Path(__file__).resolve().parent.parent
 REGISTER = ROOT / "fixtures" / "geometry" / "smart_guitar_component_register_v1.json"
 BAY = ROOT / "fixtures" / "geometry" / "smart_guitar_electronics_bay_v1.json"
-LTB = Path("C:/Users/thepr/Downloads/luthiers-toolbox")
-REFS = LTB / "docs/archive/instrument_references/smart_guitar"
-TRACE = (
-    LTB / "services/api/app/instrument_geometry/body/traced_outlines"
-    / "smart_guitar_back_v1.json"
-)
+# The outlines are vendored into this repo rather than read from a sibling
+# luthiers-toolbox checkout. They used to be loaded from an absolute Windows
+# path, which meant this exporter and its fifteen tests ran on exactly one
+# machine and errored everywhere else, CI included. They are small, static
+# reference geometry, so copying them in costs ~58 KB and buys reproducibility
+# — the same argument this Dev Order makes for deriving cavities rather than
+# transcribing them. Provenance is in the README beside them.
+#
+# SG_GEOMETRY_SOURCE_DIR overrides the directory, for checking a working
+# luthiers-toolbox tree before vendoring an updated outline.
+REFS = Path(os.environ.get("SG_GEOMETRY_SOURCE_DIR", ROOT / "fixtures" / "geometry" / "sources"))
 
 SOURCES = {
     "front_v5": REFS / "smart_guitar_front_v5.dxf",
     "back_v5": REFS / "smart_guitar_back_v5.dxf",
-    "trace": TRACE,
+    "trace": REFS / "smart_guitar_back_trace_v1.json",
 }
 DEFAULT_SOURCE = "front_v5"
 DEFAULT_OUT = ROOT / "exports" / "geometry" / "smart_guitar_body_v1.dxf"

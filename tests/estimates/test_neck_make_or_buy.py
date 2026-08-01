@@ -108,16 +108,24 @@ def test_accepted_v2_fixtures_are_byte_identical():
     """Adding setup_scope must not have disturbed the accepted baseline.
 
     Hashes rather than totals: a total can coincide, a hash cannot.
+
+    Line endings are normalised to LF before hashing, matching `file_sha256`
+    in the machine-costed bid tests and `sha256_lf` in the V1 estimate tests.
+    Hashing raw bytes instead made this pass on a CRLF checkout and fail on a
+    LF one, which is what it did on CI: the digests recorded here were taken
+    on Windows, so every Linux runner saw four spurious failures and the real
+    guarantee — that the accepted baseline has not moved — went untested.
     """
     expected = {
-        "thin_skin_variant_a_input_v1.json": "0adf1d90b304ada8",
-        "thin_skin_variant_a_estimate_v1.json": "a7f8ff63331d3eef",
-        "thin_skin_variant_b_input_v1.json": "1d53aa725d0180ea",
-        "thin_skin_variant_b_estimate_v1.json": "78bfafd58439aa93",
+        "thin_skin_variant_a_input_v1.json": "75252f00d3637d2c",
+        "thin_skin_variant_a_estimate_v1.json": "1c1ff3ff2eefdd07",
+        "thin_skin_variant_b_input_v1.json": "913335de59c3b25f",
+        "thin_skin_variant_b_estimate_v1.json": "223be312c3ced9cf",
     }
     for name, prefix in expected.items():
         path = ROOT / "fixtures" / "estimates" / "guitar" / name
-        assert hashlib.sha256(path.read_bytes()).hexdigest()[:16] == prefix, name
+        normalised = path.read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(normalised).hexdigest()[:16] == prefix, name
 
 
 def test_accepted_v2_totals_are_unchanged():
