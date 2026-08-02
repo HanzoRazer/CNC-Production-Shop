@@ -1,0 +1,66 @@
+{
+  "tooling_id": "ROUTING-TOOLING-V1",
+  "product_ref": "PRODUCT-SMART-GUITAR-V1",
+  "status": "ruled",
+  "units": "mm",
+  "cutter_diameter_mm": 6.35,
+  "standard_cut_length_mm": 25.4,
+  "long_series_cut_length_mm": 38.1,
+  "part_clearance_per_side_mm": 4.0,
+  "derived": {
+    "internal_corner_radius_mm": 3.175,
+    "square_corner_intrusion_diagonal_mm": 1.315,
+    "square_corner_intrusion_per_axis_mm": 0.93,
+    "clearance_verdict": "absorbed"
+  },
+  "cavities": [
+    {
+      "cavity_id": "POD_PI",
+      "depth_mm": 27.0,
+      "min_plan_dimension_mm": 64.0,
+      "corner_radius_mm": 3.175,
+      "tool_entry": "fits",
+      "reach_class": "long_series",
+      "note": "27.0 deep exceeds the 25.4 standard flute length, so this needs a long-series cutter. At 6.35 diameter that is a slender tool at full stickout - expect to rough with something larger and leave only a finishing pass for the 6.35, or corner deflection will show in the wall."
+    },
+    {
+      "cavity_id": "POD_HAT",
+      "depth_mm": 33.0,
+      "min_plan_dimension_mm": 64.5,
+      "corner_radius_mm": 3.175,
+      "tool_entry": "fits",
+      "reach_class": "long_series",
+      "note": "33.0 deep exceeds the 25.4 standard flute length, so this needs a long-series cutter. At 6.35 diameter that is a slender tool at full stickout - expect to rough with something larger and leave only a finishing pass for the 6.35, or corner deflection will show in the wall."
+    },
+    {
+      "cavity_id": "WIRE_CHANNEL_PI_HAT",
+      "depth_mm": 5.0,
+      "min_plan_dimension_mm": 30.0,
+      "corner_radius_mm": 3.175,
+      "tool_entry": "fits",
+      "reach_class": "standard"
+    },
+    {
+      "cavity_id": "BATTERY_CHAMBER",
+      "depth_mm": 21.0,
+      "min_plan_dimension_mm": 55.0,
+      "corner_radius_mm": 3.175,
+      "tool_entry": "fits",
+      "reach_class": "standard"
+    }
+  ],
+  "provenance": {
+    "source": "owner_ruling",
+    "source_ref": "cutter specified 2026-07-28",
+    "snapshot_date": "2026-07-28",
+    "confidence": "confirmed",
+    "note": "Cutter diameter is the owner's decision; every radius here is derived from it and nothing is typed. Flute lengths are typical catalogue values for this diameter, not a specific tool - confirm against whatever is actually in the shop before cutting POD_HAT."
+  },
+  "notes": [
+    "ONE DECISION SETS EVERY INTERNAL RADIUS. A 6.35 cutter gives 3.175 in every corner it cuts. Changing the cutter changes every pocket, which is the point of recording it once here rather than per cavity.",
+    "SQUARE BOARDS IN ROUND CORNERS: the leftover material reaches 1.315 from the true corner along the diagonal, 0.93 per axis. Each pocket carries 4.0 of clearance per side, so a square PCB corner still clears with room to spare. No corner relief is needed and none should be added.",
+    "REACH IS THE REAL CONSTRAINT, NOT RADIUS. POD_PI at 27.0 and POD_HAT at 33.0 both exceed the 25.4 standard flute length. Both are inside the 38.1 long series, but a 6.35 tool at that stickout deflects; rough with a larger cutter and leave the 6.35 a finishing pass.",
+    "External corners are unaffected - a cutter can produce any external radius. Only INTERNAL corners are bounded by tool diameter.",
+    "The bridge rout is excluded here. Its corner radii come from the vendor drawings, which specify R6 for the TransTrem, and a bridge casting has to sit in its own designed pocket rather than in whatever the shop's cutter leaves."
+  ]
+}

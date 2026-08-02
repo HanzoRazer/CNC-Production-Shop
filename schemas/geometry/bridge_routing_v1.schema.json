@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bridge_routing_v1.schema.json",
+  "title": "Headless bridge routing envelope",
+  "description": "Routing envelopes for candidate headless bridge units, and the solid block derived from them. A headless instrument terminates ALL string tension at the bridge, so this rout cannot land in a hollow: the block it needs is a structural requirement rather than a convenience, and it is derived here rather than asserted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "envelope_id",
+    "product_ref",
+    "status",
+    "units",
+    "candidates",
+    "derived_block",
+    "provenance"
+  ],
+  "properties": {
+    "envelope_id": { "type": "string", "pattern": "^[A-Z0-9-]+$" },
+    "product_ref": { "type": "string" },
+    "status": { "enum": ["concept", "draft", "ruled"] },
+    "units": { "const": "mm" },
+    "selected_candidate": {
+      "type": ["string", "null"],
+      "description": "Null while the unit is unchosen. The block is sized for the WORST case across all candidates until one is selected, so an unmade decision cannot silently shrink it."
+    },
+    "screw_margin_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Material kept beyond the rout on every side, for screw purchase and edge strength. An engineering estimate, not a figure from any vendor drawing."
+    },
+    "min_floor_mm": { "type": "number", "exclusiveMinimum": 0 },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit_id",
+          "display_name",
+          "rout_width_mm",
+          "rout_length_mm",
+          "max_depth_mm",
+          "levels",
+          "source_document",
+          "measured_from"
+        ],
+        "properties": {
+          "unit_id": { "type": "string", "pattern": "^[A-Z0-9_-]+$" },
+          "display_name": { "type": "string" },
+          "rout_width_mm": {
+            "type": "number",
+            "description": "Across the strings."
+          },
+          "rout_length_mm": {
+            "type": "number",
+            "description": "Along the strings, toward the tail."
+          },
+          "max_depth_mm": { "type": "number" },
+          "levels": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Stepped depths, shallowest first.",
+            "items": { "type": "number" }
+          },
+          "inner_pocket_width_mm": { "type": ["number", "null"] },
+          "inner_pocket_length_mm": { "type": ["number", "null"] },
+          "fixing": { "type": "string" },
+          "source_document": { "type": "string" },
+          "measured_from": {
+            "type": "string",
+            "description": "The instrument the vendor drawing was measured on. These are measurements of production guitars, not vendor CAD, so they carry that uncertainty."
+          },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "derived_block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "governing_unit_id",
+        "rout_width_mm",
+        "rout_length_mm",
+        "max_depth_mm",
+        "block_width_mm",
+        "block_length_mm",
+        "required_solid_depth_mm",
+        "blank_thickness_mm",
+        "remaining_below_mm",
+        "verdict"
+      ],
+      "properties": {
+        "governing_unit_id": { "type": "string" },
+        "rout_width_mm": { "type": "number" },
+        "rout_length_mm": { "type": "number" },
+        "max_depth_mm": { "type": "number" },
+        "block_width_mm": { "type": "number" },
+        "block_length_mm": { "type": "number" },
+        "required_solid_depth_mm": { "type": "number" },
+        "blank_thickness_mm": { "type": "number" },
+        "remaining_below_mm": { "type": "number" },
+        "verdict": { "enum": ["sufficient", "insufficient"] }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "snapshot_date", "confidence"],
+      "properties": {
+        "source": { "type": "string" },
+        "source_ref": { "type": "string" },
+        "snapshot_date": { "type": "string" },
+        "confidence": { "enum": ["draft", "estimate", "confirmed"] },
+        "note": { "type": "string" }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "product_id": "PRODUCT-SMART-GUITAR-V1",
+  "product_name": "Smart Guitar",
+  "product_description": "Headless hollow thin-skin electric guitar with an embedded Linux host, intended as a practice and travel instrument rather than a stage instrument. The modern electric campfire guitar: played with headphones or wirelessly, with onboard effects and a coaching engine.",
+  "product_role": "practice_instrument",
+  "status": "concept",
+  "construction": {
+    "body_type": "hollow_thin_skin_box",
+    "body_architecture_note": "Two composite skins over a hollow wooden core with a structural frame and centre block, in the manner of the Masonite-era Danelectro. The hollow interior is what makes the full electronics package fit; the same stack has no valid placement in a solid body of these dimensions.",
+    "neck_joint": "bolt_on",
+    "neck_sourcing": "shop_machined",
+    "scale_length_mm": 628.65,
+    "fret_count": 24,
+    "string_count": 6,
+    "body_length_mm": 468.5,
+    "body_width_mm": 402.85,
+    "body_thickness_mm": 47.0
+  },
+  "series": [
+    {
+      "series_id": "SMART-HEADLESS",
+      "headstock": "none_headless",
+      "nut_type": "locking_clamp",
+      "status": "primary_build_target",
+      "note": "The only series for this product line. Headless suits a practice and travel instrument: shorter overall length, no headstock to knock, tuning at the bridge. DESIGN INTENT, owner 2026-07-27: it mimics a HEADLESS CLASSICAL TRAVEL GUITAR DISGUISED AS A HYBRID ELECTRIC. That is the look being aimed at, and it is why the silhouette and the voids are not negotiable to suit the electronics - they are the product."
+    }
+  ],
+  "electronics_package": {
+    "package_id": "SMART-STACK-FULL-V1",
+    "compute_host": "Raspberry Pi 5 (8 GB)",
+    "onboard_audio_output": true,
+    "components": [
+      "Raspberry Pi 5 (8 GB) — JACK + Guitarix/MODEP host and coaching engine",
+      "HiFiBerry DAC+ADC — I2S audio out and headphone jack",
+      "Teensy 4.1 — I/O coprocessor, control only, no audio path",
+      "Battery pack + BMS (4x 18650), USB-C PD 20 W charging",
+      "40 mm cooling fan, lid-mounted, venting outward",
+      "GPIO ribbon between the Pi and the HAT"
+    ],
+    "rationale": "The full stack including the HiFiBerry HAT, because the headphone jack is the point of a practice instrument. The hollow box provides the volume: the same package is 96 cm2 short of fitting a solid body of these dimensions.",
+    "open_question": "AUDIO FRONT END UNRESOLVED, and it is a BUILD decision rather than a sourcing one. The onboard audio front end is therefore a CUSTOM SUBASSEMBLY, not a sourced product. It is bounded engineering rather than open-ended: a USB audio codec plus a JFET Hi-Z input stage, both of which have vendor reference designs. It still has to solve the six things a converter board does not — Hi-Z input impedance, instrument preamp, gain control, headphone amplifier, protection and anti-alias filtering. COST CLASS IS DIFFERENT FROM A SOURCED PART: it carries non-recurring engineering for schematic, layout and prototyping, plus EMC certification for the finished assembly, against a per-unit BOM well below any retail interface price. The budget model must carry NRE and certification as separate lines rather than folding them into unit cost. Physical envelope is not the constraint: the 36 mm height limit was derived against retail enclosures, and a bare board is a fraction of that. Until it is designed, this instrument cannot be self-contained, and the campfire premise depends on it: with an external interface the Smart Guitar is a desk practice tool, not a travel one."
+  },
+  "materials": {
+    "body": "hollow wooden core, species not yet selected",
+    "skins": "composite / hardboard, thickness not yet selected",
+    "neck": "hard maple",
+    "fingerboard": "ebony",
+    "finish_system": "not yet selected"
+  },
+  "configuration": {
+    "pickup_layout": "dual_humbucker",
+    "bridge_type": "headless_fixed_with_fine_tuners",
+    "control_layout": "two_knob_one_rotary"
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-27",
+    "confidence": "draft",
+    "references": [
+      "fixtures/geometry/smart_guitar_cavity_geometry_v1.json",
+      "external:luthiers-toolbox smart_guitar_v1.json@v1.1"
+    ],
+    "note": "Split from a single conflated product record on 2026-07-27, when the practice and performance lines were separated."
+  },
+  "notes": [
+    "STATUS IS 'concept', NOT 'draft'. The Smart Guitar is still an AI-generated photograph. Every dimension derived so far is real arithmetic performed on an imagined object: the outline is corroborated for proportion across three artifacts but has never been measured against a physical blank, and the cavity datum is an engineering fit rather than a measurement.",
+    "GO DECISION 2026-07-27. This is the active product line. The hollow thin-skin box is what makes the electronics placeable: they share one continuous cavity, so the pocket-to-pocket walls that defeated the solid Khaya do not apply. That construction choice stopped being a cost preference and became the reason this instrument is buildable and its sibling is not.",
+    "This is explicitly NOT a performance instrument. It is a practice and travel instrument, so headphone output matters and stage ergonomics do not.",
+    "Body construction changes the economics as well as the packing. Thin-skin over a hollow core weighs about 48% of solid Khaya at the same dimensions, so body size is not constrained by weight here.",
+    "The through-body ergonomic voids are the visual identity of this instrument and are deliberately NOT reduced. They double the finished edge length, from 1.51 m of outer perimeter to 3.01 m including void edges on both faces, which lands directly on the edge-cleanup and edge-sealing operations already identified as the cost risk in the thin-skin estimate. Roughly 48 minutes and $23 per unit, and worth paying.",
+    "Core species, skin material and thickness, and the finish system are all unselected. They are the remaining inputs to the budget model, not settled facts.",
+    "Contains no cost, price, or margin fields by design.",
+    "The 'campfire guitar' premise depends on an onboard audio interface. With an external box this instrument is a desk practice tool, not a travel one. That is a product decision, not an engineering one, and it is unresolved.",
+    "SOURCING POLICY — NO EMBEDDED THIRD-PARTY CONSUMER PRODUCTS. A finished retail product may not be designed into either instrument as an internal component. Embedding one creates OEM licensing and trademark exposure, a single-source dependency on another company's product roadmap, warranty and support ambiguity, and re-certification questions for the finished assembly. This rules out mounting an iRig HD 2, Apogee Jam X, Scarlett Solo or MOTU M2 inside the body, regardless of whether it physically fits. EXTERNAL peripherals are NOT affected: shipping or recommending an interface the customer connects is resale, not embedding.",
+    "The audio front-end board's non-recurring engineering and certification now fall ENTIRELY on this line. With the Khaya reverted to passive, there is no second product to amortise them across, and the budget model must carry them against this volume alone.",
+    "THE RENDERS ARE STALE ON THE NECK. The owner confirmed 2026-07-27 that this line is headless and has always been headless, and that no image exists of a Smart Guitar with a traditional headstock. Any render read as showing one is either an old neck fitted for the picture or a misreading of the headless tuner block.",
+    "HEADLESS PUTS THE TUNING HARDWARE AT THE TAIL, which is the same end as the electronics cavity and the hollowed area below the large bass-side void. Whatever the tuner block, string anchors and their access need has first call on that space; the electronics work around it, not the other way round."
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "smart_guitar_cavity_geometry_v1.schema.json",
+  "title": "SmartGuitarCavityGeometryV1",
+  "description": "Cavity geometry derived from a Smart Guitar component register, with per-cavity fit verdicts and a required-body-thickness derivation. Physical geometry only: no cost, price, or manufacturing-time fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "geometry_id",
+    "register_id",
+    "register_ref",
+    "product_ref",
+    "status",
+    "units",
+    "body",
+    "cavities",
+    "conflicts",
+    "calculation",
+    "provenance",
+    "notes"
+  ],
+  "$defs": {
+    "mm": {"type": "number"},
+    "optionalMm": {"type": ["number", "null"]},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "source_ref", "snapshot_date", "confidence"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "source_ref": {"type": "string", "minLength": 1},
+        "snapshot_date": {"type": "string", "minLength": 1},
+        "confidence": {"type": "string", "enum": ["draft", "reviewed", "approved"]},
+        "note": {"type": "string"}
+      }
+    }
+  },
+  "properties": {
+    "geometry_id": {
+      "type": "string",
+      "pattern": "^SMART-GUITAR-CAVITY-GEOMETRY-[A-Z0-9-]+$"
+    },
+    "register_id": {
+      "type": "string",
+      "pattern": "^SMART-GUITAR-COMPONENT-REGISTER-[A-Z0-9-]+$"
+    },
+    "register_ref": {"type": "string", "minLength": 1},
+    "product_ref": {"type": "string", "minLength": 1},
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+    },
+    "units": {"type": "string", "const": "mm"},
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stated_thickness_mm",
+        "required_thickness_mm",
+        "governing_cavity_id",
+        "margin_mm",
+        "verdict"
+      ],
+      "properties": {
+        "stated_thickness_mm": {"$ref": "#/$defs/mm"},
+        "required_thickness_mm": {
+          "$ref": "#/$defs/mm",
+          "description": "max over cavities of (derived_depth + min_floor)"
+        },
+        "governing_cavity_id": {"type": "string", "minLength": 1},
+        "margin_mm": {
+          "$ref": "#/$defs/mm",
+          "description": "stated minus required. Negative means the blank is too thin."
+        },
+        "verdict": {"type": "string", "enum": ["sufficient", "insufficient"]}
+      }
+    },
+    "cavities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cavity_id",
+          "surface",
+          "layout",
+          "component_ids",
+          "derived_length_mm",
+          "derived_width_mm",
+          "derived_depth_mm",
+          "floor_remaining_mm",
+          "min_floor_mm",
+          "fit_ok",
+          "stated_length_mm",
+          "stated_width_mm",
+          "stated_depth_mm",
+          "length_delta_mm",
+          "width_delta_mm",
+          "depth_delta_mm",
+          "findings"
+        ],
+        "properties": {
+          "cavity_id": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+          "surface": {"type": "string", "enum": ["back", "top", "edge"]},
+          "layout": {
+            "type": "string",
+            "enum": ["side_by_side", "stacked", "single"]
+          },
+          "component_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string"}
+          },
+          "derived_length_mm": {"$ref": "#/$defs/mm"},
+          "derived_width_mm": {"$ref": "#/$defs/mm"},
+          "derived_depth_mm": {"$ref": "#/$defs/mm"},
+          "floor_remaining_mm": {"$ref": "#/$defs/mm"},
+          "min_floor_mm": {"$ref": "#/$defs/mm"},
+          "fit_ok": {"type": "boolean"},
+          "stated_length_mm": {"$ref": "#/$defs/optionalMm"},
+          "stated_width_mm": {"$ref": "#/$defs/optionalMm"},
+          "stated_depth_mm": {"$ref": "#/$defs/optionalMm"},
+          "length_delta_mm": {
+            "$ref": "#/$defs/optionalMm",
+            "description": "stated minus derived. Negative means the spec cannot hold its contents."
+          },
+          "width_delta_mm": {"$ref": "#/$defs/optionalMm"},
+          "depth_delta_mm": {"$ref": "#/$defs/optionalMm"},
+          "findings": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["conflict_id", "field", "sources", "status", "ruling", "ruled_by"],
+        "properties": {
+          "conflict_id": {"type": "string", "pattern": "^CONF-[A-Z0-9-]+$"},
+          "field": {"type": "string", "minLength": 1},
+          "sources": {
+            "type": "array",
+            "minItems": 2,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "status": {"type": "string", "enum": ["ruled", "unresolved"]},
+          "ruling": {"type": "string", "minLength": 1},
+          "ruled_by": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "calculation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["calculator_id", "rounding_policy", "effective_date"],
+      "properties": {
+        "calculator_id": {"type": "string", "minLength": 1},
+        "rounding_policy": {"type": "string", "minLength": 1},
+        "effective_date": {"type": "string", "minLength": 1}
+      }
+    },
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

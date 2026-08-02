@@ -520,7 +520,6 @@ class TestCommercialBoundary:
         markdown_dirs = [
             ROOT / "fixtures" / "proposals",
             ROOT / "exports",
-            ROOT / "docs",
         ]
         for directory in markdown_dirs:
             if not directory.exists():

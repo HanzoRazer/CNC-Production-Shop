@@ -1,0 +1,677 @@
+{
+  "estimate_input_id": "GUITAR-ESTIMATE-INPUT-BASELINE-V1",
+  "product_id": "PRODUCT-CNC-ELECTRIC-GUITAR-BASELINE-V1",
+  "product_ref": "fixtures/products/cnc_electric_guitar_baseline_v1.json",
+  "status": "draft",
+  "quantity": 1,
+  "currency": "USD",
+  "material_inputs": [
+    {
+      "input_id": "MAT-BODY-BLANK-ALDER",
+      "description": "Alder body blank (purchasable blank, not net finished volume)",
+      "category": "wood",
+      "quantity": 1,
+      "unit": "blank",
+      "unit_cost": 55.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft",
+        "note": "Plausible catalog blank price; not a vendor quote."
+      }
+    },
+    {
+      "input_id": "MAT-NECK-BLANK-MAPLE",
+      "description": "Maple neck blank",
+      "category": "wood",
+      "quantity": 1,
+      "unit": "blank",
+      "unit_cost": 38.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "MAT-FINGERBOARD-MAPLE",
+      "description": "Maple fingerboard blank",
+      "category": "wood",
+      "quantity": 1,
+      "unit": "blank",
+      "unit_cost": 22.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    }
+  ],
+  "purchased_component_inputs": [
+    {
+      "input_id": "HW-BRIDGE-TREMOLO",
+      "description": "Standard tremolo bridge assembly",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 48.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "HW-TUNERS-SET",
+      "description": "Six sealed tuners",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 36.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "HW-NECK-PLATE",
+      "description": "Neck plate and mounting screws",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 8.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "HW-STRAP-BUTTONS",
+      "description": "Strap buttons",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "pair",
+      "unit_cost": 4.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "HW-PICKGUARD",
+      "description": "Pickguard",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 18.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "HW-JACK-PLATE",
+      "description": "Output jack plate",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 5.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "HW-MISC-FASTENERS",
+      "description": "Miscellaneous fasteners and ferrules",
+      "category": "hardware",
+      "quantity": 1,
+      "unit": "lot",
+      "unit_cost": 6.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "EL-PICKUP-SET-SSS",
+      "description": "Three single-coil pickup set",
+      "category": "electronics",
+      "quantity": 1,
+      "unit": "set",
+      "unit_cost": 75.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "EL-POTS",
+      "description": "Control potentiometers (3)",
+      "category": "electronics",
+      "quantity": 3,
+      "unit": "each",
+      "unit_cost": 4.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "EL-SWITCH",
+      "description": "5-way blade switch",
+      "category": "electronics",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 8.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "EL-JACK",
+      "description": "Output jack",
+      "category": "electronics",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 4.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "EL-CAP",
+      "description": "Tone capacitor",
+      "category": "electronics",
+      "quantity": 1,
+      "unit": "each",
+      "unit_cost": 1.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "EL-WIRE-SHIELD",
+      "description": "Hookup wire and shielding materials",
+      "category": "electronics",
+      "quantity": 1,
+      "unit": "lot",
+      "unit_cost": 10.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "CON-SANDPAPER",
+      "description": "Sandpaper assortment",
+      "category": "consumables",
+      "quantity": 1,
+      "unit": "lot",
+      "unit_cost": 8.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "CON-ADHESIVE",
+      "description": "Wood adhesive",
+      "category": "consumables",
+      "quantity": 1,
+      "unit": "lot",
+      "unit_cost": 5.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "CON-FINISH-MATERIALS",
+      "description": "Baseline shop finish materials (sealer/topcoat)",
+      "category": "consumables",
+      "quantity": 1,
+      "unit": "lot",
+      "unit_cost": 40.0,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Finish materials roll into consumables_cost; finish labor is separate."
+      }
+    },
+    {
+      "input_id": "CON-POLISH",
+      "description": "Polishing compounds",
+      "category": "consumables",
+      "quantity": 1,
+      "unit": "lot",
+      "unit_cost": 10.0,
+      "provenance": {
+        "source": "catalog_price",
+        "confidence": "draft"
+      }
+    },
+    {
+      "input_id": "CON-SHOP-MISC",
+      "description": "General shop consumables",
+      "category": "consumables",
+      "quantity": 1,
+      "unit": "lot",
+      "unit_cost": 12.0,
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    }
+  ],
+  "labor_rate_inputs": [
+    {
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "description": "Inherited shop loaded labor rate ($23.00 x 1.25)",
+      "base_wage_per_hour": 23.0,
+      "payroll_burden_pct": 25.0,
+      "loaded_rate_per_hour": 28.75,
+      "provenance": {
+        "source": "inherited_shop_default",
+        "confidence": "draft",
+        "note": "From fixtures/cnc_cost shop defaults. Not Eco-Loom $25/hr."
+      }
+    }
+  ],
+  "operations": [
+    {
+      "operation_id": "OP-1000-BODY-BLANK-PREP",
+      "wbs_code": "1000",
+      "description": "Body blank preparation and squaring",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 20,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-2000-BODY-CNC-SETUP",
+      "wbs_code": "2000-01",
+      "description": "Body CNC fixture setup and first-article check",
+      "cost_category": "machine",
+      "attendance": "attended",
+      "setup_minutes": 25,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 25,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 0,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-2000-BODY-CNC-MACHINE",
+      "wbs_code": "2000-02",
+      "description": "Body contour, cavities, and pocket machining",
+      "cost_category": "machine",
+      "attendance": "partially_attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 90,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 30,
+      "manual_labor_minutes": 0,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Unattended portion of runtime does not create equal labor minutes."
+      }
+    },
+    {
+      "operation_id": "OP-2000-BODY-DRILL",
+      "wbs_code": "2000-03",
+      "description": "Body drilling for hardware",
+      "cost_category": "machine",
+      "attendance": "attended",
+      "setup_minutes": 10,
+      "run_minutes_per_unit": 15,
+      "setup_labor_minutes": 10,
+      "attended_run_labor_minutes": 15,
+      "manual_labor_minutes": 0,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-1000-NECK-BLANK-PREP",
+      "wbs_code": "1000-01",
+      "description": "Neck blank preparation",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 15,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-3000-NECK-CNC-SETUP",
+      "wbs_code": "3000-01",
+      "description": "Neck CNC setup",
+      "cost_category": "machine",
+      "attendance": "attended",
+      "setup_minutes": 20,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 20,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 0,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-3000-NECK-CNC-MACHINE",
+      "wbs_code": "3000-02",
+      "description": "Neck profile and truss-rod channel machining",
+      "cost_category": "machine",
+      "attendance": "partially_attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 60,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 20,
+      "manual_labor_minutes": 0,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-4000-FINGERBOARD-PREP",
+      "wbs_code": "4000-01",
+      "description": "Fingerboard preparation and glue-up labor",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 35,
+      "cure_or_wait_minutes": 120,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Glue cure wait is elapsed time only; not direct labor."
+      }
+    },
+    {
+      "operation_id": "OP-4000-FRETWORK-PREP",
+      "wbs_code": "4000-02",
+      "description": "Fret-slot / fretwork preparation",
+      "cost_category": "machine",
+      "attendance": "attended",
+      "setup_minutes": 15,
+      "run_minutes_per_unit": 25,
+      "setup_labor_minutes": 15,
+      "attended_run_labor_minutes": 25,
+      "manual_labor_minutes": 20,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": true,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-5000-MANUAL-SANDING",
+      "wbs_code": "5000-01",
+      "description": "Manual sanding before finish",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 90,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-5000-FINISH-PREP",
+      "wbs_code": "5000-02",
+      "description": "Sealing and finish preparation labor",
+      "cost_category": "finishing",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 40,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-5000-FINISH-APPLY",
+      "wbs_code": "5000-03",
+      "description": "Finish application labor",
+      "cost_category": "finishing",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 60,
+      "cure_or_wait_minutes": 1440,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft",
+        "note": "Cure/wait recorded as elapsed time only."
+      }
+    },
+    {
+      "operation_id": "OP-5000-LEVEL-POLISH",
+      "wbs_code": "5000-04",
+      "description": "Leveling and polishing labor",
+      "cost_category": "finishing",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 75,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-6000-HARDWARE-INSTALL",
+      "wbs_code": "6000-01",
+      "description": "Hardware installation",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 45,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-6000-ELECTRONICS-ASSY",
+      "wbs_code": "6000-02",
+      "description": "Electronics assembly and shielding",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 90,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-7000-FINAL-ASSEMBLY",
+      "wbs_code": "7000",
+      "description": "Final assembly (neck join, strings, controls)",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 40,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-8000-SETUP",
+      "wbs_code": "8000-01",
+      "description": "Setup (action, intonation, truss)",
+      "cost_category": "inspection_and_setup",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 45,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-8000-INSPECTION",
+      "wbs_code": "8000-02",
+      "description": "Functional inspection",
+      "cost_category": "inspection_and_setup",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 20,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    },
+    {
+      "operation_id": "OP-9000-PACK-READY",
+      "wbs_code": "9000",
+      "description": "Packaging readiness labor (no packaging materials)",
+      "cost_category": "direct_labor",
+      "attendance": "attended",
+      "setup_minutes": 0,
+      "run_minutes_per_unit": 0,
+      "setup_labor_minutes": 0,
+      "attended_run_labor_minutes": 0,
+      "manual_labor_minutes": 10,
+      "cure_or_wait_minutes": 0,
+      "uses_machine": false,
+      "labor_rate_id": "LABOR-LOADED-SHOP-DEFAULT-V1",
+      "provenance": {
+        "source": "engineering_estimate",
+        "confidence": "draft"
+      }
+    }
+  ],
+  "machine_profile_ref": "fixtures/machines/bcm_2030ca_atc_v1.json",
+  "cost_basis_ref": "fixtures/machines/cost_basis/bcm_2030ca_atc_cost_basis_v1.json",
+  "machine_id": "MACHINE-BCM2030CA-ATC-V1",
+  "cost_basis_id": "MACHINE-COST-BASIS-BCM2030CA-ATC-V1",
+  "scrap_policy": {
+    "scrap_rate": 0.05,
+    "eligible_input_ids": [
+      "MAT-BODY-BLANK-ALDER",
+      "MAT-NECK-BLANK-MAPLE",
+      "MAT-FINGERBOARD-MAPLE",
+      "CON-SANDPAPER",
+      "CON-ADHESIVE",
+      "CON-SHOP-MISC"
+    ],
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "5% applies only to listed wood blanks and low-value consumables. High-value hardware/electronics excluded."
+    }
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "confidence": "draft",
+    "note": "Baseline draft inputs for internal manufacturing-cost modeling only."
+  },
+  "notes": [
+    "INTERNAL manufacturing estimate inputs \u2014 not a customer quote.",
+    "All monetary and duration assumptions are draft unless upgraded with vendor or measured evidence.",
+    "Technical machine rate comes from MACHINE-COST-BASIS-BCM2030CA-ATC-V1; commercial $72/hr is not used.",
+    "Loaded labor rate is $28.75/hr ($23.00 x 1.25), not Eco-Loom $25/hr."
+  ]
+}

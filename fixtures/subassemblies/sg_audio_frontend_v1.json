@@ -1,0 +1,391 @@
+{
+  "spec_id": "SUBASSEMBLY-SG-AUDIO-FRONTEND-V1",
+  "subassembly_name": "Smart Guitar onboard audio front end",
+  "component_id": "SG_AUDIO_FRONTEND",
+  "status": "concept",
+  "units": "mm",
+  "form_factor": {
+    "standard": "Raspberry Pi HAT, 65.0 x 56.5 mm outline, 4 x M2.5 mounting",
+    "mounting": "Four M2.5 standoffs to the cavity floor, 6.0 mm",
+    "stacking": "NOT stacked on the Pi. The board sits BESIDE it, joined by a GPIO ribbon. Stacking was ruled out because a Pi plus standoffs plus a HAT is 58 mm in a 47 mm blank — see CONF-POD-LAYOUT. HAT form factor is retained anyway so a stock GPIO extension ribbon mates without a custom cable. REQUIRED RIBBON REACH IS 125.0 mm HEADER TO HEADER against a 150 mm part - a stock extension length, so no custom cable. The part was lengthened specifically to buy separation from the Pi. What holds regardless: the run is measured HEADER TO HEADER, not between pocket edges, and a diagonal layout costs far more ribbon than the pocket gap suggests.",
+    "authority_note": "Take the exact mounting-hole positions, corner radii and 40-pin connector offset from the official Raspberry Pi HAT mechanical specification, NOT from this record. Matching it exactly is what makes a stock ribbon work. THE 40-PIN CONNECTOR OFFSET IS NOW LOAD-BEARING ON THE INSTRUMENT, not just on mating: the cavity layout was solved assuming the header sits where the HAT specification puts it, and moving it changes how far the ribbon must travel. See CONF-RIBBON-REACH, where a layout ruled on the wrong measure needed 118.8 mm of a 100 mm ribbon."
+  },
+  "envelope": {
+    "board_length_mm": 65.0,
+    "board_width_mm": 56.5,
+    "pcb_thickness_mm": 1.6,
+    "assembly_height_target_mm": 24.0,
+    "assembly_height_max_mm": 30.0,
+    "bottom_side_max_mm": 4.0,
+    "derivation": "Blank 47.0 less structural floor 8.0 less mounting standoff 6.0 less cover clearance 3.0 leaves 30.0 mm of assembly height. The 24.0 mm TARGET is set deliberately below that ceiling: it matches the HiFiBerry DAC+ADC this board replaces, so the derived pocket does not move, and it leaves 6.0 mm of margin before the blank would have to grow. With a 1.6 mm PCB the target gives 22.4 mm of component height above the board. Bottom-side parts are limited to 4.0 mm by the 6.0 mm standoff, keeping 2.0 mm of clearance."
+  },
+  "interfaces": [
+    {
+      "interface_id": "INSTRUMENT_IN",
+      "direction": "in",
+      "connection": "wire_to_board",
+      "description": "Pickup signal from the control cavity, taken AFTER the volume, tone and selector controls. High impedance, millivolt level."
+    },
+    {
+      "interface_id": "AMP_OUT",
+      "direction": "out",
+      "connection": "wire_to_board",
+      "description": "Buffered output to the body-mounted 1/4 inch jack. Carries either the dry signal or the processed signal depending on bypass state."
+    },
+    {
+      "interface_id": "HEADPHONE_OUT",
+      "direction": "out",
+      "connection": "wire_to_board",
+      "description": "To the body-mounted headphone jack. At least 100 mW into 32 ohm at or below 1% THD — see REQ-HEADPHONE-DRIVE. This is the defining feature of the practice instrument, so the figure is quantified rather than described."
+    },
+    {
+      "interface_id": "GPIO_HOST",
+      "direction": "bidirectional",
+      "connection": "gpio_header",
+      "description": "40-pin to the Raspberry Pi 5 via ribbon: I2S audio, I2C for codec and gain control, power, and the link to the onboard MCU section. Ribbon run is 125.0 mm header to header against a 150 mm part, not pocket edge to pocket edge. The extra length is deliberate - it is what puts 42.0 mm between this board and the Pi."
+    },
+    {
+      "interface_id": "CONTROLS",
+      "direction": "in",
+      "connection": "wire_to_board",
+      "description": "Footswitches and panel controls. Handled by the onboard MCU section, not by the Pi."
+    },
+    {
+      "interface_id": "INDICATORS",
+      "direction": "out",
+      "connection": "wire_to_board",
+      "description": "LED outputs, including fret markers if fitted."
+    },
+    {
+      "interface_id": "BATTERY",
+      "direction": "power",
+      "connection": "wire_to_board",
+      "description": "From the battery chamber: power rails plus BMS telemetry to the MCU section."
+    }
+  ],
+  "requirements": [
+    {
+      "requirement_id": "REQ-BYPASS",
+      "requirement": "An analog bypass path shall carry the buffered dry instrument signal to AMP_OUT whenever the Pi is off, booting, or unresponsive. The path shall default to bypass on loss of power and shall use a latching relay or equivalent so it draws no standing current.",
+      "rationale": "An instrument that is silent for thirty seconds while Linux boots is not shippable, and one that goes silent mid-song is worse. This is a behavioural requirement, not an implementation note.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-HIZ",
+      "requirement": "The instrument input shall present at least 1 megohm input impedance, using a JFET or equivalent high-impedance input topology, and shall not degrade in noise performance when driven from a pickup-like source rather than a low-impedance one. Input bias/gate current shall not exceed 100 pA at 25 C.",
+      "rationale": "A guitar pickup is a high-impedance inductive source, not a resistor, and an input stage that measures well from a low-impedance source can be unusable with a real pickup. THIS CLOSES A GAP: impedance was demonstrated at design review while noise was not demonstrated until REQ-NOISE at first article - and REQ-NOISE is measured with the input terminated in 10 kilohm, which does not stress a high-impedance stage at all. Input-referred noise from a 10 kilohm resistive source is dominated by VOLTAGE noise; from a pickup at resonance, where source impedance rises into the hundreds of kilohms, it is dominated by CURRENT noise and gate leakage. A stage with excessive gate current or a badly chosen bias resistor passes both existing tests and fails in the instrument. The bias-current limit is stated because it is the usual root cause and can be checked from a datasheet before anything is built.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-GAIN-RECALL",
+      "requirement": "Input gain shall be digitally controlled and readable, not set by a mechanical trimmer.",
+      "rationale": "Makes gain recallable per preset, which is what a practice instrument with a coaching engine needs.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-HEADPHONE-DRIVE",
+      "requirement": "The headphone output shall deliver at least 100 mW continuous into 32 ohm at or below 1% THD, without an external amplifier.",
+      "rationale": "Headphone output is the reason this instrument exists. Roughly 100 mW into 32 ohm is a reasonable target.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-CODEC-SUPPORTED",
+      "requirement": "The codec shall be silicon that already has a mainline Raspberry Pi device-tree overlay.",
+      "rationale": "This is the single largest de-risking decision on the board. Matching supported silicon turns the software task from writing and maintaining an ALSA driver into reusing an overlay.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-MCU-ONBOARD",
+      "requirement": "The board shall carry the I/O microcontroller functions on-board rather than as a separate module: footswitches, panel controls, LEDs, BMS telemetry and bypass control.",
+      "rationale": "Absorbing the separate Teensy module removes its pocket from the body, which matters in both product lines. CORRECTED 2026-07-27: an earlier version of this rationale claimed it is 'what makes the electronics fit the solid body'. That was wrong. In a solid body the Pi pocket and this board's pocket cannot coexist at all — see CONF-SOLID-BODY-PACKING — so removing the MCU module reduces the shortfall without closing it. The requirement stands on its own merits: fewer pockets, fewer connectors, no second module to service through a cavity cover.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-NOISE",
+      "requirement": "Separated analog and digital grounds joined at a single point, with analog rails on dedicated low-noise regulators. Demonstrated by ADC-path SNR of at least 95 dB A-weighted under the stated measurement conditions.",
+      "rationale": "Millivolt guitar signals run 42.0 mm from a Raspberry Pi 5 with WiFi active, in one sealed chamber that also holds a switching battery pack. That separation was 7.0 until the GPIO ribbon was lengthened on 2026-07-28; it is now limited by the bay rather than by the cable. Power supply and grounding failures are the usual cause of unusable noise floors in boards of this class. The requirement is bounded deliberately: it governs noise the BOARD contributes, measured from its own input onward.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-LATENCY",
+      "requirement": "Round-trip latency from instrument input to headphone output shall not exceed 5 ms, with 10 ms as the hard maximum.",
+      "rationale": "Carried from the existing signal-chain budget. An all-I2S path is expected to land near 1.9 ms against the 3.1 ms of the previous USB-input path, so this is headroom rather than a constraint.",
+      "criticality": "medium"
+    },
+    {
+      "requirement_id": "REQ-POWER-ARCH",
+      "requirement": "The board shall take raw battery pack voltage (6.0 to 8.4 V) and regulate its own rails. It shall NOT supply the Raspberry Pi. Quiescent draw shall not exceed 120 mA and peak draw shall not exceed 350 mA.",
+      "rationale": "Removes the largest ambiguity in the brief. A contractor who assumes this board feeds the Pi would design a 25 W converter and quote accordingly. Keeping the Pi's supply off this board also keeps its switching noise away from a millivolt analog front end.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-INPUT-HEADROOM",
+      "requirement": "The input shall accept at least 4.0 Vpp at minimum gain without clipping, and shall provide at least 30 dB of gain range so a low-output passive pickup still reaches full scale. Pickup type is FLUID and may change without a board revision.",
+      "rationale": "Pickup selection is not fixed and may include SINGLE COILS. A vintage-output single coil and a high-output active sit roughly 20-30 dB apart: an active can peak near 4 Vpp where a low-output passive sits well under 1. Note that a P-90 is a single coil, not a humbucker — it is the pickup humbuckers were invented to replace — so the single-coil case is live rather than hypothetical. Specifying one level would tie the board to a pickup decision that is still open; headroom plus gain range makes it indifferent.",
+      "criticality": "shippable_blocker"
+    },
+    {
+      "requirement_id": "REQ-MCU-LINK",
+      "requirement": "The MCU link to the host shall run on the 40-pin GPIO header — UART or I2C. It shall not require a separate USB cable.",
+      "rationale": "A second cable is not in the cavity budget: GPIO_HOST is the only host connection the packing accounts for. Resolves an inconsistency in Rev A of the tender, which offered USB-serial while the interface table placed the MCU link on the GPIO header.",
+      "criticality": "high"
+    },
+    {
+      "requirement_id": "REQ-NOISE-BOUNDARY",
+      "requirement": "The board is responsible for noise from INSTRUMENT_IN onward. It is not responsible for interference the pickup itself receives. Acceptance of REQ-NOISE shall be measured with the input terminated in 10 kilohm, not through a live pickup.",
+      "rationale": "A pickup is a coil of wire and a magnet — an antenna. It receives the Pi's switching and RF emissions before the signal reaches this board, and no input stage can remove what arrives already summed with the signal. If single coils are used the instrument loses the common-mode rejection a humbucker provides, and that becomes an INSTRUMENT problem: shielding, pickup placement, cavity treatment, and how far the Pi sits from the coils. Stating the boundary protects a contractor from being held to something they cannot fix, and stops the buyer assuming a board fix exists for it. The instrument-level test is defined and is NOT this board's deliverable: docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md, which measures against a conventional single-coil guitar's ambient floor rather than against silence.",
+      "criticality": "high"
+    }
+  ],
+  "environment": [
+    "Sealed wooden cavity with a cover plate, no forced airflow across the board itself.",
+    "42.0 mm from the Raspberry Pi 5, which runs at 2.4 GHz with WiFi and Bluetooth active. This figure has moved twice and the history matters: Rev C to E said 35.75 from a layout later withdrawn; Rev F withdrew it rather than restate a wrong number; Rev H restored it as 7.0 once the bay became canon, because a 100 mm GPIO ribbon was holding the two boards together. THE RIBBON WAS LENGTHENED TO 150 mm ON 2026-07-28 and the separation is now 42.0, limited by the bay rather than by the cable. Price against 42.0.",
+    "The battery sits in the same bay, two 2-cell modules 67.0 mm below the boards, wired 2S2P. A pack with protection and charging electronics switches, so it is a second noise source in the same chamber - closer than in any conventional instrument, though further off than the Pi.",
+    "What has NOT changed, and what a bid should be priced against: the board sits inside one sealed cavity set with a Raspberry Pi 5 running at 2.4 GHz with WiFi and Bluetooth active, and with a battery pack whose protection and charging electronics switch. Both are close - closer than in any conventional instrument. REQ-NOISE is accepted IN THE ASSEMBLED INSTRUMENT with the Pi powered, so the obligation is fixed by the venue of the measurement rather than by any distance quoted here. The numbers were context; the acceptance condition is the contract, and it is unaffected.",
+    "Battery powered, so quiescent draw affects runtime directly.",
+    "Cavity shielding is available and already specified for the pickup routes; the board should assume it and not rely on it. It remains the leading instrument-level mitigation under CONF-SINGLE-PICKUP-EMC, but the geometric lever is no longer spent: lengthening the GPIO ribbon took the pod separation from 7.0 to 42.0 mm, and the bay is now the limit.",
+    "Pickup type may include single-coil operation. A true single coil has no common-mode rejection; a coil-split humbucker loses it only while split; a stacked noiseless single coil retains it. Whichever is chosen, an instrument with an onboard computer is a harder EMC problem than a conventional one, and it is solved at instrument level — shielding, pickup placement, distance from the Pi — not on this board."
+  ],
+  "certification": [
+    "FCC Part 15 Class B and CE/UKCA apply to the FINISHED ASSEMBLY. The Raspberry Pi's own certification does not transfer to a product containing it.",
+    "UN38.3 for shipping lithium cells and IEC 62133 for the pack.",
+    "Hazard to design against: a battery-powered instrument with an amp output into a mains-powered amplifier, while simultaneously connected to USB-C charging, is a ground-loop and safety path that must be addressed rather than discovered."
+  ],
+  "open_questions": [
+    "I2S versus USB has NOT been settled. I2S is preferred on cost, board area and battery draw, but USB Audio Class 2 is class-compliant and needs no driver or overlay at all, and would let the board work standalone with a phone or laptop. Latency does not decide it: the existing USB path already measures 3.1 ms against a 5 ms target, so the roughly 1.2 ms an all-I2S path would save is headroom, not a requirement.",
+    "Codec selection, and therefore whether REQ-CODEC-SUPPORTED can be met, is unresolved.",
+    "Pickup type is FLUID by owner decision and is no longer a blocker on this board: the input is specified as 4.0 Vpp headroom plus 30 dB of gain range rather than as a level. It remains open upstream as CONF-PICKUP-TYPE for pickup ROUTE dimensions, which this board does not touch.",
+    "THE TWO PRODUCT LINES NO LONGER CARRY THE SAME PICKUPS, so there is no single expected input level: PRODUCT-KHAYA-SOLIDBODY-V1 is a single bridge Telecaster-style single coil, PRODUCT-SMART-GUITAR-V1 is still dual humbucker. This board is indifferent by design - REQ-INPUT-HEADROOM specifies 4.0 Vpp of headroom plus 30 dB of gain range rather than a level - so neither line forces a board revision. See CONF-PICKUP-TYPE, which remains open upstream for pickup ROUTE dimensions that this board does not touch.",
+    "Non-recurring engineering and certification cost are not estimated. They are separate lines in the budget model, not unit cost.",
+    "Deliverables and IP ownership are NOT stated: what is handed over — schematics, layout source, gerbers, BOM, firmware — and who owns it. Commercial rather than engineering, but a tender is not complete without it.",
+    "MCU firmware and any device-tree overlay work are not scoped. State whether they are the contractor's or ours before NRE is quoted.",
+    "QUANTITY AND SCHEDULE ARE NOT STATED and cannot be derived here. Both change who bids and what they charge, and asking for BOM at 50/250/1000 units implies volumes the document never commits to. Supply an annual volume, a first-article date, and whether production assembly is in scope.",
+    "SINGLE-COIL EXPOSURE IS AN INSTRUMENT-LEVEL RISK, not a board question, and its SIZE depends on how single-coil tone is obtained. A true single coil has no common-mode rejection at any time, and sits in the same cavity set as a Pi 5 radiating at 2.4 GHz alongside switching supplies at a separation that is under revision. A coil-split humbucker loses rejection only in the split position, and a stacked noiseless single coil hum-cancels by construction — both reduce the worst case from a permanent condition to one switch setting or none. Owner direction on 2026-07-27 favours splittable pickups. Needs a shielded mock-up measurement in the WORST mode before pickups are chosen — the procedure now exists at docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md and has not been run, because the answer may constrain pickup selection rather than the other way round.",
+    "THE KHAYA CARRIES A SINGLE COIL WITH ONBOARD COMPUTE, which is the worst EMC combination this board will meet: no common-mode rejection at the pickup, in one cavity set with a Pi 5 radiating at 2.4 GHz. THE SEPARATIONS ARE UNDER REVISION and no figure quoted in Rev B through E survives - see the operating environment. REQ-NOISE-BOUNDARY already places pickup-borne interference outside this board's responsibility, and the acceptance measurement should still be taken in THAT instrument, not the hollow one, because it remains the harder case whatever the geometry resolves to.",
+    "THE BODY ARRANGEMENT IS UNRESOLVED and it is the largest open item against this board, though not a board problem. On the corrected outline no electronics pocket places at all, so the pocket that holds this board does not currently exist in a buildable layout. THE BOARD'S OWN ENVELOPE IS UNAFFECTED - 65.0 x 56.5 with a 24.0 mm assembly height target - because the pocket is derived FROM the board rather than the other way round. What changes with the body is where that pocket sits and what sits near it. See CONF-BODY-CANNOT-HOST-ELECTRONICS.",
+    "CAN THIS BOARD CARRY AN M.2 2230 SLOT? The instrument needs storage beyond microSD if the coaching engine logs or records, and the Pi 5 cannot take NVMe without an adapter board that has nowhere to live - the electronics bay has 2.0 x 3.0 mm spare. Putting the slot on THIS board would remove that adapter entirely. THREE THINGS MAKE IT A REAL QUESTION RATHER THAN AN OBVIOUS YES. (1) The Pi 5 brings PCIe out on a separate flat-flex connector, not on the 40-pin header, so this would be a SECOND host cable - and REQ-MCU-LINK's rationale states that a second cable is not in the cavity budget. (2) An M.2 2280 is 80 mm long against a 65 mm board, so only a 2230 is possible. (3) It puts a multi-gigabit serial lane and an SSD's switching regulator on the board whose 95 dB A-weighted SNR is a shippable blocker, 42 mm from a Pi 5. WE ARE ASKING RATHER THAN SPECIFYING: tell us whether you can route this without compromising REQ-NOISE, and what it adds to the quote. A clear no is a useful answer."
+  ],
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-27",
+    "confidence": "draft",
+    "references": [
+      "fixtures/geometry/smart_guitar_component_register_v1.json",
+      "fixtures/products/smart_guitar_v1.json",
+      "fixtures/products/khaya_solidbody_v1.json"
+    ],
+    "note": "Written after the sourcing policy ruled out embedding any finished retail interface. This is the mechanical and system brief that comes FROM the instrument; circuit topology is the PCB designer's."
+  },
+  "notes": [
+    "STATUS IS 'concept'. No schematic exists. This is a brief, not a design.",
+    "Scope boundary: this record carries the envelope, the interfaces and the behavioural requirements. It deliberately does NOT specify circuit topology, part numbers or component values, which are the designer's to choose against these constraints.",
+    "The envelope is TIED TO THE CAVITY. This board appears in the geometry component register as SG_AUDIO_FRONTEND, and the pocket that holds it is derived from those dimensions. Changing the board here changes the pocket there, and a validator fails if the two disagree.",
+    "This subassembly is on the critical path for BOTH product lines again. The Khaya briefly reverted to passive on 2026-07-27 when the dual-humbucker solid body could not host both pockets, then restored compute the same day once a single Telecaster-style pickup freed the space. NRE and certification therefore amortise across two lines rather than one — materially better for the budget model than the single-line case.",
+    "The instrument constrains this board more than the board constrains the instrument. The Pi and this board must be ADJACENT, because the ribbon reach is measured header to header and a diagonal layout costs far more cable than the pocket gap suggests. THE BATTERY CONSTRAINT HAS BEEN LIFTED: this note previously said the pack must be 2x 18650 rather than 4x, which was true only while the body was modelled as solid. The owner ruled 4x on 2026-07-28, wired 2S2P. THAT CHANGES NOTHING ELECTRICAL - 2S2P doubles capacity at the same 6.0-8.4 V, so the supply range in section 3 and REQ-POWER-ARCH both stand unaltered.",
+    "The electrical envelope was added on 2026-07-27 after review of the Rev A tender document, which carried the mechanical brief without any electrical specification. Every value in that block is an engineering estimate awaiting confirmation, and the brief marks them as such.",
+    "DOCUMENT CLASS IS 'rfi', NOT A TENDER. The record status is 'concept': codec unselected, quantity and schedule unstated, several electrical values proposed rather than confirmed. Those are the right conditions for shortlisting designers and costing the work, and the wrong conditions for buying a design. Commercial terms including IP transfer are therefore OUT of scope at this revision — asking a contractor to price IP transfer against an unresolved specification produces either a padded number or an argument. Move to 'tender' once the codec is named, the quantity is committed and the electrical values are confirmed.",
+    "BMS TOPOLOGY IS NOW 2S2P, not 2S. The pack balances two series groups at roughly double the charge current. Ordinary, but it is a different part from a 2S BMS, and if the charging path shares this board's input it bears on the peak-draw figure in section 3. Raise it if your power design assumes a 2S charger."
+  ],
+  "electrical": {
+    "power_architecture": {
+      "mode": "independent_rails",
+      "rationale": "The board does NOT supply the Raspberry Pi. Both take raw pack voltage from the battery/BMS and regulate independently. Routing the Pi's supply — up to 5 V at 5 A, 25 W — through a 65 x 56.5 mm board that also carries millivolt analog would be poor practice and would dominate its thermal design inside a sealed cavity. Taking raw pack voltage rather than a shared 5 V rail is also the quieter choice: the board makes its own analog rails from ~7.4 V instead of inheriting a rail that is simultaneously feeding a Pi 5, and a bipolar analog supply stays available if the designer wants one."
+    },
+    "supply": {
+      "input_nominal_v": 7.4,
+      "input_min_v": 6.0,
+      "input_max_v": 8.4,
+      "quiescent_max_ma": 120.0,
+      "peak_max_ma": 350.0
+    },
+    "audio": {
+      "sample_rate_primary_khz": 48.0,
+      "sample_rate_capable_khz": 96.0,
+      "bit_depth": 24,
+      "input_full_scale_vpp": 4.0,
+      "input_typical_vpp": 0.6
+    },
+    "performance": {
+      "adc_snr_db_a_weighted": 95.0,
+      "thd_n_max_pct": 0.01,
+      "headphone_power_mw_into_32r": 100.0
+    },
+    "thermal": {
+      "cavity_ambient_min_c": 0.0,
+      "cavity_ambient_max_c": 60.0,
+      "component_rating_min_c": 85.0
+    },
+    "io_provision": {
+      "switch_inputs": 4,
+      "analog_inputs": 4,
+      "discrete_led_outputs": 8,
+      "addressable_led_channels": 1
+    },
+    "measurement_conditions": [
+      "ADC SNR: A-weighted, 20 Hz to 20 kHz, referenced to full scale, instrument input terminated in 10 kilohm to represent a pickup's DC resistance, measured with the Pi 5 powered and WiFi active — not on an isolated bench supply.",
+      "THD+N: 1 kHz at -3 dBFS, measured at AMP_OUT and again at HEADPHONE_OUT into 32 ohm.",
+      "Headphone power: continuous into 32 ohm at or below 1% THD.",
+      "Round-trip latency: instrument input to headphone output, at the primary sample rate, with the buffer size stated in the result.",
+      "Quiescent current: Pi idle, bypass engaged, no LEDs lit. Peak: full headphone output plus all LED provision active.",
+      "All figures to be demonstrated in the assembled instrument or a representative shielded cavity mock-up, NOT on open bench."
+    ],
+    "provenance": {
+      "source": "engineering_estimate",
+      "captured_by": "engineering",
+      "capture_date": "2026-07-27",
+      "confidence": "draft",
+      "note": "EVERY VALUE IN THIS BLOCK IS PROPOSED, NOT CONFIRMED. They were derived from the instrument's context rather than measured or specified by the owner, and each needs confirmation before tender. The load-bearing ones: input_full_scale_vpp is 4.0 and is NO LONGER blocked on CONF-PICKUP-TYPE: the owner confirmed on 2026-07-27 that pickups are fluid, so the input is specified as headroom plus gain range rather than as a level, making the board indifferent to the pickup decision; adc_snr_db_a_weighted 95 is a demanding but achievable figure for this environment and is the number a bid will be priced against; supply range 6.0-8.4 V follows from TWO CELLS IN SERIES and is unchanged by the 2026-07-28 move to a 4x pack, because that pack is 2S2P - four cells, still two in series - so the range is set by the series count and not the cell count; it changes entirely if the BMS presents a regulated rail instead; io_provision counts are a guess at the control layout, with an addressable channel included so fret markers do not force a connector change later."
+    }
+  },
+  "acceptance": [
+    {
+      "requirement_id": "REQ-BYPASS",
+      "stage": "prototype",
+      "method": "Cut host power with a signal present; repeat with the host held in reset and with the host hung after boot. Observe AMP_OUT on a scope.",
+      "pass_criterion": "Dry signal present at AMP_OUT in all three cases. Bypass is the unpowered resting state. Switch time stated and repeatable."
+    },
+    {
+      "requirement_id": "REQ-HIZ",
+      "stage": "design_review",
+      "method": "Measure input impedance at 1 kHz; confirm input topology and the device's bias/gate current from the schematic and datasheet.",
+      "pass_criterion": "At least 1 megohm, JFET or equivalent high-impedance input stage, bias/gate current at most 100 pA at 25 C."
+    },
+    {
+      "requirement_id": "REQ-HIZ",
+      "stage": "prototype",
+      "method": "Measure input-referred noise TWICE at maximum gain, A-weighted, 20 Hz to 20 kHz: once with the input terminated in 10 kilohm resistive, and once from a DUMMY PICKUP SOURCE of 2.5 H series inductance and 7 kilohm series resistance with 500 pF shunt capacitance, all +/-10%, representing a single coil on a typical cable. Report both figures and the difference. Repeat at minimum gain.",
+      "pass_criterion": "The dummy-pickup figure shall not exceed the 10 kilohm figure by more than 6 dB. A larger gap means current noise or gate leakage dominates and the stage will not work with a real pickup, however good its resistive-source number looks. Board-level bench measurement - this one does NOT require the assembled instrument, which is the point: it catches the fault at prototype rather than at first article."
+    },
+    {
+      "requirement_id": "REQ-GAIN-RECALL",
+      "stage": "prototype",
+      "method": "Set and read back gain over the host interface across the full range.",
+      "pass_criterion": "Gain settable and readable in discrete steps with no mechanical trimmer in the operating path."
+    },
+    {
+      "requirement_id": "REQ-HEADPHONE-DRIVE",
+      "stage": "prototype",
+      "method": "Drive 32 ohm resistive load at 1 kHz; measure continuous output power and THD.",
+      "pass_criterion": "At least 100 mW continuous at or below 1% THD."
+    },
+    {
+      "requirement_id": "REQ-INPUT-HEADROOM",
+      "stage": "prototype",
+      "method": "Inject 4.0 Vpp at 1 kHz at minimum gain; then inject a low-output level and raise gain to full scale.",
+      "pass_criterion": "No clipping at 4.0 Vpp minimum gain; at least 30 dB of usable gain range."
+    },
+    {
+      "requirement_id": "REQ-CODEC-SUPPORTED",
+      "stage": "design_review",
+      "method": "Name the codec and the specific mainline device-tree overlay; demonstrate capture and playback on a stock Raspberry Pi OS image.",
+      "pass_criterion": "Working audio using an existing overlay, with no out-of-tree driver required."
+    },
+    {
+      "requirement_id": "REQ-MCU-ONBOARD",
+      "stage": "design_review",
+      "method": "Inspect the schematic and board outline.",
+      "pass_criterion": "MCU functions on this board; no second module in the cavity budget."
+    },
+    {
+      "requirement_id": "REQ-MCU-LINK",
+      "stage": "design_review",
+      "method": "Inspect the interface list and connector schedule.",
+      "pass_criterion": "MCU-to-host link carried on the 40-pin GPIO header; no separate USB cable required."
+    },
+    {
+      "requirement_id": "REQ-NOISE",
+      "stage": "first_article",
+      "method": "Measure ADC-path SNR under the stated measurement conditions: A-weighted, input terminated in 10 kilohm, IN THE ASSEMBLED INSTRUMENT with the Pi powered and WiFi active.",
+      "pass_criterion": "At least 95 dB A-weighted. A bench figure on an isolated supply does not satisfy this."
+    },
+    {
+      "requirement_id": "REQ-POWER-ARCH",
+      "stage": "design_review",
+      "method": "Inspect the power tree; measure quiescent and peak current at nominal pack voltage.",
+      "pass_criterion": "Board regulates from raw pack voltage, supplies no host power, quiescent at or below 120 mA and peak at or below 350 mA."
+    },
+    {
+      "requirement_id": "REQ-LATENCY",
+      "stage": "prototype",
+      "method": "Loopback measurement instrument input to headphone output at the primary sample rate, buffer size stated with the result.",
+      "pass_criterion": "5 ms or better; 10 ms is the hard failure threshold."
+    },
+    {
+      "requirement_id": "REQ-NOISE-BOUNDARY",
+      "stage": "design_review",
+      "method": "Confirm the acceptance configuration for REQ-NOISE: input terminated in 10 kilohm, Pi powered, WiFi active, in the assembled instrument.",
+      "pass_criterion": "REQ-NOISE demonstrated with a terminated input. Pickup-borne interference is recorded separately as an instrument-level finding, not a board defect. The instrument-level finding is recorded against CONF-SINGLE-PICKUP-EMC by the procedure at docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md."
+    }
+  ],
+  "document_control": {
+    "revision": "L",
+    "issued": "2026-07-27",
+    "document_class": "rfi",
+    "change_contact": "ISSUED WITHOUT A NAMED CONTACT - this needs fixing before anything else in this document does. The spec has been submitted to designers and there is still no one named to receive change requests, so a bidder who finds an error, or wants to answer one of the twelve open questions, has nowhere to send it. Every question below is addressed to people who currently cannot reply.",
+    "commercial_terms_in_scope": false,
+    "revision_history": [
+      {
+        "revision": "A",
+        "date": "2026-07-27",
+        "change": "First issue. Mechanical envelope, interfaces and behavioural requirements."
+      },
+      {
+        "revision": "B",
+        "date": "2026-07-27",
+        "change": "Added electrical envelope and acceptance matrix. Ruled power architecture as independent rails. Fixed the MCU-link contradiction between the architecture text and the interface table. Input respecified as headroom plus gain range after the owner confirmed pickups are fluid."
+      },
+      {
+        "revision": "C",
+        "date": "2026-07-27",
+        "change": "Updated every physical distance against the ruled pocket placement (CONF-POD-EMC-CLEARANCE): the board is 35.75 mm from the Pi and the pickup 71.6 mm from it, not the 20 mm quoted in Rev A and B, which predated the relocation. Added the two neighbours the document never named — the battery pack at 10.0 mm, the board's closest neighbour and a switching noise source, and the pickup route at 17.9 mm. Stated the GPIO ribbon's 89.9 mm header-to-header reach and promoted the 40-pin connector offset to a layout dependency (CONF-RIBBON-REACH). Cross-referenced the instrument-level EMC procedure from REQ-NOISE-BOUNDARY so the boundary points at a real test. Mechanical envelope UNCHANGED — nothing here affects a mechanical quote."
+      },
+      {
+        "revision": "D",
+        "date": "2026-07-27",
+        "change": "Closed a traceability gap on REQ-HIZ. Impedance was demonstrated at design review and noise not until REQ-NOISE at first article, but REQ-NOISE terminates the input in 10 kilohm, which does not stress a high-impedance stage - a JFET input with excessive gate current passes both and fails with a real pickup. REQ-HIZ now carries a noise clause and a 100 pA bias-current limit, plus a prototype-stage acceptance measuring input-referred noise from a defined dummy pickup source against a 10 kilohm reference, passing at no more than 6 dB of degradation. Deliberately a board-level bench test so the fault surfaces at prototype rather than first article."
+      },
+      {
+        "revision": "E",
+        "date": "2026-07-27",
+        "change": "Corrected an open question that still read 'the two pickups', written before the product split and the single-pickup refactor. The Khaya carries one Telecaster-style single coil and the Smart Guitar still carries dual humbuckers, so there is no single expected input level. The board is unaffected - REQ-INPUT-HEADROOM already specifies headroom plus gain range rather than a level - but the wording would have led a bidder to assume one configuration across both lines."
+      },
+      {
+        "revision": "F",
+        "date": "2026-07-27",
+        "change": "WITHDREW every physical separation. The distances introduced in Rev C - 35.75 mm to the Pi, 10.0 mm to the battery, 17.9 mm to the pickup route - and the 89.9 mm ribbon reach all derive from a pocket layout solved against a body outline missing its largest through-body void. On the corrected geometry no electronics pocket places at all. Replaced them with what is still true and still priceable: the board shares a sealed cavity set with a Pi 5 and a switching battery pack, and REQ-NOISE is accepted in the assembled instrument, so the obligation is fixed by the venue of the measurement rather than by any quoted distance. NO REQUIREMENT CHANGED. The envelope, interfaces and acceptance matrix are untouched - the pocket is derived from the board, not the board from the pocket."
+      },
+      {
+        "revision": "G",
+        "date": "2026-07-28",
+        "change": "Battery pack moved from 2x 18650 to 4x wired 2S2P by owner ruling. A note in section 10 asserted the pack MUST be 2x rather than 4x, which held only while the body was modelled as solid; the hollow body removed that constraint. NOTHING ELECTRICAL CHANGES - 2S2P doubles capacity at the same 6.0-8.4 V, so the supply range and REQ-POWER-ARCH are untouched and no requirement moved. Added a note that the BMS is now a 2S2P part balancing two series groups at roughly double the charge current, which bears on peak draw if the charging path shares this board's input."
+      },
+      {
+        "revision": "H",
+        "date": "2026-07-28",
+        "change": "Restored the board-to-Pi separation, withdrawn in Rev F, from SG-ELECTRONICS-BAY-V1 now that the bay is canon. IT IS 7.0 mm, NOT THE 35.75 QUOTED IN REV C TO E - materially worse, and not a packing accident: the 40-pin headers sit at each board's centre, so a 100 mm ribbon at 10% slack allows 90 mm of run and pins the boards together. The bay has room for 44 mm with a 150 mm ribbon, which makes cable length the cheapest EMC lever available. Also restored the battery as a second in-chamber noise source, 67 mm below. Ribbon reach restated as 90.0 in the form factor and on GPIO_HOST. No requirement changed."
+      },
+      {
+        "revision": "I",
+        "date": "2026-07-28",
+        "change": "GPIO ribbon lengthened from 100 to 150 mm, a stock extension length, purely to buy EMC separation. Board-to-Pi goes from 7.0 to 42.0 mm and the limit moves from the cable to the bay width. Required reach restated as 125.0 header to header, with 16.7% slack. No requirement changed and no envelope moved - this is the instrument giving the board a better environment, not the board asking for one."
+      },
+      {
+        "revision": "J",
+        "date": "2026-07-28",
+        "change": "FIRST REVISION AFTER ISSUE. The initial spec has been submitted to designers, so this and every later revision changes a document already in someone else's hands and must be diffable. Adds one open question: whether this board can carry an M.2 2230 slot, which would remove the separate adapter board the instrument has no room for. Nothing else changed - no requirement, no envelope, no acceptance row."
+      },
+      {
+        "revision": "K",
+        "date": "2026-07-28",
+        "change": "Recorded that 25 mini guitar amplifier boards already exist from an earlier concept and may bear on the output stage. Flagged as an open question rather than a requirement because we have supplied none of what would let a bidder judge it - no schematic, supply figures, dimensions or measured performance. The output stage stays fully in scope until that is provided. No requirement changed."
+      },
+      {
+        "revision": "L",
+        "date": "2026-07-28",
+        "change": "WITHDREW the open question added in Rev K about reusing 25 existing mini guitar amplifier boards. It should not have been asked. Those boards are 5 V powered, which does not fit REQ-POWER-ARCH: this board takes RAW PACK VOLTAGE of 6.0-8.4 V and regulates its own rails, deliberately, so that it does not inherit a rail shared with a Pi 5. Reusing them would mean introducing the shared regulated rail the architecture exists to avoid. They are also a different class of device - a mini amplifier, not a Hi-Z instrument front end with a 24-bit converter, gain control, bypass and an onboard MCU. The owner has no plans to use them in this instrument. THE OUTPUT STAGE IS FULLY IN SCOPE AS SPECIFIED, and Rev K should not be read as inviting a substitution."
+      }
+    ],
+    "issued_status": "issued_to_designers"
+  }
+}

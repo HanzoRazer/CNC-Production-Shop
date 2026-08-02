@@ -1,0 +1,38 @@
+{
+  "equipment_id": "EQUIPMENT-VACUUM-PRESS-V1",
+  "equipment_name": "Vacuum Bag Lamination Press",
+  "equipment_class": "lamination_press",
+  "status": "draft",
+  "capacity": {
+    "platen_length_in": 40.0,
+    "platen_width_in": 24.0,
+    "max_stack_thickness_in": 4.0,
+    "bodies_per_cycle": 1
+  },
+  "connected_load_estimate": {
+    "total_kw": 0.75,
+    "components": [
+      {
+        "name": "vacuum pump motor",
+        "kw": 0.75
+      }
+    ],
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft"
+    }
+  },
+  "provenance": {
+    "source": "engineering_estimate",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-26",
+    "confidence": "draft",
+    "references": []
+  },
+  "notes": [
+    "Represents a single-bag vacuum lamination station: pump, reservoir, bag, breather mesh, and cauls.",
+    "bodies_per_cycle is 1 for the draft estimate. A multi-body cycle would divide occupancy across bodies and is deferred to THIN-SKIN-BATCH-COSTING-1.",
+    "connected_load total_kw (0.75) is a nameplate estimate for a small rotary-vane pump, not a metered value.",
+    "Physical record only: contains no cost fields by design. Cost lives in the paired EQUIPMENT-COST-BASIS record."
+  ]
+}

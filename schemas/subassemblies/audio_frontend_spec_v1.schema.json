@@ -1,0 +1,557 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "audio_frontend_spec_v1.schema.json",
+  "title": "AudioFrontendSpecV1",
+  "description": "Design brief for a custom onboard audio front-end subassembly, written to be handed to a PCB designer. Carries the mechanical envelope, system interfaces and behavioural requirements that come FROM the instrument; circuit topology is the designer's and is deliberately absent. The envelope is tied to the cavity that holds the board: a validator recomputes the cavity from it, so changing the board changes the pocket rather than silently invalidating it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_id",
+    "subassembly_name",
+    "status",
+    "units",
+    "form_factor",
+    "envelope",
+    "electrical",
+    "interfaces",
+    "requirements",
+    "environment",
+    "certification",
+    "acceptance",
+    "open_questions",
+    "provenance",
+    "notes",
+    "document_control"
+  ],
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "confidence"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "engineering_estimate",
+            "owner_confirmed",
+            "vendor_datasheet",
+            "measured_part",
+            "calculated"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "reviewed",
+            "approved"
+          ]
+        },
+        "captured_by": {
+          "type": "string"
+        },
+        "capture_date": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "properties": {
+    "spec_id": {
+      "type": "string",
+      "pattern": "^SUBASSEMBLY-[A-Z0-9-]+$"
+    },
+    "subassembly_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "component_id": {
+      "type": "string",
+      "description": "The component_id this subassembly appears as in the geometry component register. Links the brief to the cavity derivation.",
+      "pattern": "^[A-Z0-9_]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "concept",
+        "draft",
+        "reviewed",
+        "approved",
+        "superseded",
+        "retired"
+      ]
+    },
+    "units": {
+      "type": "string",
+      "const": "mm"
+    },
+    "form_factor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "standard",
+        "mounting",
+        "stacking"
+      ],
+      "properties": {
+        "standard": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mounting": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stacking": {
+          "type": "string",
+          "description": "Whether the board stacks on the host or sits beside it, and why."
+        },
+        "authority_note": {
+          "type": "string",
+          "description": "Where the designer must take exact mechanical detail from, rather than from this record."
+        }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "board_length_mm",
+        "board_width_mm",
+        "pcb_thickness_mm",
+        "assembly_height_target_mm",
+        "assembly_height_max_mm",
+        "bottom_side_max_mm",
+        "derivation"
+      ],
+      "properties": {
+        "board_length_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "board_width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pcb_thickness_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "assembly_height_target_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Design target. The cavity is derived from THIS value."
+        },
+        "assembly_height_max_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Hard ceiling before the body blank must grow."
+        },
+        "bottom_side_max_mm": {
+          "type": "number",
+          "minimum": 0
+        },
+        "derivation": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interface_id",
+          "direction",
+          "connection",
+          "description"
+        ],
+        "properties": {
+          "interface_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "in",
+              "out",
+              "bidirectional",
+              "power"
+            ]
+          },
+          "connection": {
+            "type": "string",
+            "enum": [
+              "wire_to_board",
+              "gpio_header",
+              "board_mounted"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Behavioural requirements. These are what the board must DO, as distinct from what it is made of.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirement_id",
+          "requirement",
+          "rationale",
+          "criticality"
+        ],
+        "properties": {
+          "requirement_id": {
+            "type": "string",
+            "pattern": "^REQ-[A-Z0-9-]+$"
+          },
+          "requirement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criticality": {
+            "type": "string",
+            "enum": [
+              "shippable_blocker",
+              "high",
+              "medium",
+              "low"
+            ]
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "certification": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "electrical": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Electrical envelope. Without it the mechanical brief is not tenderable: a contractor cannot size a supply, set gain structure, or demonstrate compliance against prose.",
+      "required": [
+        "power_architecture",
+        "supply",
+        "audio",
+        "performance",
+        "thermal",
+        "io_provision",
+        "measurement_conditions",
+        "provenance"
+      ],
+      "properties": {
+        "power_architecture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "rationale"
+          ],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "board_powers_host",
+                "host_powers_board",
+                "independent_rails"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "supply": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "input_nominal_v",
+            "input_min_v",
+            "input_max_v",
+            "quiescent_max_ma",
+            "peak_max_ma"
+          ],
+          "properties": {
+            "input_nominal_v": {
+              "type": "number"
+            },
+            "input_min_v": {
+              "type": "number"
+            },
+            "input_max_v": {
+              "type": "number"
+            },
+            "quiescent_max_ma": {
+              "type": "number"
+            },
+            "peak_max_ma": {
+              "type": "number"
+            }
+          }
+        },
+        "audio": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sample_rate_primary_khz",
+            "sample_rate_capable_khz",
+            "bit_depth",
+            "input_full_scale_vpp",
+            "input_typical_vpp"
+          ],
+          "properties": {
+            "sample_rate_primary_khz": {
+              "type": "number"
+            },
+            "sample_rate_capable_khz": {
+              "type": "number"
+            },
+            "bit_depth": {
+              "type": "integer"
+            },
+            "input_full_scale_vpp": {
+              "type": "number"
+            },
+            "input_typical_vpp": {
+              "type": "number"
+            }
+          }
+        },
+        "performance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "adc_snr_db_a_weighted",
+            "thd_n_max_pct",
+            "headphone_power_mw_into_32r"
+          ],
+          "properties": {
+            "adc_snr_db_a_weighted": {
+              "type": "number"
+            },
+            "thd_n_max_pct": {
+              "type": "number"
+            },
+            "headphone_power_mw_into_32r": {
+              "type": "number"
+            }
+          }
+        },
+        "thermal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cavity_ambient_min_c",
+            "cavity_ambient_max_c",
+            "component_rating_min_c"
+          ],
+          "properties": {
+            "cavity_ambient_min_c": {
+              "type": "number"
+            },
+            "cavity_ambient_max_c": {
+              "type": "number"
+            },
+            "component_rating_min_c": {
+              "type": "number"
+            }
+          }
+        },
+        "io_provision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "switch_inputs",
+            "analog_inputs",
+            "discrete_led_outputs",
+            "addressable_led_channels"
+          ],
+          "properties": {
+            "switch_inputs": {
+              "type": "integer"
+            },
+            "analog_inputs": {
+              "type": "integer"
+            },
+            "discrete_led_outputs": {
+              "type": "integer"
+            },
+            "addressable_led_channels": {
+              "type": "integer"
+            }
+          }
+        },
+        "measurement_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "How each performance figure is to be demonstrated. A MUST without a measurement method is not testable and cannot be accepted or rejected."
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ties every requirement to how it is demonstrated and what counts as a pass. Without this a MUST is an opinion: a contractor cannot prove compliance and the buyer cannot reject work.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirement_id",
+          "method",
+          "pass_criterion"
+        ],
+        "properties": {
+          "requirement_id": {
+            "type": "string",
+            "pattern": "^REQ-[A-Z0-9-]+$"
+          },
+          "method": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pass_criterion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "design_review",
+              "prototype",
+              "first_article",
+              "production"
+            ]
+          }
+        }
+      }
+    },
+    "document_control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "issued",
+        "document_class",
+        "change_contact",
+        "revision_history"
+      ],
+      "properties": {
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued": {
+          "type": "string",
+          "minLength": 1
+        },
+        "document_class": {
+          "type": "string",
+          "enum": [
+            "rfi",
+            "rfq",
+            "tender"
+          ],
+          "description": "An RFI shortlists and costs the work. A tender buys a design. They want different documents, and a concept-stage record cannot be tendered against."
+        },
+        "change_contact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commercial_terms_in_scope": {
+          "type": "boolean"
+        },
+        "revision_history": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revision",
+              "date",
+              "change"
+            ],
+            "properties": {
+              "revision": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "change": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "issued_status": {
+          "enum": [
+            "not_issued",
+            "issued_to_designers",
+            "issued_as_tender"
+          ],
+          "description": "Whether this document has left the building. Once it has, every later revision changes something already in someone else's hands, and a named change contact stops being optional."
+        }
+      }
+    }
+  }
+}

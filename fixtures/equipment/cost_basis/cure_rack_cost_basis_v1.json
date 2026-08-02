@@ -1,0 +1,46 @@
+{
+  "cost_basis_id": "EQUIPMENT-COST-BASIS-CURE-RACK-V1",
+  "equipment_id": "EQUIPMENT-CURE-RACK-V1",
+  "status": "draft",
+  "currency": "USD",
+  "equipment_burden_rate_per_hour": 0.09,
+  "equipment_burden_provenance": {
+    "source": "engineering_estimate",
+    "confidence": "draft"
+  },
+  "electricity": {
+    "connected_load_kw": 0.15,
+    "load_factor": 0.6,
+    "price_per_kwh": 0.12,
+    "electricity_cost_per_hour": 0.01,
+    "provenance": {
+      "source": "engineering_estimate",
+      "confidence": "draft"
+    }
+  },
+  "consumables_cost_per_hour": 0.02,
+  "consumables_provenance": {
+    "source": "engineering_estimate",
+    "confidence": "draft"
+  },
+  "equipment_hour_rate": 0.12,
+  "provenance": {
+    "source": "THIN-SKIN-GUITAR-BUILD-ESTIMATE-1 sprint; all three components are engineering estimates with no owner-confirmation artifact.",
+    "captured_by": "engineering",
+    "capture_date": "2026-07-26",
+    "confidence": "draft",
+    "references": [
+      "EQUIPMENT-CURE-RACK-V1 (equipment profile)",
+      "fixtures/machines/cost_basis/bcm_2030ca_atc_cost_basis_v1.json (rate-assembly pattern)"
+    ]
+  },
+  "notes": [
+    "Burden ($0.09/hr) is an engineering estimate: ~$900 rack capital over a 7-year life at an assumed 1,500 occupancy-hours/year = 10,500 hours, giving $0.086/hr, rounded to $0.09. Not owner-confirmed.",
+    "Electricity ($0.01/hr) = 0.15 kW x load_factor 0.60 x $0.12/kWh.",
+    "Consumables ($0.02/hr) covers hangers and contact pads.",
+    "equipment_hour_rate ($0.12/hr) is a true-cost rate: burden 0.09 + electricity 0.01 + consumables 0.02. COST input, not a billing rate.",
+    "The rate is intentionally near-zero. Long cure occupancy is cheap in direct dollars and expensive in throughput and work-in-process; that trade is a scheduling and overhead question, not a direct-cost one, and is deferred to THIN-SKIN-BATCH-COSTING-1 and GUITAR-FULL-UNIT-COST-1.",
+    "Because floor space is charged as overhead rather than as a rack burden, this record understates the true cost of long cure cycles. Recheck once an overhead model exists.",
+    "connected_load_kw (0.15) mirrors EQUIPMENT-CURE-RACK-V1 connected_load_estimate.total_kw."
+  ]
+}

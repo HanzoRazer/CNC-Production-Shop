@@ -1,0 +1,84 @@
+{
+  "bay_id": "SG-ELECTRONICS-BAY-V1",
+  "product_ref": "PRODUCT-SMART-GUITAR-V1",
+  "status": "ruled",
+  "units": "mm",
+  "region": {
+    "width_mm": 210.0,
+    "height_mm": 125.0,
+    "origin": "top-left of the region, +x across the body, +y toward the tail",
+    "datum": "The interior space below the largest void, measured from the instrument mid-line. Where this region sits on the outline is deliberately not a number here - the outline is not settled, and every placement below is local to the bay, so the bay can be positioned later without any of them moving."
+  },
+  "min_web_mm": 0.0,
+  "placements": [
+    {
+      "item_id": "POD_PI",
+      "cavity_ref": "POD_PI",
+      "x_mm": 0.0,
+      "y_mm": 0.0,
+      "width_mm": 93.0,
+      "height_mm": 64.0,
+      "depth_mm": 27.0,
+      "note": "Pi 5 on 6.0 standoffs. Cavity dimensions - the 4.0 clearance per side around the board is already inside them."
+    },
+    {
+      "item_id": "POD_HAT",
+      "cavity_ref": "POD_HAT",
+      "x_mm": 135.0,
+      "y_mm": 0.0,
+      "width_mm": 73.0,
+      "height_mm": 64.5,
+      "depth_mm": 33.0,
+      "note": "Audio front-end board on 6.0 standoffs. Deepest item in the bay. Separated from POD_PI by 42.0 mm - the most the bay allows while keeping 2.0 mm off its edge. Header-to-header span is 125.0 against a 150 mm ribbon, 16.7% slack."
+    },
+    {
+      "item_id": "BATT_A",
+      "cavity_ref": "BATTERY_CHAMBER",
+      "x_mm": 0.0,
+      "y_mm": 67.0,
+      "width_mm": 90.0,
+      "height_mm": 55.0,
+      "depth_mm": 21.0,
+      "note": "Two 18650 cells - one parallel string of the 2S2P pack."
+    },
+    {
+      "item_id": "BATT_B",
+      "cavity_ref": "BATTERY_CHAMBER",
+      "x_mm": 100.0,
+      "y_mm": 67.0,
+      "width_mm": 90.0,
+      "height_mm": 55.0,
+      "depth_mm": 21.0,
+      "note": "Two 18650 cells - the other parallel string, wired to BATT_A."
+    }
+  ],
+  "derived": {
+    "width_used_mm": 208.0,
+    "height_used_mm": 122.0,
+    "width_spare_mm": 2.0,
+    "height_spare_mm": 3.0,
+    "deepest_placement_mm": 33.0,
+    "verdict": "fits"
+  },
+  "provenance": {
+    "source": "owner_measurement",
+    "source_ref": "Body Outline Editor, owner-supplied 2026-07-28",
+    "snapshot_date": "2026-07-28",
+    "confidence": "confirmed",
+    "note": "Region dimensions are the owner's, taken from the Body Outline Editor against the design as it exists, and PROMOTED TO CANON 2026-07-28 by owner ruling. The body outline around it is still unsettled; this region is not."
+  },
+  "notes": [
+    "THE WHOLE SET FITS: 208.0 x 122.0 of 210.0 x 125.0. Pods across the top, the two battery modules beneath.",
+    "THE RIBBON NO LONGER HOLDS THE PODS TOGETHER. It did at 100 mm, where 90.0 of span pinned the Pi and the analog board 7.0 mm apart - the worst EMC geometry in the program, set by a cable rather than by the instrument. The part was lengthened to 150 mm on 2026-07-28: span available rises to 135.0, the pods separate to 42.0, and THE BAY WIDTH IS NOW THE LIMIT. Header-to-header is still the measure that counts; a longer part buys real distance because of it, not in spite of it.",
+    "MIN_WEB IS ZERO HERE BY DESIGN, and that is not a shortcut. This is ONE HOLLOW CHAMBER, not four routed pockets in solid wood, so there are no inter-item webs to maintain - and every dimension listed is a CAVITY dimension that already carries its own mounting margin. The 8.0 web still governs at the bay boundary, where there is real material.",
+    "THE VERTICAL BUDGET IS THE TIGHT ONE. Abutting, the two rows are 122.0 tall, leaving 3.0 mm as the ENTIRE allowance for clearance between them. At 8.0 of separation the set is 127.5 and does NOT fit. 5.0 fits at 124.5, with almost nothing left. Treat 5.5 as the total vertical budget and spend it deliberately.",
+    "THE BATTERY IS TWO PACKS, NOT ONE. Four cells in a single row would be 92.2 deep - deeper than either pod, and it would own the full depth of wherever it sat. Two 2-cell chambers at 55.0 are shallower than both pods. Electrically identical: still 2S2P, still 6.0-8.4 V, still double the runtime, no board revision.",
+    "The two parallel strings in separate chambers is ordinary in laptop and e-bike packs. At these currents the interconnect difference is negligible, but the BMS must see one 2S2P pack, not two independent 2S packs.",
+    "COORDINATES ARE LOCAL TO THE BAY, which is why this record can exist before the outline does. Positioning the bay is one transform applied to all four placements at once.",
+    "BOUNDARY BASIS RULED 2026-07-28: THE 210 x 125 IS THE USABLE OPENING. Rim and webs are already excluded, so items may be placed to the boundary and nothing further is deducted. This is what the layout above was written against, so it stands unchanged - see CONF-BAY-BOUNDARY-BASIS.",
+    "SEPARATION IS HELD AT 42.0, NOT THE 44.0 THE OPENING ALLOWS. The last 2.0 mm buys nothing measurable in EMC terms and is worth more as edge tolerance: at 44.0 POD_HAT would sit exactly on the bay boundary with nothing in hand.",
+    "IF THE BAY IS EVER REDUCED - by the outline, by the bridge block, by anything - the pods stay and the battery modules go first. POD_PI and POD_HAT are tied to each other by a ribbon and must share a bay; the modules connect by wire and can sit anywhere in the hollow body. Ruled while the boundary was still open, and retained because it will be needed again.",
+    "BODY POSITION IS NULL AND THAT IS THE POINT. The bay is fully specified and internally verified, but it has not been placed on the outline, because the outline is not settled. Until body_position is filled in, every back-face position in the instrument is unknown - which is what the DO NOT CUT guards on the DXF and the dimension sheet now key on. They clear themselves when the bay is placed, and not before."
+  ],
+  "body_position": null
+}

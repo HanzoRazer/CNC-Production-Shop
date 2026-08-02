@@ -1,0 +1,532 @@
+{
+  "geometry_id": "SMART-GUITAR-CAVITY-GEOMETRY-V1",
+  "register_id": "SMART-GUITAR-COMPONENT-REGISTER-V1",
+  "register_ref": "fixtures/geometry/smart_guitar_component_register_v1.json",
+  "product_ref": "external:luthiers-toolbox/services/api/app/instrument_geometry/body/specs/smart_guitar_v1.json@v1.1",
+  "status": "draft",
+  "units": "mm",
+  "body": {
+    "stated_thickness_mm": 47.0,
+    "required_thickness_mm": 41.0,
+    "governing_cavity_id": "POD_HAT",
+    "margin_mm": 6.0,
+    "verdict": "sufficient"
+  },
+  "cavities": [
+    {
+      "cavity_id": "POD_PI",
+      "surface": "back",
+      "layout": "side_by_side",
+      "component_ids": [
+        "PI5",
+        "FAN_40MM"
+      ],
+      "derived_length_mm": 93.0,
+      "derived_width_mm": 64.0,
+      "derived_depth_mm": 27.0,
+      "floor_remaining_mm": 20.0,
+      "min_floor_mm": 8.0,
+      "fit_ok": true,
+      "stated_length_mm": null,
+      "stated_width_mm": null,
+      "stated_depth_mm": null,
+      "length_delta_mm": null,
+      "width_delta_mm": null,
+      "depth_delta_mm": null,
+      "findings": []
+    },
+    {
+      "cavity_id": "POD_HAT",
+      "surface": "back",
+      "layout": "single",
+      "component_ids": [
+        "SG_AUDIO_FRONTEND"
+      ],
+      "derived_length_mm": 73.0,
+      "derived_width_mm": 64.5,
+      "derived_depth_mm": 33.0,
+      "floor_remaining_mm": 14.0,
+      "min_floor_mm": 8.0,
+      "fit_ok": true,
+      "stated_length_mm": null,
+      "stated_width_mm": null,
+      "stated_depth_mm": null,
+      "length_delta_mm": null,
+      "width_delta_mm": null,
+      "depth_delta_mm": null,
+      "findings": []
+    },
+    {
+      "cavity_id": "WIRE_CHANNEL_PI_HAT",
+      "surface": "back",
+      "layout": "single",
+      "component_ids": [
+        "GPIO_RIBBON"
+      ],
+      "derived_length_mm": 150.0,
+      "derived_width_mm": 30.0,
+      "derived_depth_mm": 5.0,
+      "floor_remaining_mm": 42.0,
+      "min_floor_mm": 8.0,
+      "fit_ok": true,
+      "stated_length_mm": 150.0,
+      "stated_width_mm": 10.0,
+      "stated_depth_mm": 15.0,
+      "length_delta_mm": 0.0,
+      "width_delta_mm": -20.0,
+      "depth_delta_mm": 10.0,
+      "findings": [
+        "stated width 10.0 mm is SMALLER than derived 30.0 mm by 20.0 mm: the spec cannot hold its own contents",
+        "stated depth 15.0 mm exceeds derived 5.0 mm by 10.0 mm of slack"
+      ]
+    },
+    {
+      "cavity_id": "BATTERY_CHAMBER",
+      "surface": "back",
+      "layout": "single",
+      "component_ids": [
+        "BATTERY_PACK"
+      ],
+      "derived_length_mm": 90.0,
+      "derived_width_mm": 55.0,
+      "derived_depth_mm": 21.0,
+      "floor_remaining_mm": 26.0,
+      "min_floor_mm": 8.0,
+      "fit_ok": true,
+      "stated_length_mm": null,
+      "stated_width_mm": null,
+      "stated_depth_mm": 30.48,
+      "length_delta_mm": null,
+      "width_delta_mm": null,
+      "depth_delta_mm": 9.48,
+      "findings": [
+        "stated depth 30.48 mm exceeds derived 21.0 mm by 9.48 mm of slack"
+      ]
+    }
+  ],
+  "conflicts": [
+    {
+      "conflict_id": "CONF-POD-LAYOUT",
+      "field": "cavities.electronics_pod.electronics_stack.layout",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: layout stacked_vertical, total_height_mm 76.0, pod depth 30.48 mm",
+        "luthiers-toolbox smart_guitar_v1.json: rear_electronics_cavity 95 x 65 x 22 mm, HiFiBerry absent from contents",
+        "derived: stacked assembly is 58 mm before lid clearance, against a 44.45 mm blank"
+      ],
+      "status": "ruled",
+      "ruling": "Side-by-side. Stacking is geometrically impossible at any guitar-plausible thickness. The stacked_vertical note and its 76.0 mm figure are stale and should be retired at source.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-FAN-INTRUSION",
+      "field": "electronics_components.fan_40mm.mounting",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: mounting surface pod_lid, standoff 0, 'requires vents in lid'",
+        "no source states whether the fan body sits inside the cavity or protrudes through the cover"
+      ],
+      "status": "ruled",
+      "ruling": "RESOLVED: the fan vents OUTWARD through the lid and consumes no cavity depth. This confirms the configuration already modelled, so no derived dimension changes — but it converts the body-thickness verdict from provisional to settled. Required thickness stays 41.0 mm against the 44.45 mm blank, a real 3.45 mm margin. The counterfactual is retained in test_internal_fan_would_break_the_blank: an internally mounted fan would demand 51.0 mm and fail the specified body by 6.55 mm. The lid requires vents, per the source note.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-PI5-HEIGHT",
+      "field": "electronics_components.pi5.height",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: 18.0 mm",
+        "luthiers-toolbox smart_guitar_v1.json: 17.0 mm"
+      ],
+      "status": "ruled",
+      "ruling": "18.0 mm per sg-spec, which the owner ruled canonical for the electrical stack and its cavity dimensions. The 1 mm difference does not change any fit verdict.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-BATTERY-PLACEMENT",
+      "field": "electronics_components.battery_pack.location",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: bass_chamber, pack 80 x 45 x 18 mm",
+        "luthiers-toolbox smart_guitar_v1.json: inside rear_electronics_cavity beside the Pi 5, single 6000 mAh cell 65 x 18.3 mm",
+        "SG-ELECTRONICS-BAY-V1, ruled 2026-07-28: two battery modules placed in the bay at 0.0/67.0 and 100.0/67.0, beneath the pods"
+      ],
+      "status": "ruled",
+      "ruling": "ANSWERED BY SG-ELECTRONICS-BAY-V1, closed 2026-07-28. The question was whether the pack sits in a bass chamber, per sg-spec, or beside the Pi, per luthiers-toolbox. NEITHER SOURCE WAS RIGHT because both described a pack that no longer exists: it is now TWO 2-cell modules, not one, and they sit BENEATH the pods in the electronics bay at bay-local 0.0/67.0 and 100.0/67.0.\n\nThe original obstruction is also gone. This conflict was left open because the body had been ruled a solid blank with through-body voids rather than internal chambers, so a bass chamber could not exist. The body is a hollow thin-skin box, and the bay is that hollow.\n\nABSOLUTE POSITION STILL FOLLOWS THE BAY, whose body_position is null. What is settled is the modules' position RELATIVE to the electronics, which is what this conflict actually asked.",
+      "ruled_by": "answered by SG-ELECTRONICS-BAY-V1, 2026-07-28"
+    },
+    {
+      "conflict_id": "CONF-NVME-PLACEMENT",
+      "field": "rear_electronics_cavity.contains[NVMe SSD]",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json: NVMe M.2 2280 sited 'under Pi 5'",
+        "sg-spec smart_guitar_cavity_map.json: no NVMe in electronics_components",
+        "owner ruling 2026-07-28: the NVMe is dropped; the Pi 5 boots from microSD"
+      ],
+      "status": "ruled",
+      "ruling": "NVMe DROPPED, owner 2026-07-28. The Pi 5 boots from microSD, so the drive is removed from the component register rather than carried unplaced. It was never sited by either source - luthiers-toolbox put it 'under Pi 5', sg-spec did not list it at all - and the electronics bay has 2.0 x 3.0 mm spare, nowhere near enough for an 80 x 22 M.2 2280. A part with no home and no agreed source is better removed than kept as a placeholder.\n\nNOTHING ELSE MOVES. It was never in a cavity plan, so no cavity changes; POD_HAT still governs body thickness at 33.0; the audio front-end spec never referenced it.\n\nCARRIED FORWARD AS A PRODUCT RISK, NOT A GEOMETRY ONE: microSD wears out under sustained writes, and a coaching engine that logs practice sessions or records audio writes continuously. If the software turns out to write more than occasionally, this decision comes back - and it comes back as a placement problem, because the bay is full. Size the card generously and keep writes off the boot volume.",
+      "ruled_by": "owner ruling 2026-07-28"
+    },
+    {
+      "conflict_id": "CONF-HIZ-SPLITTER-DIMS",
+      "field": "signal_chain.components.splitter",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json signal_chain: 'active buffered Hi-Z 1MOhm input' is required by both audio paths",
+        "no source anywhere gives the splitter a physical dimension"
+      ],
+      "status": "ruled",
+      "ruling": "RESOLVED by CONF-FRONTEND-CUSTOM. The Hi-Z buffered splitter is no longer a separate undimensioned part: it is an input stage ON the custom front-end board, covered by REQ-HIZ in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1, which requires at least 1 megohm input impedance using a JFET or equivalent topology. The pod footprint is therefore no longer a lower bound waiting on an unknown component — SG_AUDIO_FRONTEND carries a governed envelope and the cavity derives from it.",
+      "ruled_by": "resolved 2026-07-27 by the custom subassembly decision"
+    },
+    {
+      "conflict_id": "CONF-USB-INTERFACE-LOCATION",
+      "field": "signal_chain.components.usb_interface",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json signal_chain: 'Focusrite Scarlett Solo 4th Gen (primary) or IK AXE IO ONE (alt)' feeding the Pi 5 USB",
+        "physical: a Scarlett Solo is roughly 143 x 97 x 47 mm and cannot fit a 44.45 mm body"
+      ],
+      "status": "ruled",
+      "ruling": "RESOLVED, differently for each product line. SMART GUITAR: no USB interface at all. Audio input, conversion and headphone output are all on the custom front-end board, so the instrument is self-contained and the Scarlett Solo named in the canonical signal chain is retired as vestigial. KHAYA: originally external MOTU M2, then made self-contained by owner decision on 2026-07-27, so it carries the same board. The M2 remains a supported EXTERNAL peripheral rather than a designed-in component, which the sourcing policy permits. Note that the interface could never have been onboard as named: the Scarlett Solo is 47 mm tall and the M2 45 mm, against a 36 mm ceiling.",
+      "ruled_by": "resolved 2026-07-27 by the custom subassembly decision"
+    },
+    {
+      "conflict_id": "CONF-FRET-COUNT",
+      "field": "neck.fret_count",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json: 24",
+        "sg-spec sg_spec/schemas/smart_guitar.py quarantine note, 2026-07-21: 'fret_count=24 (canon: 22)'",
+        "sg-spec docs/SMART_GUITAR_SPEC.md: no fret count"
+      ],
+      "status": "ruled",
+      "ruling": "24 frets. The 2026-07-21 quarantine note asserting canon 22 is itself wrong. Recorded here because it is a live contradiction in a file that presents itself as a cleanup, and does not affect cavity geometry.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-BASE-MODEL",
+      "field": "base_model / body outline lineage",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json: base_model Gibson Les Paul, outline from LesPaul_body.dxf, generated 2026-01-29",
+        "luthiers-toolbox smart_guitar_v1.json: Explorer-derived ergonomic outline, original design, v1.1 2026-03-08"
+      ],
+      "status": "ruled",
+      "ruling": "The 2026-01-29 Les Paul reference is stale. Body outline and lineage come from luthiers-toolbox; cavity dimensions come from sg-spec. Cavity POSITIONS inherited from a Les Paul outline are therefore not trustworthy and are excluded from this record.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-PICKUP-TYPE",
+      "field": "luthiers-toolbox smart_guitar_v1.json: hardware.pickups vs cavities.teensy_io_pocket.signal_chain",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json hardware.pickups: dual humbucker, direct mount, with neck and bridge route dimensions",
+        "luthiers-toolbox smart_guitar_v1.json cavities.teensy_io_pocket.signal_chain lines 449-450: BOTH audio paths begin 'P90 -> buffered_splitter', in the block marked canonical: true, spec_version 2.1"
+      ],
+      "status": "unresolved",
+      "ruling": "INTRA-FILE contradiction, not a cross-repo one: a single file names dual humbuckers in its hardware block and a P90 in its own canonical signal chain. sg-spec contains no P90 reference at all. NOTE these are different pickup CLASSES, not two models of the same thing: a P-90 is a SINGLE COIL, the pickup humbuckers were designed to replace. The owner confirmed on 2026-07-27 that pickup selection is fluid and may include single coils. Consequences split: the audio front-end board is now indifferent to the choice, since its input is specified as headroom plus gain range rather than a level; but pickup ROUTE dimensions still depend on it, and a single coil removes the common-mode rejection that makes an onboard computer tolerable, which is an instrument-level EMC risk recorded in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1.",
+      "ruled_by": "unresolved — deferred to the budget model"
+    },
+    {
+      "conflict_id": "CONF-PICKUP-ROUTE-DIMS",
+      "field": "pickup route dimensions",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json cavities.pickup_neck / pickup_bridge: 82.0 x 38.0 x 19.05 mm, corner radius 4.0 mm",
+        "luthiers-toolbox smart_guitar_v1.json cavities.neck_pickup_route / bridge_pickup_route: 92.0 x 40.0 x 19.0 mm, corner radius 3.0 mm"
+      ],
+      "status": "unresolved",
+      "ruling": "Both sources agree the pickups are humbuckers and disagree on the route by 10 mm of length, 2 mm of width, and 1 mm of corner radius. Unresolvable until CONF-PICKUP-TYPE is settled, since a P90 route is a different size again. Pickup routes are deliberately NOT modelled in this register, so this conflict is recorded rather than derived away.",
+      "ruled_by": "unresolved — blocked on CONF-PICKUP-TYPE"
+    },
+    {
+      "conflict_id": "CONF-BODY-WIDTH",
+      "field": "body.dimensions.width_max_mm",
+      "sources": [
+        "official CAD: body length 468.5 mm (owner, 2026-07-26)",
+        "luthiers-toolbox smart_guitar_v1.json body.dimensions: 368.3 mm wide x 444.5 mm long",
+        "traced outline smart_guitar_back_v1.json: extents 250.04 x 290.79 mm, aspect 0.859865, with the note 'Shape topology is correct. Scale factor TBD against physical blank.'",
+        "luthiers-toolbox docs/archive/instrument_references/smart_guitar/smart_guitar_back_v5.dxf and smart_guitar_front_v5.dxf: both carry a BODY_OUTLINE of 376.75 x 438.15 mm, aspect 0.8599, identical to the traced outline; back_v5's own annotation reads 'Smart Guitar - Back View 250.0 x 290.8 mm 78 pts'"
+      ],
+      "status": "ruled",
+      "ruling": "Stated width 368.3 mm is the outlier and is treated as stale. Taking the official CAD length with the traced topology gives a single uniform scale k = 468.5/290.79 = 1.611128 and a derived width of 402.85 mm, against which the stated 368.3 mm is 34.55 mm (9.38%) short. The cross-check is decisive: trusting the stated width instead derives a body length of 428.32 mm, 40.18 mm short of the official CAD. Corroborated by the spec's own design_heritage.explorer.reference_body_mm of 420 x 460 mm, which the derived 402.85 x 468.5 resembles and the stated 368.3 x 444.5 does not. Note also that 368.3, 444.5, and 438.15 are all exact round inch values (14.50, 17.50, 17.25) which read as assumptions, while 468.5 (18.44 in) is not and reads as measured. DERIVED WIDTH 402.85 mm IS A PREDICTION, not a measurement: it must be verified against a physical blank in SMART-GUITAR-PLAN-COLLISION-1 phase 1.",
+      "ruled_by": "owner ruling, 2026-07-26. CORROBORATED INDEPENDENTLY: the owner's own separate calculation also arrives at 402.85 mm, so the figure no longer rests solely on the traced aspect ratio. The official CAD declares no width — the drawing is on hold and will produce a comparable width according to shape — so 402.85 mm stands as the governed derived width. FURTHER CORROBORATED 2026-07-27 by two independent DXF artifacts (back_v5, front_v5), which carry the same 78-point outline at the same 0.8599 aspect and scale it to a body length of 438.15 mm — the stale 'corrected' figure — yielding a width of 376.75 mm. Same method against the official 468.5 mm length yields 402.85 mm. Three artifacts now agree on the aspect. CONF-TRACE-REGISTRATION concerns void POSITIONS and does not impugn the silhouette aspect; the two are separable claims."
+    },
+    {
+      "conflict_id": "CONF-LENGTH-DATUM",
+      "field": "cavities.*.body_position_mm.y_from_top",
+      "sources": [
+        "official CAD: body length 468.5 mm",
+        "luthiers-toolbox smart_guitar_v1.json: every cavity y_from_top computed against a 444.5 mm body",
+        "luthiers-toolbox smart_guitar_v1.json neck.neck_length.body_length_mm: 438.15 mm, itself 'corrected from 444.5'"
+      ],
+      "status": "ruled",
+      "ruling": "RESOLVED: the extra 24.0 mm is at the TAIL, below the bridge. Every cavity y_from_top is therefore preserved unchanged, because the datum is the neck end of the body and the growth is entirely below the bridge line. The bridge at y_from_top 320.0 remains fixed by scale length (628.65 mm nut to saddle) and is unaffected. The 438.15 mm figure in the same file's neck block remains stale. This unblocks plan-level Y positions, which were the binding constraint on SMART-GUITAR-PLAN-COLLISION-1.",
+      "ruled_by": "owner ruling, 2026-07-26"
+    },
+    {
+      "conflict_id": "CONF-TRACE-REGISTRATION",
+      "field": "traced outline void positions vs spec cavity positions",
+      "sources": [
+        "traced outline smart_guitar_back_v1.json: V4 'control_cavity' centroid sits 0.5707 of body length from the neck end, at x -9.57 mm; V6 'neck_bolt_plate_area' sits at 0.2703",
+        "luthiers-toolbox smart_guitar_v1.json: control_cavity y_from_top 317.0 (0.7132 of a 444.5 body, 0.6766 of a 468.5 body) at x_center +25.0; neck_pocket y_from_top 53.3 (0.1199 / 0.1138)",
+        "trace provenance: 'hand-traced from AI render back view, 2026-03-26'",
+        "luthiers-toolbox smart_guitar_front_v5.dxf: six of eight cavity layers imply a body-top datum of y +4.2 +/- 1.2 at v5 scale, while its own BODY_OUTLINE tops at y +113.2 — a constant offset of 109.0 mm (72.4 mm at spec scale), not scattered error"
+      ],
+      "status": "ruled",
+      "ruling": "DIAGNOSED. The mismatch is a CONSTANT DATUM OFFSET in the generated artifacts, not evidence that the outline and the spec positions are incompatible. In smart_guitar_front_v5.dxf, six of eight cavity layers — ARDUINO_POCKET, PICKUP_NECK, ANTENNA_RECESS, REAR_ELECTRONICS, PICKUP_BRIDGE and BRIDGE_MOUNTING — imply a body-top datum of y +4.2 +/- 1.2 mm, while the file's own BODY_OUTLINE tops at y +113.2 mm. The generator plotted cavities from the drawing origin rather than from the body top edge, a 109.0 mm shift at v5 scale. CONSEQUENCE: the spec's y_from_top values are sound and the outline is sound; the artifacts that combined them were not. Placing cavities at (body_top_y - y_from_top), as scripts/export_smart_guitar_dxf.py does, is the correct registration. RESIDUAL: NECK_POCKET and CONTROL_PLATE remain outliers at -55.8 and -38.5 even after the offset is removed, so those two positions are independently suspect and should be checked against the drawing.",
+      "ruled_by": "diagnosed 2026-07-27 from smart_guitar_front_v5.dxf; two cavity positions remain suspect"
+    },
+    {
+      "conflict_id": "CONF-OPPOSED-FACE-WEB",
+      "field": "top pickup routes vs back electronics pod, combined depth",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json: bridge_pickup_route 19.0 mm deep on the TOP face at y_from_top 294.6, x_center 0.0",
+        "luthiers-toolbox smart_guitar_v1.json: rear_electronics_cavity 22.0 mm deep on the BACK face at y_from_top 275.7, x_center 36.8 — the two overlap in plan on these stated positions",
+        "derived: this register's side-by-side pod is 33.0 mm deep and 162.0 mm long, deeper and far longer than the 95 x 65 x 22 mm cavity those positions were checked against"
+      ],
+      "status": "ruled",
+      "ruling": "RESOLVED by relocating the pod to the tail below the bridge, per owner instruction 2026-07-27. GOVERNED PLACEMENT: centre x 74.0, y_from_top 387.0, laid 162 across X and 64 along Y, giving an extent of x -7.0..155.0, y 355.0..419.0. The pod clears every top-face route, so the opposed-face web check no longer applies to it at all — separation in plan removes the constraint rather than satisfying it. CLEARANCES: 8.0 mm wall to control_cavity (which ends at y 347.0), 14.0 mm to bridge_route, 40.4 mm to bridge_pickup_route, and 36.8 mm of spare between the pod and the tail rim limit at y 455.8. Floor remaining 14.0 mm against a 47.0 mm blank. LATITUDE IS NARROW: the feasible centre-x range is only 61.9..86.2, a 24.3 mm window, because the body narrows toward the tail — at y 419 the outline spans x -31.8..186.5, leaving 192.9 mm of usable width for a 162 mm pod. Moving the pod more than ~12 mm either way in X pushes it through the rim. ASSUMPTION: the 8.0 mm cavity-to-cavity wall is taken from the ruled floor and web minimums by analogy and has not itself been ruled. OUTSTANDING: at its stated x 110.4 the output jack falls inside the pod footprint, overlapping 12.7 x 12.7. The outline edge at y 391.2 is x 182.2, so as an edge bore the jack belongs there and would clear the pod by 20.9 mm; its stated position is the same class of error as usb_c_port.",
+      "ruled_by": "owner instruction, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-BODY-THICKNESS",
+      "field": "body.dimensions.thickness_mm",
+      "sources": [
+        "luthiers-toolbox smart_guitar_v1.json and sg-spec cavity map: 44.45 mm (1.75 in), previously agreed by both",
+        "derived: at 44.45 mm, four opposed-face pairs of SPEC-NATIVE cavities breach min_web 8.0 — antenna_recess x neck_pickup_route (web 1.45), rear_electronics_cavity x bridge_pickup_route (3.45), control_cavity x bridge_pickup_route (5.45), teensy_io_pocket x neck_pickup_route (5.45)",
+        "owner ruling 2026-07-27: the antenna is mounted outside the body, removing the 51.0 mm driver"
+      ],
+      "status": "ruled",
+      "ruling": "SET TO 47.0 mm. At the original 44.45 mm, four opposed-face pairs of SPEC-NATIVE cavities breached min_web 8.0. 47.0 is the binding requirement: control_cavity (20) against bridge_pickup_route (19), and teensy_io_pocket (20) against neck_pickup_route (19), both needing 47.0. At 47.0 both clear with exactly 8.0 mm of web. HISTORY: briefly ruled 51.0 on 2026-07-26, driven solely by antenna_recess (24) against neck_pickup_route (19). CONF-ANTENNA-PARENT then established the antenna is mounted OUTSIDE the body, removing that constraint and 4.0 mm of blank. The derived ELECTRONICS_POD at 33.0 deep still fails a 19 mm pickup route by -5.0 mm and must be RELOCATED; thickness alone would need 60.0 mm, so no plausible blank accommodates it in place. CONSEQUENCES at 47.0: estimated body weight 7.5 lb -> 7.93 lb (+5.7%, against +14.7% at 51.0); pod floor remaining 14.0 mm; sg-spec's max_hollow_depth of 30.48 was set against a 44.45 blank and scales to 32.23, which the 33.0 pod still exceeds by 0.77 mm, so C9 continues to bind and needs restating; the internal-fan counterfactual returns to failing, by 4.0 mm.",
+      "ruled_by": "owner instruction 2026-07-26, revised 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-ANTENNA-PARENT",
+      "field": "cavities.antenna_recess — whether it is a body cavity at all",
+      "sources": [
+        "sg-spec smart_guitar_cavity_map.json antenna_recess: 'Stepped shelf milled into floor of rear_electronics_cavity', parent_cavity 'rear_electronics_cavity', with a 2 mm RF window",
+        "luthiers-toolbox smart_guitar_v1.json antenna_recess body_position_mm: x 22.2, y_from_top 202.6, giving a y extent of at most 177.6-227.6",
+        "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity: y_from_top 275.7, length 95, giving a y extent of 228.2-323.2"
+      ],
+      "status": "ruled",
+      "ruling": "RESOLVED: the antenna is MOUNTED OUTSIDE THE BODY. It is not an internal cavity, consumes no cavity depth, and creates no opposed-face conflict. Both stated descriptions were wrong in different ways — sg-spec called it a stepped shelf milled into the floor of rear_electronics_cavity with a 2 mm RF window, and luthiers-toolbox positioned it at x 22.2, y 202.6, which is neither inside that cavity nor on the lower bout. The internal '2 mm wood window' RF premise is abandoned with it. CONSEQUENCE: the antenna was the sole driver of a 51.0 mm blank; without it the binding requirement is 47.0 mm.",
+      "ruled_by": "owner ruling, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-X-SIGN-CONVENTION",
+      "field": "x_center sign convention: which side is treble",
+      "sources": [
+        "traced outline smart_guitar_back_v1.json coordinate_system: 'body_center_origin — X+ treble, Y+ toward neck', corroborated by its own metadata note that the bass side extends 7.62 mm further and by trace extents x -128.83..121.21",
+        "luthiers-toolbox smart_guitar_v1.json rear_electronics_cavity.body_position_mm.notes: 'Offset right (bass side)' for a POSITIVE x_center of 36.8, which under the trace convention is the treble side"
+      ],
+      "status": "ruled",
+      "ruling": "RESOLVED: +X IS TREBLE. The traced outline's convention is correct and the spec annotation is wrong — luthiers-toolbox labels a positive x_center of 36.8 as 'bass side', and that note should be disregarded wherever it appears. Corroborated independently by the trace: its bass-side voids V1 (upper_bass) and V5 (bass_lower) have centroids at negative x, and the metadata records the bass side extending 7.62 mm further, matching extents of x -128.83..121.21. CONSEQUENCE: the governed pod placement at centre x +74.0 sits on the TREBLE side as drawn, and no asymmetric feature needs mirroring.",
+      "ruled_by": "owner ruling, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-POD-SPLIT",
+      "field": "cavities.electronics_pod — one pocket or two",
+      "sources": [
+        "derived: a one-piece 162 x 64 pod has NO valid position in the body outline under containment, 12.7 mm rim inset and 8.0 mm clearance from the through-body voids",
+        "derived: split into POD_PI 93 x 64 x 27 and POD_HAT 73 x 64 x 33, both place with room to spare at the governed 468.5 x 402.85 body",
+        "derived: accommodating the one-piece pod by growing the body needs 1.381x — a 556 x 647 mm, ~14 lb instrument"
+      ],
+      "status": "ruled",
+      "ruling": "SPLIT into POD_PI and POD_HAT, ruled 2026-07-27. Nothing ever required the Pi 5 and the HiFiBerry to share a cavity — side-by-side placement already forbids header stacking, so a ribbon runs between them either way. The one-piece pod was an artifact of modelling them as one side_by_side group. Splitting also drops the Pi pocket to 27 mm deep, since only the HAT needs 33. The ribbon is registered as component GPIO_RIBBON so that pocket separation is constrained rather than merely noted.",
+      "ruled_by": "owner instruction, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-CAVITY-DATUM",
+      "field": "datum for cavity y_from_top and x_center",
+      "sources": [
+        "spec cavity positions plotted against the outline's topmost point: NECK_POCKET, PU_NECK, PU_BRIDGE and BRIDGE all fall outside the body",
+        "derived: a single offset of dx -15.0, dy -50.0 mm places all four function-driven features inside the body with rim inset AND clear of the through-body voids"
+      ],
+      "status": "ruled",
+      "ruling": "The datum for y_from_top is NOT the topmost point of the outline. It sits about 50 mm below it, with the centreline about 15 mm off x = 0. The topmost point of the traced silhouette is the tip of the upper horn, which is not the body-top reference the spec measures from. This single offset is the substance of CONF-TRACE-REGISTRATION: applying it takes the four non-negotiable, scale-length-driven features from all-failing to all-passing. dx -15.0 dy -50.0 is recovered from those four features and is an ENGINEERING FIT, not a measured datum — it should be confirmed against the CAD drawing, since it shifts every cavity in the instrument.",
+      "ruled_by": "derived 2026-07-27 from the four scale-length-driven features; confirm against the CAD drawing"
+    },
+    {
+      "conflict_id": "CONF-FRONTEND-CUSTOM",
+      "field": "onboard audio front end — sourced part or custom subassembly",
+      "sources": [
+        "sourcing policy: no finished retail product may be designed in as an internal component, which rules out the iRig HD 2, Apogee Jam X, Scarlett Solo and MOTU M2 regardless of fit",
+        "a converter board such as the HiFiBerry solves none of the guitar-specific analog problems: Hi-Z input impedance, instrument preamp, gain control, headphone amplifier, protection and anti-alias filtering",
+        "owner decision 2026-07-27: the Khaya line goes fully self-contained, so both product lines now depend on this subassembly"
+      ],
+      "status": "ruled",
+      "ruling": "CUSTOM SUBASSEMBLY, specified in SUBASSEMBLY-SG-AUDIO-FRONTEND-V1. A Raspberry Pi HAT form-factor board carrying the instrument front end, codec, headphone amplifier, analog bypass relay and the I/O microcontroller functions previously assigned to a separate Teensy module. It replaces HIFIBERRY_DAC_ADC and TEENSY_4_1 in this register, and absorbing the MCU is what removes the Teensy pocket and makes the electronics fit the SOLID body. Its dimensions here are the ENVELOPE from that spec, not a measured part: no schematic exists and the status is 'concept'. Cost class differs from a sourced part — non-recurring engineering and EMC certification are separate budget lines, not unit cost. I2S versus USB is recorded as unresolved in the spec; latency does not decide it, since the existing USB path already meets the 5 ms budget at 3.1 ms.",
+      "ruled_by": "owner decision, 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-SOLID-BODY-PACKING",
+      "field": "whether POD_PI and POD_HAT can both be placed in a SOLID body",
+      "sources": [
+        "derived: POD_PI 93 x 64 has exactly 10 valid sites, POD_HAT 73 x 64.5 has 18, and every one of them lies in the same region",
+        "derived: pairwise test with an 8 mm wall — POD_PI + BATTERY is possible, POD_HAT + BATTERY is possible, POD_PI + POD_HAT is IMPOSSIBLE",
+        "derived: the largest axis-aligned pocket that fits anywhere in the body is 100 x 60 mm; POD_PI needs 93 x 64",
+        "derived: no fit at wall 6 mm, rim 10 mm, voids -10%, or body +10% — the result is not sensitive to those margins",
+        "re-tested 2026-07-27 at 75, 100 and 150 mm ribbon after a 60 mm constraint was found to be geometrically impossible: still no fit with two humbucker routes, so the finding is not an artefact of that error"
+      ],
+      "status": "ruled",
+      "ruling": "THE SOLID BODY CANNOT HOST BOTH POCKETS. After the rim inset, an 8 mm keep-out from the through-body voids and the five function-driven features, the usable area fragments into seven disjoint pieces and only ONE is large enough for a ~93 x 64 pocket. The Pi and the front-end board both need it. CORRECTS AN EARLIER CLAIM: an area budget showed 287 cm2 free against 218 cm2 of pockets and was read as '+35 cm2 spare'. Area parity never proves a packing — the free area is there, but not in one usable shape. The claim that the split board 'makes the electronics fit the solid body' was wrong and is withdrawn. NOT AFFECTED: the hollow thin-skin Smart Guitar, where the electronics share one continuous cavity and pocket-to-pocket walls do not apply. This is specific to routing discrete pockets in solid timber. RE-VERIFIED after correcting a ribbon-length error: the 60 mm channel had itself forbidden the two pockets from coexisting, so the test was repeated at 75, 100 and 150 mm. Two humbucker routes still do not fit. HOWEVER the finding is specific to the DUAL-HUMBUCKER layout: see CONF-SINGLE-PICKUP-SPACE.",
+      "ruled_by": "derived 2026-07-27; forces a product decision on the Khaya line"
+    },
+    {
+      "conflict_id": "CONF-SINGLE-PICKUP-SPACE",
+      "field": "whether a single-pickup layout frees enough area for onboard compute in a solid body",
+      "sources": [
+        "derived: replacing two humbucker routes (92 x 40 each) with one Telecaster-style single-coil route (80 x 22) raises free area from 287 to 356 cm2",
+        "derived: POD_PI valid sites rise from 10 to 130, POD_HAT from 18 to 271",
+        "derived: POD_PI, POD_HAT and a 2x18650 battery all pack at a 75 mm ribbon — PI at x -25 y_from_top 240.0, HAT at x -25 y_from_top 165.0, battery at x +115 y_from_top 350.0, pocket separation 75 mm - SUPERSEDED by CONF-POD-EMC-CLEARANCE, which keeps the feasibility finding but replaces these coordinates"
+      ],
+      "status": "ruled",
+      "ruling": "A SINGLE TELECASTER-STYLE PICKUP MAKES THE SOLID BODY WORK. Deleting the neck route and shrinking the bridge route frees 69 cm2 precisely where the pods compete, and the complete electronics set then packs. This does NOT overturn CONF-SOLID-BODY-PACKING, which remains correct for the dual-humbucker layout it was tested against; it identifies the constraint as the PICKUP LAYOUT rather than the body. CONSEQUENCE: onboard compute in the Khaya is no longer ruled out by geometry. Whether to restore it is a product decision — the line was reverted to passive on 2026-07-27 on the strength of the dual-humbucker result, and that reasoning no longer applies unchanged. PLACEMENT SUPERSEDED: the coordinates quoted above were the first packing found, not the best one, and they left POD_PI 11.6 mm from the pickup. CONF-POD-EMC-CLEARANCE re-solved the same problem for clearance and moved all three pockets. The FEASIBILITY conclusion here is unchanged and still stands; only the coordinates are stale.",
+      "ruled_by": "derived 2026-07-27 from the owner's single-pickup proposal"
+    },
+    {
+      "conflict_id": "CONF-POD-EMC-CLEARANCE",
+      "field": "back-face pocket placement, ranked by clearance rather than by fit",
+      "sources": [
+        "derived: the placement ruled in CONF-SINGLE-PICKUP-SPACE left POD_PI 11.6 mm from the pickup route and 10.75 mm from POD_HAT",
+        "derived: re-solving the same packing for clearance reaches POD_PI 71.6 mm from the route and 35.75 mm from POD_HAT, with the whole set still packing",
+        "derived: at the new placement POD_PI is bound by the upper bass-side ergonomic void, not by the pickup, so this is close to the ceiling this outline allows",
+        "derived: the GPIO ribbon must span 89.9 mm header to header, leaving 10.1 mm of a 100 mm part as slack - see CONF-RIBBON-REACH for why that constraint, not edge-to-edge clearance, governs",
+        "scripts/solve_khaya_pocket_layout.py --ribbon-metric header, front_v5 outline, 2.5 mm grid, min_web 8.0, rim 12.7",
+        "SG-ELECTRONICS-BAY-V1, ruled 2026-07-28: the pods are placed in bay-local coordinates, 42.0 mm apart, and the bay is internally verified"
+      ],
+      "status": "ruled",
+      "ruling": "SUPERSEDED BY SG-ELECTRONICS-BAY-V1, closed 2026-07-28. This conflict carried a placement solved against a stale void set, withdrawn once the renders showed three voids rather than four. The bay replaces it outright: POD_PI at bay-local 0.0/0.0 and POD_HAT at 135.0/0.0, 42.0 mm apart, packed and re-checked by a validator.\n\nWHAT CARRIED FORWARD is the reasoning rather than the numbers. The objective is still the Pi's distance from its nearest victim, not from any one thing - and in the bay that victim is the analog front end at 42.0 mm, since the pickup is outside the bay. The separation is set by the GPIO ribbon, which is why lengthening it to 150 mm was the lever that moved this from 7.0 to 42.0.\n\nWHAT IS STILL UNKNOWN moved with it and is now tracked where it belongs: the bay's body_position is null, so the pods' absolute positions on the instrument remain unknown until the outline is settled. The DO NOT CUT guards on the DXF and the dimension sheet key on that field, not on this conflict.",
+      "ruled_by": "superseded by SG-ELECTRONICS-BAY-V1, 2026-07-28"
+    },
+    {
+      "conflict_id": "CONF-RIBBON-REACH",
+      "field": "how far the GPIO ribbon must travel between POD_PI and POD_HAT",
+      "sources": [
+        "register: GPIO_RIBBON is a fixed 100.0 mm part",
+        "derived: edge-to-edge pocket clearance understates the run badly once the pockets sit diagonally - a layout with a 48.3 mm edge gap needs 118.8 mm of ribbon",
+        "derived: the Pi 5's 40-pin header runs along the long edge of the board and the HAT's mates with it, so each header sits at its pocket's x centre on one of the two x-aligned edges; the run is the best of those four pairings",
+        "derived: sweeping usable ribbon length gives POD_PI-to-pickup 74.1 mm at 100, 74.1 at 95, 71.6 at 90, 71.6 at 85, and 11.6 at 80",
+        "derived 2026-07-28: with the bay canon, a 100 mm part at 10% slack allows 90.0 of span and pins the pods 7.0 mm apart; a 150 mm part allows 135.0 and the BAY WIDTH becomes the limit instead, at 42.0 mm of gap"
+      ],
+      "status": "ruled",
+      "ruling": "HEADER-TO-HEADER SPAN GOVERNS, NOT EDGE CLEARANCE. This caught a real error: the first relocation was ruled on edge-to-edge clearance and produced a layout needing 118.8 mm of a 100 mm ribbon - not buildable. The corrected placement spans 89.9 mm, holding 10.1 mm of slack. THE SENSITIVITY IS A CLIFF, NOT A SLOPE: anything from 0 to 15% slack keeps the Pi 71-74 mm from the pickup, but at 20% the packing collapses back to the original 11.6 mm layout. 10% was chosen because zero slack allows no bend radius or connector entry and buys only 2.5 mm of extra clearance. IF A LONGER RIBBON IS SOURCED the constraint relaxes and the search should be re-run; nothing here depends on 100 mm being the only option.\n\nRIBBON LENGTHENED TO 150 mm, ruled 2026-07-28. The reach question stopped being about whether the cable fits and became about what the cable COSTS: at 100 mm it was holding the Pi 7.0 mm from the analog front end, which is the worst EMC geometry in the program and was set by a cable rather than by the instrument. At 150 mm the span available rises from 90.0 to 135.0, the pods separate to 42.0, and the limit moves to the bay width. A stock 40-pin extension exists at this length, so nothing custom follows. THE HEADER-TO-HEADER MEASURE STILL GOVERNS - that lesson is unchanged, and it is why a longer part buys real distance rather than apparent distance.",
+      "ruled_by": "derived 2026-07-27 while exporting the cavity DXF, which exposed the diagonal run"
+    },
+    {
+      "conflict_id": "CONF-BATTERY-AGGRESSOR",
+      "field": "whether the battery pack should be placed as an aggressor alongside the Pi",
+      "sources": [
+        "derived: the ruled layout leaves the pack 8.60 mm from the pickup coil and 10.00 mm from the analog board - closer to the coil than anything else in the instrument, and placed there only because it was fitted last, wherever it fit",
+        "derived: holding the Pi and HAT where CONF-POD-EMC-CLEARANCE puts them, the pack has EXACTLY ONE legal site in the whole body. 8.60 mm is not a choice, it is forced",
+        "derived: raising the required pack clearance to 12 mm collapses the Pi from 71.6 mm to 11.6 mm from the coil; every floor from 12 to 35 mm gives the same collapsed layout, and 40 mm does not pack at all",
+        "derived: ranking pack and Pi as EQUAL aggressors (maximise the worst of four pairs) reaches a worst case of 16.1 mm, but does it by moving the Pi to 17.9 mm from the coil - trading 54 mm of Pi clearance for 7 mm of pack clearance"
+      ],
+      "status": "ruled",
+      "ruling": "NO CHANGE TO THE LAYOUT. The re-solve was run and it VALIDATES the ruled placement rather than replacing it. THE CHOICE IS BINARY, NOT A CONTINUUM: the only real estate far from the coil is the upper bout the deleted neck pickup vacated, and exactly one pocket can occupy it. Either the Pi is far and the pack is close, or the reverse. There is no intermediate layout - the sweep from 12 to 35 mm returns the SAME collapsed result at every step. The Pi keeps the space because it is the dominant aggressor: a 2.4 GHz radio, multi-rail switching regulators and load-dependent current transients, against a pack that is quiet at DC and switches only through its protection and charging circuitry. THE PACK'S EXPOSURE IS REAL AND IS MITIGATED LOCALLY, not geometrically: twisted pack leads, a grounded shield can around the chamber, and charging electronics kept outside the pocket. Those are cheap; a Pi 11.6 mm from a single coil is not fixable at all. The pack is recorded as a SECONDARY aggressor in docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md, configurations G to I, which separate charger noise from the Pi's rather than assuming it away. NOTE THAT THIS RULING IS ENGINEERING JUDGEMENT STANDING IN FOR A MEASUREMENT: it asserts the pack is a weak aggressor, and nothing has been measured. Configuration H is the one most likely to falsify it - a charger near full charge drops into pulse-skipping, and the packet repetition rate can fall in the audio band, so H can fail while maximum-current charging passes.",
+      "ruled_by": "derived 2026-07-27 from the owner's instruction to re-solve treating the battery as an aggressor"
+    },
+    {
+      "conflict_id": "CONF-SINGLE-PICKUP-EMC",
+      "field": "whether a single coil is viable in one cavity set with a Raspberry Pi 5",
+      "sources": [
+        "derived: as first solved, POD_PI sat 11.6 mm from the Telecaster route, fully overlapping it in X, with only 1.0 mm of stock between the pocket ceiling and the route floor at their respective depths",
+        "derived, THEN WITHDRAWN: separations of 71.6 mm to the route and 35.75 mm to POD_HAT were computed against a stale outline and no longer hold. No separation is currently established",
+        "engineering judgement: a single coil has no common-mode rejection, and the Pi's 2.4 GHz radio and switching supplies remain inside the same cavity set"
+      ],
+      "status": "unresolved",
+      "ruling": "CANNOT BE SETTLED BY DERIVATION. This is the first question in the program that needs a physical measurement rather than a calculation. Procedure written at docs/geometry/SG_PICKUP_EMC_MOCKUP_PROCEDURE.md; no measurement has been taken. The comparison is against a conventional single-coil guitar's ambient floor, NOT against silence, and discrete switching tones are weighted above broadband hiss. GEOMETRY IMPROVED but the question stands: CONF-POD-EMC-CLEARANCE took the separation from 11.6 mm to 71.6 mm, close to the most this outline allows, and distance alone does not establish a pass. CONSEQUENCE IF IT FAILS: a hum-cancelling pickup changes the route dimensions, which re-opens the packing ruled in CONF-SINGLE-PICKUP-SPACE. Cavity shielding is now the leading mitigation, because the cheap geometric one has been spent.",
+      "ruled_by": "unresolved - awaits a shielded mock-up measurement"
+    },
+    {
+      "conflict_id": "CONF-VOID-SET-SOURCE",
+      "field": "which artifact carries the true void set, and whether any electronics pocket fits at all",
+      "sources": [
+        "front_v5 carries THREE void layers: VOID_UPPER_BASS, VOID_UPPER_TREBLE, VOID_LOWER_BASS. There is no lower-treble void in the file",
+        "back_v5 carries FOUR voids on VOID_CHAMBERS, annotated V1/V2/V3/V5, and the traced outline carries the same four at voids_mm 0/1/2/4 - agreeing to two decimal places",
+        "the void MISSING from front_v5 is the lower treble one, x 43.42..152.81, y_from_top 178.90..366.18, about 205 cm2",
+        "front_v5's three voids are also positioned differently from the other two artifacts, by up to 30 mm",
+        "derived: POD_HAT as ruled (x 57.9..130.9, y 247.8..312.2) sits ENTIRELY INSIDE the missing void",
+        "derived: re-solving on the corrected body at a 2.5 mm grid gives ZERO valid sites for POD_PI, POD_HAT and BATTERY_CHAMBER alike",
+        "derived: 406.7 cm2 remains free after rim, voids, control cavity and 8 mm webs, but it is a thin web - no 90 x 55 rectangle fits anywhere in it",
+        "owner ruling 2026-07-27: the voids are THROUGH-BODY CUTS, not chambers - so they are hard keep-outs and the back_v5 layer name VOID_CHAMBERS is a misnomer",
+        "owner-supplied renders 2026-07-27 (smart_guitar_back.png, Smart_Guitarwith neck.png): the design carries THREE voids - upper bass, upper treble beside the neck, and one large lower bass - and the lower TREBLE region is the electronics cavity, shown with a screwed cover plate in the back view"
+      ],
+      "status": "ruled",
+      "ruling": "RULED FROM THE RENDERS, AND THE EARLIER FINDING IS WITHDRAWN. The traced outline is STALE. It carries four through-body voids; the design has THREE. What the trace plots as a fourth void on the lower treble side is the ELECTRONICS CAVITY - visible in the back render as a large screwed cover plate, not an opening.\n\nTHAT REVERSES THE CONCLUSION. The 'no electronics pocket fits anywhere' result came from treating the one region the design had already allocated to electronics as a hole in the body. It was an artifact of the stale source, not a property of the instrument. front_v5's three voids are closer to the render than the trace's four, though its positions are still not trustworthy.\n\nALSO WITHDRAWN: the conclusion that shrinking the voids is a dead lever, and the single-void-removal results. Both were computed against the same wrong void set.",
+      "ruled_by": "owner-supplied renders 2026-07-27"
+    },
+    {
+      "conflict_id": "CONF-BODY-CANNOT-HOST-ELECTRONICS",
+      "field": "the body as drawn and the electronics as specified cannot both exist",
+      "sources": [
+        "derived: on the corrected body - four through-body voids plus the central control cavity - a 2.5 mm grid search finds ZERO valid sites for POD_PI (93 x 64), POD_HAT (73 x 64.5) and BATTERY_CHAMBER (90 x 55) alike",
+        "derived: 406.7 cm2 is free after rim 12.7, voids, control cavity and 8 mm webs, but no 90 x 55 rectangle fits in it",
+        "owner ruling 2026-07-27: the voids are through-body cuts, so they cannot host the electronics",
+        "owner statement, earlier: the void style is part of the visual appeal of the design",
+        "derived: sweeping a LINEAR shrink of all four voids about their centroids - 5, 10, 15, 20, 25, 30 and 40% - never produces a valid packing. No pocket places at all below 25%; above it, sites appear but no POD_PI/POD_HAT pair ever clears the 8 mm inter-pocket web",
+        "derived: the failure is independent of ribbon length. Repeating at 90, 135 and unlimited mm of reach changes nothing, because no valid pair exists to connect",
+        "derived: at 40% linear shrink - 64% of the void AREA removed - the surviving sites for all three pockets cluster in ONE window near the tail, centres x 88..128, y_from_top 370..390. All three want the same ground",
+        "owner ruling 2026-07-27: the regions not under the voids can be hollowed in BOTH models, including the area below the largest bass-side void; assume the guitar retains no appreciable solid areas"
+      ],
+      "status": "ruled",
+      "ruling": "WITHDRAWN - THE PREMISE WAS FALSE. This conflict asserted that the body as drawn and the electronics as specified could not both exist. It rested on the stale void set corrected in CONF-VOID-SET-SOURCE, and on two constraints that do not apply to this instrument: that each board needs its own routed pocket with an 8 mm wall to its neighbours, and that the control cavity is a keep-out rather than part of the same hollow. Correcting the control cavity alone took POD_PI from 0 valid placements to 224.\n\nTHE OWNER RULED 2026-07-27 that every region not under a void can be hollowed in both models, that the area below the largest bass-side void is hollowed too, and that no appreciable solid area remains. Under that model the electronics are not being fitted into leftover material at all - they sit in a hollow box, and the design already carries an electronics cavity with a cover plate on the lower treble side.\n\nTHE REMAINING CONSTRAINT IS STRUCTURAL, NOT SPATIAL: what ribs and glue surfaces a thin-skin box needs to carry the neck joint, the bridge and the string-through ferrules visible in the render. That is a different question and it is not answered by packing rectangles.",
+      "ruled_by": "owner ruling 2026-07-27 on hollowing, plus the corrected void set"
+    },
+    {
+      "conflict_id": "CONF-CONTROL-PLATE-POSITION",
+      "field": "control cavity position, which decides whether POD_HAT clears it",
+      "sources": [
+        "smart_guitar_back_v5.dxf, layer CONTROL_CAVITY, annotated 'CTRL CAVITY': x -48.34..16.11, y_from_top 202.60..331.49",
+        "traced outline smart_guitar_back_v1.json, voids_mm index 3: identical to two decimal places",
+        "SUPERSEDED candidate A - front_v5 CONTROL_PLATE with both scale errors undone: x 5.2..106.1, y_from_top 320.6..370.0",
+        "SUPERSEDED candidate B - the DXF export's own cavity table: centred x 25.0, y_from_top 317.0, 100 x 60"
+      ],
+      "status": "ruled",
+      "ruling": "SETTLED FROM CAD. The control cavity is x -48.34..+16.11, y_from_top 202.60..331.49, i.e. 64.45 x 128.89 mm, sitting in the CENTRAL SPINE between the two lower voids rather than on the treble side. back_v5 carries it on a labelled CONTROL_CAVITY layer and the traced outline carries the same rectangle at voids_mm index 3, agreeing to two decimal places - two independent artifacts, one answer. NEITHER PRIOR CANDIDATE WAS CORRECT: both were roughly half the height and on the wrong side. It does NOT collide with POD_HAT, which was the specific worry this conflict was opened to settle. It DOES collide with POD_PI and BATTERY_CHAMBER - but that is moot, because CONF-VOID-SET-SOURCE invalidates those placements outright.",
+      "ruled_by": "derived 2026-07-27 from back_v5 and the traced outline, which agree exactly"
+    },
+    {
+      "conflict_id": "CONF-BATTERY-CELL-COUNT",
+      "field": "battery pack cell count, and therefore BATTERY_CHAMBER size",
+      "sources": [
+        "component register BATTERY_PACK: 'Battery pack + BMS (4x 18650)', 80.0 x 45.0 x 18.0",
+        "SUBASSEMBLY-SG-AUDIO-FRONTEND-V1 notes: 'the battery must be the 2x 18650 pack rather than 4x', stated as a load-bearing derived fact once the Khaya went self-contained",
+        "the front-end spec's electrical envelope gives a 6.0-8.4 V supply range, which follows from TWO cells in series and not four",
+        "derived: an 18650 is 18.6 dia x 65.2 long. Two cells side by side are 65.2 x 37.2 x 18.6, which fits the recorded 80 x 45 x 18 with 14.8 of length and 7.8 of width left for BMS and wrap. Four across would be 74.4 wide and a 2x2 stack 37.2 tall - neither fits the recorded pack",
+        "derived: as ONE 4-across block the pack is 82.2 wide, giving a 92.2 cavity - deeper than either pod. As TWO 2-cell packs it is 45.0 each, shallower than either pod. Electrically identical; the difference is purely how placeable the shape is"
+      ],
+      "status": "ruled",
+      "ruling": "RULED 4x 18650 IN 2S2P, owner 2026-07-28. The owner ruled two cells earlier the same day, then reopened it once the hollow body removed the cavity constraint that had forced the smaller pack, and ruled four.\n\nTHE ORIGINAL CONTRADICTION WAS A LABEL, NOT A DIMENSION. The register said '4x' while its own 80 x 45 x 18 described a TWO-cell pack: an 18650 is 18.6 x 65.2, so four across is 74.4 wide against the stated 45.0, and a 2x2 stack is 37.2 tall against the stated 18.0. Two cells fitted exactly, with 14.8 of length and 7.8 of width left for BMS and wrap. The label has now been made true rather than corrected away.\n\nPACK 80.0 x 82.2 x 18.0, CAVITY 90.0 x 92.2 x 21.0. Four cells laid flat side by side across the width, carrying the same allowances. DEPTH DOES NOT MOVE - still 21.0 - so body thickness is unaffected and POD_HAT continues to govern at 33.0. VOLTAGE DOES NOT MOVE either: 2S2P doubles capacity at the same 6.0-8.4 V, so REQ-POWER-ARCH holds and SUBASSEMBLY-SG-AUDIO-FRONTEND-V1 needs no revision to its electrical envelope. The cost is 37.2 mm of extra WIDTH, plan area 49.5 to 83.0 cm2, and roughly 94 g of added cells.\n\n4S REMAINS RULED OUT: 12-16.8 V would break the board's stated supply range and force a front-end revision to buy exactly the same capacity that 2S2P buys for free.\n\nCARRIED FORWARD: a 2S2P pack needs a BMS that balances two series groups at roughly double the charge current. Ordinary, but a different part from the 2S BMS, and it feeds the peak-draw figures if the charging path shares the board's input.\n\nBUILD IT AS TWO 2-CELL PACKS, NOT ONE BLOCK. Four cells in a single row give a 92.2 mm cavity, which is deeper than either pod and awkward to place - it cannot sit beside them without eating the full depth of whatever region holds it. Split into two 2-cell packs of 90.0 x 45.0 x 21.0, the same four cells are SHALLOWER than either pod and drop in beside or beneath them almost anywhere. Still 2S2P, still four cells, still 6.0-8.4 V, still double the runtime: nothing electrical changes, and no board revision follows. The two parallel strings sit in separate chambers, which is ordinary in laptop and e-bike packs; at these currents the interconnect difference between strings is negligible. BATTERY_CHAMBER therefore becomes TWO chambers rather than one.\n\nBUILT AS TWO 2-CELL MODULES, ruled 2026-07-28. BATTERY_PACK is now one 80.0 x 45.0 x 18.0 module and TWO are fitted, giving two 90.0 x 55.0 x 21.0 chambers instead of one 90.0 x 92.2 x 21.0. Four cells either way, 2S2P either way, 6.0-8.4 V either way - the split is purely about the shape being placeable. Placement is in SG-ELECTRONICS-BAY-V1.",
+      "ruled_by": "owner ruling 2026-07-28, revised the same day from two cells to four"
+    },
+    {
+      "conflict_id": "CONF-BAY-BOUNDARY-BASIS",
+      "field": "whether the 210 x 125 electronics bay already excludes its own rim and webs",
+      "sources": [
+        "owner measurement 2026-07-28 via the Body Outline Editor: the space below the largest void, measured from the mid-line, is 210 x 125",
+        "derived: the four items abut at 119.5 tall. With an 8.0 web top and bottom the usable height is 109.0 and the batteries overflow by 10.5; with 8.0 to the void above and a 12.7 rim below it is 104.3 and they overflow by 15.2",
+        "derived: side webs cost 16.0 of width, dropping the maximum pod separation from 44.0 to 28.0",
+        "owner ruling 2026-07-28: the region IS the usable opening"
+      ],
+      "status": "ruled",
+      "ruling": "RULED READING A, owner 2026-07-28: THE 210 x 125 IS THE USABLE OPENING. Its rim and webs are already excluded, so items may be placed to the boundary and no further margin is deducted. Usable area is the full 210.0 x 125.0.\n\nSG-ELECTRONICS-BAY-V1 STANDS AS RULED. It was written against this reading: all four items in the bay, pods 42.0 mm apart, 208.0 x 122.0 used. Nothing moves.\n\nThe priority rule ruled alongside it is retained even though it is no longer needed: THE BAY IS FOR THE PODS AND THE BATTERY MODULES ARE ITS FIRST-OUT TENANTS, because the pods are ribbon-tied to each other and the modules connect by wire. If the bay is ever reduced - by the outline, by the bridge block, by anything - that is the order things leave in, and it does not need re-deriving.\n\nSeparation is held at 42.0 rather than the 44.0 the opening would allow. The last 2.0 mm buys nothing measurable in EMC terms and is worth more as edge tolerance, since POD_HAT would otherwise sit exactly on the bay boundary.",
+      "ruled_by": "owner ruling 2026-07-28"
+    }
+  ],
+  "calculation": {
+    "calculator_id": "smart_guitar_cavity_geometry_v1",
+    "rounding_policy": "millimetre_half_up_2dp",
+    "effective_date": "2026-07-26"
+  },
+  "provenance": {
+    "source": "calculated",
+    "source_ref": "fixtures/geometry/smart_guitar_component_register_v1.json",
+    "snapshot_date": "2026-07-26",
+    "confidence": "draft",
+    "note": "Physical geometry only. Derived from the component register; stated spec dimensions are compared, never consumed."
+  },
+  "notes": [
+    "INTERNAL physical geometry record. Contains no cost, price, or manufacturing-time fields by design.",
+    "Every cavity dimension in the paired geometry record is DERIVED from this register. Nothing downstream reads a stated cavity dimension, which is why a stale note like 'total_height_mm: 76.0' cannot propagate.",
+    "stated_* fields exist only so the derivation can be compared against the source specs. They are never inputs.",
+    "The source scan behind this register was BOUNDED and is not exhaustive. It covered sg-spec, luthiers-toolbox instrument_geometry, and tap_tone_pi hardware docs. string_master_v.4.0 was not fully searched. Absence of a conflict record is not evidence that no conflict exists.",
+    "min_floor_mm is 8.0 on every cavity: an engineering estimate, not a structural calculation. The pod sits in the lower bout near the control cavity and the battery routing, so the real minimum should come from a structural review under string tension.",
+    "The derived pod footprint is a LOWER BOUND. The Hi-Z buffered splitter is required by the canonical signal chain and has no dimensions anywhere, so it could not be included.",
+    "This record derives cavity SIZE only. It does not validate cavity POSITION against the body outline, so it cannot detect two cavities colliding in plan or a cavity breaching the perimeter. Plan-level collision checking needs the traced outline and is out of scope. CONF-OPPOSED-FACE-WEB is a concrete instance of what that omission hides.",
+    "Pickups, pickup routes, the neck pocket, the bridge, the control cavity, and the output jack are NOT modelled here. This register covers the embedded-electronics cavities only: the pod, the Teensy pocket, and the battery chamber. Pickup disagreements are recorded as conflicts (CONF-PICKUP-TYPE, CONF-PICKUP-ROUTE-DIMS) but no pickup dimension is derived or fit-checked.",
+    "Because top-face routes are excluded, the derived body thickness is a LOWER BOUND in a second way: it accounts only for back-face cavity depth plus floor, never for a top-face route cutting toward the same plane from the other side."
+  ]
+}

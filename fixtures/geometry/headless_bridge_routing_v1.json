@@ -1,0 +1,72 @@
+{
+  "envelope_id": "HEADLESS-BRIDGE-ROUTING-V1",
+  "product_ref": "PRODUCT-SMART-GUITAR-V1",
+  "status": "draft",
+  "units": "mm",
+  "selected_candidate": null,
+  "screw_margin_mm": 15.0,
+  "min_floor_mm": 8.0,
+  "candidates": [
+    {
+      "unit_id": "R_TREM",
+      "display_name": "Headless USA R-Trem",
+      "rout_width_mm": 67.0,
+      "rout_length_mm": 85.0,
+      "max_depth_mm": 27.0,
+      "levels": [
+        16.0,
+        22.0,
+        27.0
+      ],
+      "inner_pocket_width_mm": 32.2,
+      "inner_pocket_length_mm": 49.0,
+      "fixing": "Base plate on four wood screws.",
+      "source_document": "R-Trem_instructions_final_publish.pdf p2, 'R-Trem routing dimensions', 2025 Bernd Meissner",
+      "measured_from": "Newburgh Steinberger GR4R",
+      "note": "Labelled dimensions: A 85.0 overall, C 81.0 and B 50.8 intermediate ledges, D 67.0 across. Depths E 16.0, F 16.0, G 22.0, H 27.0. Spring/pivot pocket M 54.0 overall and L 49.0 inner, with the centre tab J 16.1 either side of the string line and I 27.0 either side to the outer edge. Current product, document dated 2025."
+    },
+    {
+      "unit_id": "TRANS_TREM",
+      "display_name": "Steinberger TransTrem",
+      "rout_width_mm": 80.8,
+      "rout_length_mm": 74.5,
+      "max_depth_mm": 23.0,
+      "levels": [
+        12.0,
+        23.0
+      ],
+      "inner_pocket_width_mm": 26.0,
+      "inner_pocket_length_mm": 58.6,
+      "fixing": "Not stated in the source drawing.",
+      "source_document": "TransTrem_routing.pdf, 2012 Bernd Meissner",
+      "measured_from": "Music Yo GM-4 body",
+      "note": "Two-level rout. Outer 80.8 wide x 74.5 long, stepping in to 63.6 at the tail with R6 corners, depth 11.2-12.0. Inner pocket 26.0 x 58.6 on the string centreline with a rounded top, depth 22.7-23.0. Depth ranges are given as ranges in the source; the deeper figure is taken. Vintage unit - availability is a sourcing question, not a geometry one."
+    }
+  ],
+  "derived_block": {
+    "governing_unit_id": "R_TREM",
+    "rout_width_mm": 80.8,
+    "rout_length_mm": 85.0,
+    "max_depth_mm": 27.0,
+    "block_width_mm": 110.8,
+    "block_length_mm": 115.0,
+    "required_solid_depth_mm": 35.0,
+    "blank_thickness_mm": 47.0,
+    "remaining_below_mm": 12.0,
+    "verdict": "sufficient"
+  },
+  "provenance": {
+    "source": "vendor_instruction_sheets",
+    "source_ref": "owner-supplied PDFs, 2026-07-28",
+    "snapshot_date": "2026-07-28",
+    "confidence": "draft",
+    "note": "Both drawings are MEASUREMENTS OF PRODUCTION GUITARS, not vendor CAD, and both are by the same author. Treat them as good indications rather than tolerances. screw_margin_mm 15.0 is an engineering estimate for screw purchase and edge strength; nothing in either document states it."
+  },
+  "notes": [
+    "THIS ROUT CANNOT LAND IN THE HOLLOW. A headless instrument terminates ALL string tension at the bridge - there is no headstock sharing the load - so roughly 45-50 kg of pull is carried permanently by the base plate's fixings. They need solid material through the full depth, not a skin over a cavity.",
+    "The block is sized for the WORST CASE across both candidates while selected_candidate is null, so leaving the unit unchosen cannot silently shrink it. Choosing R-Trem keeps the depth at 27.0; choosing TransTrem would drop it to 23.0 but widen the rout to 80.8.",
+    "The construction record already calls for 'a structural frame and centre block, in the manner of the Masonite-era Danelectro'. This is that block's minimum size at the bridge station - the first hard dimension the tail end has had.",
+    "HEADLESS PUTS TUNING AT THE BRIDGE, so this block, the electronics cavity and the hollowed area below the large bass-side void all want the tail. The block has first call: it is the only one carrying structural load, and the other two can be routed around it.",
+    "String spacing is not modelled here. The rout width has to clear the string spread as well as the casting, and neither drawing states the spacing it was measured at."
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "electronics_bay_v1.schema.json",
+  "title": "Smart Guitar electronics bay",
+  "description": "The usable interior region below the largest void, and the placement of the electronics within it. Coordinates are local to the bay, not to the body, so the bay can be positioned on the outline later without any placement inside it moving.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bay_id",
+    "product_ref",
+    "status",
+    "units",
+    "region",
+    "min_web_mm",
+    "placements",
+    "derived",
+    "provenance",
+    "body_position"
+  ],
+  "properties": {
+    "bay_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9-]+$"
+    },
+    "product_ref": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "concept",
+        "draft",
+        "ruled"
+      ]
+    },
+    "units": {
+      "const": "mm"
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width_mm",
+        "height_mm",
+        "origin",
+        "datum"
+      ],
+      "properties": {
+        "width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "origin": {
+          "type": "string",
+          "description": "Which corner of the region local coordinates are measured from."
+        },
+        "datum": {
+          "type": "string",
+          "description": "Where the region sits on the instrument, in words. The bay's position on the outline is deliberately NOT a number here."
+        }
+      }
+    },
+    "min_web_mm": {
+      "type": "number",
+      "minimum": 0
+    },
+    "placements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "item_id",
+          "x_mm",
+          "y_mm",
+          "width_mm",
+          "height_mm",
+          "depth_mm"
+        ],
+        "properties": {
+          "item_id": {
+            "type": "string"
+          },
+          "cavity_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x_mm": {
+            "type": "number",
+            "minimum": 0
+          },
+          "y_mm": {
+            "type": "number",
+            "minimum": 0
+          },
+          "width_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "height_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "depth_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "derived": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width_used_mm",
+        "height_used_mm",
+        "width_spare_mm",
+        "height_spare_mm",
+        "deepest_placement_mm",
+        "verdict"
+      ],
+      "properties": {
+        "width_used_mm": {
+          "type": "number"
+        },
+        "height_used_mm": {
+          "type": "number"
+        },
+        "width_spare_mm": {
+          "type": "number"
+        },
+        "height_spare_mm": {
+          "type": "number"
+        },
+        "deepest_placement_mm": {
+          "type": "number"
+        },
+        "verdict": {
+          "enum": [
+            "fits",
+            "does_not_fit"
+          ]
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "snapshot_date",
+        "confidence"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "snapshot_date": {
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "draft",
+            "estimate",
+            "confirmed"
+          ]
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "body_position": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "description": "Where the bay's origin sits on the body, once the outline can carry it. NULL means the bay is specified but not yet placed - every back-face position downstream is therefore unknown, and anything drawing them must say so.",
+      "properties": {
+        "x_mm": {
+          "type": "number"
+        },
+        "y_from_top_mm": {
+          "type": "number"
+        },
+        "basis": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "x_mm",
+        "y_from_top_mm",
+        "basis"
+      ]
+    }
+  }
+}

@@ -1,0 +1,564 @@
+{
+  "input_id": "NECK-DEFECT-TAXONOMY-INPUT-V1",
+  "dev_order": "NECK-QUALITY-TAXONOMY-1",
+  "status": "draft",
+  "currency": "USD",
+  "decision_authorized": false,
+  "purpose": "Put a build and a purchase on ONE yardstick. The cost model compared $35 to $187.88 as though they were prices on the same object. Here both sources face the same acceptance criteria, and the decisive difference turns out not to be score but VERIFIABILITY: a neck built here passes through every stage so every criterion can be run, while a finished neck bought in arrives at M4 with most of the evidence already buried. Costs may only be compared where coverage matches, and a criterion that cannot be run is recorded as unverifiable, never as a pass.",
+  "rates": {
+    "loaded_labour_per_hour": 28.75,
+    "rate_source": "governed rate carried from the V2 estimate; unchanged here"
+  },
+  "provenance": {
+    "note": "NOTHING in this file is measured from a production run, because there has not been one. The strongest evidence present is two physical necks the owner examined and a species reference database. Every labour figure is a draft engineering estimate and is expected to be rebuilt once build sessions and workflows exist.",
+    "rebuild_trigger": "First completed neck build sessions with captured times and a recorded inspection disposition.",
+    "field_reports": "Recurring complaints about imported necks were relayed by the owner from luthiery forums. No survey was conducted and no thread is cited, so these are recorded as owner-relayed rather than as independent evidence."
+  },
+  "species_reference": {
+    "source": "luthiers-toolbox services/api/app/data_registry/system/materials/wood_species.json",
+    "observed_neck_species": "basswood",
+    "observed_basis": "Owner assessment of two Amazon Les Paul necks purchased pre-tariff at $35 each, from feel and weight-to-length. Not a laboratory identification.",
+    "basswood": {
+      "density_kg_m3": 415,
+      "janka_hardness_lbf": 410,
+      "modulus_of_elasticity_gpa": 10.07,
+      "modulus_of_rupture_mpa": 60.0,
+      "typical_uses": [
+        "body"
+      ]
+    },
+    "khaya": {
+      "density_kg_m3": 530,
+      "janka_hardness_lbf": 1070,
+      "modulus_of_elasticity_gpa": 10.1,
+      "modulus_of_rupture_mpa": 81.0,
+      "typical_uses": [
+        "body",
+        "neck",
+        "back_sides"
+      ]
+    },
+    "note": "Stiffness is NOT the differentiator and the model must not claim it is: MOE 10.07 against 10.10 is a dead heat, and per unit mass basswood is stiffer. The disqualifiers are hardness (410 against 1070, a factor of 2.6, at every compression joint) and bending strength (60 against 81 MPa, at the headstock transition)."
+  },
+  "defect_modes": [
+    {
+      "defect_id": "DEF-TUNER-HOLE-POSITION",
+      "description": "Tuner peg hole position and spacing error in the headstock",
+      "elimination": "PROCESS",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 0.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 45.0,
+      "remediation_material": 4.0,
+      "evidence": "field_reported_owner_relayed",
+      "note": "The canonical forum complaint. Free to prevent: the machine indexes from the same datum as every other feature. Repair means plugging with dowel, refinishing the face and redrilling, which is why the two numbers are so far apart."
+    },
+    {
+      "defect_id": "DEF-FRET-SLOT-POSITION",
+      "description": "Fret slot position error against nominal scale, causing intonation error that cannot be tuned out",
+      "elimination": "PROCESS",
+      "visibility": "AT_RECEIPT",
+      "remediable": false,
+      "labour_minutes": 0.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 0.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "The axis where a CNC shop wins structurally rather than by effort, and hand-built boutique work does not beat a machine at it either. Irremediable in place: closing it means filling every slot and recutting the board, which is building a new fretboard."
+    },
+    {
+      "defect_id": "DEF-NUT-SLOT-SPACING",
+      "description": "String spacing at the nut uneven across the board",
+      "elimination": "PROCESS",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 0.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 25.0,
+      "remediation_material": 3.25,
+      "evidence": "assumed",
+      "note": "Repaired by fitting a new nut blank, so the repair price is a nut plus the cutting time."
+    },
+    {
+      "defect_id": "DEF-TRUSS-CHANNEL-CENTRING",
+      "description": "Truss rod channel off-centre or off-depth, giving uneven relief and thin walls",
+      "elimination": "PROCESS",
+      "visibility": "LATENT",
+      "remediable": false,
+      "labour_minutes": 0.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 0.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "Latent: it reads as a neck that will not set flat, months after purchase. Buried under a glued fretboard, so reaching it destroys the neck."
+    },
+    {
+      "defect_id": "DEF-HEEL-POCKET-FIT",
+      "description": "Heel geometry outside tolerance for the body pocket, giving a loose or forced joint",
+      "elimination": "PROCESS",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 0.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 30.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "Specific to a CNC shop cutting its own pockets: both halves come off the same model, so fit is a consequence of the datum rather than of fitting work."
+    },
+    {
+      "defect_id": "DEF-FRETBOARD-RADIUS",
+      "description": "Fretboard radius inconsistent along the length of the board",
+      "elimination": "PROCESS",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 0.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 40.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "Repair means pulling frets, resurfacing the board and refretting, which is most of a refret."
+    },
+    {
+      "defect_id": "DEF-SPECIES-SUBSTITUTION",
+      "description": "A body wood used as a neck wood, typically basswood or nato sold as mahogany",
+      "elimination": "SPECIFICATION",
+      "visibility": "AT_RECEIPT",
+      "remediable": false,
+      "labour_minutes": 0.0,
+      "material_cost": 7.96,
+      "remediation_minutes": 0.0,
+      "remediation_material": 0.0,
+      "evidence": "owner_observed",
+      "note": "The two observed necks. Prevention is the cost of the correct blank, already in the shop's material bill. There is no repair: the wood is the neck."
+    },
+    {
+      "defect_id": "DEF-WOOD-HARDNESS",
+      "description": "Janka below the threshold for hardware retention, so fret tangs, tuner bushings, screws and the truss rod anchor all bear on wood that crushes",
+      "elimination": "SPECIFICATION",
+      "visibility": "LATENT",
+      "remediable": false,
+      "labour_minutes": 0.0,
+      "material_cost": 0.01,
+      "remediation_minutes": 0.0,
+      "remediation_material": 0.0,
+      "evidence": "derived_from_species_data",
+      "note": "Basswood 410 lbf against khaya 1070. The defect that makes accurately drilled tuner holes move after assembly: the machine was right and the wood gave up. Latent and irremediable, which is the worst pair, and on a built instrument it returns as warranty rather than as a rejected part. Prevention carries a nominal cost because choosing the harder species is already charged under DEF-SPECIES-SUBSTITUTION; it is not free, it is bundled."
+    },
+    {
+      "defect_id": "DEF-GRAIN-RUNOUT",
+      "description": "Grain runout at the headstock transition, the standard break location",
+      "elimination": "SPECIFICATION",
+      "visibility": "LATENT",
+      "remediable": false,
+      "labour_minutes": 0.0,
+      "material_cost": 2.5,
+      "remediation_minutes": 0.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "Prevention is blank selection and orientation, which is a yield cost rather than a purchase cost. Compounded by basswood's 60 MPa bending strength against khaya's 81."
+    },
+    {
+      "defect_id": "DEF-MOISTURE-CONTENT",
+      "description": "Blank not dried to service equilibrium, so the neck moves after the instrument is assembled",
+      "elimination": "SPECIFICATION",
+      "visibility": "LATENT",
+      "remediable": false,
+      "labour_minutes": 0.0,
+      "material_cost": 1.5,
+      "remediation_minutes": 0.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "Irremediable in the sense that matters commercially: a neck can be re-acclimatised, but the twist it took while drying wrong does not come back out."
+    },
+    {
+      "defect_id": "DEF-TRUSS-ROD-GRADE",
+      "description": "Soft single-action rod with rolled threads that strip under adjustment",
+      "elimination": "SPECIFICATION",
+      "visibility": "LATENT",
+      "remediable": false,
+      "labour_minutes": 0.0,
+      "material_cost": 12.5,
+      "remediation_minutes": 0.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "The shop's rod costs more than the entire manufacturing cost of the observed import. Irremediable because the rod sits under a glued fretboard."
+    },
+    {
+      "defect_id": "DEF-FRETWIRE-GRADE",
+      "description": "Unbranded soft fretwire that wears into divots early in service",
+      "elimination": "SPECIFICATION",
+      "visibility": "LATENT",
+      "remediable": true,
+      "labour_minutes": 0.0,
+      "material_cost": 7.5,
+      "remediation_minutes": 90.0,
+      "remediation_material": 7.5,
+      "evidence": "assumed",
+      "note": "The one material defect that IS remediable, because a refret is a known operation. It costs more than the neck."
+    },
+    {
+      "defect_id": "DEF-FRET-LEVEL",
+      "description": "Frets not level to one another, giving buzz and dead notes",
+      "elimination": "LABOUR",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 35.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 35.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "Prevention and repair are the same operation, which is what makes this an honest labour line rather than a hidden material failure."
+    },
+    {
+      "defect_id": "DEF-FRET-CROWN",
+      "description": "Crown profile flattened or uneven after levelling, blurring intonation at the contact point",
+      "elimination": "LABOUR",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 25.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 25.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": ""
+    },
+    {
+      "defect_id": "DEF-FRET-END-DRESS",
+      "description": "Fret ends sharp or proud of the board edge",
+      "elimination": "LABOUR",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 18.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 18.0,
+      "remediation_material": 0.0,
+      "evidence": "field_reported_owner_relayed",
+      "note": "The complaint a player registers in the first thirty seconds of handling an instrument."
+    },
+    {
+      "defect_id": "DEF-NUT-SLOT-HEIGHT",
+      "description": "Nut slots cut high, giving stiff action and sharp intonation at the first frets",
+      "elimination": "LABOUR",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 20.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 20.0,
+      "remediation_material": 0.0,
+      "evidence": "assumed",
+      "note": "Left high deliberately by volume builders because a high nut is safe and a low one is scrap."
+    },
+    {
+      "defect_id": "DEF-FINISH-QUALITY",
+      "description": "Orange peel, sags, witness lines or a finish left thick enough to deaden response",
+      "elimination": "LABOUR",
+      "visibility": "AT_RECEIPT",
+      "remediable": true,
+      "labour_minutes": 15.0,
+      "material_cost": 0.0,
+      "remediation_minutes": 60.0,
+      "remediation_material": 6.0,
+      "evidence": "owner_observed",
+      "note": "Prevention is spray discipline; repair is stripping and refinishing somebody else's work, which is four times the cost. The owner read the observed necks as 'artificial', consistent with a thick pigmented film over a featureless straight-grained wood."
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "SRC-SHOP-CNC",
+      "description": "This shop, building necks on the BCM 2030CA from the governed operation set",
+      "addresses": [
+        "DEF-TUNER-HOLE-POSITION",
+        "DEF-FRET-SLOT-POSITION",
+        "DEF-NUT-SLOT-SPACING",
+        "DEF-TRUSS-CHANNEL-CENTRING",
+        "DEF-HEEL-POCKET-FIT",
+        "DEF-FRETBOARD-RADIUS",
+        "DEF-SPECIES-SUBSTITUTION",
+        "DEF-WOOD-HARDNESS",
+        "DEF-GRAIN-RUNOUT",
+        "DEF-MOISTURE-CONTENT",
+        "DEF-TRUSS-ROD-GRADE",
+        "DEF-FRETWIRE-GRADE",
+        "DEF-FRET-LEVEL",
+        "DEF-FRET-CROWN",
+        "DEF-FRET-END-DRESS",
+        "DEF-NUT-SLOT-HEIGHT",
+        "DEF-FINISH-QUALITY"
+      ],
+      "evidence": "assumed",
+      "is_characterised": true,
+      "note": "Full coverage is the INTENT of the process, not a measured outcome. There has been no build session. This is the entry most likely to be wrong and the first that a pilot should overturn.",
+      "arrival_stage": "MATERIAL_RECEIPT",
+      "arrival_note": "Built here from the blank up, so every stage is observable and every criterion can be run. That is a property of owning the process, not of being careful."
+    },
+    {
+      "source_id": "SRC-OBSERVED-IMPORT-35",
+      "description": "The two Amazon Les Paul necks purchased pre-tariff at $35 each, assessed as basswood",
+      "addresses": [],
+      "evidence": "owner_observed",
+      "is_characterised": true,
+      "note": "Credited with no coverage. That is an assessment of two examples the owner examined and judged unusable, not a claim about every neck from that source.",
+      "arrival_stage": "M4",
+      "arrival_note": "Arrives finished. The truss channel is under a glued fretboard, the blank's moisture history is gone, and the fret slots were cut to somebody else's table. Those checks are not failed - they are impossible."
+    }
+  ],
+  "uncharacterised_sources": [
+    {
+      "source_id": "SRC-IMPORT-45",
+      "description": "The $45 import in the make-or-buy model",
+      "why": "Never handled. Coverage would be invented, and inventing it would let the cost model resume comparing prices across unknown products."
+    },
+    {
+      "source_id": "SRC-BOUTIQUE-125",
+      "description": "The $125 boutique finished neck",
+      "why": "Never handled. Likely addresses the labour modes and the specification modes; likely does NOT beat a machine on DEF-FRET-SLOT-POSITION. Both are guesses and neither is encoded."
+    },
+    {
+      "source_id": "SRC-MIGHTY-MITE-197",
+      "description": "The retail listing used to anchor the back-calculation",
+      "why": "Never handled, and not a comparable product in any case - it has a headstock and a standard nut."
+    }
+  ],
+  "comparisons": [
+    {
+      "source_id": "SRC-OBSERVED-IMPORT-35",
+      "against_id": "SRC-SHOP-CNC",
+      "question": "Measured against one yardstick, how does a neck built here compare with the observed purchase - on coverage, on what can be verified, and on cost?"
+    }
+  ],
+  "acceptance": [
+    {
+      "defect_id": "DEF-SPECIES-SUBSTITUTION",
+      "stage": "MATERIAL_RECEIPT",
+      "method": "Weigh and measure the dressed blank; compute density. Compare against the species reference for the ordered species.",
+      "pass_criterion": "Density within tolerance of the reference figure for the ordered species (khaya 530 kg/m3). Outside it, the blank is not what was ordered and goes back.",
+      "threshold": 12.0,
+      "units": "percent deviation from reference density",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-WOOD-HARDNESS",
+      "stage": "MATERIAL_RECEIPT",
+      "method": "Accept by the species identity established above; no per-blank hardness test. Janka is a species property, not a blank property.",
+      "pass_criterion": "Ordered species appears in the reference with 'neck' among its typical uses AND janka at or above the threshold.",
+      "threshold": 900.0,
+      "units": "janka lbf",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-MOISTURE-CONTENT",
+      "stage": "MATERIAL_RECEIPT",
+      "method": "Pin moisture meter, three readings along the blank, taken after the blank has sat in the shop at least 48 hours.",
+      "pass_criterion": "All three readings within the band AND spread across readings no more than 1 point. A wet core reads dry at the surface, so the spread matters as much as the value.",
+      "threshold": 7.5,
+      "units": "percent MC, target band 6-9",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-GRAIN-RUNOUT",
+      "stage": "MATERIAL_RECEIPT",
+      "method": "Visual inspection of the blank's long faces under raking light; measure runout angle where the headstock transition will fall.",
+      "pass_criterion": "Runout at or below threshold through the headstock transition zone. This is the standard break location and the blank is cheap; reject freely.",
+      "threshold": 5.0,
+      "units": "degrees",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-TRUSS-ROD-GRADE",
+      "stage": "MATERIAL_RECEIPT",
+      "method": "Bought-part inspection: confirm dual-action, verify thread engagement by running the nut through full travel off the neck, confirm supplier and lot.",
+      "pass_criterion": "Dual-action rod, full travel both directions without binding, no thread deformation. Once glued in it is unreachable, so it is judged here or never.",
+      "threshold": null,
+      "units": "",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-FRETWIRE-GRADE",
+      "stage": "MATERIAL_RECEIPT",
+      "method": "Confirm branded wire, alloy and crown dimensions against the order.",
+      "pass_criterion": "Named manufacturer and stated alloy. Unbranded wire is rejected on identity, not on measurement.",
+      "threshold": null,
+      "units": "",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-TRUSS-CHANNEL-CENTRING",
+      "stage": "M1",
+      "method": "Measure channel centreline offset and depth at heel, midpoint and nut with a depth gauge, BEFORE the fretboard is glued.",
+      "pass_criterion": "Offset and depth within tolerance at all three stations. THIS GATE IS THE WHOLE POINT: after glue-up the channel is invisible and unreachable, which is what makes this mode latent and irremediable. Judged here it is neither.",
+      "threshold": 0.4,
+      "units": "mm offset from centreline",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-FRET-SLOT-POSITION",
+      "stage": "M2",
+      "method": "Measure nut face to each slot with a calibrated rule or on the machine; compare against the nominal scale table for 628.65 mm.",
+      "pass_criterion": "Every slot within tolerance of nominal CUMULATIVE distance. Cumulative, not slot-to-slot: errors that pass individually can walk.",
+      "threshold": 0.1,
+      "units": "mm from nominal cumulative",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-FRETBOARD-RADIUS",
+      "stage": "M2",
+      "method": "Radius gauges at nut, 7th and last fret; feeler check for rock at each station.",
+      "pass_criterion": "Specified radius at all three stations with no measurable rock under the gauge.",
+      "threshold": null,
+      "units": "",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-HEEL-POCKET-FIT",
+      "stage": "M2",
+      "method": "Trial fit into the mating body pocket, or gauge the heel against the pocket model dimensions.",
+      "pass_criterion": "Slip fit with no forcing and no visible gap at any face. Both halves come off the same model, so a failure here means a datum problem, not a fitting problem.",
+      "threshold": 0.15,
+      "units": "mm gap",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-TUNER-HOLE-POSITION",
+      "stage": "M2",
+      "method": "Measure hole centres against the headstock drawing; trial fit the actual tuner set.",
+      "pass_criterion": "All centres within tolerance and the full tuner set seats without reaming.",
+      "threshold": 0.25,
+      "units": "mm from nominal centre",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-FRET-LEVEL",
+      "stage": "M3",
+      "method": "Fret rocker across every three-fret span; straightedge along the board with the truss rod set neutral.",
+      "pass_criterion": "No rock detectable at any span. Rocker is pass/fail by feel and is the accepted shop method; a numeric threshold is recorded only if a dial indicator is adopted.",
+      "threshold": null,
+      "units": "",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-FRET-CROWN",
+      "stage": "M3",
+      "method": "Visual under magnification along the crown line; check contact width on each fret.",
+      "pass_criterion": "Continuous unbroken crown line, no flats from levelling, contact width consistent fret to fret.",
+      "threshold": null,
+      "units": "",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-FRET-END-DRESS",
+      "stage": "M3",
+      "method": "Run a hand the length of both board edges; inspect ends under magnification.",
+      "pass_criterion": "No catch detectable by hand anywhere on either edge, ends rounded and polished.",
+      "threshold": null,
+      "units": "",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-NUT-SLOT-SPACING",
+      "stage": "M4",
+      "method": "Caliper the centre-to-centre spacing of all slots at the nut, and the edge margin from outer slots to the board edge on both sides.",
+      "pass_criterion": "Spacing uniform within tolerance across all slots and edge margins equal within tolerance on both sides. Uneven edge margin is what a player notices as the outer string falling off the board.",
+      "threshold": 0.2,
+      "units": "mm",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-NUT-SLOT-HEIGHT",
+      "stage": "M4",
+      "method": "Feeler gauge at the first fret with each string fretted at the third.",
+      "pass_criterion": "Clearance within band at every string. Too low is scrap, too high is a rework, so the band is asymmetric in consequence and both ends are checked.",
+      "threshold": 0.05,
+      "units": "mm clearance at first fret",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    },
+    {
+      "defect_id": "DEF-FINISH-QUALITY",
+      "stage": "M4",
+      "method": "Inspect under raking light along the full length; measure film thickness on a witness coupon sprayed in the same session.",
+      "pass_criterion": "No orange peel, sags or witness lines visible under raking light, film thickness at or below threshold. A thick film deadens response, so this is a functional limit and not a cosmetic one.",
+      "threshold": 0.15,
+      "units": "mm film thickness",
+      "threshold_source": "proposed_draft",
+      "owner_confirmed": false
+    }
+  ],
+  "stage_value_at_risk": {
+    "MATERIAL_RECEIPT": 41.21,
+    "M1": 48.93,
+    "M2": 100.37,
+    "M3": 150.23,
+    "M4": 187.88
+  },
+  "stage_value_source": "Per-saleable cost at each completion state, taken from the SCARF_JOINT quantity-20 rows of neck_make_or_buy_result_v1.json. MATERIAL_RECEIPT is the full material bill, which OVERSTATES the loss on a blank rejected before the fretboard and hardware are committed - it is wrong in the conservative direction.",
+  "disposition_policy": {
+    "note": "Disposition is DERIVED from remediability, never chosen. Any failed mode that cannot be recovered makes the neck SCRAP; everything else is REWORK priced at the remediation figures. Calling an unrecoverable neck 'rework' is how real losses get buried in a rework budget.",
+    "yield_link": "The 90 percent yield in the cost model is an assumption with nothing behind it. This gate is the mechanism that would replace it with a measurement - but only for modes that HAVE a criterion. Ungated modes cannot appear in a yield figure, so the figure would undercount the ways a neck can be wrong.",
+    "comparison_rule": "A criterion that cannot be run on a source is UNVERIFIABLE and scores neither pass nor fail. Treating unverifiable as pass is the assumption that made a $35 neck look like a bargain: it credits a purchase with every quality nobody checked."
+  },
+  "example_dispositions": [
+    {
+      "example_id": "EX-BUILD-CHANNEL-M1",
+      "source_id": "SRC-SHOP-CNC",
+      "stage": "M1",
+      "failed_modes": [
+        "DEF-TRUSS-CHANNEL-CENTRING"
+      ],
+      "why": "BUILD side. The channel is measured before the fretboard goes on, so an unrecoverable fault surfaces while the part is worth 48.93."
+    },
+    {
+      "example_id": "EX-BUY-CHANNEL-ESCAPED",
+      "source_id": "SRC-OBSERVED-IMPORT-35",
+      "stage": "M4",
+      "failed_modes": [
+        "DEF-TRUSS-CHANNEL-CENTRING"
+      ],
+      "why": "BUY side, same fault. There is no M1 to inspect at, so it is found only when the neck will not set flat - by then it is in a finished instrument."
+    },
+    {
+      "example_id": "EX-BUILD-FRET-REWORK",
+      "source_id": "SRC-SHOP-CNC",
+      "stage": "M3",
+      "failed_modes": [
+        "DEF-FRET-LEVEL",
+        "DEF-FRET-END-DRESS"
+      ],
+      "why": "BUILD side, the ordinary case: handwork failed and handwork fixes it."
+    },
+    {
+      "example_id": "EX-BUY-FRET-REWORK",
+      "source_id": "SRC-OBSERVED-IMPORT-35",
+      "stage": "M4",
+      "failed_modes": [
+        "DEF-FRET-LEVEL",
+        "DEF-FRET-END-DRESS"
+      ],
+      "why": "BUY side, same two faults. Identical rework minutes, but they are added ON TOP of the purchase price rather than replacing work already counted."
+    },
+    {
+      "example_id": "EX-BUILD-WET-BLANK",
+      "source_id": "SRC-SHOP-CNC",
+      "stage": "MATERIAL_RECEIPT",
+      "failed_modes": [
+        "DEF-MOISTURE-CONTENT"
+      ],
+      "why": "BUILD side. Caught before a cut is made; the loss is a blank."
+    }
+  ]
+}

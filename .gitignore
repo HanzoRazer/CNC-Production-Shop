@@ -47,7 +47,12 @@ htmlcov/
 Thumbs.db
 
 # Project specific
+# *.dxf is ignored because DXF here is normally generated output. The vendored
+# body outlines are the exception: they are source INPUT to the exporter, and
+# without them the DXF suite cannot run anywhere but the machine that has a
+# luthiers-toolbox checkout. See fixtures/geometry/sources/README.md.
 *.dxf
+!/fixtures/geometry/sources/*.dxf
 *.nc
 *.gcode
 *.tap
