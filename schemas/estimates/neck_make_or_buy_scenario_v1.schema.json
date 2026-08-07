@@ -1,0 +1,471 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "neck_make_or_buy_scenario_v1.schema.json",
+  "title": "NeckMakeOrBuyScenarioV1",
+  "description": "Governed scenario input for the neck make-or-buy sensitivity model. Carries no customer price, wholesale price, MSRP, margin, markup, or overhead allocation in any make-or-buy section: the operational record must stay commercially neutral so a threshold can never be mistaken for a quote. The single exception is `back_calculation`, which is SEPARATELY CLASSIFIED strategic analysis -- it reads a third party's observed shelf price backwards to infer THEIR manufacturing cost, and it is not an input to any make-cost arithmetic in this model. That separation is enforced by scripts/validate_neck_make_or_buy.py, not merely documented here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "input_id",
+    "dev_order",
+    "product_ref",
+    "status",
+    "currency",
+    "rates",
+    "construction_options",
+    "wood_prices",
+    "fretboard_options",
+    "yield_policy",
+    "quantities",
+    "materials",
+    "operations",
+    "buy_references",
+    "buy_completion_states",
+    "purchase_price_thresholds",
+    "back_calculation",
+    "sensitivity",
+    "provenance",
+    "notes"
+  ],
+  "properties": {
+    "input_id": { "type": "string", "minLength": 1 },
+    "dev_order": { "type": "string", "minLength": 1 },
+    "product_ref": { "type": "string", "minLength": 1 },
+    "status": {
+      "description": "Nothing here is measured; the record may not claim otherwise.",
+      "const": "draft"
+    },
+    "currency": { "type": "string", "minLength": 3 },
+    "rates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loaded_labour_per_hour", "machine_per_hour", "note"],
+      "properties": {
+        "loaded_labour_per_hour": { "type": "number", "exclusiveMinimum": 0 },
+        "machine_per_hour": { "type": "number", "exclusiveMinimum": 0 },
+        "note": { "type": "string" }
+      }
+    },
+    "construction_options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["construction_id", "description", "mahogany_board_feet", "note"],
+        "properties": {
+          "construction_id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "mahogany_board_feet": { "type": "number", "exclusiveMinimum": 0 },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "wood_prices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "african_mahogany_per_board_foot",
+        "source",
+        "confidence",
+        "snapshot_date",
+        "note"
+      ],
+      "properties": {
+        "african_mahogany_per_board_foot": { "type": "number", "exclusiveMinimum": 0 },
+        "source": { "type": "string" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "snapshot_date": { "$ref": "#/$defs/date" },
+        "note": { "type": "string" }
+      }
+    },
+    "fretboard_options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fretboard_id", "description", "cost", "source", "confidence", "note"],
+        "properties": {
+          "fretboard_id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "cost": {
+            "description": "null where the option is unpriced and swept instead. The budget build has no fretboard source yet, and a placeholder price would become the answer.",
+            "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+          },
+          "source": { "type": "string" },
+          "confidence": { "$ref": "#/$defs/confidence" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "yield_policy": {
+      "description": "Saleable units out of units started. Zero is rejected because a batch that yields nothing has no cost per saleable unit to report, and above 1.0 is rejected because more necks cannot leave than entered.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rate", "basis", "source", "confidence"],
+      "properties": {
+        "rate": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "basis": { "type": "string", "minLength": 1 },
+        "source": { "type": "string" },
+        "confidence": { "$ref": "#/$defs/confidence" }
+      }
+    },
+    "quantities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "integer", "minimum": 1 }
+    },
+    "materials": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "description": "Either a fixed `cost`, or a `cost_source` naming where the figure is derived or swept from -- exactly one. Both would be ambiguous about which the calculator uses; neither would leave the material silently uncosted.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["material_id", "description", "from_state"],
+        "oneOf": [
+          { "required": ["cost"], "not": { "required": ["cost_source"] } },
+          { "required": ["cost_source"], "not": { "required": ["cost"] } }
+        ],
+        "properties": {
+          "material_id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "from_state": { "$ref": "#/$defs/makeState" },
+          "cost_source": { "type": "string", "minLength": 1 },
+          "cost": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "description",
+          "setup_minutes",
+          "touch_minutes",
+          "machine_minutes",
+          "setup_per_batch",
+          "from_state",
+          "is_draft_addition"
+        ],
+        "properties": {
+          "operation_id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "setup_minutes": { "type": "number", "minimum": 0 },
+          "touch_minutes": { "type": "number", "minimum": 0 },
+          "machine_minutes": { "type": "number", "minimum": 0 },
+          "equipment_occupancy_minutes": { "type": "number", "minimum": 0 },
+          "elapsed_wait_minutes": {
+            "description": "Calendar time. Costs nothing, and must exist as a field so cure time is never folded back into operator labour.",
+            "type": "number",
+            "minimum": 0
+          },
+          "equipment_rate_per_hour": { "type": "number", "minimum": 0 },
+          "setup_per_batch": { "type": "boolean" },
+          "from_state": { "$ref": "#/$defs/makeState" },
+          "is_draft_addition": { "type": "boolean" },
+          "note": {
+            "description": "Optional. OP-4400 in the accepted record carries none, and inventing prose for an accepted operation would be a worse fix than leaving the field optional.",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "buy_references": {
+      "description": "Observed purchase options, recorded as references. A reference is not a substitute: none of these is asserted to fit this instrument.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reference_id",
+          "description",
+          "completion_state",
+          "catalog_price",
+          "source",
+          "confidence",
+          "freight_per_unit",
+          "duty_percent",
+          "incoming_inspection_minutes",
+          "corrective_work_minutes",
+          "reject_percent",
+          "notes"
+        ],
+        "properties": {
+          "reference_id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "completion_state": { "$ref": "#/$defs/makeState" },
+          "catalog_price": { "type": "number", "exclusiveMinimum": 0 },
+          "source": { "type": "string" },
+          "confidence": { "$ref": "#/$defs/confidence" },
+          "freight_per_unit": { "$ref": "#/$defs/unknownableNonNegative" },
+          "duty_percent": { "$ref": "#/$defs/unknownableNonNegative" },
+          "incoming_inspection_minutes": { "$ref": "#/$defs/unknownableNonNegative" },
+          "corrective_work_minutes": { "$ref": "#/$defs/unknownableNonNegative" },
+          "reject_percent": {
+            "description": "100 is rejected: a reference where nothing survives has no cost per usable neck.",
+            "oneOf": [
+              { "type": "null" },
+              { "type": "number", "minimum": 0, "exclusiveMaximum": 100 }
+            ]
+          },
+          "notes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "buy_completion_states": {
+      "description": "B1-B4. Definitions of what a purchased neck would have to be, NOT assertions that one can be bought. Exactly four, one per make state, so every comparison is like-for-like.",
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/buyCompletionState" }
+    },
+    "purchase_price_thresholds": {
+      "description": "Analytical delivered price points the model is judged against. NOT supplier offers and NOT quotes.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["values", "basis", "source", "confidence", "note"],
+      "properties": {
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "number", "exclusiveMinimum": 0 }
+        },
+        "basis": { "const": "analytical" },
+        "source": { "type": "string" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "note": { "type": "string" }
+      }
+    },
+    "back_calculation": { "$ref": "#/$defs/strategicBackCalculation" },
+    "sensitivity": {
+      "description": "Deterministic sweep axes. Each is sorted, deduplicated, and the union of the originally accepted points with the expanded specification, so no previously computed cell is lost when the domain grows.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fretwork_minutes",
+        "fretboard_price",
+        "machine_minutes",
+        "yield_rate",
+        "baseline_machine_minutes",
+        "baseline_fretwork_minutes",
+        "note"
+      ],
+      "properties": {
+        "fretwork_minutes": { "$ref": "#/$defs/minuteAxis" },
+        "fretboard_price": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "number", "minimum": 0 }
+        },
+        "machine_minutes": { "$ref": "#/$defs/minuteAxis" },
+        "yield_rate": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+        },
+        "baseline_machine_minutes": { "type": "number", "minimum": 0 },
+        "baseline_fretwork_minutes": { "type": "number", "minimum": 0 },
+        "note": { "type": "string" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "confidence", "snapshot_date", "note"],
+      "properties": {
+        "source": { "type": "string" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "snapshot_date": { "$ref": "#/$defs/date" },
+        "note": { "type": "string" }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "confidence": { "enum": ["draft", "estimated", "confirmed", "unknown"] },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "makeState": { "enum": ["M1", "M2", "M3", "M4"] },
+    "buyState": { "enum": ["B1", "B2", "B3", "B4"] },
+    "unknownableNonNegative": {
+      "description": "A value that may legitimately be unknown. null means UNKNOWN and is preferable to a placeholder, because a placeholder becomes an answer.",
+      "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+    },
+    "minuteAxis": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": { "type": "number", "minimum": 0 }
+    },
+    "buyCompletionState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state_id",
+        "description",
+        "make_equivalent",
+        "completion_requirements",
+        "retained_shop_operations",
+        "inspection_requirements",
+        "compatibility_requirements",
+        "purchase_price_status",
+        "compatible_supplier_identified",
+        "source",
+        "confidence",
+        "note"
+      ],
+      "properties": {
+        "state_id": { "$ref": "#/$defs/buyState" },
+        "description": { "type": "string" },
+        "make_equivalent": {
+          "description": "The one make state this buy state may be compared with. The pairing is enforced in code as well; a B2-to-M4 comparison is the error the taxonomy exists to prevent.",
+          "$ref": "#/$defs/makeState"
+        },
+        "completion_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "retained_shop_operations": {
+          "description": "Shop work that survives the decision to buy: receiving, verification, corrective fitting. Charged to the BUY side, which is why the competitive ceiling sits below the in-house cost.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "minutes", "rationale"],
+            "properties": {
+              "operation": { "type": "string", "minLength": 1 },
+              "minutes": { "type": "number", "minimum": 0 },
+              "rationale": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "inspection_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "compatibility_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "purchase_price_status": { "enum": ["unresolved", "quoted", "observed"] },
+        "compatible_supplier_identified": { "type": "boolean" },
+        "source": { "type": "string" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "note": { "type": "string" }
+      }
+    },
+    "strategicBackCalculation": {
+      "title": "StrategicBackCalculationV1",
+      "description": "SEPARATELY CLASSIFIED. This subtree infers a THIRD PARTY's manufacturing cost from their observed shelf price, so channel and retail vocabulary is the method here rather than a leak of commercial pricing into an operational record. It is not an input to any make-cost arithmetic: perturbing any value in it must leave every make scenario, threshold and sensitivity cell unchanged, and the validator proves that rather than asserting it. The anchor must declare itself not a comparable product.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["note", "anchor", "channel_scenarios", "shop_position", "margin_provenance"],
+      "properties": {
+        "note": { "type": "string" },
+        "anchor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reference_id",
+            "description",
+            "retail_price",
+            "list_price_before_discount",
+            "source",
+            "confidence",
+            "is_comparable_product",
+            "snapshot_date",
+            "note"
+          ],
+          "properties": {
+            "reference_id": { "type": "string", "minLength": 1 },
+            "description": { "type": "string" },
+            "retail_price": { "type": "number", "exclusiveMinimum": 0 },
+            "list_price_before_discount": { "type": "number", "exclusiveMinimum": 0 },
+            "source": { "type": "string" },
+            "confidence": { "$ref": "#/$defs/confidence" },
+            "is_comparable_product": {
+              "description": "Must be false. The anchor is a conventional headstock neck; this instrument is headless with a clamp nut. It anchors channel arithmetic and nothing else.",
+              "const": false
+            },
+            "snapshot_date": { "$ref": "#/$defs/date" },
+            "note": { "type": "string" }
+          }
+        },
+        "channel_scenarios": {
+          "description": "At least three routes. A single assumed markup would produce one confident number and the confidence would be fabricated; the spread is the honest width of the answer.",
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scenario_id",
+              "description",
+              "retail_margin",
+              "distributor_margin",
+              "manufacturer_margin"
+            ],
+            "properties": {
+              "scenario_id": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" },
+              "retail_margin": { "$ref": "#/$defs/marginFraction" },
+              "distributor_margin": { "$ref": "#/$defs/marginFraction" },
+              "manufacturer_margin": { "$ref": "#/$defs/marginFraction" }
+            }
+          }
+        },
+        "shop_position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "material_cost",
+            "material_basis",
+            "machine_minutes",
+            "labour_minutes",
+            "basis"
+          ],
+          "properties": {
+            "material_cost": { "type": "number", "minimum": 0 },
+            "material_basis": { "type": "string" },
+            "machine_minutes": { "type": "number", "minimum": 0 },
+            "labour_minutes": { "type": "number", "minimum": 0 },
+            "basis": { "type": "string" }
+          }
+        },
+        "margin_provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "confidence", "note"],
+          "properties": {
+            "source": { "type": "string" },
+            "confidence": { "$ref": "#/$defs/confidence" },
+            "note": {
+              "description": "Must say the margins are rules of thumb rather than observations.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "marginFraction": {
+      "description": "A fraction in [0, 1). A margin of 1.0 implies a zero-cost product.",
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 1
+    }
+  }
+}

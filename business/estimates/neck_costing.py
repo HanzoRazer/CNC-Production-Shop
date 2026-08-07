@@ -24,6 +24,7 @@ the model cannot present a placeholder as an answer.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 
 from business.calculators.machine_cost_basis import as_money
@@ -39,6 +40,19 @@ COMPLETION_DESCRIPTIONS: dict[str, str] = {
     "M3": "Frets installed, levelled, crowned and dressed",
     "M4": "Nut cut, relief set, neck finished — ready to hang on a body",
 }
+
+# The purchased mirror of the four make states. Each B state exists ONLY to be
+# compared with the M state of the same index; the mapping is data rather than
+# convention so that a cross-state comparison is a raised error and not a
+# plausible-looking number.
+BUY_STATES: tuple[str, ...] = ("B1", "B2", "B3", "B4")
+
+BUY_TO_MAKE: dict[str, str] = {"B1": "M1", "B2": "M2", "B3": "M3", "B4": "M4"}
+
+# A purchased neck is not free the moment it arrives, and it is not free even
+# when it is perfect. These are the reasons a landed price is not a delivered
+# cost, and they are retained by the shop at every completion state.
+PRICE_STATUS_UNRESOLVED = "unresolved"
 
 
 @dataclass(frozen=True)
@@ -468,3 +482,209 @@ def fretwork_threshold(
     if threshold < 0:
         return None
     return round(threshold, 2)
+
+
+# --------------------------------------------------------------------- buy side
+#
+# Everything below was added by NECK-MAKE-OR-BUY-GAP-CLOSURE-1. The accepted
+# sprint compared in-house cost against two purchase references that both sat at
+# M4, which meant three of the four completion states had no buy side at all and
+# the like-for-like rule was a comment rather than a constraint.
+
+
+@dataclass(frozen=True)
+class RetainedShopOperation:
+    """Shop work that survives the decision to buy.
+
+    A delivered price is not a delivered cost. Someone still opens the box,
+    measures the neck against the pocket it has to sit in, and corrects what
+    does not fit. Those minutes are charged at the loaded rate to the BUY side,
+    which is why the maximum competitive purchase price is below the in-house
+    cost rather than equal to it.
+    """
+
+    operation: str
+    minutes: float
+    rationale: str
+
+    def __post_init__(self) -> None:
+        if self.minutes < 0:
+            raise ValueError(f"{self.operation}: retained minutes must be non-negative")
+
+
+@dataclass(frozen=True)
+class BuyCompletionState:
+    """A purchased-neck completion state.
+
+    This is a definition of what would have to be true of a purchased neck, not
+    an assertion that one can be bought. `compatible_supplier_identified` is the
+    field that keeps those two apart: the Smart Guitar is headless with a
+    locking clamp nut at a 628.65 mm scale, and every purchase reference on
+    record is a conventional headstock neck. The economics still calculate — a
+    threshold is a threshold — but a comparison against a source that does not
+    exist is not commercially actionable, and the record has to say so.
+    """
+
+    state_id: str
+    description: str
+    make_equivalent: str
+    completion_requirements: tuple[str, ...]
+    retained_shop_operations: tuple[RetainedShopOperation, ...]
+    inspection_requirements: tuple[str, ...]
+    compatibility_requirements: tuple[str, ...]
+    purchase_price_status: str = PRICE_STATUS_UNRESOLVED
+    compatible_supplier_identified: bool = False
+    source: str = "engineering_estimate"
+    confidence: str = "draft"
+
+    def __post_init__(self) -> None:
+        if self.state_id not in BUY_STATES:
+            raise ValueError(f"unknown buy state {self.state_id!r}")
+        expected = BUY_TO_MAKE[self.state_id]
+        if self.make_equivalent != expected:
+            raise ValueError(
+                f"{self.state_id} must map to {expected}, not {self.make_equivalent!r}: "
+                f"a buy state may only be compared with the make state of the same "
+                f"completion, and this mapping is the guard against comparing a "
+                f"machined shaft with a finished neck"
+            )
+        if not self.completion_requirements:
+            raise ValueError(f"{self.state_id}: completion requirements must be stated")
+        if not self.inspection_requirements:
+            raise ValueError(f"{self.state_id}: inspection requirements must be stated")
+        if self.compatible_supplier_identified and (
+            self.purchase_price_status == PRICE_STATUS_UNRESOLVED
+        ):
+            raise ValueError(
+                f"{self.state_id}: a state cannot claim an identified compatible "
+                f"supplier while its purchase price remains unresolved"
+            )
+
+    @property
+    def retained_minutes(self) -> float:
+        return float(sum(o.minutes for o in self.retained_shop_operations))
+
+    def retained_completion_cost(self, loaded_labour_rate: float) -> float:
+        """Loaded cost of the work buying does not remove."""
+        return as_money(self.retained_minutes / 60.0 * loaded_labour_rate)
+
+
+def assert_like_for_like(make_state: str, buy_state: str) -> None:
+    """Refuse any comparison that is not at a single completion state.
+
+    Comparing M1 with B4 is the specific error the completion-state taxonomy
+    was built to prevent, and it is the error the accepted sprint's own report
+    records having made once already.
+    """
+    if make_state not in COMPLETION_STATES:
+        raise ValueError(f"unknown make state {make_state!r}")
+    if buy_state not in BUY_STATES:
+        raise ValueError(f"unknown buy state {buy_state!r}")
+    if BUY_TO_MAKE[buy_state] != make_state:
+        raise ValueError(
+            f"{make_state} may not be compared with {buy_state}; "
+            f"{buy_state} is equivalent to {BUY_TO_MAKE[buy_state]}"
+        )
+
+
+@dataclass(frozen=True)
+class ThresholdComparison:
+    """One purchase-price threshold judged against one completion state.
+
+    `maximum_compatible_delivered_purchase_price` is the number the sprint was
+    called to produce: the most a delivered equivalent neck may cost before
+    buying it beats building it, net of the shop work buying does not remove.
+
+    `commercially_actionable` is deliberately separate from the arithmetic. The
+    comparison can be correct and still be unusable, because no supplier of a
+    headless clamp-nut neck has been identified. Collapsing those two into one
+    verdict is how a threshold becomes mistaken for a quote.
+    """
+
+    make_state: str
+    buy_state: str
+    threshold_price: float
+    make_cost_per_saleable: float
+    retained_buy_side_completion_cost: float
+    maximum_compatible_delivered_purchase_price: float
+    difference_versus_threshold: float
+    result: str
+    commercially_actionable: bool
+    reason: str
+    compatibility_caveat: str
+
+
+def evaluate_threshold(
+    *,
+    make_scenario: MakeScenario,
+    buy_state: BuyCompletionState,
+    threshold_price: float,
+    loaded_labour_rate: float,
+    tolerance: float = 0.005,
+) -> ThresholdComparison:
+    """Judge one threshold price at one completion state.
+
+    The sign convention is stated here because it inverts easily. Total buy cost
+    is the delivered price PLUS retained shop work; total make cost is the
+    in-house figure. So
+
+        difference = threshold - (make_cost - retained)
+
+    and a POSITIVE difference means buying at that price costs more than
+    building, i.e. make is lower cost.
+    """
+    if threshold_price <= 0:
+        raise ValueError("threshold price must be > 0")
+    assert_like_for_like(make_scenario.completion_state, buy_state.state_id)
+
+    retained = buy_state.retained_completion_cost(loaded_labour_rate)
+    ceiling = as_money(make_scenario.cost_per_saleable - retained)
+    difference = as_money(threshold_price - ceiling)
+
+    if abs(difference) < tolerance:
+        result = "break_even"
+    elif difference > 0:
+        result = "make_lower_cost"
+    else:
+        result = "buy_lower_cost"
+
+    if buy_state.compatible_supplier_identified:
+        actionable = True
+        reason = "a compatible purchased-neck source is identified"
+    else:
+        actionable = False
+        reason = "no compatible purchased-neck source identified"
+
+    return ThresholdComparison(
+        make_state=make_scenario.completion_state,
+        buy_state=buy_state.state_id,
+        threshold_price=threshold_price,
+        make_cost_per_saleable=make_scenario.cost_per_saleable,
+        retained_buy_side_completion_cost=retained,
+        maximum_compatible_delivered_purchase_price=ceiling,
+        difference_versus_threshold=difference,
+        result=result,
+        commercially_actionable=actionable,
+        reason=reason,
+        compatibility_caveat=(
+            "The threshold is analytical. It is not a supplier offer, and no "
+            "source of a headless clamp-nut neck at this completion state has "
+            "been identified."
+        ),
+    )
+
+
+def union_sweep(existing: Sequence[float], added: Sequence[float]) -> list[float]:
+    """Union two sweep grids into a sorted, deduplicated axis.
+
+    Deterministic by construction: sorted ascending, duplicates collapsed. The
+    accepted points survive so every previously computed cell still recomputes;
+    the added points extend the domain. Values that differ only by float noise
+    would produce two near-identical axis entries, so they are keyed on a
+    rounded value.
+    """
+    seen: dict[float, float] = {}
+    for value in list(existing) + list(added):
+        v = float(value)
+        seen.setdefault(round(v, 6), v)
+    return [seen[k] for k in sorted(seen)]
