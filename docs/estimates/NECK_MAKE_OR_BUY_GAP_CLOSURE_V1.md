@@ -244,6 +244,23 @@ places where the schema had to accommodate the record rather than the reverse:
 because the swept budget fretboard genuinely has no source and no price. A
 placeholder there would become the answer.
 
+One field was **removed** rather than accommodated. Every make scenario carried
+`max_competitive_purchase_price`, returning the bare in-house cost. That was
+right while the buy side was assumed free on arrival, and this sprint is the one
+that made it wrong: the ceiling is make cost *less* retained buy-side work, so
+it needs both sides and a make scenario cannot know it. Left in place it
+published `$187.88` at `M4` where the answer is `$171.11`, and `$100.37` at `M2`
+where the answer is `$86.47` — wrong by four times that row's entire `$3.53`
+margin, under the name of the number this sprint exists to report. Nothing
+recomputed it and nothing compared it against anything, so it would have stayed
+correct-looking indefinitely.
+
+The ceiling is now reported in exactly one place, `threshold_findings.ceilings`,
+as `maximum_compatible_delivered_purchase_price`. Because the schema is closed
+it refuses the old key outright, and the validator bans the *shape* — anything
+matching `competitive|ceiling|max.*price` on a make scenario — so a revival
+under another spelling is caught too.
+
 ## Evidence gaps
 
 Everything on the accepted list still stands, and this sprint adds:

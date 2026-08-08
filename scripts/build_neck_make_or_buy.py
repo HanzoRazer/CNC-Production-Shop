@@ -256,7 +256,10 @@ def build(doc: dict[str, Any]) -> dict[str, Any]:
                         "cost_per_started": s.cost_per_started,
                         "cost_per_saleable": s.cost_per_saleable,
                         "yield_loss_per_saleable": s.yield_loss_per_saleable,
-                        "max_competitive_purchase_price": s.max_competitive_purchase_price,
+                        # No purchase ceiling is emitted here. A make scenario cannot
+                        # know one: the ceiling is this cost less the shop work the
+                        # matching buy state retains. It is reported once, in
+                        # threshold_findings, where both sides are present.
                     }
                 )
 

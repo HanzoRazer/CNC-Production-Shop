@@ -22,6 +22,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
 import jsonschema
 
@@ -81,7 +82,7 @@ def _fail(errors: list[str], condition: bool, message: str) -> None:
         errors.append(f"FAIL {message}")
 
 
-def _schema_errors(data: dict, schema_path: Path, label: str) -> list[str]:
+def _schema_errors(data: dict[str, Any], schema_path: Path, label: str) -> list[str]:
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     jsonschema.Draft202012Validator.check_schema(schema)
     try:
@@ -420,6 +421,26 @@ def main() -> int:
         "record is a conventional headstock neck.",
     )
 
+    # 12b. The purchase ceiling is reported in exactly ONE place. It is make cost
+    #      LESS the retained buy-side work, so a make scenario cannot state one:
+    #      it does not know which buy state it is being compared with. This
+    #      record carried `max_competitive_purchase_price` on every make scenario,
+    #      returning the bare in-house cost under the name of the very number the
+    #      sprint exists to report — $12.94 to $16.77 too generous, and at M2,
+    #      where the whole margin is $3.53, wrong by four times the answer.
+    #      The schema now refuses that exact key; this catches a revival under
+    #      any other spelling.
+    ceiling_like = re.compile(r"competitive|ceiling|max.*price|price.*max")
+    for s in stored["make_scenarios"]:
+        offenders = sorted(k for k in s if ceiling_like.search(k))
+        _fail(
+            errors,
+            not offenders,
+            f"make_scenarios states a purchase ceiling {offenders}. A ceiling needs "
+            f"both sides of the comparison and belongs in threshold_findings.ceilings "
+            f"as maximum_compatible_delivered_purchase_price.",
+        )
+
     # 13. Thresholds must recompute, and the sign convention must hold.
     tf = stored["threshold_findings"]
     retained_by_state = {b["state_id"]: b["retained_completion_cost"] for b in states}
@@ -432,9 +453,13 @@ def main() -> int:
     expected_prices = [float(v) for v in doc["purchase_price_thresholds"]["values"]]
     seen_pairs: set[tuple[str, str, float]] = set()
     for c in tf["comparisons"]:
-        key = (c["make_state"], c["buy_state"], c["threshold_price"])
-        _fail(errors, key not in seen_pairs, f"duplicate threshold comparison {key}")
-        seen_pairs.add(key)
+        # Not named `key`: check 11 above binds that to a str, and reusing it here
+        # made this membership test compare a str against a set of tuples. It
+        # happened to work by rebinding order, but a duplicate check that mypy
+        # reads as never-true is one edit away from silently passing everything.
+        row_key = (c["make_state"], c["buy_state"], c["threshold_price"])
+        _fail(errors, row_key not in seen_pairs, f"duplicate threshold comparison {row_key}")
+        seen_pairs.add(row_key)
         _fail(
             errors,
             BUY_TO_MAKE[c["buy_state"]] == c["make_state"],

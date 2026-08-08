@@ -29,8 +29,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 52.23,
       "cost_per_saleable": 58.04,
-      "yield_loss_per_saleable": 5.81,
-      "max_competitive_purchase_price": 58.04
+      "yield_loss_per_saleable": 5.81
     },
     {
       "construction": "SCARF_JOINT",
@@ -49,8 +48,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 45.33,
       "cost_per_saleable": 50.37,
-      "yield_loss_per_saleable": 5.04,
-      "max_competitive_purchase_price": 50.37
+      "yield_loss_per_saleable": 5.04
     },
     {
       "construction": "SCARF_JOINT",
@@ -69,8 +67,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 44.47,
       "cost_per_saleable": 49.41,
-      "yield_loss_per_saleable": 4.94,
-      "max_competitive_purchase_price": 49.41
+      "yield_loss_per_saleable": 4.94
     },
     {
       "construction": "SCARF_JOINT",
@@ -89,8 +86,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 44.04,
       "cost_per_saleable": 48.93,
-      "yield_loss_per_saleable": 4.89,
-      "max_competitive_purchase_price": 48.93
+      "yield_loss_per_saleable": 4.89
     },
     {
       "construction": "SCARF_JOINT",
@@ -109,8 +105,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 43.82,
       "cost_per_saleable": 48.69,
-      "yield_loss_per_saleable": 4.87,
-      "max_competitive_purchase_price": 48.69
+      "yield_loss_per_saleable": 4.87
     },
     {
       "construction": "SCARF_JOINT",
@@ -129,8 +124,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 98.53,
       "cost_per_saleable": 109.47,
-      "yield_loss_per_saleable": 10.94,
-      "max_competitive_purchase_price": 109.47
+      "yield_loss_per_saleable": 10.94
     },
     {
       "construction": "SCARF_JOINT",
@@ -149,8 +143,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 91.63,
       "cost_per_saleable": 101.81,
-      "yield_loss_per_saleable": 10.18,
-      "max_competitive_purchase_price": 101.81
+      "yield_loss_per_saleable": 10.18
     },
     {
       "construction": "SCARF_JOINT",
@@ -169,8 +162,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 90.76,
       "cost_per_saleable": 100.85,
-      "yield_loss_per_saleable": 10.09,
-      "max_competitive_purchase_price": 100.85
+      "yield_loss_per_saleable": 10.09
     },
     {
       "construction": "SCARF_JOINT",
@@ -189,8 +181,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 90.33,
       "cost_per_saleable": 100.37,
-      "yield_loss_per_saleable": 10.04,
-      "max_competitive_purchase_price": 100.37
+      "yield_loss_per_saleable": 10.04
     },
     {
       "construction": "SCARF_JOINT",
@@ -209,8 +200,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 90.12,
       "cost_per_saleable": 100.13,
-      "yield_loss_per_saleable": 10.01,
-      "max_competitive_purchase_price": 100.13
+      "yield_loss_per_saleable": 10.01
     },
     {
       "construction": "SCARF_JOINT",
@@ -229,8 +219,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 143.4,
       "cost_per_saleable": 159.33,
-      "yield_loss_per_saleable": 15.93,
-      "max_competitive_purchase_price": 159.33
+      "yield_loss_per_saleable": 15.93
     },
     {
       "construction": "SCARF_JOINT",
@@ -249,8 +238,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 136.5,
       "cost_per_saleable": 151.67,
-      "yield_loss_per_saleable": 15.17,
-      "max_competitive_purchase_price": 151.67
+      "yield_loss_per_saleable": 15.17
     },
     {
       "construction": "SCARF_JOINT",
@@ -269,8 +257,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 135.64,
       "cost_per_saleable": 150.71,
-      "yield_loss_per_saleable": 15.07,
-      "max_competitive_purchase_price": 150.71
+      "yield_loss_per_saleable": 15.07
     },
     {
       "construction": "SCARF_JOINT",
@@ -289,8 +276,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 135.21,
       "cost_per_saleable": 150.23,
-      "yield_loss_per_saleable": 15.02,
-      "max_competitive_purchase_price": 150.23
+      "yield_loss_per_saleable": 15.02
     },
     {
       "construction": "SCARF_JOINT",
@@ -309,8 +295,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 134.99,
       "cost_per_saleable": 149.99,
-      "yield_loss_per_saleable": 15.0,
-      "max_competitive_purchase_price": 149.99
+      "yield_loss_per_saleable": 15.0
     },
     {
       "construction": "SCARF_JOINT",
@@ -329,8 +314,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 177.29,
       "cost_per_saleable": 196.98,
-      "yield_loss_per_saleable": 19.69,
-      "max_competitive_purchase_price": 196.98
+      "yield_loss_per_saleable": 19.69
     },
     {
       "construction": "SCARF_JOINT",
@@ -349,8 +333,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 170.39,
       "cost_per_saleable": 189.32,
-      "yield_loss_per_saleable": 18.93,
-      "max_competitive_purchase_price": 189.32
+      "yield_loss_per_saleable": 18.93
     },
     {
       "construction": "SCARF_JOINT",
@@ -369,8 +352,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 169.52,
       "cost_per_saleable": 188.36,
-      "yield_loss_per_saleable": 18.84,
-      "max_competitive_purchase_price": 188.36
+      "yield_loss_per_saleable": 18.84
     },
     {
       "construction": "SCARF_JOINT",
@@ -389,8 +371,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 169.09,
       "cost_per_saleable": 187.88,
-      "yield_loss_per_saleable": 18.79,
-      "max_competitive_purchase_price": 187.88
+      "yield_loss_per_saleable": 18.79
     },
     {
       "construction": "SCARF_JOINT",
@@ -409,8 +390,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 168.88,
       "cost_per_saleable": 187.64,
-      "yield_loss_per_saleable": 18.76,
-      "max_competitive_purchase_price": 187.64
+      "yield_loss_per_saleable": 18.76
     },
     {
       "construction": "ONE_PIECE",
@@ -429,8 +409,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 63.99,
       "cost_per_saleable": 71.1,
-      "yield_loss_per_saleable": 7.11,
-      "max_competitive_purchase_price": 71.1
+      "yield_loss_per_saleable": 7.11
     },
     {
       "construction": "ONE_PIECE",
@@ -449,8 +428,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 57.09,
       "cost_per_saleable": 63.43,
-      "yield_loss_per_saleable": 6.34,
-      "max_competitive_purchase_price": 63.43
+      "yield_loss_per_saleable": 6.34
     },
     {
       "construction": "ONE_PIECE",
@@ -469,8 +447,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 56.22,
       "cost_per_saleable": 62.47,
-      "yield_loss_per_saleable": 6.25,
-      "max_competitive_purchase_price": 62.47
+      "yield_loss_per_saleable": 6.25
     },
     {
       "construction": "ONE_PIECE",
@@ -489,8 +466,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 55.79,
       "cost_per_saleable": 61.99,
-      "yield_loss_per_saleable": 6.2,
-      "max_competitive_purchase_price": 61.99
+      "yield_loss_per_saleable": 6.2
     },
     {
       "construction": "ONE_PIECE",
@@ -509,8 +485,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 55.58,
       "cost_per_saleable": 61.75,
-      "yield_loss_per_saleable": 6.17,
-      "max_competitive_purchase_price": 61.75
+      "yield_loss_per_saleable": 6.17
     },
     {
       "construction": "ONE_PIECE",
@@ -529,8 +504,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 110.28,
       "cost_per_saleable": 122.53,
-      "yield_loss_per_saleable": 12.25,
-      "max_competitive_purchase_price": 122.53
+      "yield_loss_per_saleable": 12.25
     },
     {
       "construction": "ONE_PIECE",
@@ -549,8 +523,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 103.38,
       "cost_per_saleable": 114.86,
-      "yield_loss_per_saleable": 11.48,
-      "max_competitive_purchase_price": 114.86
+      "yield_loss_per_saleable": 11.48
     },
     {
       "construction": "ONE_PIECE",
@@ -569,8 +542,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 102.52,
       "cost_per_saleable": 113.91,
-      "yield_loss_per_saleable": 11.39,
-      "max_competitive_purchase_price": 113.91
+      "yield_loss_per_saleable": 11.39
     },
     {
       "construction": "ONE_PIECE",
@@ -589,8 +561,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 102.08,
       "cost_per_saleable": 113.43,
-      "yield_loss_per_saleable": 11.35,
-      "max_competitive_purchase_price": 113.43
+      "yield_loss_per_saleable": 11.35
     },
     {
       "construction": "ONE_PIECE",
@@ -609,8 +580,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 101.87,
       "cost_per_saleable": 113.19,
-      "yield_loss_per_saleable": 11.32,
-      "max_competitive_purchase_price": 113.19
+      "yield_loss_per_saleable": 11.32
     },
     {
       "construction": "ONE_PIECE",
@@ -629,8 +599,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 155.15,
       "cost_per_saleable": 172.39,
-      "yield_loss_per_saleable": 17.24,
-      "max_competitive_purchase_price": 172.39
+      "yield_loss_per_saleable": 17.24
     },
     {
       "construction": "ONE_PIECE",
@@ -649,8 +618,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 148.25,
       "cost_per_saleable": 164.73,
-      "yield_loss_per_saleable": 16.48,
-      "max_competitive_purchase_price": 164.73
+      "yield_loss_per_saleable": 16.48
     },
     {
       "construction": "ONE_PIECE",
@@ -669,8 +637,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 147.39,
       "cost_per_saleable": 163.77,
-      "yield_loss_per_saleable": 16.38,
-      "max_competitive_purchase_price": 163.77
+      "yield_loss_per_saleable": 16.38
     },
     {
       "construction": "ONE_PIECE",
@@ -689,8 +656,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 146.96,
       "cost_per_saleable": 163.29,
-      "yield_loss_per_saleable": 16.33,
-      "max_competitive_purchase_price": 163.29
+      "yield_loss_per_saleable": 16.33
     },
     {
       "construction": "ONE_PIECE",
@@ -709,8 +675,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 146.74,
       "cost_per_saleable": 163.05,
-      "yield_loss_per_saleable": 16.31,
-      "max_competitive_purchase_price": 163.05
+      "yield_loss_per_saleable": 16.31
     },
     {
       "construction": "ONE_PIECE",
@@ -729,8 +694,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 189.04,
       "cost_per_saleable": 210.04,
-      "yield_loss_per_saleable": 21.0,
-      "max_competitive_purchase_price": 210.04
+      "yield_loss_per_saleable": 21.0
     },
     {
       "construction": "ONE_PIECE",
@@ -749,8 +713,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 182.14,
       "cost_per_saleable": 202.38,
-      "yield_loss_per_saleable": 20.24,
-      "max_competitive_purchase_price": 202.38
+      "yield_loss_per_saleable": 20.24
     },
     {
       "construction": "ONE_PIECE",
@@ -769,8 +732,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 181.28,
       "cost_per_saleable": 201.42,
-      "yield_loss_per_saleable": 20.14,
-      "max_competitive_purchase_price": 201.42
+      "yield_loss_per_saleable": 20.14
     },
     {
       "construction": "ONE_PIECE",
@@ -789,8 +751,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 180.84,
       "cost_per_saleable": 200.94,
-      "yield_loss_per_saleable": 20.1,
-      "max_competitive_purchase_price": 200.94
+      "yield_loss_per_saleable": 20.1
     },
     {
       "construction": "ONE_PIECE",
@@ -809,8 +770,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 180.63,
       "cost_per_saleable": 200.7,
-      "yield_loss_per_saleable": 20.07,
-      "max_competitive_purchase_price": 200.7
+      "yield_loss_per_saleable": 20.07
     }
   ],
   "batching_effect": {

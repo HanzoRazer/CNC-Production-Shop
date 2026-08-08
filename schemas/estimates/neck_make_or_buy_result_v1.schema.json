@@ -48,6 +48,7 @@
       "type": "array",
       "minItems": 1,
       "items": {
+        "description": "One in-house build at one completion state and quantity. Note what is NOT here: a purchase ceiling. A make scenario cannot state one, because the ceiling is this cost less the shop work the matching buy state retains, so it needs both sides. It is reported once, in threshold_findings.ceilings, as maximum_compatible_delivered_purchase_price. additionalProperties is false, so this schema now refuses the field rather than merely omitting it.",
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -67,8 +68,7 @@
           "elapsed_wait_minutes",
           "cost_per_started",
           "cost_per_saleable",
-          "yield_loss_per_saleable",
-          "max_competitive_purchase_price"
+          "yield_loss_per_saleable"
         ],
         "properties": {
           "construction": { "type": "string", "minLength": 1 },
@@ -99,8 +99,7 @@
           },
           "cost_per_started": { "type": "number", "minimum": 0 },
           "cost_per_saleable": { "type": "number", "minimum": 0 },
-          "yield_loss_per_saleable": { "type": "number", "minimum": 0 },
-          "max_competitive_purchase_price": { "type": "number", "minimum": 0 }
+          "yield_loss_per_saleable": { "type": "number", "minimum": 0 }
         }
       }
     },

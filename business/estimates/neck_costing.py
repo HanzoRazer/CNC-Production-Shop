@@ -191,10 +191,18 @@ class MakeScenario:
     occupancy_minutes: float
     elapsed_wait_minutes: float
 
-    @property
-    def max_competitive_purchase_price(self) -> float:
-        """The most a delivered equivalent neck may cost before buying wins."""
-        return self.cost_per_saleable
+    # There is deliberately NO max_competitive_purchase_price here. This class
+    # once carried one that returned cost_per_saleable, which was correct while
+    # the buy side was assumed free on arrival. It is not: a purchased neck
+    # retains inspection and corrective work, so the ceiling is
+    #
+    #     cost_per_saleable - retained_buy_side_completion_cost
+    #
+    # and it cannot be computed from a make scenario alone — it needs the buy
+    # state it is being compared with. It therefore belongs to the comparison,
+    # as ThresholdComparison.maximum_compatible_delivered_purchase_price, and
+    # nowhere else. Leaving the old property here published a figure $12.94 to
+    # $16.77 too generous under the name of the one the sprint exists to report.
 
 
 @dataclass(frozen=True)
@@ -552,6 +560,13 @@ class BuyCompletionState:
             raise ValueError(f"{self.state_id}: completion requirements must be stated")
         if not self.inspection_requirements:
             raise ValueError(f"{self.state_id}: inspection requirements must be stated")
+        if not self.compatibility_requirements:
+            raise ValueError(
+                f"{self.state_id}: compatibility requirements must be stated. Whether a "
+                f"purchased neck FITS this instrument outranks what it costs — it is the "
+                f"binding constraint on the whole make-or-buy question — so this is the "
+                f"last list that may be left empty, not the first."
+            )
         if self.compatible_supplier_identified and (
             self.purchase_price_status == PRICE_STATUS_UNRESOLVED
         ):

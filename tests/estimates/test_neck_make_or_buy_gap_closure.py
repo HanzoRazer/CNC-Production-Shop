@@ -25,6 +25,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -318,6 +319,28 @@ def test_a_buy_state_cannot_be_built_with_the_wrong_make_equivalent():
         _buy_state(make_equivalent="M3")
 
 
+@pytest.mark.parametrize(
+    ("field", "match"),
+    [
+        ("completion_requirements", "completion requirements"),
+        ("inspection_requirements", "inspection requirements"),
+        ("compatibility_requirements", "compatibility requirements"),
+    ],
+)
+def test_every_requirement_list_must_be_stated(field, match):
+    """All three, not two.
+
+    compatibility_requirements was the one list that could be left empty, which
+    is backwards: whether a purchased neck FITS this instrument is the binding
+    constraint on the entire question — no supplier of a headless clamp-nut neck
+    at 628.65 mm has been found at any completion state — and it outranks cost.
+    An empty list there would let a buy state look fully specified while saying
+    nothing about the only thing that currently decides the answer.
+    """
+    with pytest.raises(ValueError, match=match):
+        _buy_state(**{field: ()})
+
+
 def test_a_claimed_supplier_must_arrive_with_a_price():
     """Otherwise 'we can buy this' enters the record with nothing behind it."""
     with pytest.raises(ValueError, match="identified compatible supplier"):
@@ -380,6 +403,52 @@ def test_ceiling_is_make_cost_less_retained_buy_side_work(result):
         assert c["maximum_compatible_delivered_purchase_price"] == pytest.approx(
             expected, abs=0.02
         )
+
+
+def test_the_ceiling_is_reported_in_exactly_one_place(result):
+    """A make scenario may not state a purchase ceiling.
+
+    It cannot know one. The ceiling is make cost LESS the shop work the matching
+    buy state retains, so it needs both sides. This record carried
+    `max_competitive_purchase_price` on all 40 make scenarios, returning the
+    bare in-house cost under the name of the number this sprint exists to
+    report: $187.88 where the answer is $171.11, and at M2 $100.37 where the
+    answer is $86.47 — wrong by four times the entire $3.53 margin that row has.
+
+    Nothing recomputed it and nothing compared it, so it would have stayed
+    correct-looking indefinitely. The name is what makes it dangerous, so the
+    test bans the shape rather than the spelling.
+    """
+    ceiling_like = re.compile(r"competitive|ceiling|max.*price|price.*max")
+    for s in result["make_scenarios"]:
+        assert not [k for k in s if ceiling_like.search(k)], s["completion_state"]
+
+    ceilings = result["threshold_findings"]["ceilings"]
+    assert len(ceilings) == 4
+    for c in ceilings:
+        assert c["maximum_compatible_delivered_purchase_price"] < c["make_cost_per_saleable"]
+
+
+def test_the_result_schema_now_refuses_a_revived_ceiling_field(result):
+    """Removing the field is not enough if the contract still admits it."""
+    doc = copy.deepcopy(result)
+    doc["make_scenarios"][0]["max_competitive_purchase_price"] = 187.88
+    with pytest.raises(jsonschema.ValidationError, match="Additional properties"):
+        jsonschema.validate(doc, load(RESULT_SCHEMA))
+
+
+def test_a_make_scenario_cannot_compute_a_ceiling_on_its_own():
+    """The removal is structural, not cosmetic: there is no such attribute."""
+    scenario = build_make_scenario(
+        completion_state="M4",
+        quantity=20,
+        operations=(),
+        materials=(),
+        yield_policy=YieldPolicy(rate=0.9, basis="test"),
+        loaded_labour_rate=LAB,
+        machine_rate=12.0,
+    )
+    assert not hasattr(scenario, "max_competitive_purchase_price")
 
 
 def test_difference_and_verdict_agree_on_every_row(result):
