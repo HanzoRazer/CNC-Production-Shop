@@ -778,6 +778,70 @@ def test_validator_rejects_a_tampered_result(label, mutate):
         RESULT.write_text(original, encoding="utf-8")
 
 
+def test_a_malformed_result_is_reported_not_crashed():
+    """The validator must never lose its own output to a traceback.
+
+    Every check after the schema indexes into the document, and several use
+    next() over a section they assume exists. Emptying sensitivity.sweeps used
+    to raise StopIteration and print zero FAIL lines: exit code 1, but the
+    operator was told nothing about what was wrong. Shape is now checked first
+    and the run stops there with a reason.
+    """
+    original = RESULT.read_text(encoding="utf-8")
+    doc = json.loads(original)
+    doc["sensitivity"]["sweeps"] = []
+    RESULT.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    try:
+        proc = _run_validator()
+        assert proc.returncode != 0
+        assert "Traceback" not in proc.stderr, proc.stderr
+        assert [ln for ln in proc.stdout.splitlines() if ln.startswith("FAIL")], proc.stdout
+        assert "shape is invalid" in proc.stdout
+    finally:
+        RESULT.write_text(original, encoding="utf-8")
+
+
+def test_a_supplier_claim_needs_evidence_but_is_not_forbidden():
+    """The validator refuses the claim without evidence, not the claim itself.
+
+    This check used to assert that NO buy state may report a compatible
+    supplier, which froze the present conclusion into permanent law: the day
+    someone finds a source — the one outcome this analysis exists to wait for —
+    the artifact would have stopped validating, and evaluate_threshold's
+    actionable branch was unreachable through the fixture. The rule that
+    actually matters is that a flipped boolean must arrive with something
+    behind it.
+    """
+    original = RESULT.read_text(encoding="utf-8")
+    doc = json.loads(original)
+    doc["buy_completion_states"][0]["compatible_supplier_identified"] = True
+    RESULT.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    try:
+        proc = _run_validator()
+        assert proc.returncode != 0
+        # The specific evidence rule fired, not merely some downstream check.
+        assert "on the strength of an engineering estimate" in proc.stdout, proc.stdout
+        # And the old blanket refusal is gone.
+        assert "a buy state claims an identified compatible supplier" not in proc.stdout
+    finally:
+        RESULT.write_text(original, encoding="utf-8")
+
+
+def test_schema_cardinality_tracks_the_buy_state_taxonomy():
+    """The schema hardcodes 4; BUY_STATES is the source of truth for that number.
+
+    Pinned together so the two cannot drift apart silently if the taxonomy ever
+    grows a state.
+    """
+    props = load(RESULT_SCHEMA)["properties"]
+    for name, node in (
+        ("buy_completion_states", props["buy_completion_states"]),
+        ("ceilings", props["threshold_findings"]["properties"]["ceilings"]),
+    ):
+        assert node["minItems"] == len(BUY_STATES), name
+        assert node["maxItems"] == len(BUY_STATES), name
+
+
 def test_validator_rejects_a_runtime_grid_that_lost_its_upside():
     """Tampering the INPUT and regenerating, so only the policy check can catch it."""
     original = INPUT.read_text(encoding="utf-8")

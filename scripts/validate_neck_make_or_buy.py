@@ -30,7 +30,11 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from business.estimates.neck_costing import BUY_STATES, BUY_TO_MAKE  # noqa: E402
+from business.estimates.neck_costing import (  # noqa: E402
+    BUY_STATES,
+    BUY_TO_MAKE,
+    PRICE_STATUS_UNRESOLVED,
+)
 from scripts.build_neck_make_or_buy import build  # noqa: E402
 
 NECK = ROOT / "fixtures" / "estimates" / "neck"
@@ -103,6 +107,20 @@ def main() -> int:
     #    recomputes correctly can still carry a field nobody agreed to.
     errors += _schema_errors(doc, SCENARIO_SCHEMA, "scenario")
     errors += _schema_errors(stored, RESULT_SCHEMA, "result")
+
+    # 0b. SHAPE FIRST, and stop if it is wrong. Every check below indexes into
+    #     these documents and several use next() over a section they assume is
+    #     present. On a malformed artifact those raise KeyError or StopIteration,
+    #     and the traceback REPLACES the diagnostics instead of adding to them:
+    #     emptying sensitivity.sweeps produced a StopIteration and zero FAIL
+    #     lines, so the operator was told nothing about what was actually wrong.
+    #     A validator whose failure mode is losing its own output is worse than
+    #     one that stops and says why.
+    if errors:
+        for e in errors:
+            print(e)
+        print("FAIL shape is invalid; arithmetic and governance checks did not run")
+        return 1
 
     # 1. The whole result must be reproducible from the input.
     recomputed = build(doc)
@@ -411,15 +429,36 @@ def main() -> int:
             abs(b["retained_completion_cost"] - recomputed_minutes / 60 * lab_rate) < 0.01,
             f"{b['state_id']} retained cost is not retained minutes x the loaded rate",
         )
-    # Every buy reference in the record is a conventional headstock neck, so none
-    # may be attached to a buy state as though it were a substitute.
-    _fail(
-        errors,
-        all(not b["compatible_supplier_identified"] for b in states),
-        "a buy state claims an identified compatible supplier. The instrument is "
-        "headless with a locking clamp nut at 628.65 mm and every reference on "
-        "record is a conventional headstock neck.",
-    )
+    # A buy state MAY come to have a compatible supplier. That is the single
+    # change this whole analysis is waiting on, and the model supports it
+    # already: BuyCompletionState accepts the claim with a resolved price, and
+    # evaluate_threshold returns commercially_actionable=True on the strength of
+    # it. This check used to refuse the claim outright, which froze today's
+    # conclusion into permanent law — the artifact would have become unbuildable
+    # the day someone found a source, and evaluate_threshold's actionable branch
+    # was dead code that could never be reached through the fixture.
+    #
+    # What is refused now is the CLAIM WITHOUT THE EVIDENCE, which is the actual
+    # governance rule: a flipped boolean is what turns an analytical threshold
+    # into something the shop believes it can act on.
+    for b in states:
+        if not b["compatible_supplier_identified"]:
+            continue
+        _fail(
+            errors,
+            b["purchase_price_status"] != PRICE_STATUS_UNRESOLVED,
+            f"{b['state_id']} claims a compatible supplier while its purchase price "
+            f"is still unresolved",
+        )
+        _fail(
+            errors,
+            b["source"] != "engineering_estimate",
+            f"{b['state_id']} claims a compatible supplier on the strength of an "
+            f"engineering estimate. The instrument is headless with a locking clamp "
+            f"nut at 628.65 mm and every reference on record is a conventional "
+            f"headstock neck, so this claim needs a source outside this model — a "
+            f"quote, a catalogue entry, a conversation on record.",
+        )
 
     # 12b. The purchase ceiling is reported in exactly ONE place. It is make cost
     #      LESS the retained buy-side work, so a make scenario cannot state one:
@@ -611,8 +650,9 @@ def main() -> int:
     print(f"  batching worth {be['saving_qty_1_to_40']} per neck, ceiling "
           f"{be['ceiling_at_infinite_quantity']}")
     print("  both artifacts validate against their governed schemas")
+    claimed = sum(1 for b in stored["buy_completion_states"] if b["compatible_supplier_identified"])
     print(f"  {len(stored['buy_completion_states'])} buy states, all mapped like-for-like, "
-          f"none claiming a compatible supplier")
+          f"{claimed} claiming a compatible supplier")
     print(f"  {len(stored['threshold_findings']['comparisons'])} threshold comparisons "
           f"recomputed, {stored['threshold_findings']['commercially_actionable_rows']} "
           f"commercially actionable")
