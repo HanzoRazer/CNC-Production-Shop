@@ -22,16 +22,21 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from business.estimates.neck_costing import (  # noqa: E402
+    BUY_TO_MAKE,
     COMPLETION_DESCRIPTIONS,
     COMPLETION_STATES,
     BackCalculatedTarget,
+    BuyCompletionState,
     BuyReference,
     ChannelScenario,
+    MakeScenario,
     NeckMaterial,
     NeckOperation,
+    RetainedShopOperation,
     YieldPolicy,
     back_calculate_target,
     build_make_scenario,
+    evaluate_threshold,
     fretwork_threshold,
 )
 
@@ -109,6 +114,76 @@ def _with_machine(ops: tuple[NeckOperation, ...], minutes: float) -> tuple[NeckO
     )
 
 
+def _buy_states(raw: list[dict[str, Any]]) -> tuple[BuyCompletionState, ...]:
+    """Load B1-B4. The constructor enforces the like-for-like mapping."""
+    return tuple(
+        BuyCompletionState(
+            state_id=b["state_id"],
+            description=b["description"],
+            make_equivalent=b["make_equivalent"],
+            completion_requirements=tuple(b["completion_requirements"]),
+            retained_shop_operations=tuple(
+                RetainedShopOperation(
+                    operation=o["operation"],
+                    minutes=float(o["minutes"]),
+                    rationale=o["rationale"],
+                )
+                for o in b["retained_shop_operations"]
+            ),
+            inspection_requirements=tuple(b["inspection_requirements"]),
+            compatibility_requirements=tuple(b["compatibility_requirements"]),
+            purchase_price_status=b["purchase_price_status"],
+            compatible_supplier_identified=bool(b["compatible_supplier_identified"]),
+            source=b["source"],
+            confidence=b["confidence"],
+        )
+        for b in raw
+    )
+
+
+def _axis(name: str, values: list[Any]) -> dict[str, Any]:
+    """A matrix axis: sorted, unique, and named.
+
+    An axis with a duplicate value produces two cells that claim the same
+    coordinate, which is a silent way to lose a result.
+    """
+    ordered = sorted({float(v): v for v in values}.items())
+    return {"name": name, "values": [v for _, v in ordered]}
+
+
+def _matrix(
+    *,
+    matrix_id: str,
+    description: str,
+    row_axis: dict[str, Any],
+    column_axis: dict[str, Any],
+    completion_state: str,
+    quantity: int,
+    fixed_assumptions: dict[str, Any],
+    cell: Any,
+) -> dict[str, Any]:
+    """Build a fully-specified two-variable matrix.
+
+    Everything not swept is recorded in fixed_assumptions. A matrix that does
+    not say what it held constant cannot be recomputed, and a cell that cannot
+    be recomputed is a number nobody can check.
+    """
+    return {
+        "matrix_id": matrix_id,
+        "description": description,
+        "row_axis": row_axis,
+        "column_axis": column_axis,
+        "completion_state": completion_state,
+        "quantity": quantity,
+        "fixed_assumptions": fixed_assumptions,
+        "cells": [
+            {"row": r, "column": c, "cost_per_saleable": cell(r, c)}
+            for r in row_axis["values"]
+            for c in column_axis["values"]
+        ],
+    }
+
+
 def build(doc: dict[str, Any]) -> dict[str, Any]:
     ops = _operations(doc["operations"])
     rates = doc["rates"]
@@ -141,7 +216,9 @@ def build(doc: dict[str, Any]) -> dict[str, Any]:
         "make_scenarios": [],
         "batching_effect": {},
         "buy_references": [],
+        "buy_completion_states": [],
         "thresholds": {},
+        "threshold_findings": {},
         "sensitivity": {},
         "findings": [],
     }
@@ -179,7 +256,10 @@ def build(doc: dict[str, Any]) -> dict[str, Any]:
                         "cost_per_started": s.cost_per_started,
                         "cost_per_saleable": s.cost_per_saleable,
                         "yield_loss_per_saleable": s.yield_loss_per_saleable,
-                        "max_competitive_purchase_price": s.max_competitive_purchase_price,
+                        # No purchase ceiling is emitted here. A make scenario cannot
+                        # know one: the ceiling is this cost less the shop work the
+                        # matching buy state retains. It is reported once, in
+                        # threshold_findings, where both sides are present.
                     }
                 )
 
@@ -277,44 +357,254 @@ def build(doc: dict[str, Any]) -> dict[str, Any]:
         }
 
     # --- two-variable grids -------------------------------------------------
-    grid = []
-    for fb in sens["fretboard_price"]:
-        mats = _materials(doc, "SCARF_JOINT", float(fb))
-        row = {"fretboard_price": fb, "costs": {}}
-        for fm in sens["fretwork_minutes"]:
-            s = build_make_scenario(
-                completion_state="M4", quantity=20, operations=_with_fretwork(ops, float(fm)),
-                materials=mats, yield_policy=yp, loaded_labour_rate=lab, machine_rate=mach,
-            )
-            row["costs"][str(fm)] = s.cost_per_saleable
-        grid.append(row)
-    result["sensitivity"]["fretboard_x_fretwork_qty20_M4"] = grid
+    #
+    # All three matrices are fixed at M4 and quantity 20, which is the state the
+    # decision is actually about and the quantity the router prompted. Anything
+    # not on an axis is recorded in fixed_assumptions so each cell recomputes.
+    def _pol(y: float) -> YieldPolicy:
+        return YieldPolicy(rate=float(y), basis=f"swept: {y}", source="engineering_estimate")
 
-    ygrid = []
-    for y in sens["yield_rate"]:
-        pol = YieldPolicy(rate=float(y), basis=f"swept: {y}", source="engineering_estimate")
-        row = {"yield_rate": y, "costs": {}}
-        for fm in sens["fretwork_minutes"]:
-            s = build_make_scenario(
-                completion_state="M4", quantity=20, operations=_with_fretwork(ops, float(fm)),
-                materials=scarf, yield_policy=pol, loaded_labour_rate=lab, machine_rate=mach,
-            )
-            row["costs"][str(fm)] = s.cost_per_saleable
-        ygrid.append(row)
-    result["sensitivity"]["yield_x_fretwork_qty20_M4"] = ygrid
-
-    mgrid = []
-    for mm in sens["machine_minutes"]:
+    def _cost(
+        *,
+        fretboard: float,
+        fretwork: float,
+        machine: float,
+        yield_rate: float,
+    ) -> float:
+        tuned = _with_machine(_with_fretwork(ops, fretwork), machine)
         s = build_make_scenario(
-            completion_state="M4", quantity=20, operations=_with_machine(ops, float(mm)),
-            materials=scarf, yield_policy=yp, loaded_labour_rate=lab, machine_rate=mach,
+            completion_state="M4",
+            quantity=20,
+            operations=tuned,
+            materials=_materials(doc, "SCARF_JOINT", fretboard),
+            yield_policy=_pol(yield_rate),
+            loaded_labour_rate=lab,
+            machine_rate=mach,
         )
-        mgrid.append({"machine_minutes_per_neck": mm, "cost_per_saleable": s.cost_per_saleable})
-    result["sensitivity"]["machine_runtime_qty20_M4"] = mgrid
+        return s.cost_per_saleable
 
+    base_machine = float(sens["baseline_machine_minutes"])
+    base_fretwork = float(sens["baseline_fretwork_minutes"])
+
+    result["sensitivity"]["matrices"] = [
+        _matrix(
+            matrix_id="FRETBOARD_X_FRETWORK_QTY20_M4",
+            description="Fretboard stock price against fretwork minutes. The pair of "
+            "levers the accepted sprint identified, retained here because both remain "
+            "valid.",
+            row_axis=_axis("fretboard_price", sens["fretboard_price"]),
+            column_axis=_axis("fretwork_minutes", sens["fretwork_minutes"]),
+            completion_state="M4",
+            quantity=20,
+            fixed_assumptions={
+                "construction": "SCARF_JOINT",
+                "yield_rate": yp.rate,
+                "machine_minutes_per_neck": base_machine,
+            },
+            cell=lambda fb, fm: _cost(
+                fretboard=float(fb), fretwork=float(fm),
+                machine=base_machine, yield_rate=yp.rate,
+            ),
+        ),
+        _matrix(
+            matrix_id="FRETWORK_X_YIELD_QTY20_M4",
+            description="Fretwork minutes against saleable yield. Fretwork is the "
+            "largest labour operation and yield is wholly unmeasured, so this is the "
+            "pair with the most unknown between them.",
+            row_axis=_axis("yield_rate", sens["yield_rate"]),
+            column_axis=_axis("fretwork_minutes", sens["fretwork_minutes"]),
+            completion_state="M4",
+            quantity=20,
+            fixed_assumptions={
+                "construction": "SCARF_JOINT",
+                "fretboard_price": ebony,
+                "machine_minutes_per_neck": base_machine,
+            },
+            cell=lambda y, fm: _cost(
+                fretboard=ebony, fretwork=float(fm),
+                machine=base_machine, yield_rate=float(y),
+            ),
+        ),
+        _matrix(
+            matrix_id="RUNTIME_X_YIELD_QTY20_M4",
+            description="Machine runtime per neck against saleable yield. Added by "
+            "GAP-CLOSURE-1: runtime previously had no yield axis and never rose above "
+            "the unverified 52-minute baseline, so the model could not show what a "
+            "WORSE runtime does to a batch that also loses necks.",
+            row_axis=_axis("yield_rate", sens["yield_rate"]),
+            column_axis=_axis("machine_minutes_per_neck", sens["machine_minutes"]),
+            completion_state="M4",
+            quantity=20,
+            fixed_assumptions={
+                "construction": "SCARF_JOINT",
+                "fretboard_price": ebony,
+                "fretwork_minutes": base_fretwork,
+            },
+            cell=lambda y, mm: _cost(
+                fretboard=ebony, fretwork=base_fretwork,
+                machine=float(mm), yield_rate=float(y),
+            ),
+        ),
+    ]
+
+    result["sensitivity"]["sweeps"] = [
+        {
+            "sweep_id": "MACHINE_RUNTIME_QTY20_M4",
+            "axis": _axis("machine_minutes_per_neck", sens["machine_minutes"]),
+            "baseline_value": base_machine,
+            "completion_state": "M4",
+            "quantity": 20,
+            "fixed_assumptions": {
+                "construction": "SCARF_JOINT",
+                "fretboard_price": ebony,
+                "fretwork_minutes": base_fretwork,
+                "yield_rate": yp.rate,
+            },
+            "points": [
+                {
+                    "machine_minutes_per_neck": mm,
+                    "cost_per_saleable": _cost(
+                        fretboard=ebony, fretwork=base_fretwork,
+                        machine=float(mm), yield_rate=yp.rate,
+                    ),
+                    "relative_to_baseline": (
+                        "baseline" if float(mm) == base_machine
+                        else "better" if float(mm) < base_machine
+                        else "worse"
+                    ),
+                }
+                for mm in _axis("machine_minutes_per_neck", sens["machine_minutes"])["values"]
+            ],
+        }
+    ]
+
+    result["buy_completion_states"] = _buy_completion_states(doc, lab)
+    result["threshold_findings"] = _threshold_findings(doc, lab)
     result["back_calculation"] = _back_calculation(doc, lab, mach)
     result["findings"] = _findings(result, doc)
     return result
+
+
+def _buy_completion_states(doc: dict[str, Any], lab: float) -> list[dict[str, Any]]:
+    """Serialise B1-B4 with their retained shop cost computed, not transcribed."""
+    out: list[dict[str, Any]] = []
+    for state in _buy_states(doc["buy_completion_states"]):
+        raw = next(b for b in doc["buy_completion_states"] if b["state_id"] == state.state_id)
+        out.append(
+            {
+                "state_id": state.state_id,
+                "description": state.description,
+                "make_equivalent": state.make_equivalent,
+                "completion_requirements": list(state.completion_requirements),
+                "retained_shop_operations": [
+                    {"operation": o.operation, "minutes": o.minutes, "rationale": o.rationale}
+                    for o in state.retained_shop_operations
+                ],
+                "retained_minutes": round(state.retained_minutes, 2),
+                "retained_completion_cost": state.retained_completion_cost(lab),
+                "inspection_requirements": list(state.inspection_requirements),
+                "compatibility_requirements": list(state.compatibility_requirements),
+                "purchase_price_status": state.purchase_price_status,
+                "compatible_supplier_identified": state.compatible_supplier_identified,
+                "source": state.source,
+                "confidence": state.confidence,
+                "note": raw["note"],
+            }
+        )
+    return out
+
+
+def _threshold_findings(doc: dict[str, Any], lab: float) -> dict[str, Any]:
+    """Judge each analytical threshold at each completion state, like-for-like.
+
+    Every comparison here pairs Mx with Bx and nothing else. The four prices are
+    the Dev Order's analytical thresholds, not offers, and because no compatible
+    supplier exists for a headless clamp-nut neck every row comes back
+    commercially inactionable however the arithmetic lands.
+    """
+    mach = float(doc["rates"]["machine_per_hour"])
+    ops = _operations(doc["operations"])
+    yp = YieldPolicy(
+        rate=float(doc["yield_policy"]["rate"]),
+        basis=doc["yield_policy"]["basis"],
+        source=doc["yield_policy"]["source"],
+        confidence=doc["yield_policy"]["confidence"],
+    )
+    ebony = next(f["cost"] for f in doc["fretboard_options"] if f["fretboard_id"] == "EBONY_AAA")
+    mats = _materials(doc, "SCARF_JOINT", ebony)
+    states = {s.state_id: s for s in _buy_states(doc["buy_completion_states"])}
+    thresholds = [float(v) for v in doc["purchase_price_thresholds"]["values"]]
+
+    scenarios: dict[str, MakeScenario] = {
+        m: build_make_scenario(
+            completion_state=m, quantity=20, operations=ops, materials=mats,
+            yield_policy=yp, loaded_labour_rate=lab, machine_rate=mach,
+        )
+        for m in COMPLETION_STATES
+    }
+
+    comparisons: list[dict[str, Any]] = []
+    for buy_id, make_id in BUY_TO_MAKE.items():
+        for price in thresholds:
+            c = evaluate_threshold(
+                make_scenario=scenarios[make_id],
+                buy_state=states[buy_id],
+                threshold_price=price,
+                loaded_labour_rate=lab,
+            )
+            comparisons.append(
+                {
+                    "make_state": c.make_state,
+                    "buy_state": c.buy_state,
+                    "threshold_price": c.threshold_price,
+                    "make_cost_per_saleable": c.make_cost_per_saleable,
+                    "retained_buy_side_completion_cost": c.retained_buy_side_completion_cost,
+                    "maximum_compatible_delivered_purchase_price": (
+                        c.maximum_compatible_delivered_purchase_price
+                    ),
+                    "difference_versus_threshold": c.difference_versus_threshold,
+                    "result": c.result,
+                    "commercially_actionable": c.commercially_actionable,
+                    "reason": c.reason,
+                    "compatibility_caveat": c.compatibility_caveat,
+                }
+            )
+
+    return {
+        "basis": {
+            "construction": "SCARF_JOINT",
+            "quantity": 20,
+            "yield_rate": yp.rate,
+            "fretboard_price": ebony,
+            "note": "One basis for every threshold row, so differences between rows are "
+            "the completion state and the price and nothing else.",
+        },
+        "sign_convention": (
+            "difference_versus_threshold = threshold_price - "
+            "maximum_compatible_delivered_purchase_price. POSITIVE means buying at that "
+            "price costs more than building, i.e. make is lower cost. Retained shop work "
+            "sits on the BUY side, which is why the ceiling is below the make cost."
+        ),
+        "ceilings": [
+            {
+                "make_state": m,
+                "buy_state": b,
+                "make_cost_per_saleable": scenarios[m].cost_per_saleable,
+                "retained_buy_side_completion_cost": states[b].retained_completion_cost(lab),
+                "maximum_compatible_delivered_purchase_price": round(
+                    scenarios[m].cost_per_saleable - states[b].retained_completion_cost(lab), 2
+                ),
+            }
+            for b, m in BUY_TO_MAKE.items()
+        ],
+        "comparisons": comparisons,
+        "commercially_actionable_rows": sum(
+            1 for c in comparisons if c["commercially_actionable"]
+        ),
+        "note": "Not one row is commercially actionable. The arithmetic is sound and the "
+        "thresholds are correct; what is missing is a supplier of a neck that fits this "
+        "instrument at any completion state.",
+    }
 
 
 def _back_calculation(doc: dict[str, Any], lab: float, mach: float) -> dict[str, Any]:
@@ -474,6 +764,38 @@ def _findings(result: dict[str, Any], doc: dict[str, Any]) -> list[dict[str, Any
             "decision_authorized": False,
         },
         {
+            "finding_id": "FINDING-NO-COMPATIBLE-BUY-SIDE-EXISTS",
+            "metric": "threshold comparisons that are commercially actionable",
+            "calculated_delta": result["threshold_findings"]["commercially_actionable_rows"],
+            "interpretation": "B1-B4 are now defined and every threshold from 90 to 140 "
+            "is judged like-for-like against its make state. NOT ONE COMPARISON IS "
+            "ACTIONABLE. The instrument is headless with a locking clamp nut at 628.65 mm, "
+            "and no supplier of such a neck has been identified at any completion state. "
+            "The economics are computed anyway, because a threshold the shop cannot act on "
+            "today is still the number it would need if a source appeared.",
+            "confidence": "draft",
+            "decision_authorized": False,
+        },
+        {
+            "finding_id": "FINDING-RUNTIME-RISK-WAS-ONE-SIDED",
+            "metric": "cost per saleable neck across the widened runtime grid",
+            "calculated_delta": round(
+                max(p["cost_per_saleable"] for p in result["sensitivity"]["sweeps"][0]["points"])
+                - min(
+                    p["cost_per_saleable"]
+                    for p in result["sensitivity"]["sweeps"][0]["points"]
+                ),
+                2,
+            ),
+            "interpretation": "The accepted runtime sweep only descended from the "
+            "unverified 52-minute baseline, so it could only ever show the number proving "
+            "favourable. Extended above it, the grid shows the spread across the full "
+            "domain. Runtime remains the largest single unmeasured lever and it now cuts "
+            "both ways.",
+            "confidence": "draft",
+            "decision_authorized": False,
+        },
+        {
             "finding_id": "FINDING-COMPARISON-CONFIDENCE",
             "metric": "reachable threshold combinations against the boutique price",
             "calculated_delta": len(reachable),
@@ -491,7 +813,15 @@ def _findings(result: dict[str, Any], doc: dict[str, Any]) -> list[dict[str, Any
 def main() -> int:
     doc = json.loads(INPUT.read_text(encoding="utf-8"))
     result = build(doc)
-    OUT.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    # newline="\n" so the fixture is byte-identical whoever regenerates it.
+    # Without it Python translates to os.linesep, and a Windows run rewrites
+    # every line of a file the repo stores with LF -- a 2,514-line diff carrying
+    # no change at all.
+    OUT.write_text(
+        json.dumps(result, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     print(f"wrote {OUT.relative_to(ROOT).as_posix()}")
     print(f"  {len(result['make_scenarios'])} make scenarios, "
           f"{len(result['findings'])} findings")

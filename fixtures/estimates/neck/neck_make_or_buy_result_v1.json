@@ -29,8 +29,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 52.23,
       "cost_per_saleable": 58.04,
-      "yield_loss_per_saleable": 5.81,
-      "max_competitive_purchase_price": 58.04
+      "yield_loss_per_saleable": 5.81
     },
     {
       "construction": "SCARF_JOINT",
@@ -49,8 +48,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 45.33,
       "cost_per_saleable": 50.37,
-      "yield_loss_per_saleable": 5.04,
-      "max_competitive_purchase_price": 50.37
+      "yield_loss_per_saleable": 5.04
     },
     {
       "construction": "SCARF_JOINT",
@@ -69,8 +67,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 44.47,
       "cost_per_saleable": 49.41,
-      "yield_loss_per_saleable": 4.94,
-      "max_competitive_purchase_price": 49.41
+      "yield_loss_per_saleable": 4.94
     },
     {
       "construction": "SCARF_JOINT",
@@ -89,8 +86,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 44.04,
       "cost_per_saleable": 48.93,
-      "yield_loss_per_saleable": 4.89,
-      "max_competitive_purchase_price": 48.93
+      "yield_loss_per_saleable": 4.89
     },
     {
       "construction": "SCARF_JOINT",
@@ -109,8 +105,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 43.82,
       "cost_per_saleable": 48.69,
-      "yield_loss_per_saleable": 4.87,
-      "max_competitive_purchase_price": 48.69
+      "yield_loss_per_saleable": 4.87
     },
     {
       "construction": "SCARF_JOINT",
@@ -129,8 +124,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 98.53,
       "cost_per_saleable": 109.47,
-      "yield_loss_per_saleable": 10.94,
-      "max_competitive_purchase_price": 109.47
+      "yield_loss_per_saleable": 10.94
     },
     {
       "construction": "SCARF_JOINT",
@@ -149,8 +143,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 91.63,
       "cost_per_saleable": 101.81,
-      "yield_loss_per_saleable": 10.18,
-      "max_competitive_purchase_price": 101.81
+      "yield_loss_per_saleable": 10.18
     },
     {
       "construction": "SCARF_JOINT",
@@ -169,8 +162,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 90.76,
       "cost_per_saleable": 100.85,
-      "yield_loss_per_saleable": 10.09,
-      "max_competitive_purchase_price": 100.85
+      "yield_loss_per_saleable": 10.09
     },
     {
       "construction": "SCARF_JOINT",
@@ -189,8 +181,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 90.33,
       "cost_per_saleable": 100.37,
-      "yield_loss_per_saleable": 10.04,
-      "max_competitive_purchase_price": 100.37
+      "yield_loss_per_saleable": 10.04
     },
     {
       "construction": "SCARF_JOINT",
@@ -209,8 +200,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 90.12,
       "cost_per_saleable": 100.13,
-      "yield_loss_per_saleable": 10.01,
-      "max_competitive_purchase_price": 100.13
+      "yield_loss_per_saleable": 10.01
     },
     {
       "construction": "SCARF_JOINT",
@@ -229,8 +219,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 143.4,
       "cost_per_saleable": 159.33,
-      "yield_loss_per_saleable": 15.93,
-      "max_competitive_purchase_price": 159.33
+      "yield_loss_per_saleable": 15.93
     },
     {
       "construction": "SCARF_JOINT",
@@ -249,8 +238,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 136.5,
       "cost_per_saleable": 151.67,
-      "yield_loss_per_saleable": 15.17,
-      "max_competitive_purchase_price": 151.67
+      "yield_loss_per_saleable": 15.17
     },
     {
       "construction": "SCARF_JOINT",
@@ -269,8 +257,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 135.64,
       "cost_per_saleable": 150.71,
-      "yield_loss_per_saleable": 15.07,
-      "max_competitive_purchase_price": 150.71
+      "yield_loss_per_saleable": 15.07
     },
     {
       "construction": "SCARF_JOINT",
@@ -289,8 +276,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 135.21,
       "cost_per_saleable": 150.23,
-      "yield_loss_per_saleable": 15.02,
-      "max_competitive_purchase_price": 150.23
+      "yield_loss_per_saleable": 15.02
     },
     {
       "construction": "SCARF_JOINT",
@@ -309,8 +295,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 134.99,
       "cost_per_saleable": 149.99,
-      "yield_loss_per_saleable": 15.0,
-      "max_competitive_purchase_price": 149.99
+      "yield_loss_per_saleable": 15.0
     },
     {
       "construction": "SCARF_JOINT",
@@ -329,8 +314,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 177.29,
       "cost_per_saleable": 196.98,
-      "yield_loss_per_saleable": 19.69,
-      "max_competitive_purchase_price": 196.98
+      "yield_loss_per_saleable": 19.69
     },
     {
       "construction": "SCARF_JOINT",
@@ -349,8 +333,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 170.39,
       "cost_per_saleable": 189.32,
-      "yield_loss_per_saleable": 18.93,
-      "max_competitive_purchase_price": 189.32
+      "yield_loss_per_saleable": 18.93
     },
     {
       "construction": "SCARF_JOINT",
@@ -369,8 +352,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 169.52,
       "cost_per_saleable": 188.36,
-      "yield_loss_per_saleable": 18.84,
-      "max_competitive_purchase_price": 188.36
+      "yield_loss_per_saleable": 18.84
     },
     {
       "construction": "SCARF_JOINT",
@@ -389,8 +371,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 169.09,
       "cost_per_saleable": 187.88,
-      "yield_loss_per_saleable": 18.79,
-      "max_competitive_purchase_price": 187.88
+      "yield_loss_per_saleable": 18.79
     },
     {
       "construction": "SCARF_JOINT",
@@ -409,8 +390,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 168.88,
       "cost_per_saleable": 187.64,
-      "yield_loss_per_saleable": 18.76,
-      "max_competitive_purchase_price": 187.64
+      "yield_loss_per_saleable": 18.76
     },
     {
       "construction": "ONE_PIECE",
@@ -429,8 +409,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 63.99,
       "cost_per_saleable": 71.1,
-      "yield_loss_per_saleable": 7.11,
-      "max_competitive_purchase_price": 71.1
+      "yield_loss_per_saleable": 7.11
     },
     {
       "construction": "ONE_PIECE",
@@ -449,8 +428,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 57.09,
       "cost_per_saleable": 63.43,
-      "yield_loss_per_saleable": 6.34,
-      "max_competitive_purchase_price": 63.43
+      "yield_loss_per_saleable": 6.34
     },
     {
       "construction": "ONE_PIECE",
@@ -469,8 +447,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 56.22,
       "cost_per_saleable": 62.47,
-      "yield_loss_per_saleable": 6.25,
-      "max_competitive_purchase_price": 62.47
+      "yield_loss_per_saleable": 6.25
     },
     {
       "construction": "ONE_PIECE",
@@ -489,8 +466,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 55.79,
       "cost_per_saleable": 61.99,
-      "yield_loss_per_saleable": 6.2,
-      "max_competitive_purchase_price": 61.99
+      "yield_loss_per_saleable": 6.2
     },
     {
       "construction": "ONE_PIECE",
@@ -509,8 +485,7 @@
       "elapsed_wait_minutes": 0.0,
       "cost_per_started": 55.58,
       "cost_per_saleable": 61.75,
-      "yield_loss_per_saleable": 6.17,
-      "max_competitive_purchase_price": 61.75
+      "yield_loss_per_saleable": 6.17
     },
     {
       "construction": "ONE_PIECE",
@@ -529,8 +504,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 110.28,
       "cost_per_saleable": 122.53,
-      "yield_loss_per_saleable": 12.25,
-      "max_competitive_purchase_price": 122.53
+      "yield_loss_per_saleable": 12.25
     },
     {
       "construction": "ONE_PIECE",
@@ -549,8 +523,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 103.38,
       "cost_per_saleable": 114.86,
-      "yield_loss_per_saleable": 11.48,
-      "max_competitive_purchase_price": 114.86
+      "yield_loss_per_saleable": 11.48
     },
     {
       "construction": "ONE_PIECE",
@@ -569,8 +542,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 102.52,
       "cost_per_saleable": 113.91,
-      "yield_loss_per_saleable": 11.39,
-      "max_competitive_purchase_price": 113.91
+      "yield_loss_per_saleable": 11.39
     },
     {
       "construction": "ONE_PIECE",
@@ -589,8 +561,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 102.08,
       "cost_per_saleable": 113.43,
-      "yield_loss_per_saleable": 11.35,
-      "max_competitive_purchase_price": 113.43
+      "yield_loss_per_saleable": 11.35
     },
     {
       "construction": "ONE_PIECE",
@@ -609,8 +580,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 101.87,
       "cost_per_saleable": 113.19,
-      "yield_loss_per_saleable": 11.32,
-      "max_competitive_purchase_price": 113.19
+      "yield_loss_per_saleable": 11.32
     },
     {
       "construction": "ONE_PIECE",
@@ -629,8 +599,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 155.15,
       "cost_per_saleable": 172.39,
-      "yield_loss_per_saleable": 17.24,
-      "max_competitive_purchase_price": 172.39
+      "yield_loss_per_saleable": 17.24
     },
     {
       "construction": "ONE_PIECE",
@@ -649,8 +618,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 148.25,
       "cost_per_saleable": 164.73,
-      "yield_loss_per_saleable": 16.48,
-      "max_competitive_purchase_price": 164.73
+      "yield_loss_per_saleable": 16.48
     },
     {
       "construction": "ONE_PIECE",
@@ -669,8 +637,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 147.39,
       "cost_per_saleable": 163.77,
-      "yield_loss_per_saleable": 16.38,
-      "max_competitive_purchase_price": 163.77
+      "yield_loss_per_saleable": 16.38
     },
     {
       "construction": "ONE_PIECE",
@@ -689,8 +656,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 146.96,
       "cost_per_saleable": 163.29,
-      "yield_loss_per_saleable": 16.33,
-      "max_competitive_purchase_price": 163.29
+      "yield_loss_per_saleable": 16.33
     },
     {
       "construction": "ONE_PIECE",
@@ -709,8 +675,7 @@
       "elapsed_wait_minutes": 50.0,
       "cost_per_started": 146.74,
       "cost_per_saleable": 163.05,
-      "yield_loss_per_saleable": 16.31,
-      "max_competitive_purchase_price": 163.05
+      "yield_loss_per_saleable": 16.31
     },
     {
       "construction": "ONE_PIECE",
@@ -729,8 +694,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 189.04,
       "cost_per_saleable": 210.04,
-      "yield_loss_per_saleable": 21.0,
-      "max_competitive_purchase_price": 210.04
+      "yield_loss_per_saleable": 21.0
     },
     {
       "construction": "ONE_PIECE",
@@ -749,8 +713,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 182.14,
       "cost_per_saleable": 202.38,
-      "yield_loss_per_saleable": 20.24,
-      "max_competitive_purchase_price": 202.38
+      "yield_loss_per_saleable": 20.24
     },
     {
       "construction": "ONE_PIECE",
@@ -769,8 +732,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 181.28,
       "cost_per_saleable": 201.42,
-      "yield_loss_per_saleable": 20.14,
-      "max_competitive_purchase_price": 201.42
+      "yield_loss_per_saleable": 20.14
     },
     {
       "construction": "ONE_PIECE",
@@ -789,8 +751,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 180.84,
       "cost_per_saleable": 200.94,
-      "yield_loss_per_saleable": 20.1,
-      "max_competitive_purchase_price": 200.94
+      "yield_loss_per_saleable": 20.1
     },
     {
       "construction": "ONE_PIECE",
@@ -809,8 +770,7 @@
       "elapsed_wait_minutes": 316.67,
       "cost_per_started": 180.63,
       "cost_per_saleable": 200.7,
-      "yield_loss_per_saleable": 20.07,
-      "max_competitive_purchase_price": 200.7
+      "yield_loss_per_saleable": 20.07
     }
   ],
   "batching_effect": {
@@ -865,6 +825,195 @@
         "A modelled hidden-cost structure suggests these roughly double the catalog figure, but nothing in it is measured, which is why no value is recorded here.",
         "Heel-to-pocket fit is the specific risk for a CNC shop: the neck pocket is repeatable to hundredths of a millimetre and an imported heel is not. That mismatch costs labour on every instrument, not once."
       ]
+    }
+  ],
+  "buy_completion_states": [
+    {
+      "state_id": "B1",
+      "description": "Purchased CNC-machined unfinished neck",
+      "make_equivalent": "M1",
+      "completion_requirements": [
+        "shaft profile machined to drawing",
+        "truss rod channel cut and to depth",
+        "heel geometry to print",
+        "fretboard NOT attached"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5.0,
+          "rationale": "unpack, count, check for transit damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10.0,
+          "rationale": "heel width and thickness against the CNC pocket datum"
+        },
+        {
+          "operation": "corrective fitting",
+          "minutes": 12.0,
+          "rationale": "heel and truss channel correction to reach pocket fit"
+        }
+      ],
+      "retained_minutes": 27.0,
+      "retained_completion_cost": 12.94,
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "truss channel depth",
+        "scale-length datum"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "No supplier of a machined-only headless neck has been identified. The state is defined so the comparison is possible, not because a source exists."
+    },
+    {
+      "state_id": "B2",
+      "description": "Purchased neck with fretboard installed",
+      "make_equivalent": "M2",
+      "completion_requirements": [
+        "B1 requirements",
+        "fretboard bonded over the truss rod",
+        "board levelled and radiused",
+        "frets NOT installed"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5.0,
+          "rationale": "unpack, count, check for transit damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10.0,
+          "rationale": "heel fit plus board radius and glue-line integrity"
+        },
+        {
+          "operation": "corrective fitting",
+          "minutes": 14.0,
+          "rationale": "heel correction plus board levelling to shop tolerance"
+        }
+      ],
+      "retained_minutes": 29.0,
+      "retained_completion_cost": 13.9,
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "fretboard bond integrity",
+        "board radius and level",
+        "slot spacing against the 628.65 mm scale"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "Slot spacing is scale-specific, so a board installed by a supplier commits the scale length before this shop sees the part."
+    },
+    {
+      "state_id": "B3",
+      "description": "Purchased complete fretted neck",
+      "make_equivalent": "M3",
+      "completion_requirements": [
+        "B2 requirements",
+        "frets installed and seated",
+        "frets levelled, crowned and ends dressed",
+        "neck NOT finished"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5.0,
+          "rationale": "unpack, count, check for transit damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10.0,
+          "rationale": "heel fit, board level and fret height consistency"
+        },
+        {
+          "operation": "corrective fretwork",
+          "minutes": 18.0,
+          "rationale": "seating proud frets and re-dressing ends, which is the commonest defect on a bought fretted neck"
+        }
+      ],
+      "retained_minutes": 33.0,
+      "retained_completion_cost": 15.81,
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "fret seating and level",
+        "crown profile and end dressing",
+        "slot spacing against the 628.65 mm scale"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "Corrective fretwork is the retained cost most likely to be understated here; it is also the one no measurement exists for."
+    },
+    {
+      "state_id": "B4",
+      "description": "Purchased production-ready neck",
+      "make_equivalent": "M4",
+      "completion_requirements": [
+        "B3 requirements",
+        "nut slot cut for a locking clamp nut",
+        "neck finished",
+        "ready to hang on a body without further shop work"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5.0,
+          "rationale": "unpack, count, check for transit and finish damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10.0,
+          "rationale": "heel fit, relief and installation readiness"
+        },
+        {
+          "operation": "corrective fitting",
+          "minutes": 20.0,
+          "rationale": "correcting a FINISHED neck is dearer than correcting a blank; finish must be protected or repaired"
+        }
+      ],
+      "retained_minutes": 35.0,
+      "retained_completion_cost": 16.77,
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "fret level and nut slot geometry",
+        "finish quality and cure",
+        "installation readiness"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "The two existing purchase references sit at this completion state but are conventional headstock necks, so neither is attached here as a substitute. See buy_references for those, recorded as references only."
     }
   ],
   "thresholds": {
@@ -945,141 +1094,1244 @@
       ]
     }
   },
+  "threshold_findings": {
+    "basis": {
+      "construction": "SCARF_JOINT",
+      "quantity": 20,
+      "yield_rate": 0.9,
+      "fretboard_price": 29.0,
+      "note": "One basis for every threshold row, so differences between rows are the completion state and the price and nothing else."
+    },
+    "sign_convention": "difference_versus_threshold = threshold_price - maximum_compatible_delivered_purchase_price. POSITIVE means buying at that price costs more than building, i.e. make is lower cost. Retained shop work sits on the BUY side, which is why the ceiling is below the make cost.",
+    "ceilings": [
+      {
+        "make_state": "M1",
+        "buy_state": "B1",
+        "make_cost_per_saleable": 48.93,
+        "retained_buy_side_completion_cost": 12.94,
+        "maximum_compatible_delivered_purchase_price": 35.99
+      },
+      {
+        "make_state": "M2",
+        "buy_state": "B2",
+        "make_cost_per_saleable": 100.37,
+        "retained_buy_side_completion_cost": 13.9,
+        "maximum_compatible_delivered_purchase_price": 86.47
+      },
+      {
+        "make_state": "M3",
+        "buy_state": "B3",
+        "make_cost_per_saleable": 150.23,
+        "retained_buy_side_completion_cost": 15.81,
+        "maximum_compatible_delivered_purchase_price": 134.42
+      },
+      {
+        "make_state": "M4",
+        "buy_state": "B4",
+        "make_cost_per_saleable": 187.88,
+        "retained_buy_side_completion_cost": 16.77,
+        "maximum_compatible_delivered_purchase_price": 171.11
+      }
+    ],
+    "comparisons": [
+      {
+        "make_state": "M1",
+        "buy_state": "B1",
+        "threshold_price": 90.0,
+        "make_cost_per_saleable": 48.93,
+        "retained_buy_side_completion_cost": 12.94,
+        "maximum_compatible_delivered_purchase_price": 35.99,
+        "difference_versus_threshold": 54.01,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M1",
+        "buy_state": "B1",
+        "threshold_price": 100.0,
+        "make_cost_per_saleable": 48.93,
+        "retained_buy_side_completion_cost": 12.94,
+        "maximum_compatible_delivered_purchase_price": 35.99,
+        "difference_versus_threshold": 64.01,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M1",
+        "buy_state": "B1",
+        "threshold_price": 120.0,
+        "make_cost_per_saleable": 48.93,
+        "retained_buy_side_completion_cost": 12.94,
+        "maximum_compatible_delivered_purchase_price": 35.99,
+        "difference_versus_threshold": 84.01,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M1",
+        "buy_state": "B1",
+        "threshold_price": 140.0,
+        "make_cost_per_saleable": 48.93,
+        "retained_buy_side_completion_cost": 12.94,
+        "maximum_compatible_delivered_purchase_price": 35.99,
+        "difference_versus_threshold": 104.01,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M2",
+        "buy_state": "B2",
+        "threshold_price": 90.0,
+        "make_cost_per_saleable": 100.37,
+        "retained_buy_side_completion_cost": 13.9,
+        "maximum_compatible_delivered_purchase_price": 86.47,
+        "difference_versus_threshold": 3.53,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M2",
+        "buy_state": "B2",
+        "threshold_price": 100.0,
+        "make_cost_per_saleable": 100.37,
+        "retained_buy_side_completion_cost": 13.9,
+        "maximum_compatible_delivered_purchase_price": 86.47,
+        "difference_versus_threshold": 13.53,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M2",
+        "buy_state": "B2",
+        "threshold_price": 120.0,
+        "make_cost_per_saleable": 100.37,
+        "retained_buy_side_completion_cost": 13.9,
+        "maximum_compatible_delivered_purchase_price": 86.47,
+        "difference_versus_threshold": 33.53,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M2",
+        "buy_state": "B2",
+        "threshold_price": 140.0,
+        "make_cost_per_saleable": 100.37,
+        "retained_buy_side_completion_cost": 13.9,
+        "maximum_compatible_delivered_purchase_price": 86.47,
+        "difference_versus_threshold": 53.53,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M3",
+        "buy_state": "B3",
+        "threshold_price": 90.0,
+        "make_cost_per_saleable": 150.23,
+        "retained_buy_side_completion_cost": 15.81,
+        "maximum_compatible_delivered_purchase_price": 134.42,
+        "difference_versus_threshold": -44.42,
+        "result": "buy_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M3",
+        "buy_state": "B3",
+        "threshold_price": 100.0,
+        "make_cost_per_saleable": 150.23,
+        "retained_buy_side_completion_cost": 15.81,
+        "maximum_compatible_delivered_purchase_price": 134.42,
+        "difference_versus_threshold": -34.42,
+        "result": "buy_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M3",
+        "buy_state": "B3",
+        "threshold_price": 120.0,
+        "make_cost_per_saleable": 150.23,
+        "retained_buy_side_completion_cost": 15.81,
+        "maximum_compatible_delivered_purchase_price": 134.42,
+        "difference_versus_threshold": -14.42,
+        "result": "buy_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M3",
+        "buy_state": "B3",
+        "threshold_price": 140.0,
+        "make_cost_per_saleable": 150.23,
+        "retained_buy_side_completion_cost": 15.81,
+        "maximum_compatible_delivered_purchase_price": 134.42,
+        "difference_versus_threshold": 5.58,
+        "result": "make_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M4",
+        "buy_state": "B4",
+        "threshold_price": 90.0,
+        "make_cost_per_saleable": 187.88,
+        "retained_buy_side_completion_cost": 16.77,
+        "maximum_compatible_delivered_purchase_price": 171.11,
+        "difference_versus_threshold": -81.11,
+        "result": "buy_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M4",
+        "buy_state": "B4",
+        "threshold_price": 100.0,
+        "make_cost_per_saleable": 187.88,
+        "retained_buy_side_completion_cost": 16.77,
+        "maximum_compatible_delivered_purchase_price": 171.11,
+        "difference_versus_threshold": -71.11,
+        "result": "buy_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M4",
+        "buy_state": "B4",
+        "threshold_price": 120.0,
+        "make_cost_per_saleable": 187.88,
+        "retained_buy_side_completion_cost": 16.77,
+        "maximum_compatible_delivered_purchase_price": 171.11,
+        "difference_versus_threshold": -51.11,
+        "result": "buy_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      },
+      {
+        "make_state": "M4",
+        "buy_state": "B4",
+        "threshold_price": 140.0,
+        "make_cost_per_saleable": 187.88,
+        "retained_buy_side_completion_cost": 16.77,
+        "maximum_compatible_delivered_purchase_price": 171.11,
+        "difference_versus_threshold": -31.11,
+        "result": "buy_lower_cost",
+        "commercially_actionable": false,
+        "reason": "no compatible purchased-neck source identified",
+        "compatibility_caveat": "The threshold is analytical. It is not a supplier offer, and no source of a headless clamp-nut neck at this completion state has been identified."
+      }
+    ],
+    "commercially_actionable_rows": 0,
+    "note": "Not one row is commercially actionable. The arithmetic is sound and the thresholds are correct; what is missing is a supplier of a neck that fits this instrument at any completion state."
+  },
   "sensitivity": {
-    "fretboard_x_fretwork_qty20_M4": [
+    "matrices": [
       {
-        "fretboard_price": 29,
-        "costs": {
-          "78": 187.88,
-          "65": 180.96,
-          "55": 175.64,
-          "45": 170.31,
-          "35": 164.99,
-          "25": 159.66
-        }
+        "matrix_id": "FRETBOARD_X_FRETWORK_QTY20_M4",
+        "description": "Fretboard stock price against fretwork minutes. The pair of levers the accepted sprint identified, retained here because both remain valid.",
+        "row_axis": {
+          "name": "fretboard_price",
+          "values": [
+            5,
+            10,
+            15,
+            20,
+            29
+          ]
+        },
+        "column_axis": {
+          "name": "fretwork_minutes",
+          "values": [
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            55,
+            60,
+            65,
+            78,
+            90
+          ]
+        },
+        "completion_state": "M4",
+        "quantity": 20,
+        "fixed_assumptions": {
+          "construction": "SCARF_JOINT",
+          "yield_rate": 0.9,
+          "machine_minutes_per_neck": 52.0
+        },
+        "cells": [
+          {
+            "row": 5,
+            "column": 20,
+            "cost_per_saleable": 130.33
+          },
+          {
+            "row": 5,
+            "column": 25,
+            "cost_per_saleable": 133.0
+          },
+          {
+            "row": 5,
+            "column": 30,
+            "cost_per_saleable": 135.66
+          },
+          {
+            "row": 5,
+            "column": 35,
+            "cost_per_saleable": 138.32
+          },
+          {
+            "row": 5,
+            "column": 40,
+            "cost_per_saleable": 140.98
+          },
+          {
+            "row": 5,
+            "column": 45,
+            "cost_per_saleable": 143.64
+          },
+          {
+            "row": 5,
+            "column": 50,
+            "cost_per_saleable": 146.31
+          },
+          {
+            "row": 5,
+            "column": 55,
+            "cost_per_saleable": 148.97
+          },
+          {
+            "row": 5,
+            "column": 60,
+            "cost_per_saleable": 151.63
+          },
+          {
+            "row": 5,
+            "column": 65,
+            "cost_per_saleable": 154.29
+          },
+          {
+            "row": 5,
+            "column": 78,
+            "cost_per_saleable": 161.21
+          },
+          {
+            "row": 5,
+            "column": 90,
+            "cost_per_saleable": 167.6
+          },
+          {
+            "row": 10,
+            "column": 20,
+            "cost_per_saleable": 135.89
+          },
+          {
+            "row": 10,
+            "column": 25,
+            "cost_per_saleable": 138.55
+          },
+          {
+            "row": 10,
+            "column": 30,
+            "cost_per_saleable": 141.21
+          },
+          {
+            "row": 10,
+            "column": 35,
+            "cost_per_saleable": 143.88
+          },
+          {
+            "row": 10,
+            "column": 40,
+            "cost_per_saleable": 146.54
+          },
+          {
+            "row": 10,
+            "column": 45,
+            "cost_per_saleable": 149.2
+          },
+          {
+            "row": 10,
+            "column": 50,
+            "cost_per_saleable": 151.86
+          },
+          {
+            "row": 10,
+            "column": 55,
+            "cost_per_saleable": 154.52
+          },
+          {
+            "row": 10,
+            "column": 60,
+            "cost_per_saleable": 157.19
+          },
+          {
+            "row": 10,
+            "column": 65,
+            "cost_per_saleable": 159.85
+          },
+          {
+            "row": 10,
+            "column": 78,
+            "cost_per_saleable": 166.77
+          },
+          {
+            "row": 10,
+            "column": 90,
+            "cost_per_saleable": 173.16
+          },
+          {
+            "row": 15,
+            "column": 20,
+            "cost_per_saleable": 141.45
+          },
+          {
+            "row": 15,
+            "column": 25,
+            "cost_per_saleable": 144.11
+          },
+          {
+            "row": 15,
+            "column": 30,
+            "cost_per_saleable": 146.77
+          },
+          {
+            "row": 15,
+            "column": 35,
+            "cost_per_saleable": 149.43
+          },
+          {
+            "row": 15,
+            "column": 40,
+            "cost_per_saleable": 152.09
+          },
+          {
+            "row": 15,
+            "column": 45,
+            "cost_per_saleable": 154.76
+          },
+          {
+            "row": 15,
+            "column": 50,
+            "cost_per_saleable": 157.42
+          },
+          {
+            "row": 15,
+            "column": 55,
+            "cost_per_saleable": 160.08
+          },
+          {
+            "row": 15,
+            "column": 60,
+            "cost_per_saleable": 162.74
+          },
+          {
+            "row": 15,
+            "column": 65,
+            "cost_per_saleable": 165.4
+          },
+          {
+            "row": 15,
+            "column": 78,
+            "cost_per_saleable": 172.33
+          },
+          {
+            "row": 15,
+            "column": 90,
+            "cost_per_saleable": 178.71
+          },
+          {
+            "row": 20,
+            "column": 20,
+            "cost_per_saleable": 147.0
+          },
+          {
+            "row": 20,
+            "column": 25,
+            "cost_per_saleable": 149.66
+          },
+          {
+            "row": 20,
+            "column": 30,
+            "cost_per_saleable": 152.33
+          },
+          {
+            "row": 20,
+            "column": 35,
+            "cost_per_saleable": 154.99
+          },
+          {
+            "row": 20,
+            "column": 40,
+            "cost_per_saleable": 157.65
+          },
+          {
+            "row": 20,
+            "column": 45,
+            "cost_per_saleable": 160.31
+          },
+          {
+            "row": 20,
+            "column": 50,
+            "cost_per_saleable": 162.97
+          },
+          {
+            "row": 20,
+            "column": 55,
+            "cost_per_saleable": 165.64
+          },
+          {
+            "row": 20,
+            "column": 60,
+            "cost_per_saleable": 168.3
+          },
+          {
+            "row": 20,
+            "column": 65,
+            "cost_per_saleable": 170.96
+          },
+          {
+            "row": 20,
+            "column": 78,
+            "cost_per_saleable": 177.88
+          },
+          {
+            "row": 20,
+            "column": 90,
+            "cost_per_saleable": 184.27
+          },
+          {
+            "row": 29,
+            "column": 20,
+            "cost_per_saleable": 157.0
+          },
+          {
+            "row": 29,
+            "column": 25,
+            "cost_per_saleable": 159.66
+          },
+          {
+            "row": 29,
+            "column": 30,
+            "cost_per_saleable": 162.33
+          },
+          {
+            "row": 29,
+            "column": 35,
+            "cost_per_saleable": 164.99
+          },
+          {
+            "row": 29,
+            "column": 40,
+            "cost_per_saleable": 167.65
+          },
+          {
+            "row": 29,
+            "column": 45,
+            "cost_per_saleable": 170.31
+          },
+          {
+            "row": 29,
+            "column": 50,
+            "cost_per_saleable": 172.97
+          },
+          {
+            "row": 29,
+            "column": 55,
+            "cost_per_saleable": 175.64
+          },
+          {
+            "row": 29,
+            "column": 60,
+            "cost_per_saleable": 178.3
+          },
+          {
+            "row": 29,
+            "column": 65,
+            "cost_per_saleable": 180.96
+          },
+          {
+            "row": 29,
+            "column": 78,
+            "cost_per_saleable": 187.88
+          },
+          {
+            "row": 29,
+            "column": 90,
+            "cost_per_saleable": 194.27
+          }
+        ]
       },
       {
-        "fretboard_price": 20,
-        "costs": {
-          "78": 177.88,
-          "65": 170.96,
-          "55": 165.64,
-          "45": 160.31,
-          "35": 154.99,
-          "25": 149.66
-        }
+        "matrix_id": "FRETWORK_X_YIELD_QTY20_M4",
+        "description": "Fretwork minutes against saleable yield. Fretwork is the largest labour operation and yield is wholly unmeasured, so this is the pair with the most unknown between them.",
+        "row_axis": {
+          "name": "yield_rate",
+          "values": [
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ]
+        },
+        "column_axis": {
+          "name": "fretwork_minutes",
+          "values": [
+            20,
+            25,
+            30,
+            35,
+            40,
+            45,
+            50,
+            55,
+            60,
+            65,
+            78,
+            90
+          ]
+        },
+        "completion_state": "M4",
+        "quantity": 20,
+        "fixed_assumptions": {
+          "construction": "SCARF_JOINT",
+          "fretboard_price": 29.0,
+          "machine_minutes_per_neck": 52.0
+        },
+        "cells": [
+          {
+            "row": 0.8,
+            "column": 20,
+            "cost_per_saleable": 176.63
+          },
+          {
+            "row": 0.8,
+            "column": 25,
+            "cost_per_saleable": 179.62
+          },
+          {
+            "row": 0.8,
+            "column": 30,
+            "cost_per_saleable": 182.62
+          },
+          {
+            "row": 0.8,
+            "column": 35,
+            "cost_per_saleable": 185.61
+          },
+          {
+            "row": 0.8,
+            "column": 40,
+            "cost_per_saleable": 188.61
+          },
+          {
+            "row": 0.8,
+            "column": 45,
+            "cost_per_saleable": 191.6
+          },
+          {
+            "row": 0.8,
+            "column": 50,
+            "cost_per_saleable": 194.6
+          },
+          {
+            "row": 0.8,
+            "column": 55,
+            "cost_per_saleable": 197.59
+          },
+          {
+            "row": 0.8,
+            "column": 60,
+            "cost_per_saleable": 200.58
+          },
+          {
+            "row": 0.8,
+            "column": 65,
+            "cost_per_saleable": 203.58
+          },
+          {
+            "row": 0.8,
+            "column": 78,
+            "cost_per_saleable": 211.37
+          },
+          {
+            "row": 0.8,
+            "column": 90,
+            "cost_per_saleable": 218.55
+          },
+          {
+            "row": 0.85,
+            "column": 20,
+            "cost_per_saleable": 166.24
+          },
+          {
+            "row": 0.85,
+            "column": 25,
+            "cost_per_saleable": 169.06
+          },
+          {
+            "row": 0.85,
+            "column": 30,
+            "cost_per_saleable": 171.87
+          },
+          {
+            "row": 0.85,
+            "column": 35,
+            "cost_per_saleable": 174.69
+          },
+          {
+            "row": 0.85,
+            "column": 40,
+            "cost_per_saleable": 177.51
+          },
+          {
+            "row": 0.85,
+            "column": 45,
+            "cost_per_saleable": 180.33
+          },
+          {
+            "row": 0.85,
+            "column": 50,
+            "cost_per_saleable": 183.15
+          },
+          {
+            "row": 0.85,
+            "column": 55,
+            "cost_per_saleable": 185.97
+          },
+          {
+            "row": 0.85,
+            "column": 60,
+            "cost_per_saleable": 188.79
+          },
+          {
+            "row": 0.85,
+            "column": 65,
+            "cost_per_saleable": 191.6
+          },
+          {
+            "row": 0.85,
+            "column": 78,
+            "cost_per_saleable": 198.93
+          },
+          {
+            "row": 0.85,
+            "column": 90,
+            "cost_per_saleable": 205.7
+          },
+          {
+            "row": 0.9,
+            "column": 20,
+            "cost_per_saleable": 157.0
+          },
+          {
+            "row": 0.9,
+            "column": 25,
+            "cost_per_saleable": 159.66
+          },
+          {
+            "row": 0.9,
+            "column": 30,
+            "cost_per_saleable": 162.33
+          },
+          {
+            "row": 0.9,
+            "column": 35,
+            "cost_per_saleable": 164.99
+          },
+          {
+            "row": 0.9,
+            "column": 40,
+            "cost_per_saleable": 167.65
+          },
+          {
+            "row": 0.9,
+            "column": 45,
+            "cost_per_saleable": 170.31
+          },
+          {
+            "row": 0.9,
+            "column": 50,
+            "cost_per_saleable": 172.97
+          },
+          {
+            "row": 0.9,
+            "column": 55,
+            "cost_per_saleable": 175.64
+          },
+          {
+            "row": 0.9,
+            "column": 60,
+            "cost_per_saleable": 178.3
+          },
+          {
+            "row": 0.9,
+            "column": 65,
+            "cost_per_saleable": 180.96
+          },
+          {
+            "row": 0.9,
+            "column": 78,
+            "cost_per_saleable": 187.88
+          },
+          {
+            "row": 0.9,
+            "column": 90,
+            "cost_per_saleable": 194.27
+          },
+          {
+            "row": 0.95,
+            "column": 20,
+            "cost_per_saleable": 148.74
+          },
+          {
+            "row": 0.95,
+            "column": 25,
+            "cost_per_saleable": 151.26
+          },
+          {
+            "row": 0.95,
+            "column": 30,
+            "cost_per_saleable": 153.78
+          },
+          {
+            "row": 0.95,
+            "column": 35,
+            "cost_per_saleable": 156.3
+          },
+          {
+            "row": 0.95,
+            "column": 40,
+            "cost_per_saleable": 158.83
+          },
+          {
+            "row": 0.95,
+            "column": 45,
+            "cost_per_saleable": 161.35
+          },
+          {
+            "row": 0.95,
+            "column": 50,
+            "cost_per_saleable": 163.87
+          },
+          {
+            "row": 0.95,
+            "column": 55,
+            "cost_per_saleable": 166.39
+          },
+          {
+            "row": 0.95,
+            "column": 60,
+            "cost_per_saleable": 168.91
+          },
+          {
+            "row": 0.95,
+            "column": 65,
+            "cost_per_saleable": 171.44
+          },
+          {
+            "row": 0.95,
+            "column": 78,
+            "cost_per_saleable": 177.99
+          },
+          {
+            "row": 0.95,
+            "column": 90,
+            "cost_per_saleable": 184.04
+          },
+          {
+            "row": 1.0,
+            "column": 20,
+            "cost_per_saleable": 141.3
+          },
+          {
+            "row": 1.0,
+            "column": 25,
+            "cost_per_saleable": 143.7
+          },
+          {
+            "row": 1.0,
+            "column": 30,
+            "cost_per_saleable": 146.09
+          },
+          {
+            "row": 1.0,
+            "column": 35,
+            "cost_per_saleable": 148.49
+          },
+          {
+            "row": 1.0,
+            "column": 40,
+            "cost_per_saleable": 150.88
+          },
+          {
+            "row": 1.0,
+            "column": 45,
+            "cost_per_saleable": 153.28
+          },
+          {
+            "row": 1.0,
+            "column": 50,
+            "cost_per_saleable": 155.68
+          },
+          {
+            "row": 1.0,
+            "column": 55,
+            "cost_per_saleable": 158.07
+          },
+          {
+            "row": 1.0,
+            "column": 60,
+            "cost_per_saleable": 160.47
+          },
+          {
+            "row": 1.0,
+            "column": 65,
+            "cost_per_saleable": 162.86
+          },
+          {
+            "row": 1.0,
+            "column": 78,
+            "cost_per_saleable": 169.09
+          },
+          {
+            "row": 1.0,
+            "column": 90,
+            "cost_per_saleable": 174.84
+          }
+        ]
       },
       {
-        "fretboard_price": 15,
-        "costs": {
-          "78": 172.33,
-          "65": 165.4,
-          "55": 160.08,
-          "45": 154.76,
-          "35": 149.43,
-          "25": 144.11
-        }
-      },
-      {
-        "fretboard_price": 10,
-        "costs": {
-          "78": 166.77,
-          "65": 159.85,
-          "55": 154.52,
-          "45": 149.2,
-          "35": 143.88,
-          "25": 138.55
-        }
-      },
-      {
-        "fretboard_price": 5,
-        "costs": {
-          "78": 161.21,
-          "65": 154.29,
-          "55": 148.97,
-          "45": 143.64,
-          "35": 138.32,
-          "25": 133.0
-        }
+        "matrix_id": "RUNTIME_X_YIELD_QTY20_M4",
+        "description": "Machine runtime per neck against saleable yield. Added by GAP-CLOSURE-1: runtime previously had no yield axis and never rose above the unverified 52-minute baseline, so the model could not show what a WORSE runtime does to a batch that also loses necks.",
+        "row_axis": {
+          "name": "yield_rate",
+          "values": [
+            0.8,
+            0.85,
+            0.9,
+            0.95,
+            1.0
+          ]
+        },
+        "column_axis": {
+          "name": "machine_minutes_per_neck",
+          "values": [
+            20,
+            30,
+            40,
+            45,
+            52,
+            60,
+            75,
+            90
+          ]
+        },
+        "completion_state": "M4",
+        "quantity": 20,
+        "fixed_assumptions": {
+          "construction": "SCARF_JOINT",
+          "fretboard_price": 29.0,
+          "fretwork_minutes": 78.0
+        },
+        "cells": [
+          {
+            "row": 0.8,
+            "column": 20,
+            "cost_per_saleable": 192.05
+          },
+          {
+            "row": 0.8,
+            "column": 30,
+            "cost_per_saleable": 198.09
+          },
+          {
+            "row": 0.8,
+            "column": 40,
+            "cost_per_saleable": 204.12
+          },
+          {
+            "row": 0.8,
+            "column": 45,
+            "cost_per_saleable": 207.14
+          },
+          {
+            "row": 0.8,
+            "column": 52,
+            "cost_per_saleable": 211.37
+          },
+          {
+            "row": 0.8,
+            "column": 60,
+            "cost_per_saleable": 216.19
+          },
+          {
+            "row": 0.8,
+            "column": 75,
+            "cost_per_saleable": 225.25
+          },
+          {
+            "row": 0.8,
+            "column": 90,
+            "cost_per_saleable": 234.3
+          },
+          {
+            "row": 0.85,
+            "column": 20,
+            "cost_per_saleable": 180.76
+          },
+          {
+            "row": 0.85,
+            "column": 30,
+            "cost_per_saleable": 186.44
+          },
+          {
+            "row": 0.85,
+            "column": 40,
+            "cost_per_saleable": 192.12
+          },
+          {
+            "row": 0.85,
+            "column": 45,
+            "cost_per_saleable": 194.96
+          },
+          {
+            "row": 0.85,
+            "column": 52,
+            "cost_per_saleable": 198.93
+          },
+          {
+            "row": 0.85,
+            "column": 60,
+            "cost_per_saleable": 203.48
+          },
+          {
+            "row": 0.85,
+            "column": 75,
+            "cost_per_saleable": 212.0
+          },
+          {
+            "row": 0.85,
+            "column": 90,
+            "cost_per_saleable": 220.52
+          },
+          {
+            "row": 0.9,
+            "column": 20,
+            "cost_per_saleable": 170.71
+          },
+          {
+            "row": 0.9,
+            "column": 30,
+            "cost_per_saleable": 176.08
+          },
+          {
+            "row": 0.9,
+            "column": 40,
+            "cost_per_saleable": 181.44
+          },
+          {
+            "row": 0.9,
+            "column": 45,
+            "cost_per_saleable": 184.13
+          },
+          {
+            "row": 0.9,
+            "column": 52,
+            "cost_per_saleable": 187.88
+          },
+          {
+            "row": 0.9,
+            "column": 60,
+            "cost_per_saleable": 192.17
+          },
+          {
+            "row": 0.9,
+            "column": 75,
+            "cost_per_saleable": 200.22
+          },
+          {
+            "row": 0.9,
+            "column": 90,
+            "cost_per_saleable": 208.27
+          },
+          {
+            "row": 0.95,
+            "column": 20,
+            "cost_per_saleable": 161.73
+          },
+          {
+            "row": 0.95,
+            "column": 30,
+            "cost_per_saleable": 166.81
+          },
+          {
+            "row": 0.95,
+            "column": 40,
+            "cost_per_saleable": 171.89
+          },
+          {
+            "row": 0.95,
+            "column": 45,
+            "cost_per_saleable": 174.43
+          },
+          {
+            "row": 0.95,
+            "column": 52,
+            "cost_per_saleable": 177.99
+          },
+          {
+            "row": 0.95,
+            "column": 60,
+            "cost_per_saleable": 182.06
+          },
+          {
+            "row": 0.95,
+            "column": 75,
+            "cost_per_saleable": 189.68
+          },
+          {
+            "row": 0.95,
+            "column": 90,
+            "cost_per_saleable": 197.31
+          },
+          {
+            "row": 1.0,
+            "column": 20,
+            "cost_per_saleable": 153.64
+          },
+          {
+            "row": 1.0,
+            "column": 30,
+            "cost_per_saleable": 158.47
+          },
+          {
+            "row": 1.0,
+            "column": 40,
+            "cost_per_saleable": 163.3
+          },
+          {
+            "row": 1.0,
+            "column": 45,
+            "cost_per_saleable": 165.71
+          },
+          {
+            "row": 1.0,
+            "column": 52,
+            "cost_per_saleable": 169.09
+          },
+          {
+            "row": 1.0,
+            "column": 60,
+            "cost_per_saleable": 172.96
+          },
+          {
+            "row": 1.0,
+            "column": 75,
+            "cost_per_saleable": 180.2
+          },
+          {
+            "row": 1.0,
+            "column": 90,
+            "cost_per_saleable": 187.44
+          }
+        ]
       }
     ],
-    "yield_x_fretwork_qty20_M4": [
+    "sweeps": [
       {
-        "yield_rate": 0.8,
-        "costs": {
-          "78": 211.37,
-          "65": 203.58,
-          "55": 197.59,
-          "45": 191.6,
-          "35": 185.61,
-          "25": 179.62
-        }
-      },
-      {
-        "yield_rate": 0.85,
-        "costs": {
-          "78": 198.93,
-          "65": 191.6,
-          "55": 185.97,
-          "45": 180.33,
-          "35": 174.69,
-          "25": 169.06
-        }
-      },
-      {
-        "yield_rate": 0.9,
-        "costs": {
-          "78": 187.88,
-          "65": 180.96,
-          "55": 175.64,
-          "45": 170.31,
-          "35": 164.99,
-          "25": 159.66
-        }
-      },
-      {
-        "yield_rate": 0.95,
-        "costs": {
-          "78": 177.99,
-          "65": 171.44,
-          "55": 166.39,
-          "45": 161.35,
-          "35": 156.3,
-          "25": 151.26
-        }
-      },
-      {
-        "yield_rate": 1.0,
-        "costs": {
-          "78": 169.09,
-          "65": 162.86,
-          "55": 158.07,
-          "45": 153.28,
-          "35": 148.49,
-          "25": 143.7
-        }
-      }
-    ],
-    "machine_runtime_qty20_M4": [
-      {
-        "machine_minutes_per_neck": 52,
-        "cost_per_saleable": 187.88
-      },
-      {
-        "machine_minutes_per_neck": 45,
-        "cost_per_saleable": 184.13
-      },
-      {
-        "machine_minutes_per_neck": 40,
-        "cost_per_saleable": 181.44
-      },
-      {
-        "machine_minutes_per_neck": 30,
-        "cost_per_saleable": 176.08
-      },
-      {
-        "machine_minutes_per_neck": 20,
-        "cost_per_saleable": 170.71
+        "sweep_id": "MACHINE_RUNTIME_QTY20_M4",
+        "axis": {
+          "name": "machine_minutes_per_neck",
+          "values": [
+            20,
+            30,
+            40,
+            45,
+            52,
+            60,
+            75,
+            90
+          ]
+        },
+        "baseline_value": 52.0,
+        "completion_state": "M4",
+        "quantity": 20,
+        "fixed_assumptions": {
+          "construction": "SCARF_JOINT",
+          "fretboard_price": 29.0,
+          "fretwork_minutes": 78.0,
+          "yield_rate": 0.9
+        },
+        "points": [
+          {
+            "machine_minutes_per_neck": 20,
+            "cost_per_saleable": 170.71,
+            "relative_to_baseline": "better"
+          },
+          {
+            "machine_minutes_per_neck": 30,
+            "cost_per_saleable": 176.08,
+            "relative_to_baseline": "better"
+          },
+          {
+            "machine_minutes_per_neck": 40,
+            "cost_per_saleable": 181.44,
+            "relative_to_baseline": "better"
+          },
+          {
+            "machine_minutes_per_neck": 45,
+            "cost_per_saleable": 184.13,
+            "relative_to_baseline": "better"
+          },
+          {
+            "machine_minutes_per_neck": 52,
+            "cost_per_saleable": 187.88,
+            "relative_to_baseline": "baseline"
+          },
+          {
+            "machine_minutes_per_neck": 60,
+            "cost_per_saleable": 192.17,
+            "relative_to_baseline": "worse"
+          },
+          {
+            "machine_minutes_per_neck": 75,
+            "cost_per_saleable": 200.22,
+            "relative_to_baseline": "worse"
+          },
+          {
+            "machine_minutes_per_neck": 90,
+            "cost_per_saleable": 208.27,
+            "relative_to_baseline": "worse"
+          }
+        ]
       }
     ]
   },
@@ -1129,6 +2381,22 @@
       "metric": "labour minutes affordable against a back-calculated manufacturing cost",
       "calculated_delta": 23.0,
       "interpretation": "Working backwards from an observed shelf price puts a manufacturer's cost between 51.30 and 96.19. To meet the typical-channel figure this shop must build a complete neck in about 23 labour minutes against 191 today, or pay about 3.46 an hour against 28.75. Two of the four routes are unreachable on materials and machine time ALONE, before any labour. The gap is labour RATE times CONTENT, and the shop can only move content - which needs an eightfold reduction, not a process tweak.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
+      "finding_id": "FINDING-NO-COMPATIBLE-BUY-SIDE-EXISTS",
+      "metric": "threshold comparisons that are commercially actionable",
+      "calculated_delta": 0,
+      "interpretation": "B1-B4 are now defined and every threshold from 90 to 140 is judged like-for-like against its make state. NOT ONE COMPARISON IS ACTIONABLE. The instrument is headless with a locking clamp nut at 628.65 mm, and no supplier of such a neck has been identified at any completion state. The economics are computed anyway, because a threshold the shop cannot act on today is still the number it would need if a source appeared.",
+      "confidence": "draft",
+      "decision_authorized": false
+    },
+    {
+      "finding_id": "FINDING-RUNTIME-RISK-WAS-ONE-SIDED",
+      "metric": "cost per saleable neck across the widened runtime grid",
+      "calculated_delta": 37.56,
+      "interpretation": "The accepted runtime sweep only descended from the unverified 52-minute baseline, so it could only ever show the number proving favourable. Extended above it, the grid shows the spread across the full domain. Runtime remains the largest single unmeasured lever and it now cuts both ways.",
       "confidence": "draft",
       "decision_authorized": false
     },

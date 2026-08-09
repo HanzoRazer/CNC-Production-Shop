@@ -217,6 +217,199 @@
       ]
     }
   ],
+  "buy_completion_states": [
+    {
+      "state_id": "B1",
+      "description": "Purchased CNC-machined unfinished neck",
+      "make_equivalent": "M1",
+      "completion_requirements": [
+        "shaft profile machined to drawing",
+        "truss rod channel cut and to depth",
+        "heel geometry to print",
+        "fretboard NOT attached"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5,
+          "rationale": "unpack, count, check for transit damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10,
+          "rationale": "heel width and thickness against the CNC pocket datum"
+        },
+        {
+          "operation": "corrective fitting",
+          "minutes": 12,
+          "rationale": "heel and truss channel correction to reach pocket fit"
+        }
+      ],
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "truss channel depth",
+        "scale-length datum"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "No supplier of a machined-only headless neck has been identified. The state is defined so the comparison is possible, not because a source exists."
+    },
+    {
+      "state_id": "B2",
+      "description": "Purchased neck with fretboard installed",
+      "make_equivalent": "M2",
+      "completion_requirements": [
+        "B1 requirements",
+        "fretboard bonded over the truss rod",
+        "board levelled and radiused",
+        "frets NOT installed"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5,
+          "rationale": "unpack, count, check for transit damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10,
+          "rationale": "heel fit plus board radius and glue-line integrity"
+        },
+        {
+          "operation": "corrective fitting",
+          "minutes": 14,
+          "rationale": "heel correction plus board levelling to shop tolerance"
+        }
+      ],
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "fretboard bond integrity",
+        "board radius and level",
+        "slot spacing against the 628.65 mm scale"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "Slot spacing is scale-specific, so a board installed by a supplier commits the scale length before this shop sees the part."
+    },
+    {
+      "state_id": "B3",
+      "description": "Purchased complete fretted neck",
+      "make_equivalent": "M3",
+      "completion_requirements": [
+        "B2 requirements",
+        "frets installed and seated",
+        "frets levelled, crowned and ends dressed",
+        "neck NOT finished"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5,
+          "rationale": "unpack, count, check for transit damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10,
+          "rationale": "heel fit, board level and fret height consistency"
+        },
+        {
+          "operation": "corrective fretwork",
+          "minutes": 18,
+          "rationale": "seating proud frets and re-dressing ends, which is the commonest defect on a bought fretted neck"
+        }
+      ],
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "fret seating and level",
+        "crown profile and end dressing",
+        "slot spacing against the 628.65 mm scale"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "Corrective fretwork is the retained cost most likely to be understated here; it is also the one no measurement exists for."
+    },
+    {
+      "state_id": "B4",
+      "description": "Purchased production-ready neck",
+      "make_equivalent": "M4",
+      "completion_requirements": [
+        "B3 requirements",
+        "nut slot cut for a locking clamp nut",
+        "neck finished",
+        "ready to hang on a body without further shop work"
+      ],
+      "retained_shop_operations": [
+        {
+          "operation": "receiving inspection",
+          "minutes": 5,
+          "rationale": "unpack, count, check for transit and finish damage"
+        },
+        {
+          "operation": "dimensional verification",
+          "minutes": 10,
+          "rationale": "heel fit, relief and installation readiness"
+        },
+        {
+          "operation": "corrective fitting",
+          "minutes": 20,
+          "rationale": "correcting a FINISHED neck is dearer than correcting a blank; finish must be protected or repaired"
+        }
+      ],
+      "inspection_requirements": [
+        "heel-to-pocket fit",
+        "fret level and nut slot geometry",
+        "finish quality and cure",
+        "installation readiness"
+      ],
+      "compatibility_requirements": [
+        "headless termination, no headstock and no tuner bores",
+        "locking clamp-nut mounting pattern at the nut end",
+        "628.65 mm scale length",
+        "24-fret board length"
+      ],
+      "purchase_price_status": "unresolved",
+      "compatible_supplier_identified": false,
+      "source": "engineering_estimate",
+      "confidence": "draft",
+      "note": "The two existing purchase references sit at this completion state but are conventional headstock necks, so neither is attached here as a substitute. See buy_references for those, recorded as references only."
+    }
+  ],
+  "purchase_price_thresholds": {
+    "values": [
+      90,
+      100,
+      120,
+      140
+    ],
+    "basis": "analytical",
+    "source": "dev_order",
+    "confidence": "draft",
+    "note": "THESE ARE NOT SUPPLIER OFFERS. They are the delivered price points the Dev Order asked the model to be judged against, so the shop knows which side of each it falls on. No supplier has quoted any of them, and for a headless clamp-nut neck no compatible supplier has been identified at all."
+  },
   "back_calculation": {
     "note": "Anchors on a KNOWN retail price and solves backwards, rather than treating a catalog figure as a cost. The output is a bracket, not a point: the four channel routes are plausible industry structures and their spread is the honest width of the answer.",
     "anchor": {
@@ -275,12 +468,18 @@
   },
   "sensitivity": {
     "fretwork_minutes": [
-      78,
-      65,
-      55,
-      45,
+      20,
+      25,
+      30,
       35,
-      25
+      40,
+      45,
+      50,
+      55,
+      60,
+      65,
+      78,
+      90
     ],
     "fretboard_price": [
       29,
@@ -290,11 +489,14 @@
       5
     ],
     "machine_minutes": [
-      52,
-      45,
-      40,
+      20,
       30,
-      20
+      40,
+      45,
+      52,
+      60,
+      75,
+      90
     ],
     "yield_rate": [
       0.8,
@@ -303,7 +505,9 @@
       0.95,
       1.0
     ],
-    "note": "A deterministic grid, not an optimiser. Machine minutes remain PER NECK: this sprint does not reinterpret them as a nested batch runtime without measured evidence."
+    "note": "A deterministic grid, not an optimiser. Machine minutes remain PER NECK: this sprint does not reinterpret them as a nested batch runtime without measured evidence. Both grids are the UNION of the originally accepted points and the expanded specification, sorted ascending and deduplicated, so every previously computed cell still recomputes while the domain grows. The runtime grid now extends ABOVE the 52-minute baseline as well as below it: 52 is unverified, and a grid that only descends from it silently assumes the unmeasured number can only prove favourable.",
+    "baseline_machine_minutes": 52,
+    "baseline_fretwork_minutes": 78
   },
   "provenance": {
     "source": "engineering_estimate",
@@ -314,6 +518,7 @@
   "notes": [
     "BATCHING IS THE SMALLEST LEVER ON THE TABLE. Only OP-4100 carries setup, so the entire benefit is 8.62 per neck and it is fully realised by about quantity 10.",
     "The two real levers are the fretboard price and the fretwork time, and neither has anything to do with the router that prompted this sprint.",
-    "The construction choice is worth 11.75 per neck in timber alone, which is more than everything batching can offer combined."
+    "The construction choice is worth 11.75 per neck in timber alone, which is more than everything batching can offer combined.",
+    "NECK-MAKE-OR-BUY-GAP-CLOSURE-1 extended this record additively: the runtime and fretwork sweeps are unioned with the expanded specification and now bracket the baseline on both sides, B1-B4 are defined as governed completion states with retained shop labour, and the four analytical purchase thresholds are recorded. The strategic back_calculation section is unchanged and remains separately classified: it is not an input to any make-cost arithmetic."
   ]
 }

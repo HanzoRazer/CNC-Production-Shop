@@ -1,0 +1,580 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "neck_make_or_buy_result_v1.schema.json",
+  "title": "NeckMakeOrBuyResultV1",
+  "description": "Governed result artifact for the neck make-or-buy sensitivity model. Every number in it is derived by scripts/build_neck_make_or_buy.py and recomputed in full by scripts/validate_neck_make_or_buy.py; a figure that cannot be reproduced from the scenario is a failure, not a rounding difference. Carries no customer price, wholesale price, MSRP, margin, markup, or overhead allocation in any make-or-buy section. The single exception is `back_calculation`, which is SEPARATELY CLASSIFIED strategic analysis of a third party's cost structure and is not an input to any make-cost arithmetic here. This artifact authorizes nothing: status is draft and decision_authorized is false throughout.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_id",
+    "input_ref",
+    "dev_order",
+    "status",
+    "currency",
+    "decision_authorized",
+    "baseline",
+    "make_scenarios",
+    "batching_effect",
+    "buy_references",
+    "buy_completion_states",
+    "thresholds",
+    "threshold_findings",
+    "sensitivity",
+    "findings",
+    "back_calculation"
+  ],
+  "properties": {
+    "result_id": { "type": "string", "minLength": 1 },
+    "input_ref": { "type": "string", "minLength": 1 },
+    "dev_order": { "type": "string", "minLength": 1 },
+    "status": { "const": "draft" },
+    "currency": { "type": "string", "minLength": 3 },
+    "decision_authorized": {
+      "description": "Must be false. This model informs a sourcing decision; it never makes one.",
+      "const": false
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["construction", "fretboard_price", "yield_rate", "note"],
+      "properties": {
+        "construction": { "type": "string", "minLength": 1 },
+        "fretboard_price": { "type": "number", "minimum": 0 },
+        "yield_rate": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "note": { "type": "string" }
+      }
+    },
+    "make_scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "description": "One in-house build at one completion state and quantity. Note what is NOT here: a purchase ceiling. A make scenario cannot state one, because the ceiling is this cost less the shop work the matching buy state retains, so it needs both sides. It is reported once, in threshold_findings.ceilings, as maximum_compatible_delivered_purchase_price. additionalProperties is false, so this schema now refuses the field rather than merely omitting it.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "construction",
+          "completion_state",
+          "completion_description",
+          "quantity",
+          "saleable",
+          "material_cost",
+          "setup_cost",
+          "touch_cost",
+          "machine_cost",
+          "occupancy_cost",
+          "labour_minutes",
+          "machine_minutes",
+          "occupancy_minutes",
+          "elapsed_wait_minutes",
+          "cost_per_started",
+          "cost_per_saleable",
+          "yield_loss_per_saleable"
+        ],
+        "properties": {
+          "construction": { "type": "string", "minLength": 1 },
+          "completion_state": { "$ref": "#/$defs/makeState" },
+          "completion_description": { "type": "string" },
+          "quantity": { "type": "integer", "minimum": 1 },
+          "saleable": {
+            "description": "Expected saleable units. Must be greater than zero; a batch that yields nothing has no cost per saleable neck.",
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "material_cost": { "type": "number", "minimum": 0 },
+          "setup_cost": { "type": "number", "minimum": 0 },
+          "touch_cost": { "type": "number", "minimum": 0 },
+          "machine_cost": { "type": "number", "minimum": 0 },
+          "occupancy_cost": { "type": "number", "minimum": 0 },
+          "labour_minutes": {
+            "description": "Setup plus operator touch ONLY. Equipment occupancy and elapsed wait are excluded by definition and must stay excluded.",
+            "type": "number",
+            "minimum": 0
+          },
+          "machine_minutes": { "type": "number", "minimum": 0 },
+          "occupancy_minutes": { "type": "number", "minimum": 0 },
+          "elapsed_wait_minutes": {
+            "description": "Calendar time. Reported so it is visible, costed at nothing.",
+            "type": "number",
+            "minimum": 0
+          },
+          "cost_per_started": { "type": "number", "minimum": 0 },
+          "cost_per_saleable": { "type": "number", "minimum": 0 },
+          "yield_loss_per_saleable": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "batching_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operations_carrying_setup",
+        "total_setup_minutes",
+        "cost_per_saleable_qty_1",
+        "cost_per_saleable_qty_40",
+        "saving_qty_1_to_40",
+        "ceiling_at_infinite_quantity",
+        "note"
+      ],
+      "properties": {
+        "operations_carrying_setup": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "total_setup_minutes": { "type": "number", "minimum": 0 },
+        "cost_per_saleable_qty_1": { "type": "number", "minimum": 0 },
+        "cost_per_saleable_qty_40": { "type": "number", "minimum": 0 },
+        "saving_qty_1_to_40": {
+          "description": "Setup amortisation never runs backwards; more units cannot cost more per unit through setup alone.",
+          "type": "number",
+          "minimum": 0
+        },
+        "ceiling_at_infinite_quantity": { "type": "number", "minimum": 0 },
+        "note": { "type": "string" }
+      }
+    },
+    "buy_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reference_id",
+          "completion_state",
+          "catalog_price",
+          "landed_cost_per_good",
+          "is_fully_landed",
+          "unknown_fields",
+          "notes"
+        ],
+        "properties": {
+          "reference_id": { "type": "string", "minLength": 1 },
+          "completion_state": { "$ref": "#/$defs/makeState" },
+          "catalog_price": { "type": "number", "exclusiveMinimum": 0 },
+          "landed_cost_per_good": {
+            "description": "null when any landed-cost input is unknown. A number computed from incomplete inputs would be a guess wearing a decimal point.",
+            "oneOf": [{ "type": "null" }, { "type": "number", "exclusiveMinimum": 0 }]
+          },
+          "is_fully_landed": { "type": "boolean" },
+          "unknown_fields": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "buy_completion_states": {
+      "description": "B1-B4 with retained shop cost derived, not transcribed.",
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "state_id",
+          "description",
+          "make_equivalent",
+          "completion_requirements",
+          "retained_shop_operations",
+          "retained_minutes",
+          "retained_completion_cost",
+          "inspection_requirements",
+          "compatibility_requirements",
+          "purchase_price_status",
+          "compatible_supplier_identified",
+          "source",
+          "confidence",
+          "note"
+        ],
+        "properties": {
+          "state_id": { "$ref": "#/$defs/buyState" },
+          "description": { "type": "string" },
+          "make_equivalent": { "$ref": "#/$defs/makeState" },
+          "completion_requirements": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "retained_shop_operations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["operation", "minutes", "rationale"],
+              "properties": {
+                "operation": { "type": "string", "minLength": 1 },
+                "minutes": { "type": "number", "minimum": 0 },
+                "rationale": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "retained_minutes": { "type": "number", "minimum": 0 },
+          "retained_completion_cost": { "type": "number", "minimum": 0 },
+          "inspection_requirements": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "compatibility_requirements": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "purchase_price_status": { "enum": ["unresolved", "quoted", "observed"] },
+          "compatible_supplier_identified": { "type": "boolean" },
+          "source": { "type": "string" },
+          "confidence": { "$ref": "#/$defs/confidence" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "thresholds": {
+      "description": "Fretwork minutes required to reach each observed purchase reference. Keyed by reference id.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "type": "string", "minLength": 1 },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target_price", "completion_state", "quantity", "construction", "rows"],
+        "properties": {
+          "target_price": { "type": "number", "exclusiveMinimum": 0 },
+          "completion_state": { "$ref": "#/$defs/makeState" },
+          "quantity": { "type": "integer", "minimum": 1 },
+          "construction": { "type": "string", "minLength": 1 },
+          "rows": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "fretboard_price",
+                "fretwork_minutes_required",
+                "reachable",
+                "reduction_percent"
+              ],
+              "properties": {
+                "fretboard_price": { "type": "number", "minimum": 0 },
+                "fretwork_minutes_required": {
+                  "description": "null when the target is unreachable even with fretwork at zero. Honest unreachability beats a negative number.",
+                  "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+                },
+                "reachable": { "type": "boolean" },
+                "reduction_percent": {
+                  "oneOf": [{ "type": "null" }, { "type": "number" }]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "threshold_findings": {
+      "description": "Each analytical threshold judged like-for-like against its completion state. Mx pairs with Bx and nothing else.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "sign_convention",
+        "ceilings",
+        "comparisons",
+        "commercially_actionable_rows",
+        "note"
+      ],
+      "properties": {
+        "basis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["construction", "quantity", "yield_rate", "fretboard_price", "note"],
+          "properties": {
+            "construction": { "type": "string", "minLength": 1 },
+            "quantity": { "type": "integer", "minimum": 1 },
+            "yield_rate": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+            "fretboard_price": { "type": "number", "minimum": 0 },
+            "note": { "type": "string" }
+          }
+        },
+        "sign_convention": {
+          "description": "Stated in the artifact because the sign inverts easily and a silently flipped comparison reads as a valid answer.",
+          "type": "string",
+          "minLength": 1
+        },
+        "ceilings": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "make_state",
+              "buy_state",
+              "make_cost_per_saleable",
+              "retained_buy_side_completion_cost",
+              "maximum_compatible_delivered_purchase_price"
+            ],
+            "properties": {
+              "make_state": { "$ref": "#/$defs/makeState" },
+              "buy_state": { "$ref": "#/$defs/buyState" },
+              "make_cost_per_saleable": { "type": "number", "minimum": 0 },
+              "retained_buy_side_completion_cost": { "type": "number", "minimum": 0 },
+              "maximum_compatible_delivered_purchase_price": { "type": "number" }
+            }
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "make_state",
+              "buy_state",
+              "threshold_price",
+              "make_cost_per_saleable",
+              "retained_buy_side_completion_cost",
+              "maximum_compatible_delivered_purchase_price",
+              "difference_versus_threshold",
+              "result",
+              "commercially_actionable",
+              "reason",
+              "compatibility_caveat"
+            ],
+            "properties": {
+              "make_state": { "$ref": "#/$defs/makeState" },
+              "buy_state": { "$ref": "#/$defs/buyState" },
+              "threshold_price": { "type": "number", "exclusiveMinimum": 0 },
+              "make_cost_per_saleable": { "type": "number", "minimum": 0 },
+              "retained_buy_side_completion_cost": { "type": "number", "minimum": 0 },
+              "maximum_compatible_delivered_purchase_price": { "type": "number" },
+              "difference_versus_threshold": { "type": "number" },
+              "result": { "enum": ["make_lower_cost", "buy_lower_cost", "break_even"] },
+              "commercially_actionable": { "type": "boolean" },
+              "reason": { "type": "string", "minLength": 1 },
+              "compatibility_caveat": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "commercially_actionable_rows": { "type": "integer", "minimum": 0 },
+        "note": { "type": "string" }
+      }
+    },
+    "sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["matrices", "sweeps"],
+      "properties": {
+        "matrices": {
+          "description": "Two-variable grids. Must include fretwork-by-yield and runtime-by-yield at quantity 20.",
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "matrix_id",
+              "description",
+              "row_axis",
+              "column_axis",
+              "completion_state",
+              "quantity",
+              "fixed_assumptions",
+              "cells"
+            ],
+            "properties": {
+              "matrix_id": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" },
+              "row_axis": { "$ref": "#/$defs/axis" },
+              "column_axis": { "$ref": "#/$defs/axis" },
+              "completion_state": { "$ref": "#/$defs/makeState" },
+              "quantity": { "type": "integer", "minimum": 1 },
+              "fixed_assumptions": {
+                "description": "Everything not on an axis. A matrix that does not say what it held constant cannot be recomputed.",
+                "type": "object",
+                "minProperties": 1
+              },
+              "cells": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["row", "column", "cost_per_saleable"],
+                  "properties": {
+                    "row": { "type": "number" },
+                    "column": { "type": "number" },
+                    "cost_per_saleable": { "type": "number", "minimum": 0 }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "sweeps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sweep_id",
+              "axis",
+              "baseline_value",
+              "completion_state",
+              "quantity",
+              "fixed_assumptions",
+              "points"
+            ],
+            "properties": {
+              "sweep_id": { "type": "string", "minLength": 1 },
+              "axis": { "$ref": "#/$defs/axis" },
+              "baseline_value": { "type": "number", "minimum": 0 },
+              "completion_state": { "$ref": "#/$defs/makeState" },
+              "quantity": { "type": "integer", "minimum": 1 },
+              "fixed_assumptions": { "type": "object", "minProperties": 1 },
+              "points": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "machine_minutes_per_neck",
+                    "cost_per_saleable",
+                    "relative_to_baseline"
+                  ],
+                  "properties": {
+                    "machine_minutes_per_neck": { "type": "number", "minimum": 0 },
+                    "cost_per_saleable": { "type": "number", "minimum": 0 },
+                    "relative_to_baseline": { "enum": ["better", "baseline", "worse"] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "finding_id",
+          "metric",
+          "calculated_delta",
+          "interpretation",
+          "confidence",
+          "decision_authorized"
+        ],
+        "properties": {
+          "finding_id": { "type": "string", "minLength": 1 },
+          "metric": { "type": "string", "minLength": 1 },
+          "calculated_delta": {
+            "description": "null where the finding is qualitative. A fabricated number would be worse than none.",
+            "oneOf": [{ "type": "null" }, { "type": "number" }]
+          },
+          "interpretation": { "type": "string", "minLength": 1 },
+          "confidence": { "const": "draft" },
+          "decision_authorized": { "const": false }
+        }
+      }
+    },
+    "back_calculation": {
+      "title": "StrategicBackCalculationResultV1",
+      "description": "SEPARATELY CLASSIFIED. Derived from the scenario's strategic back-calculation subtree, which infers a THIRD PARTY's manufacturing cost from their observed shelf price. Not an input to any make-cost arithmetic in this artifact; the validator proves the separation by perturbation rather than asserting it. Must remain a bracket across several routes, never a single point.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "anchor_retail_price",
+        "anchor_reference_id",
+        "manufacturing_cost_low",
+        "manufacturing_cost_high",
+        "manufacturing_cost_midpoint",
+        "shop_current_cost",
+        "scenarios",
+        "scenarios_reachable",
+        "scenarios_unreachable_on_materials_and_machine",
+        "tightest_labour_minutes",
+        "lowest_implied_labour_rate"
+      ],
+      "properties": {
+        "anchor_retail_price": { "type": "number", "exclusiveMinimum": 0 },
+        "anchor_reference_id": { "type": "string", "minLength": 1 },
+        "manufacturing_cost_low": { "type": "number", "exclusiveMinimum": 0 },
+        "manufacturing_cost_high": { "type": "number", "exclusiveMinimum": 0 },
+        "manufacturing_cost_midpoint": { "type": "number", "exclusiveMinimum": 0 },
+        "shop_current_cost": { "type": "number", "exclusiveMinimum": 0 },
+        "scenarios": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scenario_id",
+              "description",
+              "manufacturing_cost",
+              "shop_material_cost",
+              "shop_machine_cost",
+              "budget_for_labour",
+              "labour_minutes_affordable",
+              "implied_labour_rate",
+              "reachable",
+              "note"
+            ],
+            "properties": {
+              "scenario_id": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" },
+              "manufacturing_cost": { "type": "number", "exclusiveMinimum": 0 },
+              "shop_material_cost": { "type": "number", "minimum": 0 },
+              "shop_machine_cost": { "type": "number", "minimum": 0 },
+              "budget_for_labour": { "type": "number" },
+              "labour_minutes_affordable": {
+                "description": "null when the target is unreachable on materials and machine time alone. Emitting a negative budget would invite someone to read it as a gap to close.",
+                "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+              },
+              "implied_labour_rate": {
+                "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+              },
+              "reachable": { "type": "boolean" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "scenarios_reachable": { "type": "integer", "minimum": 0 },
+        "scenarios_unreachable_on_materials_and_machine": { "type": "integer", "minimum": 0 },
+        "tightest_labour_minutes": {
+          "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+        },
+        "lowest_implied_labour_rate": {
+          "oneOf": [{ "type": "null" }, { "type": "number", "minimum": 0 }]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "confidence": { "enum": ["draft", "estimated", "confirmed", "unknown"] },
+    "makeState": { "enum": ["M1", "M2", "M3", "M4"] },
+    "buyState": { "enum": ["B1", "B2", "B3", "B4"] },
+    "axis": {
+      "description": "A named, sorted, deduplicated axis. A duplicated value produces two cells claiming one coordinate, which is a silent way to lose a result.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "values"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "values": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "number" }
+        }
+      }
+    }
+  }
+}
