@@ -167,9 +167,20 @@ def _identity_rejection(
     return RejectionCode.STRING_EXCLUDED
 
 
-def _course_index(profile: InstrumentProfile, unit: PlayableUnit) -> int:
-    """Position of this unit in playing order, for string-jump measurement."""
-    return [u.unit_id for u in playable_units(profile)].index(unit.unit_id)
+def unit_index_of(units: tuple[PlayableUnit, ...], position: SpatialPosition) -> int | None:
+    """Index of the playable unit a position sits on, or None if it is not here.
+
+    Matches on ``course_id`` first so a position recorded against one wire of a
+    course still resolves to the course the player actually fingers. Shared by
+    generation (string-jump limits) and scoring (string-change penalties) so the
+    two can never disagree about what counts as changing strings.
+    """
+    for index, unit in enumerate(units):
+        if position.course_id is not None and unit.course_id == position.course_id:
+            return index
+        if position.string_id in unit.string_ids:
+            return index
+    return None
 
 
 def generate_candidates(
@@ -200,14 +211,7 @@ def generate_candidates(
 
     previous_index: int | None = None
     if previous_position is not None and constraints.maximum_string_jump is not None:
-        for index, unit in enumerate(units):
-            same_course = (
-                previous_position.course_id is not None
-                and unit.course_id == previous_position.course_id
-            )
-            if same_course or previous_position.string_id in unit.string_ids:
-                previous_index = index
-                break
+        previous_index = unit_index_of(units, previous_position)
 
     for index, unit in enumerate(units):
         reject = _make_rejector(unit, rejections)
