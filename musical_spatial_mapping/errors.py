@@ -32,6 +32,21 @@ class MappingConstraintError(SpatialMappingError):
     code = "constraint_invalid"
 
 
+class SelectionInputError(SpatialMappingError):
+    """Selection was handed something that is not a scored candidate set.
+
+    Added by MSME-002. This is a PIPELINE programming error, never a musical
+    outcome. An empty candidate set means the caller skipped the check that
+    produces ``SelectionStatus.UNPLAYABLE``, and a candidate arriving with
+    ``score=None`` means scoring was skipped; in both cases the honest answer is
+    to refuse rather than invent a selection. Selection never manufactures
+    UNPLAYABLE — that belongs to orchestration, which branches on the generation
+    outcome before selection is ever called.
+    """
+
+    code = "selection_input_invalid"
+
+
 class UnsupportedPitchError(SpatialMappingError):
     """A pitch cannot be REPRESENTED at all — malformed or unsupported notation.
 
