@@ -56,15 +56,27 @@ class RejectionCode(str, Enum):
     location that could, and one code covering both destroys that answer::
 
         instrument feasibility   BELOW_OPEN_PITCH, ABOVE_POSITION_RANGE,
-                                 PITCH_NOT_REALIZABLE, PROFILE_INVALID
+                                 PITCH_NOT_REALIZABLE, PROFILE_INVALID,
+                                 STRING_DISABLED
         caller constraints       POSITION_CONSTRAINT, OPEN_STRING_EXCLUDED,
-                                 CAPO_CONFLICT, STRING_EXCLUDED
+                                 CAPO_CONFLICT, STRING_EXCLUDED,
+                                 STRING_JUMP_CONSTRAINT
+
+    The three string-related codes answer three different questions, and a caller
+    that gets one answer where it needed another has been misled::
+
+        STRING_DISABLED          was the string unavailable on the instrument?
+        STRING_EXCLUDED          did MY request exclude it?
+        STRING_JUMP_CONSTRAINT   was it playable, but too far from where I was?
     """
 
     # Instrument feasibility: the pitch is below the string's open reference, or
     # beyond the neck the profile actually declares.
     BELOW_OPEN_PITCH = "below_open_pitch"
     ABOVE_POSITION_RANGE = "above_position_range"
+    # Caller constraint: the request's allowed_string_ids / excluded_string_ids
+    # ruled this unit out. Narrowed by MSME-002 to identity constraints ONLY;
+    # the serialized value is unchanged.
     STRING_EXCLUDED = "string_excluded"
     OPEN_STRING_EXCLUDED = "open_string_excluded"
     OUTSIDE_PREFERRED_REGION = "outside_preferred_region"
@@ -85,3 +97,12 @@ class RejectionCode(str, Enum):
     # ABOVE_POSITION_RANGE, which made a caller's own limit indistinguishable
     # from the instrument running out of neck.
     POSITION_CONSTRAINT = "position_constraint"
+    # Added by MSME-002: the profile itself declares the string unavailable
+    # (StringProfile.enabled is False). Instrument feasibility, not a caller
+    # choice, so it must not share STRING_EXCLUDED.
+    STRING_DISABLED = "string_disabled"
+    # Added by MSME-002: the unit was available and playable, and lay further
+    # from previous_position than maximum_string_jump allows. A MOVEMENT
+    # constraint rather than a string-identity one -- nothing about this string
+    # is excluded; it is simply too far from where the hand already was.
+    STRING_JUMP_CONSTRAINT = "string_jump_constraint"

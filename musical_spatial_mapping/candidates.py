@@ -137,16 +137,25 @@ def playable_units(profile: InstrumentProfile) -> tuple[PlayableUnit, ...]:
     return tuple(sorted(units, key=lambda u: (u.display_order, u.unit_id)))
 
 
-def _identity_permits(unit: PlayableUnit, constraints: MappingConstraints) -> bool:
-    """True when at least one member wire is enabled and permitted.
+def _identity_rejection(
+    unit: PlayableUnit, constraints: MappingConstraints
+) -> RejectionCode | None:
+    """Why this unit's identity rules it out, or None when it survives.
 
     Constraints name STRINGS while a course is played as a whole, so a course
     survives if any member is permitted. Excluding one wire of an inseparable
     pair cannot make the pair unplayable — the finger still lands there.
+
+    The two failures are reported separately because they answer different
+    questions. A string the profile marks unavailable is instrument feasibility;
+    a string the request filtered out is the caller's own doing. Checking
+    ``enabled`` first means an unavailable string never gets reported as though
+    the caller had excluded it.
     """
-    for string in unit.member_strings:
-        if not string.enabled:
-            continue
+    enabled = [s for s in unit.member_strings if s.enabled]
+    if not enabled:
+        return RejectionCode.STRING_DISABLED
+    for string in enabled:
         if string.string_id in constraints.excluded_string_ids:
             continue
         if (
@@ -154,8 +163,8 @@ def _identity_permits(unit: PlayableUnit, constraints: MappingConstraints) -> bo
             and string.string_id not in constraints.allowed_string_ids
         ):
             continue
-        return True
-    return False
+        return None
+    return RejectionCode.STRING_EXCLUDED
 
 
 def _course_index(profile: InstrumentProfile, unit: PlayableUnit) -> int:
@@ -213,8 +222,12 @@ def generate_candidates(
             )
             continue
 
-        if not _identity_permits(unit, constraints):
-            reject(RejectionCode.STRING_EXCLUDED, "no member string is enabled and permitted")
+        identity = _identity_rejection(unit, constraints)
+        if identity is RejectionCode.STRING_DISABLED:
+            reject(identity, "the profile marks every member string unavailable")
+            continue
+        if identity is not None:
+            reject(identity, "the request permits none of this unit's member strings")
             continue
 
         # Physical position is measured FROM THE NUT and knows nothing about a
@@ -301,10 +314,13 @@ def generate_candidates(
         if previous_index is not None and constraints.maximum_string_jump is not None:
             jump = abs(index - previous_index)
             if jump > constraints.maximum_string_jump:
+                # Movement, not identity: nothing about this unit is excluded, it
+                # is simply further from previous_position than allowed.
                 reject(
-                    RejectionCode.STRING_EXCLUDED,
-                    f"a jump of {jump} playing units exceeds the maximum of "
-                    f"{constraints.maximum_string_jump}",
+                    RejectionCode.STRING_JUMP_CONSTRAINT,
+                    f"unit {unit.unit_id} is {jump} playing units from "
+                    f"{previous_position.string_id if previous_position else '?'}, "
+                    f"exceeding the maximum jump of {constraints.maximum_string_jump}",
                 )
                 continue
 

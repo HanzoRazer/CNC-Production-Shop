@@ -243,6 +243,64 @@ def test_a_caller_window_never_reports_an_instrument_feasibility_code():
     assert codes == {RejectionCode.POSITION_CONSTRAINT}
 
 
+def test_an_unavailable_string_reports_string_disabled():
+    """Instrument feasibility. The caller excluded nothing — the profile did."""
+    profile = guitar()
+    strings = tuple(
+        StringProfile(**{**s.__dict__, "enabled": s.string_id != "string-5"})
+        for s in profile.strings
+    )
+    out = gen(InstrumentProfile(**{**profile.__dict__, "strings": strings}), 64)
+    codes = {r.code for r in out.rejections if r.string_ids == ("string-5",)}
+    assert codes == {RejectionCode.STRING_DISABLED}
+
+
+def test_a_request_filtered_string_reports_string_excluded():
+    """Caller constraint. The string is perfectly available; the request said no."""
+    out = gen(guitar(), 64, constraints=MappingConstraints(
+        excluded_string_ids=frozenset({"string-5"})))
+    codes = {r.code for r in out.rejections if r.string_ids == ("string-5",)}
+    assert codes == {RejectionCode.STRING_EXCLUDED}
+
+
+def test_an_out_of_reach_string_reports_string_jump_constraint():
+    """Movement constraint. Available, permitted, playable — just too far."""
+    anchor = next(
+        c for c in gen(guitar(), 64).candidates if c.position.string_id == "string-6"
+    ).position
+    out = gen(
+        guitar(), 64,
+        constraints=MappingConstraints(maximum_string_jump=1),
+        previous_position=anchor,
+    )
+    jumped = [r for r in out.rejections if r.code is RejectionCode.STRING_JUMP_CONSTRAINT]
+    assert jumped, "a distant string should be rejected for movement, not identity"
+    assert all(RejectionCode.STRING_EXCLUDED is not r.code for r in jumped)
+    assert any("exceeding the maximum jump" in r.detail for r in jumped)
+
+
+def test_the_three_string_rejections_are_independently_triggerable():
+    """Each answers a different question and none may stand in for another."""
+    profile = guitar()
+    strings = tuple(
+        StringProfile(**{**s.__dict__, "enabled": s.string_id != "string-2"})
+        for s in profile.strings
+    )
+    anchor = next(
+        c for c in gen(guitar(), 64).candidates if c.position.string_id == "string-6"
+    ).position
+    out = gen(
+        InstrumentProfile(**{**profile.__dict__, "strings": strings}), 64,
+        constraints=MappingConstraints(
+            excluded_string_ids=frozenset({"string-4"}), maximum_string_jump=1),
+        previous_position=anchor,
+    )
+    by_string = {r.string_ids[0]: r.code for r in out.rejections}
+    assert by_string["string-2"] is RejectionCode.STRING_DISABLED
+    assert by_string["string-4"] is RejectionCode.STRING_EXCLUDED
+    assert by_string["string-3"] is RejectionCode.STRING_JUMP_CONSTRAINT
+
+
 def test_disabled_strings_are_not_candidates():
     profile = guitar()
     strings = tuple(
