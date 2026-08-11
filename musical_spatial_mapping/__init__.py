@@ -8,10 +8,12 @@ fretted or fretless. It is executable mathematics: dependency-free, deterministi
 and embeddable. Applications consume it; applications do not define it. See the
 package README ("Architectural Position").
 
-Public surface as of MSME-001 Phase 1-2 (contracts + geometry primitives). Mapping
-behaviour -- candidate generation, scoring, selection, annotation, and the
-``MusicalSpatialMapper`` facade -- lands in later phases and is intentionally not
-exported yet.
+The public entry point is :class:`MusicalSpatialMapper`, which runs
+``validate -> generate -> score -> select -> annotate`` and returns a
+``MappingResult``. The individual stages live in ``candidates``, ``scoring``,
+``selection`` and ``annotation`` and are deliberately NOT re-exported here: they
+are how the engine works rather than what it promises, and a caller reaching past
+the facade should have to say so by importing the module.
 """
 
 __version__ = "0.1.0"
@@ -27,9 +29,11 @@ from .errors import (
     EventValidationError,
     MappingConstraintError,
     ProfileValidationError,
+    SelectionInputError,
     SpatialMappingError,
     UnsupportedPitchError,
 )
+from .mapper import MusicalSpatialMapper, equal_best_of
 from .models import (
     CandidateScore,
     InstrumentProfile,
@@ -72,6 +76,7 @@ __all__ = [
     "EventValidationError",
     "MappingConstraintError",
     "UnsupportedPitchError",
+    "SelectionInputError",
     # models
     "MusicalEvent",
     "StringProfile",
@@ -97,4 +102,7 @@ __all__ = [
     "instrument_profile_to_dict",
     "instrument_profile_from_dict",
     "instrument_profile_from_json",
+    # mapping facade
+    "MusicalSpatialMapper",
+    "equal_best_of",
 ]
