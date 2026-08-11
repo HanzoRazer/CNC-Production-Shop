@@ -14,9 +14,23 @@ The public entry point is :class:`MusicalSpatialMapper`, which runs
 ``selection`` and ``annotation`` and are deliberately NOT re-exported here: they
 are how the engine works rather than what it promises, and a caller reaching past
 the facade should have to say so by importing the module.
+
+What IS exported alongside the facade is everything needed to use it across a
+process boundary: the domain models and enums, the fail-closed validators, and
+the (de)serializers for profiles, results and spatial positions. The position
+pair is public because a caller resuming from stored state needs it to rebuild a
+``previous_position`` for the next call, and that is the ordinary workflow rather
+than an internal detail.
+
+Example profiles live in ``musical_spatial_mapping.fixtures`` and are importable,
+but are deliberately not part of this root contract: they are sample data, not a
+durable API.
+
+``musical_spatial_mapping.cli`` is a diagnostic consumer of the engine and is
+likewise not exported; it has no semantics of its own.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .enums import (
     FingerboardMode,
@@ -58,6 +72,8 @@ from .serialization import (
     mapping_result_from_json,
     mapping_result_to_dict,
     mapping_result_to_json,
+    spatial_position_from_dict,
+    spatial_position_to_dict,
 )
 from .validation import (
     validate_instrument_profile,
@@ -110,6 +126,8 @@ __all__ = [
     "mapping_result_to_json",
     "mapping_result_from_dict",
     "mapping_result_from_json",
+    "spatial_position_to_dict",
+    "spatial_position_from_dict",
     # mapping facade
     "MusicalSpatialMapper",
     "equal_best_of",
