@@ -157,7 +157,7 @@ def _event_to_dict(event: MusicalEvent) -> dict[str, Any]:
     }
 
 
-def _position_to_dict(position: SpatialPosition) -> dict[str, Any]:
+def spatial_position_to_dict(position: SpatialPosition) -> dict[str, Any]:
     return {
         "string_id": position.string_id,
         "course_id": position.course_id,
@@ -191,7 +191,7 @@ def _score_to_dict(score: CandidateScore | None) -> dict[str, Any] | None:
 
 def _candidate_to_dict(candidate: PositionCandidate) -> dict[str, Any]:
     return {
-        "position": _position_to_dict(candidate.position),
+        "position": spatial_position_to_dict(candidate.position),
         "score": _score_to_dict(candidate.score),
     }
 
@@ -234,7 +234,7 @@ def mapping_result_to_json(result: MappingResult, *, indent: int | None = 2) -> 
     return json.dumps(mapping_result_to_dict(result), indent=indent, ensure_ascii=False)
 
 
-def _position_from_dict(data: Mapping[str, Any]) -> SpatialPosition:
+def spatial_position_from_dict(data: Mapping[str, Any]) -> SpatialPosition:
     sounding = _require(data, "sounding")
     physical = _require(data, "physical")
     playing = _require(data, "playing")
@@ -262,7 +262,7 @@ def _position_from_dict(data: Mapping[str, Any]) -> SpatialPosition:
 def _candidate_from_dict(data: Mapping[str, Any]) -> PositionCandidate:
     score = data.get("score")
     return PositionCandidate(
-        position=_position_from_dict(_require(data, "position")),
+        position=spatial_position_from_dict(_require(data, "position")),
         score=None
         if score is None
         else CandidateScore(
