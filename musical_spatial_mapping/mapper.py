@@ -61,8 +61,11 @@ def _rejection_lines(rejections: tuple[CandidateRejection, ...]) -> tuple[str, .
     it. These lines say which unit failed, under which category, and why — so a
     caller can tell "your capo is in the way" from "this neck is too short".
     """
+    # ASCII only: these lines land in tests/golden/msme_v1_vectors.json, and a
+    # golden behavioural contract should not carry characters whose encoding can
+    # differ between the machine that wrote it and the one that checks it.
     return tuple(
-        f"{r.code.value}: {r.unit_id} ({', '.join(r.string_ids)}) — {r.detail}"
+        f"{r.code.value}: {r.unit_id} ({', '.join(r.string_ids)}) - {r.detail}"
         for r in rejections
     )
 

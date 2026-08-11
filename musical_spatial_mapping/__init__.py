@@ -54,6 +54,10 @@ from .serialization import (
     instrument_profile_from_dict,
     instrument_profile_from_json,
     instrument_profile_to_dict,
+    mapping_result_from_dict,
+    mapping_result_from_json,
+    mapping_result_to_dict,
+    mapping_result_to_json,
 )
 from .validation import (
     validate_instrument_profile,
@@ -102,6 +106,10 @@ __all__ = [
     "instrument_profile_to_dict",
     "instrument_profile_from_dict",
     "instrument_profile_from_json",
+    "mapping_result_to_dict",
+    "mapping_result_to_json",
+    "mapping_result_from_dict",
+    "mapping_result_from_json",
     # mapping facade
     "MusicalSpatialMapper",
     "equal_best_of",

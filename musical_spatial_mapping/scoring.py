@@ -31,6 +31,8 @@ not, which would let a documentation detail dominate a musical judgement.
 
 from __future__ import annotations
 
+import math
+
 from .candidates import playable_units, unit_index_of
 from .enums import OpenStringPolicy
 from .models import (
@@ -232,7 +234,13 @@ def score_candidate(
     return PositionCandidate(
         position=position,
         score=CandidateScore(
-            total=sum(components.values()),
+            # math.fsum, not sum(): CPython 3.12 switched sum() to Neumaier
+            # compensated summation for floats, so the same components produce a
+            # different last bit on 3.11 than on 3.12+. That is invisible until a
+            # score is compared against a stored one, at which point a golden
+            # vector recorded on one interpreter fails on another. fsum is
+            # exactly rounded, so every version and platform agrees.
+            total=math.fsum(components.values()),
             components=components,
             explanation=explanation,
         ),

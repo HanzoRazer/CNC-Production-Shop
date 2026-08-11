@@ -118,7 +118,8 @@ def test_an_unplayable_pitch_never_raises_unsupported_pitch_error():
 def test_unplayable_preserves_the_rejection_evidence():
     r = mapper().map(event(30))
     assert r.diagnostics, "an UNPLAYABLE result that says only 'none' is useless"
-    assert all("—" in d for d in r.diagnostics)
+    assert all(" - " in d for d in r.diagnostics)
+    assert all(d.isascii() for d in r.diagnostics), "golden vectors must stay ASCII"
     assert any("below_open_pitch" in d for d in r.diagnostics)
 
 
