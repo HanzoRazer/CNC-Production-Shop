@@ -116,6 +116,68 @@ def test_score_components_are_named_in_the_serialized_form():
 # --------------------------------------------------------------------- ambiguity
 
 
+def _spanish_guitar():
+    """A profile whose name is not ASCII. Entirely ordinary, and the case that
+    separates "stable structure" from "stable bytes"."""
+    from musical_spatial_mapping.models import InstrumentProfile
+
+    base = guitar()
+    return InstrumentProfile(**{
+        **base.__dict__,
+        "display_name": "Guitarra Española",
+        "instrument_id": "guitarra.española.6",
+    })
+
+
+def test_result_json_is_ascii_even_for_a_non_ascii_profile():
+    """Ordered keys give stable STRUCTURE; escaping gives stable BYTES.
+
+    A non-ASCII instrument name parses identically either way, so a structural
+    comparison would never notice — but the bytes differ, and golden vectors and
+    CLI output are compared as bytes.
+    """
+    result = MusicalSpatialMapper(profile=_spanish_guitar()).map(event(64))
+    assert mapping_result_to_json(result).isascii()
+
+
+def test_library_and_cli_emit_identical_bytes():
+    """One payload, one byte contract. The CLI serializes through this function
+    rather than its own json.dumps, so the two cannot drift apart."""
+    import subprocess
+    import sys as _sys
+
+    from musical_spatial_mapping.serialization import instrument_profile_to_dict
+
+    profile = _spanish_guitar()
+    result = MusicalSpatialMapper(profile=profile).map(event(64))
+    library = mapping_result_to_json(result, indent=2)
+
+    import tempfile
+    from pathlib import Path
+
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "profile.json"
+        path.write_text(
+            json.dumps(instrument_profile_to_dict(profile)), encoding="utf-8"
+        )
+        proc = subprocess.run(
+            [_sys.executable, "-m", "musical_spatial_mapping.cli",
+             "--profile", str(path), "--event", '{"midi_note": 64, "event_id": "e1"}'],
+            capture_output=True, text=True,
+        )
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip() == library.strip()
+
+
+def test_readable_output_is_opt_in_and_not_byte_stable():
+    """ensure_ascii=False stays available as a display choice, clearly labelled."""
+    result = MusicalSpatialMapper(profile=_spanish_guitar()).map(event(64))
+    readable = mapping_result_to_json(result, ensure_ascii=False)
+    assert not readable.isascii()
+    # Same structure either way — which is exactly why bytes need their own rule.
+    assert json.loads(readable) == json.loads(mapping_result_to_json(result))
+
+
 def test_no_equal_best_field_is_stored():
     """A stored copy of a derived fact could drift from the scores it summarises."""
     data = mapping_result_to_dict(mapped(preferences=ALL_TIED))
