@@ -5,8 +5,19 @@ Dev Order: MSME-001
 Instrument profiles round-trip (MSME-001) and mapping results round-trip
 (MSME-002 Phase G, which is where MSME-001 deliberately deferred them).
 
-Determinism: keys are emitted in a fixed order and enums by value, so golden
-comparisons are byte-stable.
+Determinism, stated precisely because "deterministic" hides two separate
+promises:
+
+* **Stable structure** — keys are emitted in a fixed order and enums by value,
+  so a parsed result compares equal wherever it was produced.
+* **Stable bytes** — the JSON emitters escape to ASCII by default, so the same
+  result is the same byte sequence on every machine and interpreter. Ordering
+  alone does not give this: a non-ASCII instrument name would serialize
+  differently under a different ``ensure_ascii`` policy while parsing
+  identically.
+
+Anything compared byte-for-byte — golden vectors, CLI output — depends on the
+second promise, not just the first.
 """
 
 import json
@@ -229,9 +240,24 @@ def mapping_result_to_dict(result: MappingResult) -> dict[str, Any]:
     }
 
 
-def mapping_result_to_json(result: MappingResult, *, indent: int | None = 2) -> str:
-    """Deterministic JSON for a mapping result."""
-    return json.dumps(mapping_result_to_dict(result), indent=indent, ensure_ascii=False)
+def mapping_result_to_json(
+    result: MappingResult, *, indent: int | None = 2, ensure_ascii: bool = True
+) -> str:
+    """Deterministic JSON for a mapping result.
+
+    ASCII-escaped by default, so the same result is the same BYTES everywhere.
+    Ordered keys alone are not enough for that: a profile with a non-ASCII
+    display name — ``Guitarra Española`` is a perfectly ordinary instrument —
+    would otherwise serialize differently here than through the CLI, which has
+    always escaped. Two byte contracts for one payload is the bug; this is the
+    single policy, and the CLI now calls straight through to it.
+
+    Pass ``ensure_ascii=False`` for human-readable output. That is a display
+    choice and must not be used for anything compared byte-for-byte.
+    """
+    return json.dumps(
+        mapping_result_to_dict(result), indent=indent, ensure_ascii=ensure_ascii
+    )
 
 
 def spatial_position_from_dict(data: Mapping[str, Any]) -> SpatialPosition:

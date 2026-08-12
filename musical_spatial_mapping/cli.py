@@ -37,12 +37,13 @@ from .mapper import MusicalSpatialMapper
 from .models import (
     MappingConstraints,
     MappingPreferences,
+    MappingResult,
     MusicalEvent,
     SpatialPosition,
 )
 from .serialization import (
     instrument_profile_from_dict,
-    mapping_result_to_dict,
+    mapping_result_to_json,
     spatial_position_from_dict,
 )
 
@@ -167,7 +168,7 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _run(args: argparse.Namespace) -> dict[str, Any]:
+def _run(args: argparse.Namespace) -> MappingResult:
     try:
         profile_data = json.loads(Path(args.profile).read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
@@ -197,7 +198,7 @@ def _run(args: argparse.Namespace) -> dict[str, Any]:
             )
         ),
     )
-    result = mapper.map(
+    return mapper.map(
         _event_from(_require_mapping(event_data, "event")),
         previous_position=_previous_from(
             _optional_mapping(
@@ -210,7 +211,6 @@ def _run(args: argparse.Namespace) -> dict[str, Any]:
             )
         ),
     )
-    return mapping_result_to_dict(result)
 
 
 def _optional_mapping(data: Any, label: str) -> Mapping[str, Any] | None:
@@ -225,7 +225,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     """
     args = _build_parser().parse_args(argv)
     try:
-        payload = _run(args)
+        result = _run(args)
     except (CliInputError, SpatialMappingError) as exc:
         # Concise, no traceback: the caller supplied something wrong and a stack
         # trace would tell them about our frames rather than their input.
@@ -235,9 +235,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"error: could not read input ({exc.strerror or exc})", file=sys.stderr)
         return EXIT_INPUT_ERROR
 
-    # ensure_ascii keeps stdout byte-identical wherever it runs, matching the
-    # golden vectors. indent=0 collapses to one line per JSON's own convention.
-    print(json.dumps(payload, indent=args.indent or None, ensure_ascii=True))
+    # Serialized through the library rather than by a second json.dumps here, so
+    # the CLI and a library caller cannot drift into different byte contracts.
+    # ASCII escaping is the serializer's default; indent 0 collapses to one line.
+    print(mapping_result_to_json(result, indent=args.indent or None))
     return EXIT_OK
 
 
