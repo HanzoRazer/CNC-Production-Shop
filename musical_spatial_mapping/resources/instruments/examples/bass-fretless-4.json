@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "instrument_id": "bass.fretless.4",
+  "display_name": "Four-String Fretless Bass",
+  "family": "bass",
+  "fingerboard_mode": "fretless",
+  "scale_length_mm": 864.0,
+  "fret_count": null,
+  "strings": [
+    { "string_id": "string-1", "display_label": "1", "display_order": 1, "open_midi_note": 43, "course_id": null, "enabled": true, "max_position": null },
+    { "string_id": "string-2", "display_label": "2", "display_order": 2, "open_midi_note": 38, "course_id": null, "enabled": true, "max_position": null },
+    { "string_id": "string-3", "display_label": "3", "display_order": 3, "open_midi_note": 33, "course_id": null, "enabled": true, "max_position": null },
+    { "string_id": "string-4", "display_label": "4", "display_order": 4, "open_midi_note": 28, "course_id": null, "enabled": true, "max_position": null }
+  ],
+  "reference_markers": [
+    { "marker_id": "pos-3", "semitone_offset": 3, "label": "3" },
+    { "marker_id": "pos-5", "semitone_offset": 5, "label": "5" },
+    { "marker_id": "pos-7", "semitone_offset": 7, "label": "7" },
+    { "marker_id": "pos-9", "semitone_offset": 9, "label": "9" },
+    { "marker_id": "pos-12", "semitone_offset": 12, "label": "12" },
+    { "marker_id": "pos-15", "semitone_offset": 15, "label": "15" },
+    { "marker_id": "pos-17", "semitone_offset": 17, "label": "17" },
+    { "marker_id": "pos-19", "semitone_offset": 19, "label": "19" }
+  ],
+  "metadata": {
+    "tuning_name": "standard",
+    "note": "E1 A1 D2 G2; no physical frets. Reference markers are visual position guides, not frets."
+  }
+}

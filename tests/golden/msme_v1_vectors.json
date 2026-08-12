@@ -1,0 +1,5339 @@
+{
+  "vector_schema": "msme_v1",
+  "dev_order": "MSME-002",
+  "vectors": [
+    {
+      "vector_id": "guitar-fretted-basic",
+      "description": "Ordinary fretted selection, A4",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 69,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 69,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 5.0,
+              "fret_number": 5,
+              "normalized_position": 0.25084646156165924,
+              "distance_from_nut_mm": 162.54850709195517
+            },
+            "playing": {
+              "semitone_offset_from_open": 5.0,
+              "fret_relative_to_capo": 5,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.25084646156165924,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.25084646156165924,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.2508 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 69,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.25084646156165924,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 69,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 10.0,
+                "fret_number": 10,
+                "normalized_position": 0.4387689758453135,
+                "distance_from_nut_mm": 284.32229634776314
+              },
+              "playing": {
+                "semitone_offset_from_open": 10.0,
+                "fret_relative_to_capo": 10,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4387689758453135,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4387689758453135,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4388 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 69,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 69,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 5",
+          "secondary_label": null,
+          "pitch_label": "A4",
+          "string_label": "String 1",
+          "position_label": "fret 5",
+          "reference_marker_label": "5",
+          "accessibility_text": "A4 on string 1, fret 5, at marker 5."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-5 (string-5) - fret 24.00 is beyond the 22-fret neck",
+          "above_position_range: string:string-6 (string-6) - fret 29.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-multi-position",
+      "description": "One pitch playable on several strings, E4",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.25084646156165924,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4053964424986395,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-open-string",
+      "description": "Low E as an open string",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 40,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-6",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 40,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-6",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 40,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 6, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E2",
+          "string_label": "String 6",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E2 on string 6, fret 0, open string."
+        },
+        "diagnostics": [
+          "below_open_pitch: string:string-1 (string-1) - pitch is 24.00 semitones below the open string",
+          "below_open_pitch: string:string-2 (string-2) - pitch is 19.00 semitones below the open string",
+          "below_open_pitch: string:string-3 (string-3) - pitch is 15.00 semitones below the open string",
+          "below_open_pitch: string:string-4 (string-4) - pitch is 10.00 semitones below the open string",
+          "below_open_pitch: string:string-5 (string-5) - pitch is 5.00 semitones below the open string"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-open-preferred",
+      "description": "Open-string policy PREFER charges fretted",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 1.2508464615616592,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 1.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck",
+                "open_string: fretted, where the policy prefers open strings"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 1.4053964424986396,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 1.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck",
+                "open_string: fretted, where the policy prefers open strings"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 1.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 1.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck",
+                "open_string: fretted, where the policy prefers open strings"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 1.6662900364574913,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 1.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck",
+                "open_string: fretted, where the policy prefers open strings"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-open-avoided",
+      "description": "Open-string policy AVOID charges open",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-2",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 5.0,
+              "fret_number": 5,
+              "normalized_position": 0.25084646156165924,
+              "distance_from_nut_mm": 162.54850709195517
+            },
+            "playing": {
+              "semitone_offset_from_open": 5.0,
+              "fret_relative_to_capo": 5,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.25084646156165924,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.25084646156165924,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.2508 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 1.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 1.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "open_string: open, where the policy avoids open strings"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.25084646156165924,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4053964424986395,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 2, fret 5",
+          "secondary_label": null,
+          "pitch_label": "E4",
+          "string_label": "String 2",
+          "position_label": "fret 5",
+          "reference_marker_label": "5",
+          "accessibility_text": "E4 on string 2, fret 5, at marker 5."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-open-excluded",
+      "description": "Open-string policy EXCLUDE removes the candidate",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-2",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 5.0,
+              "fret_number": 5,
+              "normalized_position": 0.25084646156165924,
+              "distance_from_nut_mm": 162.54850709195517
+            },
+            "playing": {
+              "semitone_offset_from_open": 5.0,
+              "fret_relative_to_capo": 5,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.25084646156165924,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.25084646156165924,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.2508 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.25084646156165924,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4053964424986395,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 2, fret 5",
+          "secondary_label": null,
+          "pitch_label": "E4",
+          "string_label": "String 2",
+          "position_label": "fret 5",
+          "reference_marker_label": "5",
+          "accessibility_text": "E4 on string 2, fret 5, at marker 5."
+        },
+        "diagnostics": [
+          "open_string_excluded: string:string-1 (string-1) - open-string policy excludes open positions",
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-capo-2",
+      "description": "Capo 2: physical fret 3 from the nut, playing fret 1",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 67,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 67,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 3.0,
+              "fret_number": 3,
+              "normalized_position": 0.1591035847462855,
+              "distance_from_nut_mm": 103.099122915593
+            },
+            "playing": {
+              "semitone_offset_from_open": 1.0,
+              "fret_relative_to_capo": 1,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.1591035847462855,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.1591035847462855,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.1591 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 67,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 3.0,
+                "fret_number": 3,
+                "normalized_position": 0.1591035847462855,
+                "distance_from_nut_mm": 103.099122915593
+              },
+              "playing": {
+                "semitone_offset_from_open": 1.0,
+                "fret_relative_to_capo": 1,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.1591035847462855,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.1591035847462855,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.1591 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 67,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 8.0,
+                "fret_number": 8,
+                "normalized_position": 0.3700394750525634,
+                "distance_from_nut_mm": 239.78557983406108
+              },
+              "playing": {
+                "semitone_offset_from_open": 6.0,
+                "fret_relative_to_capo": 6,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.3700394750525634,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.3700394750525634,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.3700 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 67,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 12.0,
+                "fret_number": 12,
+                "normalized_position": 0.5,
+                "distance_from_nut_mm": 324.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 10.0,
+                "fret_relative_to_capo": 10,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5000 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 67,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 17.0,
+                "fret_number": 17,
+                "normalized_position": 0.6254232307808296,
+                "distance_from_nut_mm": 405.2742535459776
+              },
+              "playing": {
+                "semitone_offset_from_open": 15.0,
+                "fret_relative_to_capo": 15,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6254232307808296,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6254232307808296,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6254 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 67,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 22.0,
+                "fret_number": 22,
+                "normalized_position": 0.7193844879226567,
+                "distance_from_nut_mm": 466.16114817388154
+              },
+              "playing": {
+                "semitone_offset_from_open": 20.0,
+                "fret_relative_to_capo": 20,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.7193844879226567,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.7193844879226567,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.7194 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 3",
+          "secondary_label": "fret 1 above the capo at 2",
+          "pitch_label": "G4",
+          "string_label": "String 1",
+          "position_label": "fret 3",
+          "reference_marker_label": "3",
+          "accessibility_text": "G4 on string 1, fret 3, fret 1 above the capo at 2, at marker 3."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 27.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-capo-open",
+      "description": "Capo 2: the capoed pitch is the new open",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 66,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 66,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 2.0,
+              "fret_number": 2,
+              "normalized_position": 0.10910128185966073,
+              "distance_from_nut_mm": 70.69763064506014
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.10910128185966073,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.10910128185966073,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.1091 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 66,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 2.0,
+                "fret_number": 2,
+                "normalized_position": 0.10910128185966073,
+                "distance_from_nut_mm": 70.69763064506014
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.10910128185966073,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.10910128185966073,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.1091 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 66,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 7.0,
+                "fret_number": 7,
+                "normalized_position": 0.3325800729149828,
+                "distance_from_nut_mm": 215.51188724890886
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.3325800729149828,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.3325800729149828,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.3326 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 66,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 11.0,
+                "fret_number": 11,
+                "normalized_position": 0.47026845282035235,
+                "distance_from_nut_mm": 304.73395742758834
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.47026845282035235,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.47026845282035235,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4703 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 66,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 16.0,
+                "fret_number": 16,
+                "normalized_position": 0.6031497370079502,
+                "distance_from_nut_mm": 390.8410295811517
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6031497370079502,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6031497370079502,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6031 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 66,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 21.0,
+                "fret_number": 21,
+                "normalized_position": 0.7026982212493198,
+                "distance_from_nut_mm": 455.3484473695592
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.7026982212493198,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.7026982212493198,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.7027 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 2",
+          "secondary_label": "open above the capo at 2",
+          "pitch_label": "F#4",
+          "string_label": "String 1",
+          "position_label": "fret 2",
+          "reference_marker_label": null,
+          "accessibility_text": "F#4 on string 1, fret 2, open above the capo at 2."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 26.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-ambiguous-tie",
+      "description": "Every weight zeroed, so all candidates tie exactly",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "ambiguous",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck",
+          "ambiguous: 5 candidates tie at 0.0; chose string-1, string-2, string-3, string-4, string-5 in tie-break order"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-previous-position-movement",
+      "description": "Movement penalty from a prior position",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 3.7593110771782516,
+              "components": {
+                "movement": 2.5084646156165924,
+                "string_change": 1.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.2508 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 1",
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 5.459360867485034,
+              "components": {
+                "movement": 4.053964424986395,
+                "string_change": 1.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.4054 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 2",
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 7.100057050228134,
+              "components": {
+                "movement": 5.545506409298304,
+                "string_change": 1.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.5546 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 3",
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 8.329190401032406,
+              "components": {
+                "movement": 6.662900364574914,
+                "string_change": 1.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.6663 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 4",
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-string-change",
+      "description": "String-change penalty from a prior position",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 10.501692923123318,
+              "components": {
+                "movement": 0.25084646156165924,
+                "string_change": 10.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.2508 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 1",
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 10.810792884997278,
+              "components": {
+                "movement": 0.4053964424986395,
+                "string_change": 10.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.4054 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 2",
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 11.109101281859662,
+              "components": {
+                "movement": 0.5545506409298304,
+                "string_change": 10.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.5546 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 3",
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 11.332580072914983,
+              "components": {
+                "movement": 0.6662900364574914,
+                "string_change": 10.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.6663 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 4",
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-string-jump-rejected",
+      "description": "maximum_string_jump rejects distant units",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 1.5016929231233185,
+              "components": {
+                "movement": 0.25084646156165924,
+                "string_change": 1.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "movement: moved 0.2508 of the scale length from the previous position",
+                "string_change: changed playable unit from index 0 to 1",
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "string_jump_constraint: string:string-3 (string-3) - unit string:string-3 is 2 playing units from string-1, exceeding the maximum jump of 1",
+          "string_jump_constraint: string:string-4 (string-4) - unit string:string-4 is 3 playing units from string-1, exceeding the maximum jump of 1",
+          "string_jump_constraint: string:string-5 (string-5) - unit string:string-5 is 4 playing units from string-1, exceeding the maximum jump of 1",
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-minimum-position",
+      "description": "Caller's minimum position excludes low candidates",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-3",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 9.0,
+              "fret_number": 9,
+              "normalized_position": 0.4053964424986395,
+              "distance_from_nut_mm": 262.69689473911836
+            },
+            "playing": {
+              "semitone_offset_from_open": 9.0,
+              "fret_relative_to_capo": 9,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.4053964424986395,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.4053964424986395,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.4054 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4053964424986395,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 3, fret 9",
+          "secondary_label": null,
+          "pitch_label": "E4",
+          "string_label": "String 3",
+          "position_label": "fret 9",
+          "reference_marker_label": "9",
+          "accessibility_text": "E4 on string 3, fret 9, at marker 9."
+        },
+        "diagnostics": [
+          "position_constraint: string:string-1 (string-1) - playing offset 0.00 is below the caller's minimum 6.0",
+          "position_constraint: string:string-2 (string-2) - playing offset 5.00 is below the caller's minimum 6.0",
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-maximum-position",
+      "description": "Caller's maximum position excludes high candidates",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.25084646156165924,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "position_constraint: string:string-3 (string-3) - playing offset 9.00 is above the caller's maximum 6.0",
+          "position_constraint: string:string-4 (string-4) - playing offset 14.00 is above the caller's maximum 6.0",
+          "position_constraint: string:string-5 (string-5) - playing offset 19.00 is above the caller's maximum 6.0",
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-preferred-region",
+      "description": "Preferred region penalises without rejecting",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 162.54850709195517
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 10.25084646156166,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 10.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck",
+                "preferred_region: 2.00 semitones above the preferred region"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 30.40539644249864,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 30.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck",
+                "preferred_region: 6.00 semitones above the preferred region"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 55.55455064092983,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 55.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck",
+                "preferred_region: 11.00 semitones above the preferred region"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 80.6662900364575,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 80.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck",
+                "preferred_region: 16.00 semitones above the preferred region"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-string-disabled",
+      "description": "Profile marks a string unavailable",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4053964424986395,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "string_disabled: string:string-2 (string-2) - the profile marks every member string unavailable",
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-string-excluded",
+      "description": "Request excludes a string by identity",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 64,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 9.0,
+                "fret_number": 9,
+                "normalized_position": 0.4053964424986395,
+                "distance_from_nut_mm": 262.69689473911836
+              },
+              "playing": {
+                "semitone_offset_from_open": 9.0,
+                "fret_relative_to_capo": 9,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4053964424986395,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4053964424986395,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4054 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 359.34881532253013
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 64,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 431.75594362445446
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, fret 0",
+          "secondary_label": "open string",
+          "pitch_label": "E4",
+          "string_label": "String 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E4 on string 1, fret 0, open string."
+        },
+        "diagnostics": [
+          "string_excluded: string:string-2 (string-2) - the request permits none of this unit's member strings",
+          "above_position_range: string:string-6 (string-6) - fret 24.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-microtone-unrealizable",
+      "description": "Fixed frets cannot produce a quarter tone",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 50.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "unplayable",
+        "selected": null,
+        "candidates": [],
+        "annotation": null,
+        "diagnostics": [
+          "pitch_not_realizable: string:string-1 (string-1) - a fixed-fret instrument cannot produce an offset of 0.5000 semitones",
+          "pitch_not_realizable: string:string-2 (string-2) - a fixed-fret instrument cannot produce an offset of 5.5000 semitones",
+          "pitch_not_realizable: string:string-3 (string-3) - a fixed-fret instrument cannot produce an offset of 9.5000 semitones",
+          "pitch_not_realizable: string:string-4 (string-4) - a fixed-fret instrument cannot produce an offset of 14.5000 semitones",
+          "pitch_not_realizable: string:string-5 (string-5) - a fixed-fret instrument cannot produce an offset of 19.5000 semitones",
+          "pitch_not_realizable: string:string-6 (string-6) - a fixed-fret instrument cannot produce an offset of 24.5000 semitones"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-below-range",
+      "description": "Pitch below every open string is UNPLAYABLE",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 30,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "unplayable",
+        "selected": null,
+        "candidates": [],
+        "annotation": null,
+        "diagnostics": [
+          "below_open_pitch: string:string-1 (string-1) - pitch is 34.00 semitones below the open string",
+          "below_open_pitch: string:string-2 (string-2) - pitch is 29.00 semitones below the open string",
+          "below_open_pitch: string:string-3 (string-3) - pitch is 25.00 semitones below the open string",
+          "below_open_pitch: string:string-4 (string-4) - pitch is 20.00 semitones below the open string",
+          "below_open_pitch: string:string-5 (string-5) - pitch is 15.00 semitones below the open string",
+          "below_open_pitch: string:string-6 (string-6) - pitch is 10.00 semitones below the open string"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-above-range",
+      "description": "Pitch beyond the neck is UNPLAYABLE",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 100,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "unplayable",
+        "selected": null,
+        "candidates": [],
+        "annotation": null,
+        "diagnostics": [
+          "above_position_range: string:string-1 (string-1) - fret 36.00 is beyond the 22-fret neck",
+          "above_position_range: string:string-2 (string-2) - fret 41.00 is beyond the 22-fret neck",
+          "above_position_range: string:string-3 (string-3) - fret 45.00 is beyond the 22-fret neck",
+          "above_position_range: string:string-4 (string-4) - fret 50.00 is beyond the 22-fret neck",
+          "above_position_range: string:string-5 (string-5) - fret 55.00 is beyond the 22-fret neck",
+          "above_position_range: string:string-6 (string-6) - fret 60.00 is beyond the 22-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "guitar-constraints-exclude-all",
+      "description": "Constraints leave no candidate at all",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 64,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "guitar.standard.6",
+        "status": "unplayable",
+        "selected": null,
+        "candidates": [],
+        "annotation": null,
+        "diagnostics": [
+          "position_constraint: string:string-1 (string-1) - playing offset 0.00 is below the caller's minimum 6.0",
+          "string_excluded: string:string-2 (string-2) - the request permits none of this unit's member strings",
+          "string_excluded: string:string-3 (string-3) - the request permits none of this unit's member strings",
+          "string_excluded: string:string-4 (string-4) - the request permits none of this unit's member strings",
+          "string_excluded: string:string-5 (string-5) - the request permits none of this unit's member strings",
+          "string_excluded: string:string-6 (string-6) - the request permits none of this unit's member strings"
+        ]
+      }
+    },
+    {
+      "vector_id": "bass-fretless-basic",
+      "description": "Fretless position carries fret_number = null",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 50,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "bass.fretless.4",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 50,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 7.0,
+              "fret_number": null,
+              "normalized_position": 0.3325800729149828,
+              "distance_from_nut_mm": 287.34918299854513
+            },
+            "playing": {
+              "semitone_offset_from_open": 7.0,
+              "fret_relative_to_capo": null,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.3325800729149828,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.3325800729149828,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.3326 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 50,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 7.0,
+                "fret_number": null,
+                "normalized_position": 0.3325800729149828,
+                "distance_from_nut_mm": 287.34918299854513
+              },
+              "playing": {
+                "semitone_offset_from_open": 7.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.3325800729149828,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.3325800729149828,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.3326 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 50,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 12.0,
+                "fret_number": null,
+                "normalized_position": 0.5,
+                "distance_from_nut_mm": 432.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 12.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5000 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 50,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 17.0,
+                "fret_number": null,
+                "normalized_position": 0.6254232307808296,
+                "distance_from_nut_mm": 540.3656713946368
+              },
+              "playing": {
+                "semitone_offset_from_open": 17.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6254232307808296,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6254232307808296,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6254 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 50,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 22.0,
+                "fret_number": null,
+                "normalized_position": 0.7193844879226567,
+                "distance_from_nut_mm": 621.5481975651754
+              },
+              "playing": {
+                "semitone_offset_from_open": 22.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.7193844879226567,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.7193844879226567,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.7194 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, 7.00 semitones from the nut (287.3 mm)",
+          "secondary_label": null,
+          "pitch_label": "D3",
+          "string_label": "String 1",
+          "position_label": "7.00 semitones from the nut (287.3 mm)",
+          "reference_marker_label": "7",
+          "accessibility_text": "D3 on string 1, 7.00 semitones from the nut (287.3 mm), at marker 7."
+        },
+        "diagnostics": []
+      }
+    },
+    {
+      "vector_id": "bass-fretless-millimetres",
+      "description": "Fretless with a declared scale length",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 45,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "bass.fretless.4",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 45,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 2.0,
+              "fret_number": null,
+              "normalized_position": 0.10910128185966073,
+              "distance_from_nut_mm": 94.26350752674686
+            },
+            "playing": {
+              "semitone_offset_from_open": 2.0,
+              "fret_relative_to_capo": null,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.10910128185966073,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.10910128185966073,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.1091 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 2.0,
+                "fret_number": null,
+                "normalized_position": 0.10910128185966073,
+                "distance_from_nut_mm": 94.26350752674686
+              },
+              "playing": {
+                "semitone_offset_from_open": 2.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.10910128185966073,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.10910128185966073,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.1091 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 7.0,
+                "fret_number": null,
+                "normalized_position": 0.3325800729149828,
+                "distance_from_nut_mm": 287.34918299854513
+              },
+              "playing": {
+                "semitone_offset_from_open": 7.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.3325800729149828,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.3325800729149828,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.3326 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 12.0,
+                "fret_number": null,
+                "normalized_position": 0.5,
+                "distance_from_nut_mm": 432.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 12.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5000 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 17.0,
+                "fret_number": null,
+                "normalized_position": 0.6254232307808296,
+                "distance_from_nut_mm": 540.3656713946368
+              },
+              "playing": {
+                "semitone_offset_from_open": 17.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6254232307808296,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6254232307808296,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6254 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, 2.00 semitones from the nut (94.3 mm)",
+          "secondary_label": null,
+          "pitch_label": "A2",
+          "string_label": "String 1",
+          "position_label": "2.00 semitones from the nut (94.3 mm)",
+          "reference_marker_label": null,
+          "accessibility_text": "A2 on string 1, 2.00 semitones from the nut (94.3 mm)."
+        },
+        "diagnostics": []
+      }
+    },
+    {
+      "vector_id": "bass-fretless-normalized-only",
+      "description": "Fretless with no scale length declared",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 45,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "bass.fretless.4",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 45,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 2.0,
+              "fret_number": null,
+              "normalized_position": 0.10910128185966073,
+              "distance_from_nut_mm": null
+            },
+            "playing": {
+              "semitone_offset_from_open": 2.0,
+              "fret_relative_to_capo": null,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.10910128185966073,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.10910128185966073,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.1091 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 2.0,
+                "fret_number": null,
+                "normalized_position": 0.10910128185966073,
+                "distance_from_nut_mm": null
+              },
+              "playing": {
+                "semitone_offset_from_open": 2.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.10910128185966073,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.10910128185966073,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.1091 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 7.0,
+                "fret_number": null,
+                "normalized_position": 0.3325800729149828,
+                "distance_from_nut_mm": null
+              },
+              "playing": {
+                "semitone_offset_from_open": 7.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.3325800729149828,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.3325800729149828,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.3326 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 12.0,
+                "fret_number": null,
+                "normalized_position": 0.5,
+                "distance_from_nut_mm": null
+              },
+              "playing": {
+                "semitone_offset_from_open": 12.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5000 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 17.0,
+                "fret_number": null,
+                "normalized_position": 0.6254232307808296,
+                "distance_from_nut_mm": null
+              },
+              "playing": {
+                "semitone_offset_from_open": 17.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6254232307808296,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6254232307808296,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6254 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, 2.00 semitones from the nut",
+          "secondary_label": null,
+          "pitch_label": "A2",
+          "string_label": "String 1",
+          "position_label": "2.00 semitones from the nut",
+          "reference_marker_label": null,
+          "accessibility_text": "A2 on string 1, 2.00 semitones from the nut."
+        },
+        "diagnostics": []
+      }
+    },
+    {
+      "vector_id": "bass-fretless-microtone",
+      "description": "A fretless instrument accepts a quarter tone",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 45,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 50.0,
+          "voice_id": null
+        },
+        "instrument_id": "bass.fretless.4",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 45,
+              "cents_offset": 50.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 2.5,
+              "fret_number": null,
+              "normalized_position": 0.13446343899385693,
+              "distance_from_nut_mm": 116.17641129069239
+            },
+            "playing": {
+              "semitone_offset_from_open": 2.5,
+              "fret_relative_to_capo": null,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.13446343899385693,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.13446343899385693,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.1345 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 50.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 2.5,
+                "fret_number": null,
+                "normalized_position": 0.13446343899385693,
+                "distance_from_nut_mm": 116.17641129069239
+              },
+              "playing": {
+                "semitone_offset_from_open": 2.5,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.13446343899385693,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.13446343899385693,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.1345 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 50.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 7.5,
+                "fret_number": null,
+                "normalized_position": 0.3515802226744952,
+                "distance_from_nut_mm": 303.7653123907638
+              },
+              "playing": {
+                "semitone_offset_from_open": 7.5,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.3515802226744952,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.3515802226744952,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.3516 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 50.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 12.5,
+                "fret_number": null,
+                "normalized_position": 0.5142340294231971,
+                "distance_from_nut_mm": 444.29820142164226
+              },
+              "playing": {
+                "semitone_offset_from_open": 12.5,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5142340294231971,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5142340294231971,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5142 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 45,
+                "cents_offset": 50.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 17.5,
+                "fret_number": null,
+                "normalized_position": 0.6360867042894531,
+                "distance_from_nut_mm": 549.5789125060875
+              },
+              "playing": {
+                "semitone_offset_from_open": 17.5,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6360867042894531,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6360867042894531,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6361 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, 2.50 semitones from the nut (116.2 mm)",
+          "secondary_label": null,
+          "pitch_label": "A2+50c",
+          "string_label": "String 1",
+          "position_label": "2.50 semitones from the nut (116.2 mm)",
+          "reference_marker_label": null,
+          "accessibility_text": "A2+50c on string 1, 2.50 semitones from the nut (116.2 mm)."
+        },
+        "diagnostics": []
+      }
+    },
+    {
+      "vector_id": "bass-fretless-marker",
+      "description": "A position landing on a reference marker",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 48,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "bass.fretless.4",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": null,
+            "sounding": {
+              "midi_note": 48,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 5.0,
+              "fret_number": null,
+              "normalized_position": 0.25084646156165924,
+              "distance_from_nut_mm": 216.73134278927358
+            },
+            "playing": {
+              "semitone_offset_from_open": 5.0,
+              "fret_relative_to_capo": null,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.25084646156165924,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.25084646156165924,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.2508 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 48,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": null,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 216.73134278927358
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.25084646156165924,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-2",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 48,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 10.0,
+                "fret_number": null,
+                "normalized_position": 0.4387689758453135,
+                "distance_from_nut_mm": 379.09639513035086
+              },
+              "playing": {
+                "semitone_offset_from_open": 10.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4387689758453135,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4387689758453135,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4388 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 48,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 15.0,
+                "fret_number": null,
+                "normalized_position": 0.5795517923731428,
+                "distance_from_nut_mm": 500.7327486103954
+              },
+              "playing": {
+                "semitone_offset_from_open": 15.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5795517923731428,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5795517923731428,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5796 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-4",
+              "course_id": null,
+              "sounding": {
+                "midi_note": 48,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 20.0,
+                "fret_number": null,
+                "normalized_position": 0.6850197375262816,
+                "distance_from_nut_mm": 591.8570532227073
+              },
+              "playing": {
+                "semitone_offset_from_open": 20.0,
+                "fret_relative_to_capo": null,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6850197375262816,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6850197375262816,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6850 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "String 1, 5.00 semitones from the nut (216.7 mm)",
+          "secondary_label": null,
+          "pitch_label": "C3",
+          "string_label": "String 1",
+          "position_label": "5.00 semitones from the nut (216.7 mm)",
+          "reference_marker_label": "5",
+          "accessibility_text": "C3 on string 1, 5.00 semitones from the nut (216.7 mm), at marker 5."
+        },
+        "diagnostics": []
+      }
+    },
+    {
+      "vector_id": "mandolin-course-basic",
+      "description": "Course-level candidate, not per wire",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 74,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "mandolin.standard.8",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-3",
+            "course_id": "course-a",
+            "sounding": {
+              "midi_note": 74,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 5.0,
+              "fret_number": 5,
+              "normalized_position": 0.25084646156165924,
+              "distance_from_nut_mm": 87.79626154658074
+            },
+            "playing": {
+              "semitone_offset_from_open": 5.0,
+              "fret_relative_to_capo": 5,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.25084646156165924,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.25084646156165924,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.2508 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": "course-a",
+              "sounding": {
+                "midi_note": 74,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 87.79626154658074
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.25084646156165924,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.25084646156165924,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.2508 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": "course-d",
+              "sounding": {
+                "midi_note": 74,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 12.0,
+                "fret_number": 12,
+                "normalized_position": 0.5,
+                "distance_from_nut_mm": 175.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 12.0,
+                "fret_relative_to_capo": 12,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5000 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-7",
+              "course_id": "course-g",
+              "sounding": {
+                "midi_note": 74,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 233.201512760122
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6662900364574914,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6662900364574914,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6663 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "Course 2, fret 5",
+          "secondary_label": "sounded by string-3 and string-4",
+          "pitch_label": "D5",
+          "string_label": "Course 2",
+          "position_label": "fret 5",
+          "reference_marker_label": "5",
+          "accessibility_text": "D5 on course 2, fret 5, sounded by string-3 and string-4, at marker 5."
+        },
+        "diagnostics": [
+          "below_open_pitch: course:course-e (string-1, string-2) - pitch is 2.00 semitones below the open string"
+        ]
+      }
+    },
+    {
+      "vector_id": "mandolin-course-tie",
+      "description": "Course-level exact tie",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 74,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "mandolin.standard.8",
+        "status": "ambiguous",
+        "selected": {
+          "position": {
+            "string_id": "string-3",
+            "course_id": "course-a",
+            "sounding": {
+              "midi_note": 74,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 5.0,
+              "fret_number": 5,
+              "normalized_position": 0.25084646156165924,
+              "distance_from_nut_mm": 87.79626154658074
+            },
+            "playing": {
+              "semitone_offset_from_open": 5.0,
+              "fret_relative_to_capo": 5,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": "course-a",
+              "sounding": {
+                "midi_note": 74,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 5.0,
+                "fret_number": 5,
+                "normalized_position": 0.25084646156165924,
+                "distance_from_nut_mm": 87.79626154658074
+              },
+              "playing": {
+                "semitone_offset_from_open": 5.0,
+                "fret_relative_to_capo": 5,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": "course-d",
+              "sounding": {
+                "midi_note": 74,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 12.0,
+                "fret_number": 12,
+                "normalized_position": 0.5,
+                "distance_from_nut_mm": 175.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 12.0,
+                "fret_relative_to_capo": 12,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-7",
+              "course_id": "course-g",
+              "sounding": {
+                "midi_note": 74,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 19.0,
+                "fret_number": 19,
+                "normalized_position": 0.6662900364574914,
+                "distance_from_nut_mm": 233.201512760122
+              },
+              "playing": {
+                "semitone_offset_from_open": 19.0,
+                "fret_relative_to_capo": 19,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "Course 2, fret 5",
+          "secondary_label": "sounded by string-3 and string-4",
+          "pitch_label": "D5",
+          "string_label": "Course 2",
+          "position_label": "fret 5",
+          "reference_marker_label": "5",
+          "accessibility_text": "D5 on course 2, fret 5, sounded by string-3 and string-4, at marker 5."
+        },
+        "diagnostics": [
+          "below_open_pitch: course:course-e (string-1, string-2) - pitch is 2.00 semitones below the open string",
+          "ambiguous: 3 candidates tie at 0.0; chose string-3, string-5, string-7 in tie-break order"
+        ]
+      }
+    },
+    {
+      "vector_id": "mandolin-course-open",
+      "description": "An open course",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 76,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "mandolin.standard.8",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": "course-e",
+            "sounding": {
+              "midi_note": 76,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 0.0,
+              "fret_number": 0,
+              "normalized_position": 0.0,
+              "distance_from_nut_mm": 0.0
+            },
+            "playing": {
+              "semitone_offset_from_open": 0.0,
+              "fret_relative_to_capo": 0,
+              "is_open": true
+            }
+          },
+          "score": {
+            "total": 0.0,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.0,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": []
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": "course-e",
+              "sounding": {
+                "midi_note": 76,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 0.0,
+                "fret_number": 0,
+                "normalized_position": 0.0,
+                "distance_from_nut_mm": 0.0
+              },
+              "playing": {
+                "semitone_offset_from_open": 0.0,
+                "fret_relative_to_capo": 0,
+                "is_open": true
+              }
+            },
+            "score": {
+              "total": 0.0,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.0,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": []
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": "course-a",
+              "sounding": {
+                "midi_note": 76,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 7.0,
+                "fret_number": 7,
+                "normalized_position": 0.3325800729149828,
+                "distance_from_nut_mm": 116.40302552024399
+              },
+              "playing": {
+                "semitone_offset_from_open": 7.0,
+                "fret_relative_to_capo": 7,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.3325800729149828,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.3325800729149828,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.3326 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": "course-d",
+              "sounding": {
+                "midi_note": 76,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 14.0,
+                "fret_number": 14,
+                "normalized_position": 0.5545506409298304,
+                "distance_from_nut_mm": 194.09272432544066
+              },
+              "playing": {
+                "semitone_offset_from_open": 14.0,
+                "fret_relative_to_capo": 14,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.5545506409298304,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.5545506409298304,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.5546 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "Course 1, fret 0",
+          "secondary_label": "open string; sounded by string-1 and string-2",
+          "pitch_label": "E5",
+          "string_label": "Course 1",
+          "position_label": "fret 0",
+          "reference_marker_label": null,
+          "accessibility_text": "E5 on course 1, fret 0, open string, sounded by string-1 and string-2."
+        },
+        "diagnostics": [
+          "above_position_range: course:course-g (string-7, string-8) - fret 21.00 is beyond the 20-fret neck"
+        ]
+      }
+    },
+    {
+      "vector_id": "mandolin-capo",
+      "description": "Course instrument under a capo",
+      "result": {
+        "event": {
+          "event_id": "vec",
+          "midi_note": 79,
+          "start_tick": 0,
+          "duration_ticks": 480,
+          "velocity": 64,
+          "cents_offset": 0.0,
+          "voice_id": null
+        },
+        "instrument_id": "mandolin.standard.8",
+        "status": "selected",
+        "selected": {
+          "position": {
+            "string_id": "string-1",
+            "course_id": "course-e",
+            "sounding": {
+              "midi_note": 79,
+              "cents_offset": 0.0
+            },
+            "physical": {
+              "semitone_offset_from_nut": 3.0,
+              "fret_number": 3,
+              "normalized_position": 0.1591035847462855,
+              "distance_from_nut_mm": 55.686254661199925
+            },
+            "playing": {
+              "semitone_offset_from_open": 1.0,
+              "fret_relative_to_capo": 1,
+              "is_open": false
+            }
+          },
+          "score": {
+            "total": 0.1591035847462855,
+            "components": {
+              "movement": 0.0,
+              "string_change": 0.0,
+              "position": 0.1591035847462855,
+              "preferred_region": 0.0,
+              "open_string": 0.0,
+              "lower_position_bias": 0.0
+            },
+            "explanation": [
+              "position: sits 0.1591 of the way up the neck"
+            ]
+          }
+        },
+        "candidates": [
+          {
+            "position": {
+              "string_id": "string-1",
+              "course_id": "course-e",
+              "sounding": {
+                "midi_note": 79,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 3.0,
+                "fret_number": 3,
+                "normalized_position": 0.1591035847462855,
+                "distance_from_nut_mm": 55.686254661199925
+              },
+              "playing": {
+                "semitone_offset_from_open": 1.0,
+                "fret_relative_to_capo": 1,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.1591035847462855,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.1591035847462855,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.1591 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-3",
+              "course_id": "course-a",
+              "sounding": {
+                "midi_note": 79,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 10.0,
+                "fret_number": 10,
+                "normalized_position": 0.4387689758453135,
+                "distance_from_nut_mm": 153.56914154585974
+              },
+              "playing": {
+                "semitone_offset_from_open": 8.0,
+                "fret_relative_to_capo": 8,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.4387689758453135,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.4387689758453135,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.4388 of the way up the neck"
+              ]
+            }
+          },
+          {
+            "position": {
+              "string_id": "string-5",
+              "course_id": "course-d",
+              "sounding": {
+                "midi_note": 79,
+                "cents_offset": 0.0
+              },
+              "physical": {
+                "semitone_offset_from_nut": 17.0,
+                "fret_number": 17,
+                "normalized_position": 0.6254232307808296,
+                "distance_from_nut_mm": 218.89813077329038
+              },
+              "playing": {
+                "semitone_offset_from_open": 15.0,
+                "fret_relative_to_capo": 15,
+                "is_open": false
+              }
+            },
+            "score": {
+              "total": 0.6254232307808296,
+              "components": {
+                "movement": 0.0,
+                "string_change": 0.0,
+                "position": 0.6254232307808296,
+                "preferred_region": 0.0,
+                "open_string": 0.0,
+                "lower_position_bias": 0.0
+              },
+              "explanation": [
+                "position: sits 0.6254 of the way up the neck"
+              ]
+            }
+          }
+        ],
+        "annotation": {
+          "primary_label": "Course 1, fret 3",
+          "secondary_label": "fret 1 above the capo at 2; sounded by string-1 and string-2",
+          "pitch_label": "G5",
+          "string_label": "Course 1",
+          "position_label": "fret 3",
+          "reference_marker_label": null,
+          "accessibility_text": "G5 on course 1, fret 3, fret 1 above the capo at 2, sounded by string-1 and string-2."
+        },
+        "diagnostics": [
+          "above_position_range: course:course-g (string-7, string-8) - fret 24.00 is beyond the 20-fret neck"
+        ]
+      }
+    }
+  ]
+}

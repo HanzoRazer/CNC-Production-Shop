@@ -47,7 +47,10 @@ server = [
 cam-assist = "cam_assist.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["cam_assist", "business", "parametric", "fretboard", "materials", "acoustic"]
+packages = ["cam_assist", "business", "parametric", "fretboard", "materials", "acoustic", "musical_spatial_mapping"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"musical_spatial_mapping/resources" = "musical_spatial_mapping/resources"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
