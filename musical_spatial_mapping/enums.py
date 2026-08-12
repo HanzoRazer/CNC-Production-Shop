@@ -6,10 +6,10 @@ Every serialized string value lives here so the subsystem never scatters string
 literals. Tests assert these serialized values, because they are a public contract.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 
-class FingerboardMode(str, Enum):
+class FingerboardMode(StrEnum):
     """How positions resolve along a string."""
 
     FRETTED = "fretted"
@@ -19,7 +19,7 @@ class FingerboardMode(str, Enum):
     HYBRID = "hybrid"
 
 
-class PositionUnit(str, Enum):
+class PositionUnit(StrEnum):
     """Units a spatial position may be expressed in."""
 
     SEMITONE = "semitone"
@@ -27,7 +27,7 @@ class PositionUnit(str, Enum):
     NORMALIZED = "normalized"
 
 
-class OpenStringPolicy(str, Enum):
+class OpenStringPolicy(StrEnum):
     """How open strings are treated during candidate generation and scoring."""
 
     ALLOW = "allow"
@@ -36,7 +36,7 @@ class OpenStringPolicy(str, Enum):
     EXCLUDE = "exclude"
 
 
-class SelectionStatus(str, Enum):
+class SelectionStatus(StrEnum):
     """Outcome of selecting among scored candidates."""
 
     SELECTED = "selected"
@@ -44,7 +44,7 @@ class SelectionStatus(str, Enum):
     UNPLAYABLE = "unplayable"
 
 
-class RejectionCode(str, Enum):
+class RejectionCode(StrEnum):
     """Why a hard-constraint candidate was rejected.
 
     A preferred-region mismatch is a scoring PENALTY, not a rejection; these codes
