@@ -10,10 +10,17 @@ already-declared package made hatchling write the same archive member twice and
 fail the build, and nothing caught it: source imports worked, tests passed, CI
 passed. These tests exist because "it imports from the repo" and "it installs"
 are different claims.
+
+Every consumer test below runs an INSTALLED interpreter from a working directory
+outside the checkout, and asserts the import resolved into ``site-packages`` —
+otherwise a stray ``sys.path`` entry would let the source tree answer for the
+artifact and the test would pass without testing anything.
 """
 
 from __future__ import annotations
 
+import os
+import re
 import subprocess
 import sys
 import tomllib
@@ -24,6 +31,28 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = ROOT / "pyproject.toml"
+
+DECLARED_PACKAGES = [
+    "cam_assist",
+    "business",
+    "parametric",
+    "fretboard",
+    "materials",
+    "acoustic",
+    "musical_spatial_mapping",
+]
+
+
+def _bail(reason: str) -> None:
+    """Skip locally, FAIL under CI.
+
+    A build-environment problem is not a defect on a workstation, but on CI a
+    silent skip recreates precisely the blindness these tests exist to remove:
+    the suite would go green having never built the artifact.
+    """
+    if os.environ.get("CI"):
+        pytest.fail(f"{reason}\n(CI: refusing to skip the distribution boundary)")
+    pytest.skip(reason)
 
 
 @pytest.fixture(scope="module")
@@ -65,17 +94,21 @@ def test_musical_spatial_mapping_is_a_declared_package(config):
     assert "musical_spatial_mapping" in _wheel_target(config).get("packages", [])
 
 
+def test_every_expected_package_is_declared(config):
+    """A package dropped from this list still imports from the checkout and
+    still passes every other test — it just stops shipping."""
+    declared = _wheel_target(config).get("packages", [])
+    assert sorted(declared) == sorted(DECLARED_PACKAGES), (
+        f"declared packages drifted: {sorted(declared)}"
+    )
+
+
 # ------------------------------------------------------------ the real artifact
 
 
 @pytest.fixture(scope="module")
 def built_wheel(tmp_path_factory) -> Path:
-    """Build a real wheel, or skip when the environment cannot.
-
-    Skips rather than fails on a build-environment problem (no network for the
-    isolated build backend, say). A wheel that builds and is missing its data is
-    a defect; a machine that cannot fetch hatchling is not.
-    """
+    """Build a real wheel from this checkout."""
     out = tmp_path_factory.mktemp("wheel")
     proc = subprocess.run(
         [sys.executable, "-m", "pip", "wheel", str(ROOT), "--no-deps", "-w", str(out)],
@@ -87,19 +120,30 @@ def built_wheel(tmp_path_factory) -> Path:
         combined = proc.stdout + proc.stderr
         if "same path" in combined or "force-include" in combined:
             pytest.fail(f"wheel build failed on a packaging defect:\n{combined[-1500:]}")
-        pytest.skip(f"wheel could not be built in this environment:\n{combined[-500:]}")
+        _bail(f"wheel could not be built in this environment:\n{combined[-500:]}")
     return wheels[0]
+
+
+@pytest.fixture(scope="module")
+def wheel_members(built_wheel) -> list[str]:
+    return zipfile.ZipFile(built_wheel).namelist()
 
 
 def test_the_wheel_builds(built_wheel):
     assert built_wheel.exists()
 
 
-def test_the_wheel_carries_the_instrument_profiles(built_wheel):
+def test_the_wheel_writes_no_member_twice(wheel_members):
+    """The failure mode itself: hatchling refuses, so a duplicate here means the
+    build is impossible rather than merely wasteful."""
+    duplicates = {n for n in wheel_members if wheel_members.count(n) > 1}
+    assert not duplicates, f"duplicate archive members: {sorted(duplicates)}"
+
+
+def test_the_wheel_carries_the_instrument_profiles(wheel_members):
     """force-include was added to guarantee this. It was never needed, and it
     broke the build — `packages` already carries the data."""
-    names = zipfile.ZipFile(built_wheel).namelist()
-    resources = [n for n in names if "musical_spatial_mapping/resources/" in n]
+    resources = [n for n in wheel_members if "musical_spatial_mapping/resources/" in n]
     assert len(resources) >= 4, f"resources missing from the wheel: {resources}"
     for expected in (
         "guitar-standard-6.json",
@@ -110,30 +154,166 @@ def test_the_wheel_carries_the_instrument_profiles(built_wheel):
         assert any(expected in n for n in resources), f"{expected} not packaged"
 
 
-def test_the_installed_package_maps_a_note(built_wheel, tmp_path):
-    """The claim that matters: it works when INSTALLED, not just when imported
-    from the checkout. Runs outside the source tree so a stray sys.path entry
-    cannot rescue it."""
-    venv = tmp_path / "venv"
+def test_the_wheel_carries_every_declared_package(wheel_members):
+    """Removing the force-include must not have cost any OTHER package its files.
+
+    The fix edited a shared build table; this is the blast-radius check.
+    """
+    missing = [
+        pkg for pkg in DECLARED_PACKAGES if not any(n.startswith(f"{pkg}/") for n in wheel_members)
+    ]
+    assert not missing, f"declared packages absent from the wheel: {missing}"
+
+
+def test_the_wheel_carries_the_msme_modules(wheel_members):
+    """Resources are worthless without the code that reads them."""
+    modules = {
+        n.split("/")[-1]
+        for n in wheel_members
+        if n.startswith("musical_spatial_mapping/") and n.endswith(".py") and n.count("/") == 1
+    }
+    for expected in ("__init__.py", "mapper.py", "serialization.py", "cli.py"):
+        assert expected in modules, f"musical_spatial_mapping/{expected} not packaged"
+
+
+# ------------------------------------------------------- the installed consumer
+
+
+@pytest.fixture(scope="module")
+def installed_python(built_wheel, tmp_path_factory) -> Path:
+    """Install the wheel into a fresh venv once, and hand back its interpreter.
+
+    Module-scoped: every consumer test below shares this one installation, so
+    proving more about the artifact does not cost another venv each time.
+    """
+    base = tmp_path_factory.mktemp("consumer")
+    venv = base / "venv"
     subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True, capture_output=True)
     python = venv / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
     install = subprocess.run(
         [str(python), "-m", "pip", "install", "--quiet", str(built_wheel)],
-        capture_output=True, text=True,
+        capture_output=True,
+        text=True,
     )
     if install.returncode != 0:
-        pytest.skip(f"could not install into a fresh venv:\n{install.stderr[-500:]}")
+        _bail(f"could not install into a fresh venv:\n{install.stderr[-500:]}")
+    return python
 
-    script = (
+
+def _consume(python: Path, body: str) -> str:
+    """Run `body` on the installed interpreter, outside the source tree.
+
+    The preamble is the point: it proves the name resolved to the installed
+    package rather than to the checkout, so none of these assertions can be
+    satisfied by the very source tree they are meant to stand in for.
+    """
+    preamble = (
+        "import musical_spatial_mapping as _m, pathlib as _p\n"
+        "_loc = _p.Path(_m.__file__).resolve()\n"
+        "assert 'site-packages' in str(_loc), f'not installed: {_loc}'\n"
+        f"assert {str(ROOT)!r} not in str(_loc), f'resolved to the checkout: {{_loc}}'\n"
+    )
+    proc = subprocess.run(
+        [str(python), "-c", preamble + body],
+        capture_output=True,
+        text=True,
+        cwd=str(python.parent.parent.parent),  # outside the repository
+    )
+    assert proc.returncode == 0, f"installed package failed:\n{proc.stderr}"
+    return proc.stdout
+
+
+def test_the_installed_package_maps_a_note(installed_python):
+    """The claim that matters: it works when INSTALLED, not just when imported
+    from the checkout."""
+    out = _consume(
+        installed_python,
         "from musical_spatial_mapping import MusicalSpatialMapper, MusicalEvent\n"
         "from musical_spatial_mapping.fixtures import all_example_profiles\n"
         "profiles = all_example_profiles()\n"
         "r = MusicalSpatialMapper(profile=profiles[0]).map(\n"
-        "    MusicalEvent(event_id='e1', midi_note=64, start_tick=0, duration_ticks=480))\n"
-        "print(len(profiles), r.status.value)\n"
+        "    MusicalEvent(event_id='e1', midi_note=64, start_tick=0,"
+        " duration_ticks=480))\n"
+        "print(len(profiles), r.status.value)\n",
     )
-    proc = subprocess.run(
-        [str(python), "-c", script], capture_output=True, text=True, cwd=str(tmp_path)
+    assert out.split() == ["3", "selected"], out
+
+
+def test_the_installed_package_reports_the_source_version(installed_python):
+    """Pinned to what the checkout declares rather than to a literal, so the
+    check cannot quietly describe an older release than the one being built."""
+    declared = re.search(
+        r'^__version__\s*=\s*"([^"]+)"',
+        (ROOT / "musical_spatial_mapping" / "__init__.py").read_text(encoding="utf-8"),
+        re.MULTILINE,
     )
-    assert proc.returncode == 0, f"installed package failed to map:\n{proc.stderr}"
-    assert proc.stdout.split() == ["3", "selected"], proc.stdout
+    assert declared, "musical_spatial_mapping.__version__ not found in source"
+    out = _consume(installed_python, "print(_m.__version__)\n").strip()
+    assert out == declared.group(1), (
+        f"installed wheel reports {out!r}, source declares {declared.group(1)!r}"
+    )
+
+
+def test_the_installed_package_reads_its_packaged_schema(installed_python):
+    """A data file can be present in the archive and still unreachable through
+    the import system, which is the only way a consumer can get at it."""
+    out = _consume(
+        installed_python,
+        "import json, importlib.resources as ir\n"
+        "f = ir.files('musical_spatial_mapping') /"
+        " 'resources/instruments/schema/instrument-profile-v1.schema.json'\n"
+        "print(json.loads(f.read_text(encoding='utf-8'))['title'])\n",
+    ).strip()
+    assert out == "Instrument Profile v1", out
+
+
+def test_the_installed_package_serializes_a_result(installed_python):
+    """The byte contract has to hold for the artifact, not only in the repo."""
+    out = _consume(
+        installed_python,
+        "import json\n"
+        "from musical_spatial_mapping import MusicalSpatialMapper, MusicalEvent\n"
+        "from musical_spatial_mapping.fixtures import all_example_profiles\n"
+        "from musical_spatial_mapping.serialization import mapping_result_to_json\n"
+        "r = MusicalSpatialMapper(profile=all_example_profiles()[0]).map(\n"
+        "    MusicalEvent(event_id='e1', midi_note=64, start_tick=0,"
+        " duration_ticks=480))\n"
+        "blob = mapping_result_to_json(r)\n"
+        "print(blob.isascii(), bool(json.loads(blob)))\n",
+    )
+    assert out.split() == ["True", "True"], out
+
+
+def test_module_execution_survives_the_wheel_install(installed_python):
+    """``python -m musical_spatial_mapping.cli`` is a published entry point, and
+    module execution depends on packaging details an import test never touches.
+
+    It also re-checks the byte contract across the process boundary: the CLI now
+    serializes through the library, so identical bytes are the evidence that the
+    two emitters cannot drift apart again in a shipped artifact.
+    """
+    out = _consume(
+        installed_python,
+        "import json, subprocess, sys, tempfile\n"
+        "from pathlib import Path\n"
+        "from musical_spatial_mapping import MusicalSpatialMapper, MusicalEvent\n"
+        "from musical_spatial_mapping.fixtures import all_example_profiles\n"
+        "from musical_spatial_mapping.serialization import (\n"
+        "    instrument_profile_to_dict, mapping_result_to_json)\n"
+        "p = all_example_profiles()[0]\n"
+        "with tempfile.TemporaryDirectory() as tmp:\n"
+        "    f = Path(tmp) / 'profile.json'\n"
+        "    f.write_text(json.dumps(instrument_profile_to_dict(p)),"
+        " encoding='utf-8')\n"
+        "    proc = subprocess.run([sys.executable, '-m',"
+        " 'musical_spatial_mapping.cli',\n"
+        "        '--profile', str(f), '--event',"
+        ' \'{"midi_note": 64, "event_id": "e1"}\'],\n'
+        "        capture_output=True, text=True, cwd=tmp)\n"
+        "assert proc.returncode == 0, proc.stderr\n"
+        "lib = mapping_result_to_json(MusicalSpatialMapper(profile=p).map(\n"
+        "    MusicalEvent(event_id='e1', midi_note=64, start_tick=0,"
+        " duration_ticks=480)), indent=2)\n"
+        "print(proc.stdout.isascii(), proc.stdout.strip() == lib.strip())\n",
+    )
+    assert out.split() == ["True", "True"], f"CLI/library byte contract broke: {out}"
