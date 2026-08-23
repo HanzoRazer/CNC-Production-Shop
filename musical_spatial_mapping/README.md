@@ -62,6 +62,32 @@ application-specific.
 
 ---
 
+## Versioning
+
+MSME is currently shipped as a subpackage of `cnc-production-shop`; it is not
+independently distributed.
+
+| Name | Meaning | Current |
+|---|---|---|
+| `cnc-production-shop` distribution | Installable wheel / package metadata | `0.1.0` |
+| `musical_spatial_mapping.__version__` | Same as the containing distribution | `0.1.0` |
+| `MSME_API_VERSION` | Public MSME API/behavioral contract | `0.2.0` |
+
+```python
+import musical_spatial_mapping as msme
+
+msme.__version__        # "0.1.0" — cnc-production-shop distribution
+msme.MSME_API_VERSION   # "0.2.0" — MSME public API contract
+```
+
+`__version__` previously held `0.2.0` because that number described MSME API
+maturity. That meaning now lives on `MSME_API_VERSION`. The change is an
+authorized contract clarification, not a separately published package bump.
+
+See `docs/governance/VERSIONING_POLICY.md`.
+
+---
+
 ## Coordinate model (never overload one integer)
 
 Three distinct concepts, modelled as three value objects (`models.py`):
