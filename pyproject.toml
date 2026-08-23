@@ -53,7 +53,7 @@ cam-assist = "cam_assist.cli:main"
 # fails the build outright. musical_spatial_mapping/resources was force-included
 # that way and made `pip wheel .` impossible while every test stayed green,
 # because editable installs use build_editable and never reach that check.
-packages = ["cam_assist", "business", "parametric", "fretboard", "materials", "acoustic", "musical_spatial_mapping"]
+packages = ["cnc_version", "cam_assist", "business", "parametric", "fretboard", "materials", "acoustic", "musical_spatial_mapping"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
