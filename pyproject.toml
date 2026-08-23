@@ -47,10 +47,13 @@ server = [
 cam-assist = "cam_assist.cli:main"
 
 [tool.hatch.build.targets.wheel]
+# Listing a package here already includes everything under it, data files
+# included. Do NOT add a force-include for a path that sits inside one of these
+# packages: hatchling then tries to write the same archive member twice and
+# fails the build outright. musical_spatial_mapping/resources was force-included
+# that way and made `pip wheel .` impossible while every test stayed green,
+# because editable installs use build_editable and never reach that check.
 packages = ["cam_assist", "business", "parametric", "fretboard", "materials", "acoustic", "musical_spatial_mapping"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"musical_spatial_mapping/resources" = "musical_spatial_mapping/resources"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

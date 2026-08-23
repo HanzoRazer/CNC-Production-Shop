@@ -32,6 +32,15 @@ jobs:
       - name: Type check with mypy
         run: mypy business --ignore-missing-imports
 
+      # MSME is typed strictly at the source and was never gated here, so the
+      # strictness could have decayed without anything noticing.
+      - name: Type check musical_spatial_mapping (strict)
+        run: mypy musical_spatial_mapping --strict
+
+      # tests/test_packaging.py builds a real wheel, installs it into a fresh
+      # venv and drives it from outside the checkout. CI is set on the runner,
+      # so that test FAILS rather than skips if the artifact cannot be produced
+      # — an editable install alone never reaches hatchling's build_wheel path.
       - name: Test with pytest
         run: pytest --cov=business --cov-report=term-missing --cov-fail-under=90
 
