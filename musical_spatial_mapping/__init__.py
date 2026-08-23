@@ -30,8 +30,7 @@ durable API.
 likewise not exported; it has no semantics of its own.
 """
 
-__version__ = "0.2.0"
-
+from ._distribution_version import distribution_version as _resolve_distribution_version
 from .enums import (
     FingerboardMode,
     OpenStringPolicy,
@@ -83,7 +82,16 @@ from .validation import (
     validate_string_profile,
 )
 
+# Version of the installed cnc-production-shop distribution.
+# This is not MSME API maturity; see MSME_API_VERSION.
+__version__ = _resolve_distribution_version()
+
+# Version of the public MSME API/behavioral contract.
+# Not a separately installable distribution version.
+MSME_API_VERSION = "0.2.0"
+
 __all__ = [
+    "MSME_API_VERSION",
     # enums
     "FingerboardMode",
     "OpenStringPolicy",

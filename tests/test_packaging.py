@@ -19,8 +19,8 @@ artifact and the test would pass without testing anything.
 
 from __future__ import annotations
 
+import email
 import os
-import re
 import subprocess
 import sys
 import tomllib
@@ -172,7 +172,13 @@ def test_the_wheel_carries_the_msme_modules(wheel_members):
         for n in wheel_members
         if n.startswith("musical_spatial_mapping/") and n.endswith(".py") and n.count("/") == 1
     }
-    for expected in ("__init__.py", "mapper.py", "serialization.py", "cli.py"):
+    for expected in (
+        "__init__.py",
+        "mapper.py",
+        "serialization.py",
+        "cli.py",
+        "_distribution_version.py",
+    ):
         assert expected in modules, f"musical_spatial_mapping/{expected} not packaged"
 
 
@@ -239,19 +245,40 @@ def test_the_installed_package_maps_a_note(installed_python):
     assert out.split() == ["3", "selected"], out
 
 
-def test_the_installed_package_reports_the_source_version(installed_python):
-    """Pinned to what the checkout declares rather than to a literal, so the
-    check cannot quietly describe an older release than the one being built."""
-    declared = re.search(
-        r'^__version__\s*=\s*"([^"]+)"',
-        (ROOT / "musical_spatial_mapping" / "__init__.py").read_text(encoding="utf-8"),
-        re.MULTILINE,
+def test_the_installed_package_reports_the_distribution_version(installed_python):
+    """``__version__`` is the installed ``cnc-production-shop`` version.
+
+    Compared to package metadata, not to a source literal, so a second
+    independently maintained number cannot quietly satisfy this check.
+    """
+    out = (
+        _consume(
+            installed_python,
+            "import importlib.metadata as md\n"
+            "print(_m.__version__, md.version('cnc-production-shop'), sep='\\n')\n",
+        )
+        .strip()
+        .splitlines()
     )
-    assert declared, "musical_spatial_mapping.__version__ not found in source"
-    out = _consume(installed_python, "print(_m.__version__)\n").strip()
-    assert out == declared.group(1), (
-        f"installed wheel reports {out!r}, source declares {declared.group(1)!r}"
-    )
+    reported, meta = out
+    assert reported == meta, f"installed __version__ {reported!r} != distribution metadata {meta!r}"
+
+
+def test_the_installed_package_reports_msme_api_version(installed_python):
+    """MSME contract maturity stays named, and stays 0.2.0, after install."""
+    out = _consume(installed_python, "print(_m.MSME_API_VERSION)\n").strip()
+    assert out == "0.2.0"
+
+
+def test_wheel_metadata_reports_project_version_once(built_wheel, config):
+    """The wheel carries exactly one distribution Version header."""
+    project_version = config["project"]["version"]
+    with zipfile.ZipFile(built_wheel) as archive:
+        meta_name = next(n for n in archive.namelist() if n.endswith(".dist-info/METADATA"))
+        meta = email.message_from_bytes(archive.read(meta_name))
+    versions = meta.get_all("Version") or []
+    assert versions == [project_version]
+    assert meta.get("Name") == "cnc-production-shop"
 
 
 def test_the_installed_package_reads_its_packaged_schema(installed_python):
