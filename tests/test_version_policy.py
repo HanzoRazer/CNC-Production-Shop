@@ -14,6 +14,7 @@ from pathlib import Path
 import pytest
 
 import musical_spatial_mapping as msme
+import musical_spatial_mapping._distribution_version as versioning
 from musical_spatial_mapping._distribution_version import (
     DISTRIBUTION_NAME,
     DistributionVersionError,
@@ -88,6 +89,7 @@ def test_version_remains_accessible():
 def test_internal_version_helper_is_not_exported():
     assert "distribution_version" not in msme.__all__
     assert "_distribution_version" not in msme.__all__
+    assert "_resolve_distribution_version" not in msme.__all__
     assert "DISTRIBUTION_NAME" not in msme.__all__
 
 
@@ -98,10 +100,7 @@ def test_existing_msme_public_imports_remain_valid():
 
 
 def test_fallback_reads_pyproject_when_metadata_is_absent(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        "musical_spatial_mapping._distribution_version.installed_distribution_version",
-        lambda: None,
-    )
+    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: None)
     assert distribution_version() == _project_table()["version"]
 
 
@@ -137,18 +136,12 @@ def test_unreadable_project_file_fails_clearly(tmp_path: Path):
 
 
 def test_absent_pyproject_fails_rather_than_fabricating(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        "musical_spatial_mapping._distribution_version.installed_distribution_version",
-        lambda: None,
-    )
+    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: None)
 
     def _missing() -> Path:
         raise DistributionVersionError("cnc-production-shop pyproject.toml was not found")
 
-    monkeypatch.setattr(
-        "musical_spatial_mapping._distribution_version.locate_pyproject",
-        _missing,
-    )
+    monkeypatch.setattr(versioning, "locate_pyproject", _missing)
     with pytest.raises(DistributionVersionError, match="was not found"):
         distribution_version()
 
@@ -161,14 +154,8 @@ def test_resolver_follows_monkeypatched_project_version_not_an_msme_literal(
         '[project]\nname = "cnc-production-shop"\nversion = "9.9.9"\n',
         encoding="utf-8",
     )
-    monkeypatch.setattr(
-        "musical_spatial_mapping._distribution_version.installed_distribution_version",
-        lambda: None,
-    )
-    monkeypatch.setattr(
-        "musical_spatial_mapping._distribution_version.locate_pyproject",
-        lambda: pyproject,
-    )
+    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: None)
+    monkeypatch.setattr(versioning, "locate_pyproject", lambda: pyproject)
     assert distribution_version() == "9.9.9"
     assert msme.MSME_API_VERSION == "0.2.0"
 
@@ -176,10 +163,7 @@ def test_resolver_follows_monkeypatched_project_version_not_an_msme_literal(
 def test_msme_api_version_stays_independent_when_distribution_version_changes(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    monkeypatch.setattr(
-        "musical_spatial_mapping._distribution_version.installed_distribution_version",
-        lambda: "3.1.4",
-    )
+    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: "3.1.4")
     assert distribution_version() == "3.1.4"
     assert msme.MSME_API_VERSION == "0.2.0"
     assert msme.MSME_API_VERSION != distribution_version()
