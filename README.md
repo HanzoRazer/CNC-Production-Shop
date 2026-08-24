@@ -66,8 +66,13 @@ python -c "import business.bids.calculator"   # verifies the engine is installed
 
 Subsystems may carry separately named API/contract versions (for example
 `musical_spatial_mapping.MSME_API_VERSION`), but a subpackage `__version__`
-reflects the containing distribution when it is exposed. See
-`docs/governance/VERSIONING_POLICY.md`.
+reflects the containing distribution when it is exposed.
+
+Version authority, release lifecycle, and the changelog:
+
+- `docs/governance/VERSIONING_POLICY.md`
+- `docs/governance/RELEASE_POLICY.md`
+- `CHANGELOG.md`
 
 ## Development
 
