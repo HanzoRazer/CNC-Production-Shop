@@ -9,6 +9,7 @@ import sys
 import zipfile
 from pathlib import Path
 
+from scripts.release.check_release_readiness import FEATURE_PACKAGES as CHECKER_PACKAGES
 from scripts.release.check_release_readiness import check
 from scripts.release.model import (
     changelog_has_release_ready_unreleased,
@@ -64,10 +65,29 @@ def _fake_wheel(path: Path, version: str) -> Path:
     return wheel
 
 
-def _commit_release_tree(path: Path, version: str) -> None:
+def _plant_source_packages(root: Path, *, bind: bool = True) -> None:
+    (root / "cnc_version").mkdir(exist_ok=True)
+    (root / "cnc_version" / "__init__.py").write_text("# resolver stub\n", encoding="utf-8")
+    for name in CHECKER_PACKAGES:
+        package_dir = root / name
+        package_dir.mkdir(exist_ok=True)
+        if bind:
+            body = (
+                "from cnc_version import distribution_version\n\n"
+                "__version__ = distribution_version()\n"
+            )
+        else:
+            body = '__version__ = "9.9.9"\n'
+        if name == "musical_spatial_mapping":
+            body += 'MSME_API_VERSION = "0.2.0"\n'
+        (package_dir / "__init__.py").write_text(body, encoding="utf-8")
+
+
+def _commit_release_tree(path: Path, version: str, *, bind_packages: bool = True) -> None:
     _write_pyproject(path / "pyproject.toml", version)
     _write_changelog(path / "CHANGELOG.md", "## Unreleased\n\n### Fixed\n- ready\n")
-    _git(path, "add", "pyproject.toml", "CHANGELOG.md")
+    _plant_source_packages(path, bind=bind_packages)
+    _git(path, "add", "pyproject.toml", "CHANGELOG.md", "cnc_version", *CHECKER_PACKAGES)
     _git(path, "commit", "-m", "release tree")
 
 
@@ -94,8 +114,40 @@ def test_readiness_ignores_witness_tag(tmp_path: Path) -> None:
 
 def test_readiness_fails_if_package_versions_drift(tmp_path: Path) -> None:
     _init_repo(tmp_path)
-    _commit_release_tree(tmp_path, "9.9.9")
+    _commit_release_tree(tmp_path, "9.9.9", bind_packages=False)
     assert check("9.9.9", tmp_path, None) == 1
+
+
+def test_readiness_ignores_caller_installed_version(tmp_path: Path) -> None:
+    """A 9.9.9 tree must pass even when the caller environment is 0.1.0."""
+    _init_repo(tmp_path)
+    _commit_release_tree(tmp_path, "9.9.9")
+    assert check("9.9.9", tmp_path, None) == 0
+
+
+def test_readiness_fails_when_packages_missing_from_root(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
+    _commit_release_tree(tmp_path, "0.1.0")
+    _git(tmp_path, "rm", "-r", "cam_assist")
+    _git(tmp_path, "commit", "-m", "drop package")
+    assert check("0.1.0", tmp_path, None) == 1
+
+
+def test_readiness_fails_without_git_metadata(tmp_path: Path) -> None:
+    _write_pyproject(tmp_path / "pyproject.toml", "0.1.0")
+    _write_changelog(tmp_path / "CHANGELOG.md", "## Unreleased\n\n### Fixed\n- ready\n")
+    _plant_source_packages(tmp_path)
+    assert check("0.1.0", tmp_path, None) == 1
+
+
+def test_readiness_fails_on_malformed_wheel(tmp_path: Path) -> None:
+    _init_repo(tmp_path)
+    _commit_release_tree(tmp_path, "0.1.0")
+    wheel = tmp_path.parent / "wheels-empty" / "cnc_production_shop-0.1.0-py3-none-any.whl"
+    wheel.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(wheel, "w") as archive:
+        archive.writestr("empty.txt", "no metadata\n")
+    assert check("0.1.0", tmp_path, wheel) == 1
 
 
 def test_readiness_fails_if_wheel_metadata_disagrees(tmp_path: Path) -> None:

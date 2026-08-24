@@ -122,17 +122,19 @@ Release notes must report both when MSME changes.
 A source tree is internally consistent for a proposed version only when:
 
 - `[project].version` parses as `MAJOR.MINOR.PATCH` with no `v` prefix
-- the proposed version equals `[project].version`
-- every packaged `__version__` equals the distribution version
-- `MSME_API_VERSION` is independently readable
-- the working tree is clean
-- the canonical tag `v<version>` does not already exist locally
+- the proposed version equals `[project].version` in that tree
+- every feature package exists under the tree and binds `__version__` to
+  `cnc_version.distribution_version()` (not a hardcoded literal)
+- `MSME_API_VERSION` is independently readable from that tree
+- git metadata is present and the working tree is clean
+- the canonical tag `v<version>` does not already exist in that tree
 - `CHANGELOG.md` has a section for that version, or release-ready
   `Unreleased` material (a governed category heading with at least one entry)
 - if a wheel is supplied, its filename and metadata match the version
 
-`scripts/release/check_release_readiness.py` evaluates these checks and
-writes nothing.
+`scripts/release/check_release_readiness.py` evaluates these checks against
+`--root` only and writes nothing. It does not consult the caller's installed
+distribution or imported packages. `--root` defaults to this checkout.
 
 Eligibility is not a release.
 

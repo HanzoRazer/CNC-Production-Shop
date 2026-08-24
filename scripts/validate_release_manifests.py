@@ -28,6 +28,7 @@ from scripts.release.model import (  # noqa: E402
     ReleasePolicyError,
     parse_artifact_hash,
     parse_commit_sha,
+    parse_created_at,
     parse_distribution_version,
     parse_release_id,
     parse_release_state,
@@ -72,6 +73,11 @@ def validate_semantics(manifest: dict, path: Path) -> list[str]:
     try:
         parse_commit_sha(str(manifest["commit_sha"]))
     except ReleasePolicyError as exc:
+        errors.append(f"{path}: {exc}")
+
+    try:
+        parse_created_at(str(manifest["created_at"]))
+    except (KeyError, ReleasePolicyError) as exc:
         errors.append(f"{path}: {exc}")
 
     tag = str(manifest.get("tag", ""))

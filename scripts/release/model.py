@@ -5,8 +5,10 @@ No Git writes. No network. No mutation of ``pyproject.toml``.
 
 from __future__ import annotations
 
+import ast
 import re
 from dataclasses import dataclass
+from datetime import datetime
 
 DISTRIBUTION_NAME = "cnc-production-shop"
 RELEASE_STATES = frozenset({"development", "release_candidate", "released", "withdrawn"})
@@ -18,6 +20,10 @@ SHA256_PREFIX = "sha256:"
 COMMIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 VERSION_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 RELEASE_ID_RE = re.compile(r"^REL-CNC-(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+CREATED_AT_RE = re.compile(
+    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}"
+    r"(?:T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:Z|[+-][0-9]{2}:[0-9]{2}))?$"
+)
 CHANGELOG_CATEGORIES = (
     "Added",
     "Changed",
@@ -108,6 +114,98 @@ def parse_release_state(value: str) -> str:
     if value not in RELEASE_STATES:
         raise ReleasePolicyError(f"unknown release_state: {value!r}")
     return value
+
+
+def parse_created_at(value: str) -> str:
+    """Accept an ISO 8601 date or timezone-aware datetime."""
+    if not CREATED_AT_RE.fullmatch(value):
+        raise ReleasePolicyError("created_at must be an ISO 8601 date or timezone-aware datetime")
+    try:
+        if "T" in value:
+            normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+            datetime.fromisoformat(normalized)
+        else:
+            datetime.strptime(value, "%Y-%m-%d")
+    except ValueError as exc:
+        raise ReleasePolicyError(f"created_at is not a valid ISO 8601 value: {value!r}") from exc
+    return value
+
+
+def select_wheel_metadata_member(names: list[str]) -> str:
+    """Return the unique ``*.dist-info/METADATA`` member, or fail closed."""
+    members = [name for name in names if name.endswith(".dist-info/METADATA")]
+    if not members:
+        raise ReleasePolicyError("wheel has no .dist-info/METADATA member")
+    if len(members) != 1:
+        raise ReleasePolicyError(f"wheel has {len(members)} METADATA members")
+    return members[0]
+
+
+def package_binds_distribution_version(source: str) -> bool:
+    """True when ``__version__`` is assigned from ``cnc_version.distribution_version()``."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError as exc:
+        raise ReleasePolicyError(f"cannot parse package source: {exc}") from exc
+
+    imported: set[str] = set()
+    for node in tree.body:
+        if isinstance(node, ast.ImportFrom) and node.module == "cnc_version":
+            for alias in node.names:
+                if alias.name == "distribution_version":
+                    imported.add(alias.asname or alias.name)
+    if not imported:
+        return False
+
+    for node in tree.body:
+        targets: list[ast.expr] = []
+        value: ast.expr | None = None
+        if isinstance(node, ast.Assign):
+            targets = list(node.targets)
+            value = node.value
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            targets = [node.target]
+            value = node.value
+        if value is None:
+            continue
+        if not any(
+            isinstance(target, ast.Name) and target.id == "__version__" for target in targets
+        ):
+            continue
+        if (
+            isinstance(value, ast.Call)
+            and isinstance(value.func, ast.Name)
+            and value.func.id in imported
+            and not value.args
+            and not value.keywords
+        ):
+            return True
+    return False
+
+
+def read_assigned_string_constant(source: str, name: str) -> str:
+    """Read a module-level ``NAME = "..."`` assignment."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError as exc:
+        raise ReleasePolicyError(f"cannot parse source for {name}: {exc}") from exc
+    for node in tree.body:
+        targets: list[ast.expr] = []
+        value: ast.expr | None = None
+        if isinstance(node, ast.Assign):
+            targets = list(node.targets)
+            value = node.value
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            targets = [node.target]
+            value = node.value
+        if value is None:
+            continue
+        if not any(isinstance(target, ast.Name) and target.id == name for target in targets):
+            continue
+        if isinstance(value, ast.Constant) and isinstance(value.value, str) and value.value:
+            return value.value
+        raise ReleasePolicyError(f"{name} must be assigned a non-empty string literal")
+    raise ReleasePolicyError(f"{name} assignment was not found")
 
 
 @dataclass(frozen=True)

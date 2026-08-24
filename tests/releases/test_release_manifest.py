@@ -73,6 +73,16 @@ def test_msme_api_version_may_differ_from_distribution() -> None:
     assert validate_semantics(payload, FIXTURE) == []
 
 
+def test_created_at_must_be_iso8601() -> None:
+    schema = load_json(SCHEMA_PATH)
+    payload = _example()
+    payload["created_at"] = "not-a-date"
+    errors = list(jsonschema.Draft202012Validator(schema).iter_errors(payload))
+    assert errors
+    payload["created_at"] = "soon"
+    assert validate_semantics(payload, FIXTURE)
+
+
 def test_schema_versions_are_not_on_the_manifest() -> None:
     schema = load_json(SCHEMA_PATH)
     payload = _example()

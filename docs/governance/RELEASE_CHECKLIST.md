@@ -16,8 +16,9 @@ A checked box is evidence only when the named artifact or log exists.
 ## Version state
 
 - [ ] `[project].version` is the intended `MAJOR.MINOR.PATCH` (no `v` prefix)
-- [ ] All packaged `__version__` values equal the distribution version
-- [ ] `MSME_API_VERSION` recorded independently
+- [ ] Readiness inspected the release tree (`--root`), not another checkout's env
+- [ ] All packaged `__version__` values bind to `cnc_version.distribution_version()`
+- [ ] `MSME_API_VERSION` recorded independently from that tree
 - [ ] Schema / quote / artifact revisions were not silently retargeted
 
 ## Test state

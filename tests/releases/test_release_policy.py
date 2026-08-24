@@ -11,10 +11,14 @@ from scripts.release.model import (
     ReleasePolicyError,
     is_canonical_release_tag,
     is_witness_tag,
+    package_binds_distribution_version,
     parse_artifact_hash,
     parse_commit_sha,
+    parse_created_at,
     parse_distribution_version,
     parse_release_state,
+    read_assigned_string_constant,
+    select_wheel_metadata_member,
     tag_for_version,
     version_from_tag,
     version_from_wheel_filename,
@@ -84,6 +88,65 @@ def test_unknown_release_state_rejected() -> None:
     with pytest.raises(ReleasePolicyError, match="unknown release_state"):
         parse_release_state("shipped")
     assert parse_release_state("development") == "development"
+
+
+@pytest.mark.parametrize(
+    "value", ["2026-08-24", "2026-08-24T00:00:00Z", "2026-08-24T00:00:00+00:00"]
+)
+def test_created_at_accepts_iso8601(value: str) -> None:
+    assert parse_created_at(value) == value
+
+
+@pytest.mark.parametrize("value", ["", "soon", "2026/08/24", "2026-08-24T00:00:00", "2026-13-40"])
+def test_created_at_rejects_non_iso8601(value: str) -> None:
+    with pytest.raises(ReleasePolicyError, match="ISO 8601"):
+        parse_created_at(value)
+
+
+def test_package_bind_detects_resolver_and_alias() -> None:
+    assert package_binds_distribution_version(
+        "from cnc_version import distribution_version\n\n__version__ = distribution_version()\n"
+    )
+    assert package_binds_distribution_version(
+        "from cnc_version import distribution_version as _resolve\n\n__version__ = _resolve()\n"
+    )
+    assert not package_binds_distribution_version('__version__ = "0.1.0"\n')
+    root = Path(__file__).resolve().parents[2]
+    for name in (
+        "cam_assist",
+        "business",
+        "parametric",
+        "fretboard",
+        "materials",
+        "acoustic",
+        "musical_spatial_mapping",
+    ):
+        source = (root / name / "__init__.py").read_text(encoding="utf-8")
+        assert package_binds_distribution_version(source), name
+
+
+def test_read_assigned_string_constant() -> None:
+    assert (
+        read_assigned_string_constant('MSME_API_VERSION = "0.2.0"\n', "MSME_API_VERSION") == "0.2.0"
+    )
+    with pytest.raises(ReleasePolicyError):
+        read_assigned_string_constant("__version__ = 'x'\n", "MSME_API_VERSION")
+
+
+def test_select_wheel_metadata_member_is_fail_closed() -> None:
+    assert (
+        select_wheel_metadata_member(["cnc_production_shop-0.1.0.dist-info/METADATA"])
+        == "cnc_production_shop-0.1.0.dist-info/METADATA"
+    )
+    with pytest.raises(ReleasePolicyError, match="no .dist-info/METADATA"):
+        select_wheel_metadata_member(["empty.txt"])
+    with pytest.raises(ReleasePolicyError, match="2 METADATA"):
+        select_wheel_metadata_member(
+            [
+                "a.dist-info/METADATA",
+                "b.dist-info/METADATA",
+            ]
+        )
 
 
 def test_scripts_do_not_write_network_or_tags_or_pyproject() -> None:
