@@ -2,9 +2,9 @@
   "release_id": "REL-CNC-0.1.1",
   "distribution_name": "cnc-production-shop",
   "distribution_version": "0.1.1",
-  "release_state": "release_candidate",
-  "commit_sha": "aeff825f3492bc96db5869044255a3bc9f47345f",
-  "tag": "",
+  "release_state": "released",
+  "commit_sha": "b143ed22e9215f56bca3ed184131852dd033b3f5",
+  "tag": "v0.1.1",
   "created_at": "2026-08-24T21:57:32Z",
   "python_versions": ["3.11", "3.12"],
   "artifacts": [
@@ -13,8 +13,8 @@
       "sha256": "sha256:687871562bf49d34605f75630f03109fc4f05b1b8a828072403460fe43c26a00"
     }
   ],
-  "test_summary": "Release-candidate evidence. Pytest, ruff, mypy, and validators to be recorded on the RC PR CI (Python 3.11 / 3.12).",
-  "ci_summary": "Release-candidate. Canonical tag v0.1.1 is not created until the RC PR is merged and the merge SHA is re-verified.",
+  "test_summary": "PR #9 local gate: 1318 passed, 1 skipped; ruff and required mypy passed; all scripts/validate_*.py passed; readiness passed on the RC commit. Merge SHA rebuild matched the recorded wheel hash. Post-tag fresh-venv install passed.",
+  "ci_summary": "PR #9 CI green on Python 3.11 and 3.12: https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/32782431215",
   "subsystem_versions": {
     "MSME_API_VERSION": "0.2.0"
   },

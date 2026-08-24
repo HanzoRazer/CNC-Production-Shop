@@ -1,6 +1,6 @@
 # Release evidence — 0.1.1
 
-Status: `release_candidate`
+Status: `released`
 
 This is human-facing evidence for `REL-CNC-0.1.1`. It does not replace
 `fixtures/releases/release_manifest_0.1.1.json`.
@@ -11,18 +11,19 @@ This is human-facing evidence for `REL-CNC-0.1.1`. It does not replace
 distribution: cnc-production-shop
 version:      0.1.1
 release ID:   REL-CNC-0.1.1
-tag:          v0.1.1 (not created until post-merge verification)
+tag:          v0.1.1
 ```
 
 ## Source
 
 ```text
-version-freeze commit: aeff825f3492bc96db5869044255a3bc9f47345f
-base main:             182406fcab7ea92dc534e8d47780e588e67d9b8d
+tagged commit (peeled): b143ed22e9215f56bca3ed184131852dd033b3f5
+tag object:             b2509cf0417839638ae24c69d72ccefb6f14c011
+PR:                     https://github.com/HanzoRazer/CNC-Production-Shop/pull/9
 ```
 
-The canonical tag will point at the verified post-merge evidence-bearing
-commit, not the pre-merge branch tip.
+`v0.1.1` is an annotated tag. The peeled commit is the merge commit of PR #9,
+not the pre-merge branch tip.
 
 ## Artifact
 
@@ -33,12 +34,11 @@ duplicate members: no (64 unique members)
 stored in git:     no (hash only; rebuild from the tagged commit)
 ```
 
+Rebuild from merge SHA `b143ed2` produced the same hash as the RC record.
+
 See `dist-release/SHA256SUMS`.
 
-## Version parity (editable install after version freeze)
-
-Recorded locally during candidate preparation. Fresh-venv proof is repeated
-from the exact merge SHA before tagging.
+## Version parity (fresh venv after tag)
 
 ```text
 cam_assist:                0.1.1
@@ -49,6 +49,14 @@ materials:                 0.1.1
 acoustic:                  0.1.1
 musical_spatial_mapping:   0.1.1
 MSME_API_VERSION:          0.2.0
+```
+
+`cam-assist status` reports `CAM Assist v0.1.1 — Ready`.
+
+## CI
+
+```text
+Python 3.11 / 3.12: https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/32782431215
 ```
 
 ## Publication

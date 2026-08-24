@@ -249,7 +249,11 @@ def test_renderer_cli_and_readiness_cli_are_read_only() -> None:
         text=True,
         check=False,
     )
-    assert ready.returncode == 0, ready.stdout + ready.stderr
+    listed_before = {line for line in tags_before.splitlines() if line}
+    if tag_for_version("0.1.1") in listed_before:
+        assert ready.returncode == 1
+    else:
+        assert ready.returncode == 0, ready.stdout + ready.stderr
     tags_after = subprocess.run(
         ["git", "tag", "--list"],
         cwd=ROOT,

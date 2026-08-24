@@ -3,8 +3,8 @@
 Date: 2026-08-24
 
 Release ID: REL-CNC-0.1.1
-State: release_candidate
-Tag: v0.1.1 (proposed)
+State: released
+Tag: v0.1.1
 Distribution: cnc-production-shop
 
 This is the first governed distribution release. `0.1.0` was a version
