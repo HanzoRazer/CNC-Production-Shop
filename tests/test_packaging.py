@@ -32,7 +32,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = ROOT / "pyproject.toml"
 
-DECLARED_PACKAGES = [
+FEATURE_PACKAGES = [
     "cam_assist",
     "business",
     "parametric",
@@ -41,6 +41,10 @@ DECLARED_PACKAGES = [
     "acoustic",
     "musical_spatial_mapping",
 ]
+
+# Neutral resolver introduced by CNC-VERSION-ALIGNMENT-2. It is not a feature
+# package; it exists so no feature package owns the distribution version.
+DECLARED_PACKAGES = ["cnc_version", *FEATURE_PACKAGES]
 
 
 def _bail(reason: str) -> None:
@@ -158,11 +162,19 @@ def test_the_wheel_carries_every_declared_package(wheel_members):
     """Removing the force-include must not have cost any OTHER package its files.
 
     The fix edited a shared build table; this is the blast-radius check.
+    Adding ``cnc_version`` increases the member count by that package's
+    ``__init__.py`` only.
     """
     missing = [
         pkg for pkg in DECLARED_PACKAGES if not any(n.startswith(f"{pkg}/") for n in wheel_members)
     ]
     assert not missing, f"declared packages absent from the wheel: {missing}"
+
+
+def test_the_wheel_carries_the_neutral_resolver(wheel_members):
+    assert any(n == "cnc_version/__init__.py" for n in wheel_members), (
+        "cnc_version must ship in the wheel so installed packages can resolve __version__"
+    )
 
 
 def test_the_wheel_carries_the_msme_modules(wheel_members):
@@ -177,9 +189,9 @@ def test_the_wheel_carries_the_msme_modules(wheel_members):
         "mapper.py",
         "serialization.py",
         "cli.py",
-        "_distribution_version.py",
     ):
         assert expected in modules, f"musical_spatial_mapping/{expected} not packaged"
+    assert "_distribution_version.py" not in modules
 
 
 # ------------------------------------------------------- the installed consumer
@@ -262,6 +274,34 @@ def test_the_installed_package_reports_the_distribution_version(installed_python
     )
     reported, meta = out
     assert reported == meta, f"installed __version__ {reported!r} != distribution metadata {meta!r}"
+
+
+def test_all_installed_feature_packages_report_the_wheel_version(installed_python):
+    """Every feature package __version__ equals wheel metadata, from site-packages."""
+    names = ", ".join(repr(n) for n in FEATURE_PACKAGES)
+    out = _consume(
+        installed_python,
+        "import importlib, importlib.metadata as md\n"
+        "from pathlib import Path\n"
+        f"packages = [{names}]\n"
+        "meta = md.version('cnc-production-shop')\n"
+        "for name in packages:\n"
+        "    mod = importlib.import_module(name)\n"
+        "    loc = Path(mod.__file__).resolve()\n"
+        "    assert 'site-packages' in str(loc), loc\n"
+        f"    assert {str(ROOT)!r} not in str(loc), loc\n"
+        "    assert mod.__version__ == meta, (name, mod.__version__, meta)\n"
+        "    print(name, mod.__version__)\n"
+        "print('META', meta)\n",
+    )
+    lines = out.strip().splitlines()
+    assert lines[-1] == f"META {_project_version()}", lines
+    reported = [line.split()[1] for line in lines[:-1]]
+    assert reported == [_project_version()] * len(FEATURE_PACKAGES)
+
+
+def _project_version() -> str:
+    return tomllib.loads(PYPROJECT.read_text(encoding="utf-8"))["project"]["version"]
 
 
 def test_the_installed_package_reports_msme_api_version(installed_python):

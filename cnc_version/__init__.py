@@ -1,10 +1,8 @@
-"""Resolve the installed ``cnc-production-shop`` distribution version.
+"""Canonical ``cnc-production-shop`` distribution version.
 
-The wheel/distribution version is authoritative. Subsystem API maturity is
-expressed separately (see ``MSME_API_VERSION``) and must not be encoded in
-``__version__``.
-
-This helper is MSME-local so the engine does not depend on ``business``.
+All package-level ``__version__`` attributes shipped inside this wheel report
+the containing distribution version. Subsystem API maturity uses an explicitly
+named constant such as ``MSME_API_VERSION``, never ``__version__``.
 """
 
 from __future__ import annotations
@@ -15,12 +13,18 @@ from pathlib import Path
 
 DISTRIBUTION_NAME = "cnc-production-shop"
 
+__all__ = [
+    "DISTRIBUTION_NAME",
+    "DistributionVersionError",
+    "distribution_version",
+]
+
 
 class DistributionVersionError(RuntimeError):
     """Raised when the distribution version cannot be resolved deterministically."""
 
 
-def installed_distribution_version() -> str | None:
+def _installed_distribution_version() -> str | None:
     """Return the installed distribution version, or ``None`` if it is not installed."""
     try:
         return version(DISTRIBUTION_NAME)
@@ -28,7 +32,7 @@ def installed_distribution_version() -> str | None:
         return None
 
 
-def locate_pyproject() -> Path:
+def _locate_pyproject() -> Path:
     """Find this repository's ``pyproject.toml`` by walking from this file."""
     for directory in Path(__file__).resolve().parents:
         candidate = directory / "pyproject.toml"
@@ -47,7 +51,7 @@ def locate_pyproject() -> Path:
     )
 
 
-def project_version_from_toml(path: Path) -> str:
+def _project_version_from_toml(path: Path) -> str:
     """Read ``[project].version`` from ``path``.
 
     Fails explicitly if the file is missing, malformed, or has no usable
@@ -74,9 +78,9 @@ def project_version_from_toml(path: Path) -> str:
     return value
 
 
-def project_version_from_checkout() -> str:
+def _project_version_from_checkout() -> str:
     """Read ``[project].version`` from the repository ``pyproject.toml``."""
-    return project_version_from_toml(locate_pyproject())
+    return _project_version_from_toml(_locate_pyproject())
 
 
 def distribution_version() -> str:
@@ -86,7 +90,7 @@ def distribution_version() -> str:
     distribution is not installed, reads ``[project].version`` from
     ``pyproject.toml``. Does not fabricate a version.
     """
-    installed = installed_distribution_version()
+    installed = _installed_distribution_version()
     if installed is not None:
         return installed
-    return project_version_from_checkout()
+    return _project_version_from_checkout()

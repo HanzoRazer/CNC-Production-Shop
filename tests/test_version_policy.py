@@ -2,32 +2,37 @@
 
 Installed-wheel checks that need a real artifact live in ``test_packaging.py``
 so they share that module-scoped wheel/venv harness. This module covers the
-source-checkout contract: one project version, MSME ``__version__`` following
-it, and ``MSME_API_VERSION`` remaining an independent named constant.
+source-checkout contract: one project version, every packaged ``__version__``
+following it, and ``MSME_API_VERSION`` remaining an independent named constant.
 """
 
 from __future__ import annotations
 
+import importlib
 import tomllib
 from pathlib import Path
 
 import pytest
 
+import cnc_version as versioning
 import musical_spatial_mapping as msme
-import musical_spatial_mapping._distribution_version as versioning
-from musical_spatial_mapping._distribution_version import (
-    DISTRIBUTION_NAME,
-    DistributionVersionError,
-    distribution_version,
-    installed_distribution_version,
-    locate_pyproject,
-    project_version_from_toml,
-)
+from cnc_version import DISTRIBUTION_NAME, DistributionVersionError, distribution_version
 
 ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = ROOT / "pyproject.toml"
 POLICY = ROOT / "docs/governance/VERSIONING_POLICY.md"
 MSME_ROOT = ROOT / "musical_spatial_mapping"
+GOLDEN = ROOT / "tests/golden/msme_v1_vectors.json"
+
+PACKAGES = (
+    "cam_assist",
+    "business",
+    "parametric",
+    "fretboard",
+    "materials",
+    "acoustic",
+    "musical_spatial_mapping",
+)
 
 
 def _project_table() -> dict:
@@ -57,9 +62,22 @@ def test_distribution_name_is_cnc_production_shop():
     assert DISTRIBUTION_NAME == "cnc-production-shop"
 
 
-def test_msme_runtime_version_equals_project_version_in_checkout():
-    assert msme.__version__ == _project_table()["version"]
-    assert msme.__version__ == distribution_version()
+def test_canonical_resolver_returns_project_version():
+    assert distribution_version() == _project_table()["version"]
+
+
+def test_all_feature_packages_expose_version():
+    for name in PACKAGES:
+        module = importlib.import_module(name)
+        assert hasattr(module, "__version__")
+        assert isinstance(module.__version__, str)
+        assert module.__version__
+
+
+@pytest.mark.parametrize("name", PACKAGES)
+def test_feature_package_version_equals_distribution_version(name: str):
+    module = importlib.import_module(name)
+    assert module.__version__ == distribution_version()
 
 
 def test_msme_api_version_is_0_2_0():
@@ -72,6 +90,7 @@ def test_distribution_and_api_versions_are_allowed_to_differ():
     assert isinstance(msme.MSME_API_VERSION, str)
     assert msme.__version__
     assert msme.MSME_API_VERSION
+    assert msme.__version__ == distribution_version()
 
 
 def test_msme_api_version_is_exported_from_package_root():
@@ -81,12 +100,12 @@ def test_msme_api_version_is_exported_from_package_root():
     assert MSME_API_VERSION == "0.2.0"
 
 
-def test_version_remains_accessible():
+def test_msme_version_remains_accessible():
     assert hasattr(msme, "__version__")
     assert isinstance(msme.__version__, str)
 
 
-def test_internal_version_helper_is_not_exported():
+def test_internal_version_helper_is_not_exported_from_msme():
     assert "distribution_version" not in msme.__all__
     assert "_distribution_version" not in msme.__all__
     assert "_resolve_distribution_version" not in msme.__all__
@@ -99,54 +118,64 @@ def test_existing_msme_public_imports_remain_valid():
     assert len(msme.__all__) == 42
 
 
+def test_cnc_version_public_surface_is_minimal():
+    assert versioning.__all__ == [
+        "DISTRIBUTION_NAME",
+        "DistributionVersionError",
+        "distribution_version",
+    ]
+    assert not hasattr(versioning, "__version__")
+
+
 def test_fallback_reads_pyproject_when_metadata_is_absent(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: None)
+    monkeypatch.setattr(versioning, "_installed_distribution_version", lambda: None)
     assert distribution_version() == _project_table()["version"]
 
 
 def test_fallback_equals_project_version():
-    assert project_version_from_toml(locate_pyproject()) == _project_table()["version"]
+    resolved = versioning._project_version_from_toml(versioning._locate_pyproject())
+    assert resolved == _project_table()["version"]
 
 
 def test_missing_project_metadata_fails_clearly(tmp_path: Path):
     path = tmp_path / "pyproject.toml"
     path.write_text('[project]\nname = "cnc-production-shop"\n', encoding="utf-8")
     with pytest.raises(DistributionVersionError, match="version"):
-        project_version_from_toml(path)
+        versioning._project_version_from_toml(path)
 
 
 def test_missing_project_table_fails_clearly(tmp_path: Path):
     path = tmp_path / "pyproject.toml"
     path.write_text("[build-system]\nrequires = []\n", encoding="utf-8")
     with pytest.raises(DistributionVersionError, match=r"\[project\]"):
-        project_version_from_toml(path)
+        versioning._project_version_from_toml(path)
 
 
 def test_malformed_toml_fails_deterministically(tmp_path: Path):
     path = tmp_path / "pyproject.toml"
     path.write_text("this is not toml [[[", encoding="utf-8")
     with pytest.raises(DistributionVersionError, match="malformed"):
-        project_version_from_toml(path)
+        versioning._project_version_from_toml(path)
 
 
 def test_unreadable_project_file_fails_clearly(tmp_path: Path):
     path = tmp_path / "missing.toml"
     with pytest.raises(DistributionVersionError, match="could not read"):
-        project_version_from_toml(path)
+        versioning._project_version_from_toml(path)
 
 
 def test_absent_pyproject_fails_rather_than_fabricating(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: None)
+    monkeypatch.setattr(versioning, "_installed_distribution_version", lambda: None)
 
     def _missing() -> Path:
         raise DistributionVersionError("cnc-production-shop pyproject.toml was not found")
 
-    monkeypatch.setattr(versioning, "locate_pyproject", _missing)
+    monkeypatch.setattr(versioning, "_locate_pyproject", _missing)
     with pytest.raises(DistributionVersionError, match="was not found"):
         distribution_version()
 
 
-def test_resolver_follows_monkeypatched_project_version_not_an_msme_literal(
+def test_resolver_follows_monkeypatched_project_version(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ):
     pyproject = tmp_path / "pyproject.toml"
@@ -154,8 +183,8 @@ def test_resolver_follows_monkeypatched_project_version_not_an_msme_literal(
         '[project]\nname = "cnc-production-shop"\nversion = "9.9.9"\n',
         encoding="utf-8",
     )
-    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: None)
-    monkeypatch.setattr(versioning, "locate_pyproject", lambda: pyproject)
+    monkeypatch.setattr(versioning, "_installed_distribution_version", lambda: None)
+    monkeypatch.setattr(versioning, "_locate_pyproject", lambda: pyproject)
     assert distribution_version() == "9.9.9"
     assert msme.MSME_API_VERSION == "0.2.0"
 
@@ -163,28 +192,55 @@ def test_resolver_follows_monkeypatched_project_version_not_an_msme_literal(
 def test_msme_api_version_stays_independent_when_distribution_version_changes(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    monkeypatch.setattr(versioning, "installed_distribution_version", lambda: "3.1.4")
+    monkeypatch.setattr(versioning, "_installed_distribution_version", lambda: "3.1.4")
     assert distribution_version() == "3.1.4"
     assert msme.MSME_API_VERSION == "0.2.0"
     assert msme.MSME_API_VERSION != distribution_version()
 
 
-def test_msme_python_has_no_distribution_version_literal():
+def test_no_feature_package_owns_a_distribution_version_literal():
     offenders: list[str] = []
-    for path in MSME_ROOT.rglob("*.py"):
+    for name in PACKAGES:
+        path = ROOT / name / "__init__.py"
         text = path.read_text(encoding="utf-8")
         if '"0.1.0"' in text or "'0.1.0'" in text:
             offenders.append(str(path.relative_to(ROOT)))
     assert offenders == []
 
 
-def test_installed_metadata_is_readable_in_this_checkout():
-    installed = installed_distribution_version()
-    assert installed == _project_table()["version"]
+def test_resolver_python_has_no_distribution_version_literal():
+    text = (ROOT / "cnc_version" / "__init__.py").read_text(encoding="utf-8")
+    assert '"0.1.0"' not in text
+    assert "'0.1.0'" not in text
+    assert '"0.0.0"' not in text
+
+
+def test_no_package_imports_version_from_another_feature_package():
+    for name in PACKAGES:
+        text = (ROOT / name / "__init__.py").read_text(encoding="utf-8")
+        assert "from cnc_version import distribution_version" in text
+        for other in PACKAGES:
+            assert f"import {other}" not in text
+            assert f"from {other}" not in text
+
+
+def test_resolver_has_no_feature_domain_dependency():
+    text = (ROOT / "cnc_version" / "__init__.py").read_text(encoding="utf-8")
+    for banned in PACKAGES:
+        assert banned not in text
+
+
+def test_msme_local_helper_is_gone():
+    assert not (MSME_ROOT / "_distribution_version.py").exists()
+
+
+def test_msme_golden_vectors_file_is_unchanged_fixture():
+    # This sprint must not rewrite the behavioral spec; pin presence only.
+    assert GOLDEN.is_file()
+    assert GOLDEN.stat().st_size > 0
 
 
 def test_versioning_policy_exists_and_names_authorities():
-    # Lightweight pin of the policy artifact, not a documentation framework.
     assert POLICY.is_file()
     text = POLICY.read_text(encoding="utf-8")
     assert "cnc-production-shop" in text
@@ -192,4 +248,4 @@ def test_versioning_policy_exists_and_names_authorities():
     assert "Distribution version" in text
     assert "Subsystem API version" in text
     assert "Schema version" in text
-    assert "CNC-VERSION-ALIGNMENT-2" in text
+    assert "migration complete" in text.lower() or "CNC-VERSION-ALIGNMENT-2" in text

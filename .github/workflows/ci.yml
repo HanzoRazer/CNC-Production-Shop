@@ -37,6 +37,9 @@ jobs:
       - name: Type check musical_spatial_mapping (strict)
         run: mypy musical_spatial_mapping --strict
 
+      - name: Type check cnc_version (strict)
+        run: mypy cnc_version --strict
+
       # tests/test_packaging.py builds a real wheel, installs it into a fresh
       # venv and drives it from outside the checkout. CI is set on the runner,
       # so that test FAILS rather than skips if the artifact cannot be produced

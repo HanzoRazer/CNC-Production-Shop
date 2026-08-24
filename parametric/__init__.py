@@ -1,3 +1,5 @@
 """Parametric Guitar Designer — AI-assisted body shape ideation."""
 
-__version__ = "0.1.0"
+from cnc_version import distribution_version
+
+__version__ = distribution_version()

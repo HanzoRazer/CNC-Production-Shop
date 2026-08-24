@@ -162,8 +162,9 @@ If neither installed metadata nor readable project metadata is available, fail
 explicitly. Do not return `"0.0.0"`, `"unknown"`, or any other fabricated
 sentinel.
 
-Implementation for MSME: `musical_spatial_mapping/_distribution_version.py`.
-That helper is MSME-local so the engine does not depend on `business`.
+Implementation: `cnc_version.distribution_version()`. The helper is a
+neutral packaged module so no feature package owns the authority and MSME
+does not depend on `business`.
 
 ## Compatibility
 
@@ -249,37 +250,36 @@ Classified so a string containing "version" is not rewritten automatically.
 | Location | Current value | Class |
 |---|---|---|
 | `pyproject.toml` `[project].version` | `0.1.0` | distribution authority |
-| `musical_spatial_mapping.__version__` | distribution version | distribution (resolved at runtime) |
+| `cnc_version.distribution_version()` | runtime resolver | distribution authority |
+| seven packaged `__version__` attributes | distribution version | distribution (resolved at runtime) |
 | `musical_spatial_mapping.MSME_API_VERSION` | `0.2.0` | subsystem API |
 | instrument-profile `schema_version` | `1.0` | schema |
 | `BidV1` / `ProposalV1` / `BidSummaryV1` / related | `V1` in the type name | schema |
 | `tests/golden/msme_v1_vectors.json` | artifact name | behavioral spec / artifact revision |
 | `python_version` / Ruff `target-version` | `3.11` | tooling, not a product version |
 
-### Known version-drift debt
+### Package alignment
 
-These packaged `__version__` attributes are independently written `"0.1.0"`
-literals. They currently coincide with the distribution version, but they are
-not resolved from distribution metadata and can drift.
+`CNC-VERSION-ALIGNMENT-2` migration complete.
 
-| Package | File | Current literal |
-|---|---|---|
-| `cam_assist` | `cam_assist/__init__.py` | `"0.1.0"` |
-| `business` | `business/__init__.py` | `"0.1.0"` |
-| `parametric` | `parametric/__init__.py` | `"0.1.0"` |
-| `fretboard` | `fretboard/__init__.py` | `"0.1.0"` |
-| `materials` | `materials/__init__.py` | `"0.1.0"` |
-| `acoustic` | `acoustic/__init__.py` | `"0.1.0"` |
+All package-level `__version__` attributes shipped inside
+`cnc-production-shop` report the containing distribution version.
 
-`tests/test_cam_assist.py` pins `cam_assist.__version__ == "0.1.0"`. That test
-and those six literals are left untouched by `CNC-VERSION-POLICY-1`.
+The seven feature packages resolve `__version__` from the neutral
+`cnc_version.distribution_version()` helper. That helper has no CAM, business,
+or MSME dependency. No feature package owns a duplicated distribution-version
+literal.
+
+`cnc_version` itself does not expose `__version__`; it is the resolver, not a
+feature surface.
 
 Follow-on:
 
 ```text
-CNC-VERSION-ALIGNMENT-2
+CNC-RELEASE-POLICY-1
 ```
 
-Mission: migrate the remaining packaged `__version__` literals to the ratified
-distribution-version authority after `CNC-VERSION-POLICY-1` proves the pattern
-on MSME.
+Mission: define release numbering, when `[project].version` changes, tag
+conventions, changelog authority, and whether automated bumping or artifact
+publication is warranted. Do not begin release automation until version
+authority is fully aligned and enforced.

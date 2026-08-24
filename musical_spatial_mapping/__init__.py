@@ -30,7 +30,8 @@ durable API.
 likewise not exported; it has no semantics of its own.
 """
 
-from ._distribution_version import distribution_version as _resolve_distribution_version
+from cnc_version import distribution_version as _resolve_distribution_version
+
 from .enums import (
     FingerboardMode,
     OpenStringPolicy,
