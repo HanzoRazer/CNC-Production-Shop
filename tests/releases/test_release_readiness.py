@@ -199,7 +199,11 @@ def test_renderer_cli_and_readiness_cli_are_read_only() -> None:
         text=True,
     ).stdout
     assert tags_before == tags_after
-    assert "msme-001-foundation-original" in tags_after
+    # CI checkouts often omit remote tags. Require only that the CLIs did not
+    # create a canonical release tag. Witness-tag preservation is covered by
+    # test_readiness_ignores_witness_tag on a synthetic repo.
+    listed = {line for line in tags_after.splitlines() if line}
+    assert tag_for_version("0.1.0") not in listed
     assert (ROOT / "pyproject.toml").read_text(encoding="utf-8") == pyproject_before
     assert 'version = "0.1.0"' in pyproject_before
 
