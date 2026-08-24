@@ -212,6 +212,13 @@ def test_changelog_parser_reads_version_section() -> None:
     assert packaging.categories["Packaging"] == ("wheel",)
 
 
+def test_changelog_parser_accepts_dated_keep_a_changelog_heading() -> None:
+    text = "# Changelog\n\n## Unreleased\n\n## [0.1.1] - 2026-08-24\n\n### Governance\n- policy\n"
+    assert changelog_has_version_section(text, "0.1.1")
+    section = next(s for s in parse_changelog(text) if s.heading == "0.1.1")
+    assert section.categories["Governance"] == ("policy",)
+
+
 def test_renderer_cli_and_readiness_cli_are_read_only() -> None:
     tags_before = subprocess.run(
         ["git", "tag", "--list"],
