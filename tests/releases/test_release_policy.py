@@ -176,6 +176,7 @@ def test_changelog_is_unreleased_only_with_no_fabricated_history() -> None:
     text = (root / "CHANGELOG.md").read_text(encoding="utf-8")
     assert text.startswith("# Changelog\n")
     assert "## Unreleased" in text
+    assert "## [0.1.1] - 2026-08-24" in text
     assert "## [0.1.0]" not in text
     assert "## 0.1.0" not in text
 

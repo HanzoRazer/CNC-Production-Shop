@@ -78,7 +78,7 @@ The canonical installed artifact is `cnc-production-shop`.
 artifact. There is exactly one project distribution version. It is not
 generated from Git, commit counts, environment variables, or a network lookup.
 
-Current value: `0.1.0`.
+Current value: `0.1.1`.
 
 MSME reaching API maturity `0.2.0` does not mean the complete CNC Production
 Shop distribution has reached release `0.2.0`. Do not manufacture a
@@ -176,7 +176,7 @@ does not depend on `business`.
 ## Compatibility
 
 Changing `musical_spatial_mapping.__version__` from `0.2.0` to the
-distribution version (`0.1.0` today) changes the meaning of that attribute.
+distribution version (`0.1.1` today) changes the meaning of that attribute.
 
 Documented here so the change is not silent. Callers that need MSME contract
 maturity must read `MSME_API_VERSION`.
@@ -237,7 +237,7 @@ reporting.
 After this policy:
 
 ```text
-Distribution: 0.1.0
+Distribution: 0.1.1
 MSME API:      0.2.0
 ```
 
@@ -258,7 +258,7 @@ Classified so a string containing "version" is not rewritten automatically.
 
 | Location | Current value | Class |
 |---|---|---|
-| `pyproject.toml` `[project].version` | `0.1.0` | distribution authority |
+| `pyproject.toml` `[project].version` | `0.1.1` | distribution authority |
 | `cnc_version.distribution_version()` | runtime resolver | distribution authority |
 | seven packaged `__version__` attributes | distribution version | distribution (resolved at runtime) |
 | `musical_spatial_mapping.MSME_API_VERSION` | `0.2.0` | subsystem API |

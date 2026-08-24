@@ -164,10 +164,10 @@ def test_readiness_passes_on_clean_synthetic_fixture(tmp_path: Path) -> None:
     assert check("0.1.0", tmp_path, wheel) == 0
 
 
-def test_current_tree_is_not_release_ready_without_unreleased_entries() -> None:
-    # CHANGELOG.md is Unreleased-only with no categorized entries, by policy.
+def test_current_tree_has_governed_0_1_1_section_and_empty_unreleased() -> None:
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     assert "## Unreleased" in changelog
+    assert changelog_has_version_section(changelog, "0.1.1")
     assert not changelog_has_version_section(changelog, "0.1.0")
     assert not changelog_has_release_ready_unreleased(changelog)
 
@@ -230,7 +230,7 @@ def test_renderer_cli_and_readiness_cli_are_read_only() -> None:
     pyproject_before = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     renderer = ROOT / "scripts" / "release" / "render_release_notes.py"
     proc = subprocess.run(
-        [sys.executable, str(renderer), "--version", "0.1.0"],
+        [sys.executable, str(renderer), "--version", "0.1.1"],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -242,14 +242,14 @@ def test_renderer_cli_and_readiness_cli_are_read_only() -> None:
             sys.executable,
             str(ROOT / "scripts" / "release" / "check_release_readiness.py"),
             "--version",
-            "0.1.0",
+            "0.1.1",
         ],
         cwd=ROOT,
         capture_output=True,
         text=True,
         check=False,
     )
-    assert ready.returncode == 1
+    assert ready.returncode == 0, ready.stdout + ready.stderr
     tags_after = subprocess.run(
         ["git", "tag", "--list"],
         cwd=ROOT,
@@ -262,9 +262,9 @@ def test_renderer_cli_and_readiness_cli_are_read_only() -> None:
     # create a canonical release tag. Witness-tag preservation is covered by
     # test_readiness_ignores_witness_tag on a synthetic repo.
     listed = {line for line in tags_after.splitlines() if line}
-    assert tag_for_version("0.1.0") not in listed
+    assert tag_for_version("0.1.1") not in listed or tags_before == tags_after
     assert (ROOT / "pyproject.toml").read_text(encoding="utf-8") == pyproject_before
-    assert 'version = "0.1.0"' in pyproject_before
+    assert 'version = "0.1.1"' in pyproject_before
 
 
 def test_all_feature_packages_still_match_distribution() -> None:

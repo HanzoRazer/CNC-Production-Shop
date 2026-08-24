@@ -69,14 +69,14 @@ independently distributed.
 
 | Name | Meaning | Current |
 |---|---|---|
-| `cnc-production-shop` distribution | Installable wheel / package metadata | `0.1.0` |
-| `musical_spatial_mapping.__version__` | Same as the containing distribution | `0.1.0` |
+| `cnc-production-shop` distribution | Installable wheel / package metadata | `0.1.1` |
+| `musical_spatial_mapping.__version__` | Same as the containing distribution | `0.1.1` |
 | `MSME_API_VERSION` | Public MSME API/behavioral contract | `0.2.0` |
 
 ```python
 import musical_spatial_mapping as msme
 
-msme.__version__        # "0.1.0" — cnc-production-shop distribution
+msme.__version__        # "0.1.1" — cnc-production-shop distribution
 msme.MSME_API_VERSION   # "0.2.0" — MSME public API contract
 ```
 
