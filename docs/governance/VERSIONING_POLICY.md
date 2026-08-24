@@ -20,6 +20,13 @@ This policy answers permanently:
 
 It does not authorize a release, a tag, or a PyPI publication.
 
+Cross-reference:
+
+```text
+distribution version authority → VERSIONING_POLICY
+release lifecycle             → RELEASE_POLICY
+```
+
 ## Definitions
 
 ### Distribution version
@@ -220,8 +227,10 @@ Do not:
 - introduce setuptools-scm, hatch-vcs, bump2version, commitizen, or
   semantic-release as part of ordinary version reporting
 
-Those release-automation tools belong to a later `CNC-RELEASE-POLICY-1`
-evaluation. They are out of scope here.
+Those release-automation tools remain prohibited. Release lifecycle is
+governed by `docs/governance/RELEASE_POLICY.md`. Execution of a first
+release is a later `CNC-RELEASE-EXECUTION-1` act, not ordinary version
+reporting.
 
 ## Examples
 
@@ -273,13 +282,9 @@ literal.
 `cnc_version` itself does not expose `__version__`; it is the resolver, not a
 feature surface.
 
-Follow-on:
+Release lifecycle is defined in `docs/governance/RELEASE_POLICY.md`.
+Follow-on after that policy is ratified:
 
 ```text
-CNC-RELEASE-POLICY-1
+CNC-RELEASE-EXECUTION-1
 ```
-
-Mission: define release numbering, when `[project].version` changes, tag
-conventions, changelog authority, and whether automated bumping or artifact
-publication is warranted. Do not begin release automation until version
-authority is fully aligned and enforced.
