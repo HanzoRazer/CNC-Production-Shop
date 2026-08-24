@@ -1,0 +1,23 @@
+{
+  "release_id": "REL-CNC-0.1.1",
+  "distribution_name": "cnc-production-shop",
+  "distribution_version": "0.1.1",
+  "release_state": "release_candidate",
+  "commit_sha": "aeff825f3492bc96db5869044255a3bc9f47345f",
+  "tag": "",
+  "created_at": "2026-08-24T21:57:32Z",
+  "python_versions": ["3.11", "3.12"],
+  "artifacts": [
+    {
+      "filename": "cnc_production_shop-0.1.1-py3-none-any.whl",
+      "sha256": "sha256:687871562bf49d34605f75630f03109fc4f05b1b8a828072403460fe43c26a00"
+    }
+  ],
+  "test_summary": "Release-candidate evidence. Pytest, ruff, mypy, and validators to be recorded on the RC PR CI (Python 3.11 / 3.12).",
+  "ci_summary": "Release-candidate. Canonical tag v0.1.1 is not created until the RC PR is merged and the merge SHA is re-verified.",
+  "subsystem_versions": {
+    "MSME_API_VERSION": "0.2.0"
+  },
+  "notes_ref": "docs/releases/RELEASE_0.1.1.md",
+  "example_only": false
+}

@@ -19,6 +19,10 @@ WHEEL_PREFIX = "cnc_production_shop-"
 SHA256_PREFIX = "sha256:"
 COMMIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 VERSION_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+CHANGELOG_VERSION_HEADING_RE = re.compile(
+    r"^\[?(?P<version>(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))\]?"
+    r"(?:\s+-\s+\d{4}-\d{2}-\d{2})?$"
+)
 RELEASE_ID_RE = re.compile(r"^REL-CNC-(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 CREATED_AT_RE = re.compile(
     r"^[0-9]{4}-[0-9]{2}-[0-9]{2}"
@@ -245,7 +249,7 @@ def parse_changelog(text: str) -> list[ChangelogSection]:
         line = raw.rstrip()
         if line.startswith("## "):
             _flush_section()
-            current_heading = line[3:].strip().strip("[]")
+            current_heading = normalize_changelog_heading(line[3:].strip())
             continue
         if line.startswith("### "):
             _flush_category()
@@ -255,6 +259,18 @@ def parse_changelog(text: str) -> list[ChangelogSection]:
             items.append(line[2:].strip())
     _flush_section()
     return sections
+
+
+def normalize_changelog_heading(heading: str) -> str:
+    """Map ``##`` headings to Unreleased or ``MAJOR.MINOR.PATCH``.
+
+    Accepts ``0.1.1``, ``[0.1.1]``, and ``[0.1.1] - YYYY-MM-DD``.
+    """
+    text = heading.strip()
+    match = CHANGELOG_VERSION_HEADING_RE.fullmatch(text)
+    if match:
+        return match.group("version")
+    return text.strip("[]")
 
 
 def changelog_has_version_section(text: str, version: str) -> bool:
