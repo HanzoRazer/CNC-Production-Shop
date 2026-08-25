@@ -321,6 +321,17 @@ def test_wheel_metadata_reports_project_version_once(built_wheel, config):
     assert meta.get("Name") == "cnc-production-shop"
 
 
+def test_release_artifact_verifier_accepts_the_packaged_wheel(built_wheel, config):
+    """Release-candidate automation must accept the same wheel packaging tests build."""
+    from scripts.release.verify_release_artifact import verify_release_artifact
+
+    result = verify_release_artifact(built_wheel, config["project"]["version"])
+    assert result.ok, result.blockers
+    assert result.packages_present
+    assert result.resources_present
+    assert not result.duplicate_members
+
+
 def test_the_installed_package_reads_its_packaged_schema(installed_python):
     """A data file can be present in the archive and still unreachable through
     the import system, which is the only way a consumer can get at it."""
