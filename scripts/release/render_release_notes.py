@@ -109,17 +109,25 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=None)
     parser.add_argument("--changelog", type=Path, default=ROOT / "CHANGELOG.md")
     parser.add_argument("--date", default=None)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="write rendered notes to this path instead of stdout",
+    )
     args = parser.parse_args()
     changelog_text = args.changelog.read_text(encoding="utf-8") if args.changelog.is_file() else ""
     manifest = _load_json(args.manifest) if args.manifest else None
-    sys.stdout.write(
-        render(
-            args.version,
-            changelog_text=changelog_text,
-            manifest=manifest,
-            date=args.date,
-        )
+    text = render(
+        args.version,
+        changelog_text=changelog_text,
+        manifest=manifest,
+        date=args.date,
     )
+    if args.output is not None:
+        args.output.write_text(text, encoding="utf-8")
+    else:
+        sys.stdout.write(text)
     return 0
 
 

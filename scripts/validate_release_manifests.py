@@ -110,6 +110,18 @@ def validate_semantics(manifest: dict, path: Path) -> list[str]:
     return errors
 
 
+def validate_manifest_document(manifest: dict, path: Path) -> list[str]:
+    """Schema + semantic validation. Does not consult the network."""
+    errors: list[str] = []
+    schema = load_json(SCHEMA_PATH)
+    validator = jsonschema.Draft202012Validator(schema)
+    for err in sorted(validator.iter_errors(manifest), key=lambda e: list(e.path)):
+        loc = ".".join(str(p) for p in err.path) or "<root>"
+        errors.append(f"{path} schema {loc}: {err.message}")
+    errors.extend(validate_semantics(manifest, path))
+    return errors
+
+
 def main() -> int:
     if not SCHEMA_PATH.is_file():
         print(f"FAIL missing schema {SCHEMA_PATH}", file=sys.stderr)

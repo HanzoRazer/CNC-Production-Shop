@@ -6,17 +6,38 @@ No Git writes. No network. No mutation of ``pyproject.toml``.
 from __future__ import annotations
 
 import ast
+import hashlib
 import re
 from dataclasses import dataclass
 from datetime import datetime
 
 DISTRIBUTION_NAME = "cnc-production-shop"
 RELEASE_STATES = frozenset({"development", "release_candidate", "released", "withdrawn"})
+AUTOMATION_RELEASE_STATES = frozenset({"release_candidate"})
 CANONICAL_TAG_PREFIX = "v"
 WITNESS_TAGS = frozenset({"msme-001-foundation-original"})
 WHEEL_SUFFIX = "-py3-none-any.whl"
 WHEEL_PREFIX = "cnc_production_shop-"
 SHA256_PREFIX = "sha256:"
+FEATURE_PACKAGES = (
+    "cam_assist",
+    "business",
+    "parametric",
+    "fretboard",
+    "materials",
+    "acoustic",
+    "musical_spatial_mapping",
+)
+DECLARED_PACKAGES = ("cnc_version", *FEATURE_PACKAGES)
+REQUIRED_MSME_RESOURCE_SUFFIXES = (
+    "guitar-standard-6.json",
+    "bass-fretless-4.json",
+    "mandolin-standard.json",
+    "instrument-profile-v1.schema.json",
+)
+SUPPORTED_PYTHON_VERSIONS = ("3.11", "3.12")
+RESULT_READY = "READY_FOR_TAG"
+RESULT_BLOCKED = "BLOCKED"
 COMMIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 VERSION_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 CHANGELOG_VERSION_HEADING_RE = re.compile(
@@ -106,6 +127,37 @@ def parse_artifact_hash(value: str) -> str:
     if not re.fullmatch(r"[0-9a-f]{64}", digest):
         raise ReleasePolicyError("artifact hash must be sha256: plus 64 lowercase hex chars")
     return value
+
+
+def sha256_hex(data: bytes) -> str:
+    """Return the lowercase SHA-256 hex digest of ``data``."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def format_artifact_hash(hex_digest: str) -> str:
+    """Prefix a 64-character lowercase hex digest with ``sha256:``."""
+    if not re.fullmatch(r"[0-9a-f]{64}", hex_digest):
+        raise ReleasePolicyError("SHA-256 digest must be 64 lowercase hex chars")
+    return f"{SHA256_PREFIX}{hex_digest}"
+
+
+def format_sha256sums_line(filename: str, hex_digest: str) -> str:
+    """GNU ``sha256sum`` line: digest, two spaces, filename, newline."""
+    if not re.fullmatch(r"[0-9a-f]{64}", hex_digest):
+        raise ReleasePolicyError("SHA-256 digest must be 64 lowercase hex chars")
+    if not filename or "/" in filename or "\\" in filename:
+        raise ReleasePolicyError(f"SHA256SUMS filename must be a basename: {filename!r}")
+    return f"{hex_digest}  {filename}\n"
+
+
+def python_version_label(major: int, minor: int) -> str:
+    """Return a supported ``MAJOR.MINOR`` label or fail closed."""
+    label = f"{major}.{minor}"
+    if label not in SUPPORTED_PYTHON_VERSIONS:
+        raise ReleasePolicyError(
+            f"unsupported Python version {label}; supported: {', '.join(SUPPORTED_PYTHON_VERSIONS)}"
+        )
+    return label
 
 
 def parse_commit_sha(value: str) -> str:
