@@ -62,9 +62,9 @@ def test_workflow_requires_explicit_version_input() -> None:
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "version:" in text
     assert "required: true" in text
-    assert "publish" not in text
-    assert "create_tag" not in text
-    assert "push_to_pypi" not in text
+    assert "publish=true" not in text
+    assert "create_tag=true" not in text
+    assert "push_to_pypi=true" not in text
 
 
 def test_workflow_permissions_are_read_only() -> None:

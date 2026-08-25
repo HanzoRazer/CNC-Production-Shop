@@ -263,6 +263,14 @@ authorize each of:
 
 Until that authorization exists, do not publish.
 
+## Release candidate automation
+
+Release candidate verification may be automated, but release identity,
+tag authorization, and external publication remain governed manual
+decisions.
+
+See `docs/governance/RELEASE_AUTOMATION.md`.
+
 ## Prohibited Practices
 
 - Publishing to PyPI or an internal index from this policy sprint
