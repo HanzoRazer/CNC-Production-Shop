@@ -19,10 +19,12 @@ from __future__ import annotations
 
 import argparse
 import email
+import json
 import subprocess
 import sys
 import tomllib
 import zipfile
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -31,6 +33,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.release.model import (  # noqa: E402
     DISTRIBUTION_NAME,
+    FEATURE_PACKAGES,
     WITNESS_TAGS,
     ReleasePolicyError,
     changelog_has_release_ready_unreleased,
@@ -43,20 +46,34 @@ from scripts.release.model import (  # noqa: E402
     version_from_wheel_filename,
 )
 
-FEATURE_PACKAGES = (
-    "cam_assist",
-    "business",
-    "parametric",
-    "fretboard",
-    "materials",
-    "acoustic",
-    "musical_spatial_mapping",
-)
+
+@dataclass(frozen=True)
+class CheckItem:
+    ok: bool
+    message: str
+    extra: str = ""
 
 
-def _say(ok: bool, message: str) -> bool:
-    print(f"{'PASS' if ok else 'FAIL'} {message}")
-    return ok
+@dataclass(frozen=True)
+class ReadinessReport:
+    version: str
+    ready: bool
+    checks: tuple[CheckItem, ...]
+    blockers: tuple[str, ...]
+
+
+def _print_report(report: ReadinessReport) -> None:
+    for item in report.checks:
+        print(f"{'PASS' if item.ok else 'FAIL'} {item.message}")
+        if item.extra:
+            print(item.extra.rstrip())
+
+
+def _report_to_json(report: ReadinessReport) -> dict[str, object]:
+    payload = asdict(report)
+    payload["checks"] = [asdict(item) for item in report.checks]
+    payload["blockers"] = list(report.blockers)
+    return payload
 
 
 def _project_version(root: Path) -> str:
@@ -91,10 +108,33 @@ def _read_wheel_metadata(path: Path) -> tuple[str, str]:
     return name, version
 
 
-def _check_packages(root: Path) -> bool:
-    ok = True
+def inspect_release_readiness(version: str, root: Path, wheel: Path | None) -> ReadinessReport:
+    """Evaluate release readiness without printing. Does not mutate ``root``."""
+    checks: list[CheckItem] = []
+
+    def record(ok: bool, message: str, extra: str = "") -> None:
+        checks.append(CheckItem(ok=ok, message=message, extra=extra))
+
+    try:
+        expected = parse_distribution_version(version)
+    except ReleasePolicyError as exc:
+        record(False, str(exc))
+        return ReadinessReport(
+            version=version,
+            ready=False,
+            checks=tuple(checks),
+            blockers=tuple(item.message for item in checks if not item.ok),
+        )
+
+    try:
+        declared = _project_version(root)
+        extra = f"     expected --version {expected}" if declared != expected else ""
+        record(declared == expected, f"distribution version from --root: {declared}", extra)
+    except (OSError, KeyError, ReleasePolicyError, tomllib.TOMLDecodeError) as exc:
+        record(False, f"project distribution version: {exc}")
+
     resolver = root / "cnc_version" / "__init__.py"
-    ok &= _say(resolver.is_file(), "cnc_version resolver present under --root")
+    record(resolver.is_file(), "cnc_version resolver present under --root")
 
     missing: list[str] = []
     unbound: list[str] = []
@@ -109,99 +149,91 @@ def _check_packages(root: Path) -> bool:
                 unbound.append(name)
         except (OSError, ReleasePolicyError) as exc:
             unbound.append(f"{name} ({exc})")
-    ok &= _say(not missing, "feature packages present under --root")
-    if missing:
-        print(f"     missing: {', '.join(missing)}")
-    ok &= _say(not unbound, "package __version__ binds to distribution_version() under --root")
-    if unbound:
-        print(f"     unbound: {', '.join(unbound)}")
+    record(
+        not missing,
+        "feature packages present under --root",
+        f"     missing: {', '.join(missing)}" if missing else "",
+    )
+    record(
+        not unbound,
+        "package __version__ binds to distribution_version() under --root",
+        f"     unbound: {', '.join(unbound)}" if unbound else "",
+    )
 
     msme_init = root / "musical_spatial_mapping" / "__init__.py"
     try:
         api = read_assigned_string_constant(
             msme_init.read_text(encoding="utf-8"), "MSME_API_VERSION"
         )
-        ok &= _say(True, f"MSME_API_VERSION: {api}")
+        record(True, f"MSME_API_VERSION: {api}")
     except (OSError, ReleasePolicyError) as exc:
-        ok &= _say(False, f"MSME_API_VERSION unreadable from --root: {exc}")
-    return ok
-
-
-def check(version: str, root: Path, wheel: Path | None) -> int:
-    ok = True
-    try:
-        expected = parse_distribution_version(version)
-    except ReleasePolicyError as exc:
-        _say(False, str(exc))
-        return 1
-
-    try:
-        declared = _project_version(root)
-        ok &= _say(declared == expected, f"distribution version from --root: {declared}")
-        if declared != expected:
-            print(f"     expected --version {expected}")
-    except (OSError, KeyError, ReleasePolicyError, tomllib.TOMLDecodeError) as exc:
-        ok &= _say(False, f"project distribution version: {exc}")
-
-    ok &= _check_packages(root)
+        record(False, f"MSME_API_VERSION unreadable from --root: {exc}")
 
     git_dir = root / ".git"
     if not git_dir.exists():
-        ok &= _say(False, "git metadata present at --root")
+        record(False, "git metadata present at --root")
     else:
         status = _git(root, "status", "--porcelain")
         clean = status.returncode == 0 and status.stdout.strip() == ""
-        ok &= _say(clean, "working tree clean")
-        if not clean and status.stdout.strip():
-            print(status.stdout.rstrip())
+        dirty_extra = status.stdout.rstrip() if not clean and status.stdout.strip() else ""
+        record(clean, "working tree clean", dirty_extra)
         listed = _git(root, "tag", "--list")
         if listed.returncode != 0:
             detail = listed.stderr.strip() or f"exit {listed.returncode}"
-            ok &= _say(False, f"git tag --list: {detail}")
+            record(False, f"git tag --list: {detail}")
         else:
             tags = {
                 line for line in listed.stdout.splitlines() if line and line not in WITNESS_TAGS
             }
             canonical = tag_for_version(expected)
-            ok &= _say(canonical not in tags, f"canonical tag {canonical} does not exist")
+            record(canonical not in tags, f"canonical tag {canonical} does not exist")
 
     changelog_path = root / "CHANGELOG.md"
     if not changelog_path.is_file():
-        ok &= _say(False, "CHANGELOG.md exists")
+        record(False, "CHANGELOG.md exists")
     else:
         text = changelog_path.read_text(encoding="utf-8")
-        ready = changelog_has_version_section(text, expected) or (
+        ready_notes = changelog_has_version_section(text, expected) or (
             changelog_has_release_ready_unreleased(text)
         )
-        ok &= _say(
-            ready,
+        record(
+            ready_notes,
             f"changelog has a {expected} section or release-ready Unreleased material",
         )
 
     if wheel is not None:
         try:
             wheel_version = version_from_wheel_filename(wheel.name)
-            ok &= _say(
-                wheel_version == expected,
-                f"wheel filename version: {wheel_version}",
-            )
+            record(wheel_version == expected, f"wheel filename version: {wheel_version}")
         except ReleasePolicyError as exc:
-            ok &= _say(False, str(exc))
+            record(False, str(exc))
         if not wheel.is_file():
-            ok &= _say(False, f"wheel exists: {wheel}")
+            record(False, f"wheel exists: {wheel}")
         else:
             try:
                 meta_name_value, meta_version = _read_wheel_metadata(wheel)
             except (OSError, ReleasePolicyError) as exc:
-                ok &= _say(False, f"wheel metadata: {exc}")
+                record(False, f"wheel metadata: {exc}")
             else:
-                ok &= _say(
+                record(
                     meta_name_value == DISTRIBUTION_NAME,
                     f"wheel metadata name: {meta_name_value}",
                 )
-                ok &= _say(meta_version == expected, f"wheel metadata version: {meta_version}")
+                record(meta_version == expected, f"wheel metadata version: {meta_version}")
 
-    return 0 if ok else 1
+    blockers = tuple(item.message for item in checks if not item.ok)
+    return ReadinessReport(
+        version=expected,
+        ready=not blockers,
+        checks=tuple(checks),
+        blockers=blockers,
+    )
+
+
+def check(version: str, root: Path, wheel: Path | None) -> int:
+    report = inspect_release_readiness(version, root, wheel)
+    _print_report(report)
+    return 0 if report.ready else 1
 
 
 def main() -> int:
@@ -214,8 +246,28 @@ def main() -> int:
         help="repository root to inspect (sole source; default: this checkout)",
     )
     parser.add_argument("--wheel", type=Path, default=None, help="optional wheel to inspect")
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="write a machine-readable report to stdout instead of PASS/FAIL lines",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="write JSON report to this path (human output kept unless --json)",
+    )
     args = parser.parse_args()
-    return check(args.version, args.root.resolve(), args.wheel)
+    report = inspect_release_readiness(args.version, args.root.resolve(), args.wheel)
+    payload = _report_to_json(report)
+    encoded = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    if args.output is not None:
+        args.output.write_text(encoded, encoding="utf-8")
+    if args.json:
+        sys.stdout.write(encoded)
+    else:
+        _print_report(report)
+    return 0 if report.ready else 1
 
 
 if __name__ == "__main__":

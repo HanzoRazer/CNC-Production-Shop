@@ -15,6 +15,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -28,7 +29,7 @@ from scripts.release.model import (  # noqa: E402
 )
 
 
-def _load_json(path: Path) -> dict:
+def _load_json(path: Path) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise TypeError(f"{path} is not a JSON object")
@@ -39,7 +40,7 @@ def render(
     version: str,
     *,
     changelog_text: str,
-    manifest: dict | None,
+    manifest: dict[str, Any] | None,
     date: str | None,
 ) -> str:
     parsed = parse_distribution_version(version)
@@ -109,17 +110,25 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=None)
     parser.add_argument("--changelog", type=Path, default=ROOT / "CHANGELOG.md")
     parser.add_argument("--date", default=None)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="write rendered notes to this path instead of stdout",
+    )
     args = parser.parse_args()
     changelog_text = args.changelog.read_text(encoding="utf-8") if args.changelog.is_file() else ""
     manifest = _load_json(args.manifest) if args.manifest else None
-    sys.stdout.write(
-        render(
-            args.version,
-            changelog_text=changelog_text,
-            manifest=manifest,
-            date=args.date,
-        )
+    text = render(
+        args.version,
+        changelog_text=changelog_text,
+        manifest=manifest,
+        date=args.date,
     )
+    if args.output is not None:
+        args.output.write_text(text, encoding="utf-8")
+    else:
+        sys.stdout.write(text)
     return 0
 
 

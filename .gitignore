@@ -61,6 +61,9 @@ Thumbs.db
 # Generated release wheels. Hashes live in dist-release/SHA256SUMS.
 /dist-release/*.whl
 
+# Release-candidate automation output (CI evidence, not canonical distribution).
+/dist-release-candidate/
+
 # Exports (allow proposal markdown fixtures and workbooks)
 /exports/*
 !/exports/proposals/
