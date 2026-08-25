@@ -79,11 +79,12 @@ def _install_wheel(python: Path, wheel: Path) -> None:
 
 
 def _consume(python: Path, repo_root: Path, body: str, *, cwd: Path) -> tuple[int, str, str]:
+    source_msme = str(repo_root.resolve() / "musical_spatial_mapping")
     preamble = (
         "import musical_spatial_mapping as _m, pathlib as _p\n"
         "_loc = _p.Path(_m.__file__).resolve()\n"
         "assert 'site-packages' in str(_loc), f'not installed: {_loc}'\n"
-        f"assert {str(repo_root.resolve())!r} not in str(_loc), "
+        f"assert not str(_loc).startswith({source_msme!r} + {os.sep!r}), "
         f"f'resolved to the checkout: {{_loc}}'\n"
     )
     proc = subprocess.run(
@@ -121,12 +122,14 @@ def verify_installed_candidate(
 
     workdir = venv_dir.parent
     names = ", ".join(repr(n) for n in FEATURE_PACKAGES)
+    source_dirs = {name: str(repo_root.resolve() / name) for name in FEATURE_PACKAGES}
     code, out, err = _consume(
         python,
         repo_root,
-        "import importlib, importlib.metadata as md\n"
+        "import importlib, importlib.metadata as md, os\n"
         "from pathlib import Path\n"
         f"packages = [{names}]\n"
+        f"source_dirs = {source_dirs!r}\n"
         f"meta = md.version({DISTRIBUTION_NAME!r})\n"
         "print('META', meta)\n"
         "print('MSME_API', _m.MSME_API_VERSION)\n"
@@ -135,7 +138,7 @@ def verify_installed_candidate(
         "    mod = importlib.import_module(name)\n"
         "    loc = Path(mod.__file__).resolve()\n"
         "    assert 'site-packages' in str(loc), loc\n"
-        f"    assert {str(repo_root.resolve())!r} not in str(loc), loc\n"
+        "    assert not str(loc).startswith(source_dirs[name] + os.sep), loc\n"
         "    print('PKG', name, mod.__version__)\n"
         "    assert mod.__version__ == meta, (name, mod.__version__, meta)\n",
         cwd=workdir,

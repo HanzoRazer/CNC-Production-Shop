@@ -29,6 +29,7 @@ import json
 import shutil
 import subprocess
 import sys
+import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -166,7 +167,10 @@ def build_release_candidate(
 
     readiness = inspect_release_readiness(parsed, root, None)
     if not readiness.ready:
-        blockers.extend(readiness.blockers)
+        for item in readiness.blockers:
+            if item.startswith("canonical tag ") and not eligibility.eligible:
+                continue
+            blockers.append(item)
 
     version_authority_ok = all(
         item.ok
@@ -188,6 +192,7 @@ def build_release_candidate(
     )
     installed = InstalledVerification(ok=False, blockers=["fresh install was not run"])
     tests_ok = bool(test_summary.strip())
+    verify_venv = Path(tempfile.mkdtemp(prefix="cnc-rc-install-"))
     try:
         if not tests_ok:
             raise ReleasePolicyError("test evidence missing; refusing to build a candidate wheel")
@@ -200,12 +205,14 @@ def build_release_candidate(
                 wheel,
                 parsed,
                 repo_root=root,
-                venv_dir=output_dir / ".venv-verify",
+                venv_dir=verify_venv,
             )
             if not installed.ok:
                 blockers.extend(installed.blockers)
     except ReleasePolicyError as exc:
         blockers.append(str(exc))
+    finally:
+        shutil.rmtree(verify_venv, ignore_errors=True)
 
     notes_preview = output_dir / f"release_notes_{parsed}.md"
     changelog_text = (

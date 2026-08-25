@@ -527,6 +527,12 @@ def test_automation_utility_does_not_call_network_publishing_apis() -> None:
             assert token not in text, f"{path} contains {token!r}"
 
 
+def test_orchestrator_keeps_install_venv_out_of_evidence_dir() -> None:
+    source = (RELEASE_SCRIPTS / "build_release_candidate.py").read_text(encoding="utf-8")
+    assert 'output_dir / ".venv-verify"' not in source
+    assert "tempfile.mkdtemp" in source
+
+
 def test_git_read_rejects_mutating_verbs(tmp_path: Path) -> None:
     _init_repo(tmp_path)
     with pytest.raises(ReleasePolicyError, match="not allowed"):
