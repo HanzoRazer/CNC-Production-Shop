@@ -59,7 +59,8 @@ def _create_venv(venv: Path) -> Path:
         check=False,
     )
     if proc.returncode != 0:
-        raise ReleasePolicyError(f"could not create venv: {proc.stderr[-500:]}")
+        detail = (proc.stdout + proc.stderr)[-800:] or f"exit {proc.returncode}"
+        raise ReleasePolicyError(f"could not create venv: {detail}")
     python = _venv_python(venv)
     if not python.is_file():
         raise ReleasePolicyError(f"venv python missing: {python}")

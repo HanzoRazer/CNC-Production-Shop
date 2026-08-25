@@ -426,7 +426,7 @@ def test_failed_artifact_verification_blocks(tmp_path: Path) -> None:
 def test_valid_synthetic_candidate_returns_ready(tmp_path: Path) -> None:
     _init_repo(tmp_path)
     _commit_release_tree(tmp_path, "0.1.2")
-    wheel = make_wheel(tmp_path / "wheels", "0.1.2")
+    wheel = make_wheel(tmp_path.parent / "wheels-ready", "0.1.2")
     report = inspect_release_readiness("0.1.2", tmp_path, wheel)
     assert report.ready
 
