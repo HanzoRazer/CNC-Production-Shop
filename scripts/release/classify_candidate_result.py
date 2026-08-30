@@ -67,9 +67,7 @@ def verification_passed(payload: dict[str, object]) -> bool:
 
 def classify_payload(payload: dict[str, object]) -> CandidateClassification:
     """Classify one evidence payload."""
-    blockers = tuple(
-        str(item) for item in (payload.get("blockers") or []) if str(item).strip()
-    )
+    blockers = tuple(str(item) for item in (payload.get("blockers") or []) if str(item).strip())
     python_version = str(payload.get("python_version") or "")
     version = str(payload.get("version") or "")
     commit_sha = str(payload.get("commit_sha") or "")
@@ -158,14 +156,8 @@ def aggregate_classifications(
     missing = [label for label in REQUIRED_PYTHON_LEGS if label not in by_python]
     blockers: list[str] = []
     if missing:
-        blockers.append(
-            "missing release evidence for Python " + ", ".join(missing)
-        )
-    verification_failures = [
-        item
-        for item in items
-        if item.kind == CLASS_VERIFICATION
-    ]
+        blockers.append("missing release evidence for Python " + ", ".join(missing))
+    verification_failures = [item for item in items if item.kind == CLASS_VERIFICATION]
     for item in verification_failures:
         label = item.python_version or "unknown"
         if item.blockers:
