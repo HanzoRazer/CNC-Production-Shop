@@ -98,6 +98,7 @@ jobs:
         env:
           CI: "true"
         run: |
+          set +e
           python scripts/release/build_release_candidate.py \
             --version '${{ inputs.version }}' \
             --output-dir dist-release-candidate \
@@ -105,6 +106,9 @@ jobs:
             --ci-summary "github-actions run ${{ github.run_id }} python ${{ matrix.python-version }}" \
             --expected-commit '${{ inputs.expected_commit }}' \
             --release-state '${{ inputs.release_state }}'
+          set -e
+          python scripts/release/classify_candidate_result.py \
+            --evidence-dir dist-release-candidate
 
       - name: Upload release-candidate evidence
         if: always()
@@ -123,6 +127,10 @@ jobs:
     permissions:
       contents: read
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Download evidence
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -132,20 +140,6 @@ jobs:
       - name: Aggregate READY_FOR_TAG
         run: |
           echo "3.11 / 3.12 matrix result: ${{ needs.verify.result }}"
-          if [ "${{ needs.verify.result }}" = "success" ]; then
-            echo "3.11 PASS"
-            echo "3.12 PASS"
-            echo "artifact PASS"
-            echo "manifest PASS"
-            echo "fresh-install PASS"
-            echo "version parity PASS"
-            echo
-            echo "RESULT: READY_FOR_TAG"
-            echo "READY_FOR_TAG means verification evidence is complete."
-            echo "It is not authorization to create a tag or publish."
-          else
-            echo "RESULT: BLOCKED"
-            echo "BLOCKERS:"
-            echo "- one or more Python 3.11/3.12 verification legs failed (${{ needs.verify.result }})"
-            exit 1
-          fi
+          python3 scripts/release/classify_candidate_result.py \
+            --aggregate artifacts \
+            --verify-result '${{ needs.verify.result }}'
