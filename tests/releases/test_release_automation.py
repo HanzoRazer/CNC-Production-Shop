@@ -94,7 +94,26 @@ def test_workflow_runs_python_3_11_and_3_12() -> None:
     assert '"3.12"' in text
     assert "READY_FOR_TAG" in text
     assert "BLOCKED" in text
+    assert "FAILED" in text
     assert "retention-days: 14" in text
+
+
+def test_workflow_does_not_mask_blocked_as_verification_failure() -> None:
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "verification legs failed" not in text
+    assert "summarize_candidate_results.py" in text
+    assert "INVOCATION_ERROR" in text
+    assert "if: always()" in text
+
+
+def test_workflow_early_gates_are_invocation_errors() -> None:
+    text = WORKFLOW.read_text(encoding="utf-8")
+    confirm = text.split("name: Confirm expected commit", 1)[1]
+    reject = text.split("name: Reject unauthorized release_state", 1)[1]
+    assert "RESULT: BLOCKED" not in confirm.split("name:", 1)[0]
+    assert "INVOCATION_ERROR" in confirm.split("name:", 1)[0]
+    assert "RESULT: BLOCKED" not in reject.split("name:", 1)[0]
+    assert "INVOCATION_ERROR" in reject.split("name:", 1)[0]
 
 
 # ------------------------------------------------------------------ version gate
