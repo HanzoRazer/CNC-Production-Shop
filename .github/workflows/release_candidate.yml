@@ -52,19 +52,19 @@ jobs:
           HEAD_SHA=$(git rev-parse HEAD)
           EXPECTED='${{ inputs.expected_commit }}'
           if [ "$HEAD_SHA" != "$EXPECTED" ]; then
-            echo "RESULT: BLOCKED"
-            echo "BLOCKERS:"
+            echo "RESULT: INVOCATION_ERROR"
+            echo "expected_commit does not match workflow HEAD; this is not a release-eligibility blocker."
             echo "- HEAD $HEAD_SHA does not match expected_commit $EXPECTED"
-            exit 1
+            exit 3
           fi
 
       - name: Reject unauthorized release_state
         run: |
           if [ '${{ inputs.release_state }}' != 'release_candidate' ]; then
-            echo "RESULT: BLOCKED"
-            echo "BLOCKERS:"
+            echo "RESULT: INVOCATION_ERROR"
+            echo "unauthorized release_state is a configuration error, not an eligibility blocker."
             echo "- automation will not emit release_state=${{ inputs.release_state }}"
-            exit 1
+            exit 3
           fi
 
       - name: Lint with ruff
@@ -116,36 +116,30 @@ jobs:
           if-no-files-found: ignore
 
   summarize:
-    name: Ready for tag
+    name: Report candidate disposition
     needs: verify
     if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Download evidence
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           path: artifacts
 
-      - name: Aggregate READY_FOR_TAG
+      - name: Aggregate candidate disposition
         run: |
-          echo "3.11 / 3.12 matrix result: ${{ needs.verify.result }}"
-          if [ "${{ needs.verify.result }}" = "success" ]; then
-            echo "3.11 PASS"
-            echo "3.12 PASS"
-            echo "artifact PASS"
-            echo "manifest PASS"
-            echo "fresh-install PASS"
-            echo "version parity PASS"
-            echo
-            echo "RESULT: READY_FOR_TAG"
-            echo "READY_FOR_TAG means verification evidence is complete."
-            echo "It is not authorization to create a tag or publish."
-          else
-            echo "RESULT: BLOCKED"
-            echo "BLOCKERS:"
-            echo "- one or more Python 3.11/3.12 verification legs failed (${{ needs.verify.result }})"
-            exit 1
-          fi
+          # Consumes semantic evidence: READY_FOR_TAG | BLOCKED | FAILED.
+          # BLOCKED is a valid verification outcome, not a verification malfunction.
+          python scripts/release/summarize_candidate_results.py \
+            --artifacts-dir artifacts \
+            --verify-result '${{ needs.verify.result }}'
