@@ -242,7 +242,7 @@ def test_existing_v0_1_1_with_successful_verification_is_blocked_not_failed(
     assert payload["package_parity"] == "PASS"
     assert payload["manifest"] == "PASS"
 
-    wheel_name = f"cnc_production_shop-0.1.1-py3-none-any.whl"
+    wheel_name = "cnc_production_shop-0.1.1-py3-none-any.whl"
     assert (out / wheel_name).is_file()
     assert (out / "SHA256SUMS").is_file()
     assert (out / "release_manifest_0.1.1.json").is_file()
@@ -313,7 +313,9 @@ def test_fresh_install_failure_is_failed(
 
     _init_repo(tmp_path)
     _commit_release_tree(tmp_path, "0.1.2")
-    monkeypatch.setattr(orch, "build_wheel", lambda _r, output_dir, ver: make_wheel(output_dir, ver))
+    monkeypatch.setattr(
+        orch, "build_wheel", lambda _r, output_dir, ver: make_wheel(output_dir, ver)
+    )
     monkeypatch.setattr(
         orch,
         "verify_installed_candidate",
@@ -334,7 +336,9 @@ def test_package_parity_failure_is_failed(
 
     _init_repo(tmp_path)
     _commit_release_tree(tmp_path, "0.1.2")
-    monkeypatch.setattr(orch, "build_wheel", lambda _r, output_dir, ver: make_wheel(output_dir, ver))
+    monkeypatch.setattr(
+        orch, "build_wheel", lambda _r, output_dir, ver: make_wheel(output_dir, ver)
+    )
     drifted = InstalledVerification(
         ok=True,
         distribution_version="0.1.2",
@@ -349,7 +353,9 @@ def test_package_parity_failure_is_failed(
     payload = _run_candidate(tmp_path, version="0.1.2", root=tmp_path)
     assert payload["disposition"] == RESULT_FAILED
     assert payload["package_parity"] == "FAIL"
-    assert any("package" in item.lower() or "parity" in item.lower() for item in payload["failures"])
+    assert any(
+        "package" in item.lower() or "parity" in item.lower() for item in payload["failures"]
+    )
 
 
 def test_invalid_manifest_is_failed(
@@ -379,7 +385,9 @@ def test_failures_and_tag_blocker_keep_both_channels(
     _init_repo(tmp_path)
     _commit_release_tree(tmp_path, "0.1.1")
     _git(tmp_path, "tag", tag_for_version("0.1.1"))
-    monkeypatch.setattr(orch, "build_wheel", lambda _r, output_dir, ver: make_wheel(output_dir, ver))
+    monkeypatch.setattr(
+        orch, "build_wheel", lambda _r, output_dir, ver: make_wheel(output_dir, ver)
+    )
     monkeypatch.setattr(
         orch,
         "verify_installed_candidate",

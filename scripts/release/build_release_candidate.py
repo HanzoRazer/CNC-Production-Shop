@@ -40,6 +40,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.release.candidate_result import (  # noqa: E402
+    EXIT_FAILED,
     EXIT_INVOCATION,
     ReleaseInvocationError,
     derive_candidate_disposition,

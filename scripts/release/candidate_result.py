@@ -15,9 +15,9 @@ from scripts.release.model import (
     RESULT_BLOCKED,
     RESULT_FAILED,
     RESULT_READY,
-    ReleasePolicyError,
     VERIFICATION_FAIL,
     VERIFICATION_PASS,
+    ReleasePolicyError,
 )
 
 EXIT_OK = 0
@@ -115,16 +115,14 @@ def aggregate_candidate_results(
 ) -> dict[str, object]:
     """Combine matrix legs. FAILED wins over BLOCKED over READY_FOR_TAG."""
     if not payloads:
-        failures = [
-            "one or more Python 3.11/3.12 legs did not produce a candidate result"
-        ]
-        disposition = RESULT_FAILED
         return serialize_candidate_result(
             verification_status=VERIFICATION_FAIL,
             eligibility_status=ELIGIBILITY_NOT_EVALUATED,
-            disposition=disposition,
+            disposition=RESULT_FAILED,
             blockers=[],
-            failures=failures,
+            failures=[
+                "one or more Python 3.11/3.12 legs did not produce a candidate result"
+            ],
         ) | {"legs": []}
 
     blockers: list[str] = []
