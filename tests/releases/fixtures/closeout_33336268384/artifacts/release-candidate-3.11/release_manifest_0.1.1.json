@@ -1,0 +1,25 @@
+{
+  "release_id": "REL-CNC-0.1.1",
+  "distribution_name": "cnc-production-shop",
+  "distribution_version": "0.1.1",
+  "release_state": "release_candidate",
+  "commit_sha": "18125a09bfc1d1cf9a8470ce32ccd07970e0e9fb",
+  "tag": "",
+  "created_at": "2026-08-30T21:24:21Z",
+  "python_versions": [
+    "3.11"
+  ],
+  "artifacts": [
+    {
+      "filename": "cnc_production_shop-0.1.1-py3-none-any.whl",
+      "sha256": "sha256:687871562bf49d34605f75630f03109fc4f05b1b8a828072403460fe43c26a00"
+    }
+  ],
+  "test_summary": "pytest passed on Python 3.11 (CI)",
+  "ci_summary": "github-actions run 33336268384 python 3.11",
+  "subsystem_versions": {
+    "MSME_API_VERSION": "0.2.0"
+  },
+  "notes_ref": "docs/releases/RELEASE_0.1.1.md",
+  "example_only": false
+}

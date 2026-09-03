@@ -401,13 +401,23 @@ def _eligibility_payload(python_version: str = "3.11") -> dict[str, object]:
         "msme_cli": "PASS",
         "manifest": "PASS",
         "tag_eligibility": "FAIL",
+        "canonical_tag": "v0.1.1",
         "blockers": ["canonical tag v0.1.1 already exists"],
     }
 
 
 def test_existing_tag_is_an_eligibility_blocker() -> None:
     assert is_eligibility_blocker("canonical tag v0.1.1 already exists")
+    assert is_eligibility_blocker(
+        "canonical tag v0.1.1 already exists", version="0.1.1", canonical_tag="v0.1.1"
+    )
     assert not is_eligibility_blocker("wheel build failed")
+    assert not is_eligibility_blocker("canonical tag v0.1.1 does not exist")
+    assert not is_eligibility_blocker("canonical tag already exists")
+    assert not is_eligibility_blocker("canonical tag v0.1.1 already exists and is signed")
+    assert not is_eligibility_blocker(
+        "canonical tag v0.1.2 already exists", version="0.1.1", canonical_tag="v0.1.1"
+    )
 
 
 def test_eligibility_only_block_is_not_a_verification_failure() -> None:

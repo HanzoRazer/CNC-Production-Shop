@@ -5,8 +5,13 @@ Usage:
     python scripts/release/classify_candidate_result.py --evidence-dir dist-release-candidate
     python scripts/release/classify_candidate_result.py --aggregate artifacts
 
-Exit 0 when verification completed (READY_FOR_TAG or eligibility-only BLOCKED).
-Exit 1 when verification failed or required evidence is missing.
+``--evidence-dir`` (verify job):
+    Exit 0 when verification completed (READY_FOR_TAG or eligibility-only BLOCKED).
+    Exit 1 when verification failed or required evidence is missing.
+
+``--aggregate`` (summarize job):
+    Exit 0 only for READY_FOR_TAG.
+    Exit 1 for eligibility-only BLOCKED, verification failure, or missing evidence.
 
 Does not create tags, mutate source, or publish.
 """
@@ -23,7 +28,16 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.release.model import RESULT_BLOCKED, RESULT_READY  # noqa: E402
+from scripts.release.model import (  # noqa: E402
+    RESULT_BLOCKED,
+    RESULT_READY,
+    SUPPORTED_PYTHON_VERSIONS,
+)
+from scripts.release.tag_eligibility import (  # noqa: E402
+    ELIGIBILITY_BLOCKER_KINDS,
+    eligibility_blocker_kind,
+    is_existing_canonical_tag_blocker,
+)
 
 VERIFICATION_FIELDS = (
     "version_authority",
@@ -40,7 +54,8 @@ CLASS_READY = "READY_FOR_TAG"
 CLASS_ELIGIBILITY = "ELIGIBILITY_BLOCKED"
 CLASS_VERIFICATION = "VERIFICATION_FAILED"
 
-REQUIRED_PYTHON_LEGS = ("3.11", "3.12")
+REQUIRED_PYTHON_LEGS = SUPPORTED_PYTHON_VERSIONS
+WORKFLOW_ARTIFACT_PREFIX = "release-candidate-"
 
 
 @dataclass(frozen=True)
@@ -55,10 +70,9 @@ class CandidateClassification:
     commit_sha: str
 
 
-def is_eligibility_blocker(item: str) -> bool:
-    """Return True for the governed existing-tag eligibility blocker."""
-    text = item.strip()
-    return text.startswith("canonical tag ") and text.endswith(" already exists")
+def is_eligibility_blocker(item: str, *, version: str = "", canonical_tag: str = "") -> bool:
+    """Return True for a catalogued existing-tag eligibility blocker."""
+    return is_existing_canonical_tag_blocker(item, version=version, canonical_tag=canonical_tag)
 
 
 def verification_passed(payload: dict[str, object]) -> bool:
@@ -67,16 +81,32 @@ def verification_passed(payload: dict[str, object]) -> bool:
 
 def classify_payload(payload: dict[str, object]) -> CandidateClassification:
     """Classify one evidence payload."""
-    blockers = tuple(str(item) for item in (payload.get("blockers") or []) if str(item).strip())
+    raw_blockers = payload.get("blockers")
+    if isinstance(raw_blockers, list):
+        blockers = tuple(str(item) for item in raw_blockers if str(item).strip())
+    elif raw_blockers in (None, ""):
+        blockers = ()
+    else:
+        blockers = (str(raw_blockers),) if str(raw_blockers).strip() else ()
     python_version = str(payload.get("python_version") or "")
     version = str(payload.get("version") or "")
     commit_sha = str(payload.get("commit_sha") or "")
+    canonical_tag = str(payload.get("canonical_tag") or "")
     tag_eligibility = str(payload.get("tag_eligibility") or "FAIL")
     result = str(payload.get("result") or RESULT_BLOCKED)
     verified = verification_passed(payload)
-    eligibility_only = bool(blockers) and all(is_eligibility_blocker(item) for item in blockers)
+    kinds = [
+        eligibility_blocker_kind(item, version=version, canonical_tag=canonical_tag)
+        for item in blockers
+    ]
+    eligibility_only = (
+        bool(blockers)
+        and all(kind in ELIGIBILITY_BLOCKER_KINDS for kind in kinds)
+        and tag_eligibility == "FAIL"
+        and verified
+    )
 
-    if verified and result == RESULT_READY and not blockers:
+    if verified and result == RESULT_READY and not blockers and tag_eligibility == "PASS":
         kind = CLASS_READY
         verification = "PASS"
     elif verified and eligibility_only:
@@ -103,13 +133,90 @@ def classify_payload(payload: dict[str, object]) -> CandidateClassification:
 
 
 def load_evidence_payloads(root: Path) -> list[tuple[Path, dict[str, object]]]:
-    """Load ``release_evidence_*.json`` files under ``root``."""
+    """Load ``release_evidence_*.json`` files under ``root``.
+
+    Any unreadable or non-object file fails closed as an empty result so the
+    caller treats the directory as missing or ambiguous.
+    """
     found: list[tuple[Path, dict[str, object]]] = []
     for path in sorted(root.rglob("release_evidence_*.json")):
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        if isinstance(payload, dict):
-            found.append((path, payload))
+        if not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return []
+        if not isinstance(payload, dict):
+            return []
+        found.append((path, payload))
     return found
+
+
+def _relative_to_root(path: Path, root: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(root.resolve()))
+    except ValueError:
+        return str(path)
+
+
+def load_aggregate_payloads(
+    root: Path,
+) -> tuple[list[tuple[Path, dict[str, object]]], list[str]]:
+    """Load evidence from the workflow download-artifact layout.
+
+    Expected:
+
+    ``<root>/release-candidate-3.11/release_evidence_*.json``
+    ``<root>/release-candidate-3.12/release_evidence_*.json``
+
+    Exactly one object per required Python version. Extra, unreadable, or
+    non-object evidence files are reported as problems (fail closed).
+    """
+    problems: list[str] = []
+    found: list[tuple[Path, dict[str, object]]] = []
+    claimed: set[Path] = set()
+
+    for label in REQUIRED_PYTHON_LEGS:
+        artifact_dir = root / f"{WORKFLOW_ARTIFACT_PREFIX}{label}"
+        if not artifact_dir.is_dir():
+            continue
+        matches = sorted(
+            path for path in artifact_dir.glob("release_evidence_*.json") if path.is_file()
+        )
+        if len(matches) > 1:
+            problems.append(f"ambiguous release evidence for Python {label}")
+            claimed.update(path.resolve() for path in matches)
+            continue
+        if not matches:
+            continue
+        path = matches[0]
+        claimed.add(path.resolve())
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            problems.append(f"unreadable release evidence for Python {label}: {exc}")
+            continue
+        if not isinstance(payload, dict):
+            problems.append(f"release evidence for Python {label} is not a JSON object")
+            continue
+        payload_python = str(payload.get("python_version") or "")
+        if payload_python and payload_python != label:
+            problems.append(
+                f"{WORKFLOW_ARTIFACT_PREFIX}{label} evidence reports python_version "
+                f"{payload_python!r}"
+            )
+        found.append((path, payload))
+
+    extras = [
+        path
+        for path in sorted(root.rglob("release_evidence_*.json"))
+        if path.is_file() and path.resolve() not in claimed
+    ]
+    if extras:
+        names = ", ".join(_relative_to_root(path, root) for path in extras)
+        problems.append(f"unexpected release evidence files: {names}")
+
+    return found, problems
 
 
 def format_classification(item: CandidateClassification) -> str:
@@ -146,17 +253,52 @@ def classify_evidence_dir(evidence_dir: Path) -> CandidateClassification:
     return classify_payload(payloads[0][1])
 
 
+def _unique(items: list[str]) -> list[str]:
+    unique: list[str] = []
+    for item in items:
+        if item not in unique:
+            unique.append(item)
+    return unique
+
+
 def aggregate_classifications(
     items: list[CandidateClassification],
     *,
     verify_result: str,
+    load_problems: list[str] | None = None,
 ) -> tuple[str, list[str], str]:
     """Return (result, blockers, verification) for the matrix."""
-    by_python = {item.python_version: item for item in items}
-    missing = [label for label in REQUIRED_PYTHON_LEGS if label not in by_python]
-    blockers: list[str] = []
+    blockers: list[str] = list(load_problems or [])
+    seen: dict[str, CandidateClassification] = {}
+    duplicates: list[str] = []
+    for item in items:
+        label = item.python_version
+        if not label:
+            blockers.append("release evidence missing python_version")
+            continue
+        if label in seen:
+            if label not in duplicates:
+                duplicates.append(label)
+            continue
+        seen[label] = item
+    if duplicates:
+        blockers.append("duplicate release evidence for Python " + ", ".join(duplicates))
+
+    missing = [label for label in REQUIRED_PYTHON_LEGS if label not in seen]
     if missing:
         blockers.append("missing release evidence for Python " + ", ".join(missing))
+
+    unexpected = sorted(label for label in seen if label not in REQUIRED_PYTHON_LEGS)
+    if unexpected:
+        blockers.append("unexpected Python legs: " + ", ".join(unexpected))
+
+    versions = {item.version for item in items if item.version}
+    shas = {item.commit_sha for item in items if item.commit_sha}
+    if len(versions) > 1:
+        blockers.append("matrix legs disagree on version: " + ", ".join(sorted(versions)))
+    if len(shas) > 1:
+        blockers.append("matrix legs disagree on commit")
+
     verification_failures = [item for item in items if item.kind == CLASS_VERIFICATION]
     for item in verification_failures:
         label = item.python_version or "unknown"
@@ -165,20 +307,32 @@ def aggregate_classifications(
         else:
             blockers.append(f"Python {label}: verification failed")
 
-    if missing or verification_failures:
+    kinds = {item.kind for item in items}
+    eligibility_disagreement = CLASS_READY in kinds and CLASS_ELIGIBILITY in kinds
+    if eligibility_disagreement:
+        blockers.append("matrix legs disagree on tag eligibility")
+
+    structural_failure = bool(
+        load_problems
+        or missing
+        or duplicates
+        or unexpected
+        or len(versions) > 1
+        or len(shas) > 1
+        or eligibility_disagreement
+        or any(not item.python_version for item in items)
+    )
+
+    if structural_failure or verification_failures:
         if verify_result and verify_result != "success" and not items:
             blockers.append(
                 f"one or more Python 3.11/3.12 verification legs failed ({verify_result})"
             )
-        unique: list[str] = []
-        for item in blockers:
-            if item not in unique:
-                unique.append(item)
-        return RESULT_BLOCKED, unique, "FAIL"
+        return RESULT_BLOCKED, _unique(blockers), "FAIL"
 
     eligibility = [item for item in items if item.kind == CLASS_ELIGIBILITY]
     if eligibility:
-        unique = []
+        unique: list[str] = []
         for item in eligibility:
             for blocker in item.blockers:
                 if blocker not in unique:
@@ -188,7 +342,7 @@ def aggregate_classifications(
     if all(item.kind == CLASS_READY for item in items) and len(items) >= len(REQUIRED_PYTHON_LEGS):
         return RESULT_READY, [], "PASS"
 
-    return RESULT_BLOCKED, ["matrix evidence incomplete"], "FAIL"
+    return RESULT_BLOCKED, _unique(blockers or ["matrix evidence incomplete"]), "FAIL"
 
 
 def format_aggregate(result: str, blockers: list[str], verification: str) -> str:
@@ -223,10 +377,10 @@ def main() -> int:
     )
     args = parser.parse_args()
     if args.aggregate is not None:
-        payloads = load_evidence_payloads(args.aggregate)
+        payloads, load_problems = load_aggregate_payloads(args.aggregate)
         items = [classify_payload(payload) for _, payload in payloads]
         result, blockers, verification = aggregate_classifications(
-            items, verify_result=args.verify_result
+            items, verify_result=args.verify_result, load_problems=load_problems
         )
         sys.stdout.write(format_aggregate(result, blockers, verification))
         return 0 if result == RESULT_READY else 1

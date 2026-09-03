@@ -60,7 +60,11 @@ from scripts.release.model import (  # noqa: E402
     wheel_filename_for_version,
 )
 from scripts.release.render_release_notes import render  # noqa: E402
-from scripts.release.tag_eligibility import TagEligibility, inspect_tag_eligibility  # noqa: E402
+from scripts.release.tag_eligibility import (  # noqa: E402
+    TagEligibility,
+    inspect_tag_eligibility,
+    is_canonical_tag_absent_check_blocker,
+)
 from scripts.release.verify_installed_candidate import (  # noqa: E402
     InstalledVerification,
     verify_installed_candidate,
@@ -168,7 +172,10 @@ def build_release_candidate(
     readiness = inspect_release_readiness(parsed, root, None)
     if not readiness.ready:
         for item in readiness.blockers:
-            if item.startswith("canonical tag ") and not eligibility.eligible:
+            if (
+                is_canonical_tag_absent_check_blocker(item, version=parsed)
+                and not eligibility.eligible
+            ):
                 continue
             blockers.append(item)
 

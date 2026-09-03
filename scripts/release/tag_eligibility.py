@@ -24,11 +24,124 @@ from scripts.release.git_io import list_tags, peeled_tag_sha  # noqa: E402
 from scripts.release.model import (  # noqa: E402
     WITNESS_TAGS,
     ReleasePolicyError,
+    is_canonical_release_tag,
     is_witness_tag,
     parse_commit_sha,
     parse_distribution_version,
     tag_for_version,
 )
+
+EXISTING_CANONICAL_TAG_KIND = "existing_canonical_tag"
+
+# Only these kinds keep a verify job green when verification fields passed.
+ELIGIBILITY_BLOCKER_KINDS: frozenset[str] = frozenset({EXISTING_CANONICAL_TAG_KIND})
+
+# Known policy/source blockers that are not wheel-verification failures and
+# must never be promoted to eligibility by prefix or suffix matching.
+NON_ELIGIBILITY_POLICY_KINDS: frozenset[str] = frozenset(
+    {
+        "canonical_tag_absent_check",
+        "dirty_working_tree",
+        "missing_changelog",
+        "changelog_unready",
+        "missing_git_metadata",
+        "expected_commit_mismatch",
+        "tag_inspection_error",
+    }
+)
+
+_CANONICAL_TAG_PREFIX = "canonical tag "
+_EXISTING_TAG_SUFFIX = " already exists"
+_ABSENT_TAG_SUFFIX = " does not exist"
+
+
+def existing_canonical_tag_blocker(version: str) -> str:
+    """Governed eligibility blocker: the canonical tag already exists."""
+    return f"{_CANONICAL_TAG_PREFIX}{tag_for_version(version)}{_EXISTING_TAG_SUFFIX}"
+
+
+def canonical_tag_absent_check_message(version: str) -> str:
+    """Readiness check label. PASS when the canonical tag is absent."""
+    return f"{_CANONICAL_TAG_PREFIX}{tag_for_version(version)}{_ABSENT_TAG_SUFFIX}"
+
+
+def _canonical_tag_from_affixed_message(text: str, suffix: str) -> str | None:
+    if not (text.startswith(_CANONICAL_TAG_PREFIX) and text.endswith(suffix)):
+        return None
+    tag = text[len(_CANONICAL_TAG_PREFIX) : len(text) - len(suffix)]
+    if not is_canonical_release_tag(tag):
+        return None
+    return tag
+
+
+def eligibility_blocker_kind(
+    item: str,
+    *,
+    version: str = "",
+    canonical_tag: str = "",
+) -> str | None:
+    """Return a catalog kind, or None when the string is not eligibility.
+
+    Matching reconstructs the governed message. A valid ``vMAJOR.MINOR.PATCH``
+    tag is required in the middle; optional ``version`` / ``canonical_tag``
+    from the evidence payload must agree. Unknown wording fails closed.
+    """
+    text = item.strip()
+    tag = _canonical_tag_from_affixed_message(text, _EXISTING_TAG_SUFFIX)
+    if tag is None:
+        return None
+    if canonical_tag and tag != canonical_tag:
+        return None
+    if version:
+        try:
+            if text != existing_canonical_tag_blocker(version):
+                return None
+        except ReleasePolicyError:
+            return None
+    return EXISTING_CANONICAL_TAG_KIND
+
+
+def is_existing_canonical_tag_blocker(
+    item: str,
+    *,
+    version: str = "",
+    canonical_tag: str = "",
+) -> bool:
+    return (
+        eligibility_blocker_kind(item, version=version, canonical_tag=canonical_tag)
+        == EXISTING_CANONICAL_TAG_KIND
+    )
+
+
+def is_canonical_tag_absent_check_blocker(item: str, *, version: str = "") -> bool:
+    """True for the readiness FAIL label when the canonical tag is present."""
+    text = item.strip()
+    if version:
+        try:
+            return text == canonical_tag_absent_check_message(version)
+        except ReleasePolicyError:
+            return False
+    return _canonical_tag_from_affixed_message(text, _ABSENT_TAG_SUFFIX) is not None
+
+
+def policy_blocker_kind(item: str, *, version: str = "") -> str | None:
+    """Classify a known policy blocker. Unknown strings return None."""
+    text = item.strip()
+    if is_existing_canonical_tag_blocker(text, version=version):
+        return EXISTING_CANONICAL_TAG_KIND
+    if is_canonical_tag_absent_check_blocker(text, version=version):
+        return "canonical_tag_absent_check"
+    if text == "working tree clean":
+        return "dirty_working_tree"
+    if text == "CHANGELOG.md exists":
+        return "missing_changelog"
+    if text.startswith("changelog has a ") and "section or release-ready Unreleased" in text:
+        return "changelog_unready"
+    if text == "git metadata present at --root":
+        return "missing_git_metadata"
+    if "does not match expected_commit" in text:
+        return "expected_commit_mismatch"
+    return None
 
 
 @dataclass(frozen=True)
@@ -52,7 +165,7 @@ def inspect_tag_eligibility(root: Path, version: str) -> TagEligibility:
             canonical_tag=canonical,
             exists=True,
             eligible=False,
-            detail=f"canonical tag {canonical} already exists",
+            detail=existing_canonical_tag_blocker(parsed),
         )
     witness_present = sorted(tag for tag in tags if is_witness_tag(tag))
     extra = (
