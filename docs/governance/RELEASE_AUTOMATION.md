@@ -132,6 +132,22 @@ BLOCKERS:
 
 There is no ambiguous “green” result.
 
+Verification completion and tag eligibility are distinct. A candidate
+whose wheel, fresh install, parity, and manifest checks passed, and
+whose only blocker is that `v<VERSION>` already exists, is:
+
+```text
+VERIFICATION: PASS
+TAG ELIGIBILITY: FAIL
+RESULT: BLOCKED
+BLOCKERS:
+- canonical tag v<VERSION> already exists
+```
+
+That is not a verification-leg failure. The matrix job stays green when
+verification completed. The aggregator still reports `BLOCKED` and
+exits nonzero so the run cannot be read as `READY_FOR_TAG`.
+
 ### `READY_FOR_TAG`
 
 Verification evidence is complete for the requested version at the
