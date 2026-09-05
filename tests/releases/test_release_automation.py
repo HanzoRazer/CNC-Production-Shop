@@ -25,6 +25,7 @@ from scripts.release.generate_release_manifest import generate_release_manifest
 from scripts.release.git_io import git_read
 from scripts.release.model import (
     RESULT_BLOCKED,
+    RESULT_FAILED,
     RESULT_READY,
     ReleasePolicyError,
     parse_distribution_version,
@@ -103,6 +104,7 @@ def test_workflow_runs_python_3_11_and_3_12() -> None:
     assert '"3.12"' in text
     assert "READY_FOR_TAG" in text
     assert "BLOCKED" in text
+    assert "FAILED" in text
     assert "retention-days: 14" in text
 
 
@@ -112,6 +114,24 @@ def test_workflow_classifies_eligibility_separately_from_verification() -> None:
     assert "--evidence-dir dist-release-candidate" in text
     assert "--aggregate artifacts" in text
     assert "one or more Python 3.11/3.12 verification legs failed" not in text
+
+
+def test_workflow_does_not_mask_blocked_as_verification_failure() -> None:
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "verification legs failed" not in text
+    assert "classify_candidate_result.py" in text
+    assert "INVOCATION_ERROR" in text
+    assert "if: always()" in text
+
+
+def test_workflow_early_gates_are_invocation_errors() -> None:
+    text = WORKFLOW.read_text(encoding="utf-8")
+    confirm = text.split("name: Confirm expected commit", 1)[1]
+    reject = text.split("name: Reject unauthorized release_state", 1)[1]
+    assert "RESULT: BLOCKED" not in confirm.split("name:", 1)[0]
+    assert "INVOCATION_ERROR" in confirm.split("name:", 1)[0]
+    assert "RESULT: BLOCKED" not in reject.split("name:", 1)[0]
+    assert "INVOCATION_ERROR" in reject.split("name:", 1)[0]
 
 
 # ------------------------------------------------------------------ version gate
@@ -442,21 +462,67 @@ def test_matrix_aggregation_keeps_eligibility_blocker_precise() -> None:
         classify_payload(_eligibility_payload("3.11")),
         classify_payload(_eligibility_payload("3.12")),
     ]
-    result, blockers, verification = aggregate_classifications(items, verify_result="success")
+    result, blockers, verification, failures = aggregate_classifications(
+        items, verify_result="success"
+    )
     assert result == RESULT_BLOCKED
     assert verification == "PASS"
     assert blockers == ["canonical tag v0.1.1 already exists"]
-    text = format_aggregate(result, blockers, verification)
+    assert failures == []
+    text = format_aggregate(result, blockers, verification, failures)
     assert "VERIFICATION: PASS" in text
     assert "canonical tag v0.1.1 already exists" in text
     assert "verification legs failed" not in text
 
 
 def test_matrix_aggregation_reports_verification_failure_when_evidence_missing() -> None:
-    result, blockers, verification = aggregate_classifications([], verify_result="failure")
-    assert result == RESULT_BLOCKED
+    result, blockers, verification, failures = aggregate_classifications(
+        [], verify_result="failure"
+    )
+    assert result == RESULT_FAILED
     assert verification == "FAIL"
-    assert any("verification legs failed" in item for item in blockers)
+    assert blockers == []
+    assert any("did not produce a candidate result" in item for item in failures)
+
+
+def test_matrix_aggregation_will_not_call_a_half_reported_matrix_blocked() -> None:
+    """One leg BLOCKED, the other silent, job still green: that is a failure."""
+    items = [classify_payload(_eligibility_payload("3.11"))]
+    result, blockers, verification, failures = aggregate_classifications(
+        items, verify_result="success"
+    )
+    assert result == RESULT_FAILED
+    assert verification == "FAIL"
+    assert blockers == ["canonical tag v0.1.1 already exists"]
+    assert any("no candidate result for Python 3.12" in item for item in failures)
+    text = format_aggregate(result, blockers, verification, failures)
+    assert "RESULT: FAILED" in text
+    assert "no candidate result for Python 3.12" in text
+
+
+def test_classifier_cli_exits_nonzero_when_a_matrix_leg_is_missing(tmp_path: Path) -> None:
+    dest = tmp_path / "release-candidate-3.11"
+    dest.mkdir()
+    (dest / "release_evidence_0.1.1.json").write_text(
+        json.dumps(_eligibility_payload("3.11")) + "\n", encoding="utf-8"
+    )
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "release" / "classify_candidate_result.py"),
+            "--aggregate",
+            str(tmp_path),
+            "--verify-result",
+            "success",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "RESULT: FAILED" in proc.stdout
+    assert "no candidate result for Python 3.12" in proc.stdout
 
 
 def test_classifier_cli_exits_zero_for_eligibility_block(tmp_path: Path) -> None:
@@ -504,6 +570,7 @@ def test_classifier_cli_aggregate_exits_nonzero_for_eligibility_block(tmp_path: 
     assert "RESULT: BLOCKED" in proc.stdout
     assert "canonical tag v0.1.1 already exists" in proc.stdout
     assert "verification legs failed" not in proc.stdout
+    assert "FAILURES:" not in proc.stdout
 
 
 # ------------------------------------------------------------------ readiness extras

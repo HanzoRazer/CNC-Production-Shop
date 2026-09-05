@@ -1,0 +1,19 @@
+{
+  "workflow_run": "33336268384",
+  "source_main": "18125a09bfc1d1cf9a8470ce32ccd07970e0e9fb",
+  "version": "0.1.1",
+  "canonical_tag": "v0.1.1",
+  "python_3_11": "PASS",
+  "python_3_12": "PASS",
+  "wheel_build": "PASS",
+  "fresh_install": "PASS",
+  "package_parity": "PASS",
+  "manifest": "PASS",
+  "evidence": "PASS",
+  "verification_status": "PASS",
+  "eligibility_status": "BLOCKED",
+  "disposition": "BLOCKED",
+  "result": "BLOCKED",
+  "blockers": ["canonical tag v0.1.1 already exists"],
+  "failures": []
+}
