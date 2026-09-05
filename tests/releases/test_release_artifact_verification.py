@@ -19,9 +19,7 @@ from scripts.release.verify_release_artifact import (
 
 
 def _metadata_bytes(version: str, name: str = DISTRIBUTION_NAME) -> bytes:
-    return (
-        f"Metadata-Version: 2.1\nName: {name}\nVersion: {version}\nSummary: test\n"
-    ).encode()
+    return (f"Metadata-Version: 2.1\nName: {name}\nVersion: {version}\nSummary: test\n").encode()
 
 
 def make_wheel(

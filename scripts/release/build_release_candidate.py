@@ -71,7 +71,11 @@ from scripts.release.model import (  # noqa: E402
     wheel_filename_for_version,
 )
 from scripts.release.render_release_notes import render  # noqa: E402
-from scripts.release.tag_eligibility import TagEligibility, inspect_tag_eligibility  # noqa: E402
+from scripts.release.tag_eligibility import (  # noqa: E402
+    TagEligibility,
+    inspect_tag_eligibility,
+    is_canonical_tag_absent_check_blocker,
+)
 from scripts.release.verify_installed_candidate import (  # noqa: E402
     InstalledVerification,
     verify_installed_candidate,
@@ -110,10 +114,6 @@ def _as_invocation(exc: ReleasePolicyError) -> ReleaseInvocationError:
     if isinstance(exc, ReleaseInvocationError):
         return exc
     return ReleaseInvocationError(str(exc))
-
-
-def _is_canonical_tag_readiness(message: str) -> bool:
-    return message.startswith("canonical tag ")
 
 
 def _is_version_identity_readiness(message: str) -> bool:
@@ -240,7 +240,15 @@ def build_release_candidate(
     readiness = inspect_release_readiness(parsed, root, None)
     if not readiness.ready:
         for item in readiness.blockers:
-            if _is_canonical_tag_readiness(item):
+            if is_canonical_tag_absent_check_blocker(item, version=parsed):
+                # inspect_tag_eligibility is the sole authority for this blocker.
+                # Readiness only re-derives it, so a disagreement between the two
+                # is an evidence defect, not a policy gate.
+                if eligibility_evaluated and eligibility.eligible:
+                    failures.append(
+                        "readiness and tag eligibility disagree on whether "
+                        f"{tag_for_version(parsed)} exists"
+                    )
                 continue
             if _is_version_identity_readiness(item):
                 continue
