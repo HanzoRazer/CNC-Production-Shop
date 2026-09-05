@@ -207,7 +207,14 @@ not build a wheel:
 A candidate that never validly existed does not receive an evidence
 bundle.
 
-## CLI exit codes
+## Entry points and exit codes
+
+Two commands read a candidate. They answer different questions, so they
+do not share an exit convention.
+
+`scripts/release/build_release_candidate.py` evaluates one candidate and
+writes its evidence. Its exit code reports whether the evaluation itself
+succeeded:
 
 ```text
 0  READY_FOR_TAG or BLOCKED   (evaluation succeeded)
@@ -215,9 +222,27 @@ bundle.
 3  invocation/configuration error
 ```
 
-The GitHub `summarize` job inspects `disposition`. It is red for both
-`BLOCKED` and `FAILED` so there is no ambiguous green, but it reports
-those outcomes accurately. It must not describe a blocked candidate as
+`BLOCKED` exits `0` because policy declining to tag is a successful
+evaluation. A caller that treats a nonzero exit as “verification broke”
+is then correct.
+
+`scripts/release/classify_candidate_result.py` reads that evidence back.
+It is the single classifier; there is no second aggregator.
+
+```text
+--evidence-dir DIR   one leg
+  0  READY_FOR_TAG or BLOCKED
+  1  FAILED, or evidence missing/ambiguous
+
+--aggregate DIR      the whole matrix
+  0  READY_FOR_TAG only
+  1  anything else
+```
+
+`--aggregate` gates the tag decision, so only `READY_FOR_TAG` exits `0`.
+`BLOCKED` and `FAILED` both leave the `summarize` job red, which is
+deliberate: there is no ambiguous green. They are still reported
+distinctly, and the job must not describe a blocked candidate as
 “verification legs failed.”
 
 ## Compact summary

@@ -284,9 +284,7 @@ def test_blocked_orchestrator_cli_exits_zero(
 # ------------------------------------------------------------------ failures remain hard
 
 
-def test_wheel_build_failure_is_failed(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_wheel_build_failure_is_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import scripts.release.build_release_candidate as orch
     from scripts.release.model import ReleasePolicyError
 
@@ -306,9 +304,7 @@ def test_wheel_build_failure_is_failed(
     assert payload["result"] == payload["disposition"]
 
 
-def test_fresh_install_failure_is_failed(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_fresh_install_failure_is_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import scripts.release.build_release_candidate as orch
 
     _init_repo(tmp_path)
@@ -329,9 +325,7 @@ def test_fresh_install_failure_is_failed(
     assert payload["blockers"] == []
 
 
-def test_package_parity_failure_is_failed(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_package_parity_failure_is_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import scripts.release.build_release_candidate as orch
 
     _init_repo(tmp_path)
@@ -358,9 +352,7 @@ def test_package_parity_failure_is_failed(
     )
 
 
-def test_invalid_manifest_is_failed(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_invalid_manifest_is_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import scripts.release.build_release_candidate as orch
     from scripts.release.model import ReleasePolicyError
 
@@ -404,9 +396,7 @@ def test_failures_and_tag_blocker_keep_both_channels(
     assert payload["result"] == payload["disposition"]
 
 
-def test_dirty_tree_is_blocked_not_failed(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_dirty_tree_is_blocked_not_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _init_repo(tmp_path)
     _commit_release_tree(tmp_path, "0.1.2")
     (tmp_path / "dirt").write_text("nope\n", encoding="utf-8")
@@ -418,9 +408,7 @@ def test_dirty_tree_is_blocked_not_failed(
     assert any("working tree" in item for item in payload["blockers"])
 
 
-def test_changelog_not_ready_is_blocked(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_changelog_not_ready_is_blocked(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _init_repo(tmp_path)
     _write_pyproject(tmp_path / "pyproject.toml", "0.1.2")
     _write_changelog(tmp_path / "CHANGELOG.md", "## Unreleased\n\n")

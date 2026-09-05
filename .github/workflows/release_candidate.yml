@@ -98,6 +98,7 @@ jobs:
         env:
           CI: "true"
         run: |
+          set +e
           python scripts/release/build_release_candidate.py \
             --version '${{ inputs.version }}' \
             --output-dir dist-release-candidate \
@@ -105,6 +106,15 @@ jobs:
             --ci-summary "github-actions run ${{ github.run_id }} python ${{ matrix.python-version }}" \
             --expected-commit '${{ inputs.expected_commit }}' \
             --release-state '${{ inputs.release_state }}'
+          ORCHESTRATOR_RC=$?
+          set -e
+          if [ "$ORCHESTRATOR_RC" -eq 3 ]; then
+            echo "RESULT: INVOCATION_ERROR"
+            echo "- build_release_candidate.py rejected the invocation; no candidate was evaluated"
+            exit 3
+          fi
+          python scripts/release/classify_candidate_result.py \
+            --evidence-dir dist-release-candidate
 
       - name: Upload release-candidate evidence
         if: always()
@@ -124,6 +134,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -140,6 +152,7 @@ jobs:
         run: |
           # Consumes semantic evidence: READY_FOR_TAG | BLOCKED | FAILED.
           # BLOCKED is a valid verification outcome, not a verification malfunction.
-          python scripts/release/summarize_candidate_results.py \
-            --artifacts-dir artifacts \
+          echo "3.11 / 3.12 matrix job result: ${{ needs.verify.result }}"
+          python scripts/release/classify_candidate_result.py \
+            --aggregate artifacts \
             --verify-result '${{ needs.verify.result }}'

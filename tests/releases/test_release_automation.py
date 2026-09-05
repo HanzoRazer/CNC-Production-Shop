@@ -11,11 +11,21 @@ from pathlib import Path
 import pytest
 
 from scripts.release.check_release_readiness import inspect_release_readiness
+from scripts.release.classify_candidate_result import (
+    CLASS_ELIGIBILITY,
+    CLASS_READY,
+    CLASS_VERIFICATION,
+    aggregate_classifications,
+    classify_payload,
+    format_aggregate,
+    is_eligibility_blocker,
+)
 from scripts.release.generate_release_evidence import format_compact_summary, render_evidence
 from scripts.release.generate_release_manifest import generate_release_manifest
 from scripts.release.git_io import git_read
 from scripts.release.model import (
     RESULT_BLOCKED,
+    RESULT_FAILED,
     RESULT_READY,
     ReleasePolicyError,
     parse_distribution_version,
@@ -98,10 +108,18 @@ def test_workflow_runs_python_3_11_and_3_12() -> None:
     assert "retention-days: 14" in text
 
 
+def test_workflow_classifies_eligibility_separately_from_verification() -> None:
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "classify_candidate_result.py" in text
+    assert "--evidence-dir dist-release-candidate" in text
+    assert "--aggregate artifacts" in text
+    assert "one or more Python 3.11/3.12 verification legs failed" not in text
+
+
 def test_workflow_does_not_mask_blocked_as_verification_failure() -> None:
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "verification legs failed" not in text
-    assert "summarize_candidate_results.py" in text
+    assert "classify_candidate_result.py" in text
     assert "INVOCATION_ERROR" in text
     assert "if: always()" in text
 
@@ -386,6 +404,133 @@ def test_compact_summary_is_unambiguous() -> None:
     )
     assert "BLOCKED" in evidence
     assert "must not be tagged" in evidence
+
+
+def _eligibility_payload(python_version: str = "3.11") -> dict[str, object]:
+    return {
+        "result": RESULT_BLOCKED,
+        "version": "0.1.1",
+        "commit_sha": "18125a09bfc1d1cf9a8470ce32ccd07970e0e9fb",
+        "python_version": python_version,
+        "version_authority": "PASS",
+        "tests": "PASS",
+        "wheel_build": "PASS",
+        "fresh_install": "PASS",
+        "package_parity": "PASS",
+        "msme_resources": "PASS",
+        "msme_cli": "PASS",
+        "manifest": "PASS",
+        "tag_eligibility": "FAIL",
+        "blockers": ["canonical tag v0.1.1 already exists"],
+    }
+
+
+def test_existing_tag_is_an_eligibility_blocker() -> None:
+    assert is_eligibility_blocker("canonical tag v0.1.1 already exists")
+    assert not is_eligibility_blocker("wheel build failed")
+
+
+def test_eligibility_only_block_is_not_a_verification_failure() -> None:
+    item = classify_payload(_eligibility_payload())
+    assert item.kind == CLASS_ELIGIBILITY
+    assert item.verification == "PASS"
+    assert item.result == RESULT_BLOCKED
+    assert item.blockers == ("canonical tag v0.1.1 already exists",)
+
+
+def test_verification_field_failure_is_classified_as_verification() -> None:
+    payload = _eligibility_payload()
+    payload["fresh_install"] = "FAIL"
+    payload["blockers"] = ["fresh install was not run"]
+    item = classify_payload(payload)
+    assert item.kind == CLASS_VERIFICATION
+    assert item.verification == "FAIL"
+
+
+def test_ready_payload_classifies_as_ready() -> None:
+    payload = _eligibility_payload()
+    payload["result"] = RESULT_READY
+    payload["tag_eligibility"] = "PASS"
+    payload["blockers"] = []
+    item = classify_payload(payload)
+    assert item.kind == CLASS_READY
+    assert item.result == RESULT_READY
+
+
+def test_matrix_aggregation_keeps_eligibility_blocker_precise() -> None:
+    items = [
+        classify_payload(_eligibility_payload("3.11")),
+        classify_payload(_eligibility_payload("3.12")),
+    ]
+    result, blockers, verification, failures = aggregate_classifications(
+        items, verify_result="success"
+    )
+    assert result == RESULT_BLOCKED
+    assert verification == "PASS"
+    assert blockers == ["canonical tag v0.1.1 already exists"]
+    assert failures == []
+    text = format_aggregate(result, blockers, verification, failures)
+    assert "VERIFICATION: PASS" in text
+    assert "canonical tag v0.1.1 already exists" in text
+    assert "verification legs failed" not in text
+
+
+def test_matrix_aggregation_reports_verification_failure_when_evidence_missing() -> None:
+    result, blockers, verification, failures = aggregate_classifications(
+        [], verify_result="failure"
+    )
+    assert result == RESULT_FAILED
+    assert verification == "FAIL"
+    assert blockers == []
+    assert any("did not produce a candidate result" in item for item in failures)
+
+
+def test_classifier_cli_exits_zero_for_eligibility_block(tmp_path: Path) -> None:
+    evidence = tmp_path / "release_evidence_0.1.1.json"
+    evidence.write_text(json.dumps(_eligibility_payload()) + "\n", encoding="utf-8")
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "release" / "classify_candidate_result.py"),
+            "--evidence-dir",
+            str(tmp_path),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "CLASS: ELIGIBILITY_BLOCKED" in proc.stdout
+    assert "VERIFICATION: PASS" in proc.stdout
+
+
+def test_classifier_cli_aggregate_exits_nonzero_for_eligibility_block(tmp_path: Path) -> None:
+    for label in ("3.11", "3.12"):
+        dest = tmp_path / f"release-candidate-{label}"
+        dest.mkdir()
+        (dest / "release_evidence_0.1.1.json").write_text(
+            json.dumps(_eligibility_payload(label)) + "\n", encoding="utf-8"
+        )
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "release" / "classify_candidate_result.py"),
+            "--aggregate",
+            str(tmp_path),
+            "--verify-result",
+            "success",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "RESULT: BLOCKED" in proc.stdout
+    assert "canonical tag v0.1.1 already exists" in proc.stdout
+    assert "verification legs failed" not in proc.stdout
+    assert "FAILURES:" not in proc.stdout
 
 
 # ------------------------------------------------------------------ readiness extras

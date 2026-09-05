@@ -15,6 +15,7 @@ from scripts.release.model import (
     RESULT_BLOCKED,
     RESULT_FAILED,
     RESULT_READY,
+    SUPPORTED_PYTHON_VERSIONS,
     VERIFICATION_FAIL,
     VERIFICATION_PASS,
     ReleasePolicyError,
@@ -120,9 +121,7 @@ def aggregate_candidate_results(
             eligibility_status=ELIGIBILITY_NOT_EVALUATED,
             disposition=RESULT_FAILED,
             blockers=[],
-            failures=[
-                "one or more Python 3.11/3.12 legs did not produce a candidate result"
-            ],
+            failures=["one or more Python 3.11/3.12 legs did not produce a candidate result"],
         ) | {"legs": []}
 
     blockers: list[str] = []
@@ -152,10 +151,13 @@ def aggregate_candidate_results(
             }
         )
 
+    seen_legs = {str(leg.get("python_version") or "") for leg in legs}
+    for label in SUPPORTED_PYTHON_VERSIONS:
+        if label not in seen_legs:
+            failures.append(f"no candidate result for Python {label}")
+
     if verify_job_result != "success" and RESULT_FAILED not in dispositions:
-        failures.append(
-            "one or more Python 3.11/3.12 verification legs did not complete"
-        )
+        failures.append("one or more Python 3.11/3.12 verification legs did not complete")
 
     disposition = derive_candidate_disposition(failures, blockers)
     eligibility = derive_eligibility_status(
@@ -223,9 +225,7 @@ def format_workflow_summary(combined: dict[str, object]) -> str:
             "It is not authorization to create a tag or publish."
         )
     elif disposition == RESULT_BLOCKED:
-        lines.append(
-            "BLOCKED is a valid verification outcome, not a verification malfunction."
-        )
+        lines.append("BLOCKED is a valid verification outcome, not a verification malfunction.")
     else:
         lines.append("FAILED means verification or evidence generation did not succeed.")
     return "\n".join(lines) + "\n"
