@@ -1,0 +1,11 @@
+{
+  "blockers": [],
+  "distribution": "cnc-production-shop",
+  "duplicate_members": [],
+  "ok": true,
+  "packages_present": true,
+  "resources_present": true,
+  "sha256": "687871562bf49d34605f75630f03109fc4f05b1b8a828072403460fe43c26a00",
+  "version": "0.1.1",
+  "wheel": "cnc_production_shop-0.1.1-py3-none-any.whl"
+}

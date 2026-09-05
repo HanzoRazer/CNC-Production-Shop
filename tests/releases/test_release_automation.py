@@ -12,9 +12,7 @@ import pytest
 
 from scripts.release.check_release_readiness import inspect_release_readiness
 from scripts.release.classify_candidate_result import (
-    CLASS_ELIGIBILITY,
     CLASS_READY,
-    CLASS_VERIFICATION,
     aggregate_classifications,
     classify_payload,
     format_aggregate,
@@ -32,8 +30,18 @@ from scripts.release.model import (
     tag_for_version,
     wheel_filename_for_version,
 )
-from scripts.release.tag_eligibility import inspect_tag_eligibility, verify_post_tag
+from scripts.release.tag_eligibility import (
+    existing_canonical_tag_blocker,
+    inspect_tag_eligibility,
+    verify_post_tag,
+)
 from scripts.validate_release_manifests import validate_manifest_document
+from tests.releases.classifier_contracts import (
+    assert_cli_eligibility_only,
+    assert_eligibility_classification,
+    assert_verification_classification,
+    eligibility_payload,
+)
 from tests.releases.test_release_artifact_verification import make_wheel
 from tests.releases.test_release_readiness import (
     _commit_release_tree,
@@ -407,48 +415,35 @@ def test_compact_summary_is_unambiguous() -> None:
 
 
 def _eligibility_payload(python_version: str = "3.11") -> dict[str, object]:
-    return {
-        "result": RESULT_BLOCKED,
-        "version": "0.1.1",
-        "commit_sha": "18125a09bfc1d1cf9a8470ce32ccd07970e0e9fb",
-        "python_version": python_version,
-        "version_authority": "PASS",
-        "tests": "PASS",
-        "wheel_build": "PASS",
-        "fresh_install": "PASS",
-        "package_parity": "PASS",
-        "msme_resources": "PASS",
-        "msme_cli": "PASS",
-        "manifest": "PASS",
-        "tag_eligibility": "FAIL",
-        "blockers": ["canonical tag v0.1.1 already exists"],
-    }
+    return eligibility_payload(python_version)
 
 
 def test_existing_tag_is_an_eligibility_blocker() -> None:
-    assert is_eligibility_blocker("canonical tag v0.1.1 already exists")
+    governed = existing_canonical_tag_blocker("0.1.1")
+    assert is_eligibility_blocker(governed)
+    assert is_eligibility_blocker(governed, version="0.1.1", canonical_tag="v0.1.1")
     assert not is_eligibility_blocker("wheel build failed")
+    assert not is_eligibility_blocker("canonical tag v0.1.1 does not exist")
+    assert not is_eligibility_blocker("canonical tag already exists")
+    assert not is_eligibility_blocker("canonical tag v0.1.1 already exists and is signed")
+    assert not is_eligibility_blocker(
+        existing_canonical_tag_blocker("0.1.2"), version="0.1.1", canonical_tag="v0.1.1"
+    )
 
 
 def test_eligibility_only_block_is_not_a_verification_failure() -> None:
-    item = classify_payload(_eligibility_payload())
-    assert item.kind == CLASS_ELIGIBILITY
-    assert item.verification == "PASS"
-    assert item.result == RESULT_BLOCKED
-    assert item.blockers == ("canonical tag v0.1.1 already exists",)
+    assert_eligibility_classification(classify_payload(eligibility_payload()))
 
 
 def test_verification_field_failure_is_classified_as_verification() -> None:
-    payload = _eligibility_payload()
+    payload = eligibility_payload()
     payload["fresh_install"] = "FAIL"
     payload["blockers"] = ["fresh install was not run"]
-    item = classify_payload(payload)
-    assert item.kind == CLASS_VERIFICATION
-    assert item.verification == "FAIL"
+    assert_verification_classification(classify_payload(payload))
 
 
 def test_ready_payload_classifies_as_ready() -> None:
-    payload = _eligibility_payload()
+    payload = eligibility_payload()
     payload["result"] = RESULT_READY
     payload["tag_eligibility"] = "PASS"
     payload["blockers"] = []
@@ -459,8 +454,8 @@ def test_ready_payload_classifies_as_ready() -> None:
 
 def test_matrix_aggregation_keeps_eligibility_blocker_precise() -> None:
     items = [
-        classify_payload(_eligibility_payload("3.11")),
-        classify_payload(_eligibility_payload("3.12")),
+        classify_payload(eligibility_payload("3.11")),
+        classify_payload(eligibility_payload("3.12")),
     ]
     result, blockers, verification, failures = aggregate_classifications(
         items, verify_result="success"
@@ -527,7 +522,7 @@ def test_classifier_cli_exits_nonzero_when_a_matrix_leg_is_missing(tmp_path: Pat
 
 def test_classifier_cli_exits_zero_for_eligibility_block(tmp_path: Path) -> None:
     evidence = tmp_path / "release_evidence_0.1.1.json"
-    evidence.write_text(json.dumps(_eligibility_payload()) + "\n", encoding="utf-8")
+    evidence.write_text(json.dumps(eligibility_payload()) + "\n", encoding="utf-8")
     proc = subprocess.run(
         [
             sys.executable,
@@ -540,9 +535,7 @@ def test_classifier_cli_exits_zero_for_eligibility_block(tmp_path: Path) -> None
         text=True,
         check=False,
     )
-    assert proc.returncode == 0, proc.stdout + proc.stderr
-    assert "CLASS: ELIGIBILITY_BLOCKED" in proc.stdout
-    assert "VERIFICATION: PASS" in proc.stdout
+    assert_cli_eligibility_only(proc, aggregate=False)
 
 
 def test_classifier_cli_aggregate_exits_nonzero_for_eligibility_block(tmp_path: Path) -> None:
@@ -550,7 +543,7 @@ def test_classifier_cli_aggregate_exits_nonzero_for_eligibility_block(tmp_path: 
         dest = tmp_path / f"release-candidate-{label}"
         dest.mkdir()
         (dest / "release_evidence_0.1.1.json").write_text(
-            json.dumps(_eligibility_payload(label)) + "\n", encoding="utf-8"
+            json.dumps(eligibility_payload(label)) + "\n", encoding="utf-8"
         )
     proc = subprocess.run(
         [

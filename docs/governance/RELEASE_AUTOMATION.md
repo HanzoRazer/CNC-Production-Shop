@@ -207,6 +207,40 @@ not build a wheel:
 A candidate that never validly existed does not receive an evidence
 bundle.
 
+## Evidence shape
+
+Classification never infers a governed condition from prose. The
+existing-tag blocker has exactly one producer,
+`tag_eligibility.existing_canonical_tag_blocker()`, and is recognised
+only when the middle token is a canonical `vMAJOR.MINOR.PATCH` tag and
+the evidence payload's own `version` / `canonical_tag` fields agree.
+
+`existing_canonical_tag` is the only catalogued eligibility kind today.
+Other known policy conditions -- dirty working tree, missing CHANGELOG,
+unready CHANGELOG, missing git metadata, expected-commit mismatch, the
+readiness "canonical tag does not exist" check -- are catalogued as
+policy but *not* eligibility, so no prefix or suffix match can promote
+one into an eligibility pass. Blocker wording the catalogue does not
+recognise fails closed into `failures`.
+
+A payload that contradicts itself is an evidence defect, not a policy
+gate. `tag_eligibility: PASS` alongside an eligibility blocker, or
+`tag_eligibility: FAIL` with nothing to justify it, is a `FAILED`.
+
+Aggregate mode requires the workflow artifact layout:
+
+```text
+artifacts/release-candidate-3.11/release_evidence_<version>.json
+artifacts/release-candidate-3.12/release_evidence_<version>.json
+```
+
+Exactly one evidence object per required Python version. Duplicate,
+extra, unreadable, or identity-disagreeing files are `failures` even
+when `needs.verify.result` is `success` -- a matrix that cannot describe
+itself has not verified anything, whatever its legs claim. The same
+holds for legs that disagree on version, on commit, or on whether the
+tag is eligible.
+
 ## Entry points and exit codes
 
 Two commands read a candidate. They answer different questions, so they

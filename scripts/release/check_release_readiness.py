@@ -45,6 +45,7 @@ from scripts.release.model import (  # noqa: E402
     tag_for_version,
     version_from_wheel_filename,
 )
+from scripts.release.tag_eligibility import canonical_tag_absent_check_message  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -186,7 +187,7 @@ def inspect_release_readiness(version: str, root: Path, wheel: Path | None) -> R
                 line for line in listed.stdout.splitlines() if line and line not in WITNESS_TAGS
             }
             canonical = tag_for_version(expected)
-            record(canonical not in tags, f"canonical tag {canonical} does not exist")
+            record(canonical not in tags, canonical_tag_absent_check_message(expected))
 
     changelog_path = root / "CHANGELOG.md"
     if not changelog_path.is_file():
