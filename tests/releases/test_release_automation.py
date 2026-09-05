@@ -485,6 +485,46 @@ def test_matrix_aggregation_reports_verification_failure_when_evidence_missing()
     assert any("did not produce a candidate result" in item for item in failures)
 
 
+def test_matrix_aggregation_will_not_call_a_half_reported_matrix_blocked() -> None:
+    """One leg BLOCKED, the other silent, job still green: that is a failure."""
+    items = [classify_payload(_eligibility_payload("3.11"))]
+    result, blockers, verification, failures = aggregate_classifications(
+        items, verify_result="success"
+    )
+    assert result == RESULT_FAILED
+    assert verification == "FAIL"
+    assert blockers == ["canonical tag v0.1.1 already exists"]
+    assert any("no candidate result for Python 3.12" in item for item in failures)
+    text = format_aggregate(result, blockers, verification, failures)
+    assert "RESULT: FAILED" in text
+    assert "no candidate result for Python 3.12" in text
+
+
+def test_classifier_cli_exits_nonzero_when_a_matrix_leg_is_missing(tmp_path: Path) -> None:
+    dest = tmp_path / "release-candidate-3.11"
+    dest.mkdir()
+    (dest / "release_evidence_0.1.1.json").write_text(
+        json.dumps(_eligibility_payload("3.11")) + "\n", encoding="utf-8"
+    )
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "release" / "classify_candidate_result.py"),
+            "--aggregate",
+            str(tmp_path),
+            "--verify-result",
+            "success",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "RESULT: FAILED" in proc.stdout
+    assert "no candidate result for Python 3.12" in proc.stdout
+
+
 def test_classifier_cli_exits_zero_for_eligibility_block(tmp_path: Path) -> None:
     evidence = tmp_path / "release_evidence_0.1.1.json"
     evidence.write_text(json.dumps(_eligibility_payload()) + "\n", encoding="utf-8")
