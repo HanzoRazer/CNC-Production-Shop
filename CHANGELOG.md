@@ -2,14 +2,6 @@
 
 ## Unreleased
 
-### Changed
-- Smart Guitar scale length revised to 25.5 in / 647.7 mm, from 24.75 in /
-  628.65 mm. Owner-directed. Both product-line baselines already declared
-  25.5 in, so this returns the product to the line it had deviated from.
-  `docs/geometry/SMART_GUITAR_CAD_DIMENSIONS.md` is regenerated. The Khaya
-  sibling is unchanged and still reads 628.65; whether it follows is a
-  product decision, not a consequence of this one.
-
 ## [0.1.1] - 2026-08-24
 
 ### Changed
