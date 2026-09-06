@@ -1162,7 +1162,9 @@ def test_dimension_sheet_separates_what_can_be_cut_from_what_cannot():
         assert heading in sheet, f"missing {heading!r}"
 
     fixed = sheet.split("## 2.")[0]
-    for value in ("468.5", "402.85", "47.0", "628.65"):
+    # 647.7 = 25.5 in, revised from 628.65 (24.75 in) on 2026-09-05 by owner direction;
+    # the sheet is generated from the product record, so this tracks that record.
+    for value in ("468.5", "402.85", "47.0", "647.7"):
         assert value in fixed, f"{value} missing from the fixed section"
 
     # Withdrawn placements must not reappear anywhere, in any section.

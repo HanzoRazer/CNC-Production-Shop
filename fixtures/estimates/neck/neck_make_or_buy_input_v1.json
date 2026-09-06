@@ -516,6 +516,7 @@
     "note": "Wood prices and purchase references are owner-supplied research. Every operation time other than the two draft additions is carried from the accepted V2 baseline at commit 1cd74f9 and is not re-derived here."
   },
   "notes": [
+    "SCALE SUPERSEDED 2026-09-05. Every figure in this estimate was computed against a 628.65 mm (24.75 in) scale length. The product record now carries 647.7 mm (25.5 in). Slot spacing is scale-specific, so the fretboard buy_references and any quote taken against them are for the wrong part; make-side operation times are unaffected but the board they cut is not. The 628.65 citations in this file are deliberately left as written - they record what was actually specified and quoted. RE-RUN before this estimate is used for a sourcing decision.",
     "BATCHING IS THE SMALLEST LEVER ON THE TABLE. Only OP-4100 carries setup, so the entire benefit is 8.62 per neck and it is fully realised by about quantity 10.",
     "The two real levers are the fretboard price and the fretwork time, and neither has anything to do with the router that prompted this sprint.",
     "The construction choice is worth 11.75 per neck in timber alone, which is more than everything batching can offer combined.",

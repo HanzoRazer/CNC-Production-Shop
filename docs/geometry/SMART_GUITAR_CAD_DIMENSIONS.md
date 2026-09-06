@@ -25,7 +25,7 @@ bear, so nothing here has to be taken on trust:
 | Body length | **468.5** | Official CAD, ruled |
 | Body width, maximum | **402.85** | Outline aspect, corroborated three ways |
 | Body thickness | **47.0** | Ruled after four web failures |
-| Scale length | **628.65** | Product record |
+| Scale length | **647.7** | Product record |
 | Frets | **24** | Ruled — standard, not 25 |
 | Strings | **6** | |
 | Bass overhang past treble | **12.28** | Trace metadata; this is what fixes `x = 0` |

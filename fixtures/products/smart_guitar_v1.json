@@ -9,7 +9,7 @@
     "body_architecture_note": "Two composite skins over a hollow wooden core with a structural frame and centre block, in the manner of the Masonite-era Danelectro. The hollow interior is what makes the full electronics package fit; the same stack has no valid placement in a solid body of these dimensions.",
     "neck_joint": "bolt_on",
     "neck_sourcing": "shop_machined",
-    "scale_length_mm": 628.65,
+    "scale_length_mm": 647.7,
     "fret_count": 24,
     "string_count": 6,
     "body_length_mm": 468.5,
@@ -64,6 +64,7 @@
     "note": "Split from a single conflated product record on 2026-07-27, when the practice and performance lines were separated."
   },
   "notes": [
+    "SCALE LENGTH REVISED 2026-09-05, owner-directed: 628.65 mm (24.75 in) -> 647.7 mm (25.5 in exactly; the mm figure is the conversion). The 628.65 was Gibson heritage inherited from the Explorer and Les Paul parents recorded in instrument.design_heritage. Both product-line baselines - cnc_electric_guitar_baseline_v1 and thin_skin_electric_guitar_baseline_v1 - already declare scale_length_in 25.5, so on this figure the Smart Guitar was the deviation and this returns it to the line. CONSEQUENCES NOT APPLIED HERE: the bridge station is scale-derived and moves 19.05 mm toward the tail, and both pickup positions are bridge-referenced and move with it; those literals live in the luthiers-toolbox spec and are withdrawn pending a body outline, so they are flagged rather than recomputed. The neck make-or-buy estimate was run against the superseded scale - see its own note.",
     "STATUS IS 'concept', NOT 'draft'. The Smart Guitar is still an AI-generated photograph. Every dimension derived so far is real arithmetic performed on an imagined object: the outline is corroborated for proportion across three artifacts but has never been measured against a physical blank, and the cavity datum is an engineering fit rather than a measurement.",
     "GO DECISION 2026-07-27. This is the active product line. The hollow thin-skin box is what makes the electronics placeable: they share one continuous cavity, so the pocket-to-pocket walls that defeated the solid Khaya do not apply. That construction choice stopped being a cost preference and became the reason this instrument is buildable and its sibling is not.",
     "This is explicitly NOT a performance instrument. It is a practice and travel instrument, so headphone output matters and stage ergonomics do not.",
