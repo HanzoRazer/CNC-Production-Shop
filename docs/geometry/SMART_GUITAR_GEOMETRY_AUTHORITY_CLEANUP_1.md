@@ -54,13 +54,36 @@ withdrawn, as is its claim that the bridge station is already frozen from it.
 
 ## What the search actually found
 
-**Neck pocket.** One source only:
-`luthiers-toolbox/services/api/app/instrument_geometry/body/specs/smart_guitar_v1.json`
-— `76.2 × 55.9 × 15.9, r6.35` at `y_from_top 53.3`, withdrawn along with every
-other cavity position. No second source exists in any repository in reach. The
-"two sources disagree" sentence was a literal string in
-`scripts/export_cad_dimensions.py`, unlike every neighbouring figure in that
-sheet, which is derived from records.
+**Neck pocket — the claim was not merely unsupported, it was contradicted.**
+
+The pocket appears with dimensions in exactly two documents, both in
+`luthiers-toolbox`, and they agree to the decimal:
+
+```text
+services/.../specs/smart_guitar_v1.json     76.2 x 55.9 x 15.9  r6.35  x=0  y=53.3
+docs/archive/.../SMART_GUITAR_V1_CNC_HANDOFF.md
+                                            76.2 x 55.9 x 15.9         x=0  y=53.3
+```
+
+The handoff derives from the spec and says so, so that is one source and a
+document about it. Both are withdrawn with every other cavity position.
+`sg-spec` and `tap_tone_pi` carry no neck-pocket geometry at all; the other
+neck-pocket hits in `luthiers-toolbox` are **other instruments** — Explorer
+1958, Les Paul 1959, a 24-fret Stratocaster.
+
+**Where the claim came from.** It was born as a hardcoded string literal in
+`4cb42a3` (2026-07-28, "rebuild the CAD dimension sheet around confidence"). The
+diff adds it with no corresponding removal, and the previous version of the
+sheet did not mention the neck pocket at all — so it replaced nothing and decayed
+from nothing. That commit's message is otherwise thorough, and says nothing about
+the neck pocket. It entered a *Not established* table in which every neighbouring
+row was real.
+
+**No document in this repository has ever named `sg-spec` in connection with the
+neck pocket.** The claim named neither source. `sg-spec` was searched because
+this project's own notes record it as canonical for cavity dimensions — checked,
+not accused. That distinction was stated wrongly in the first draft of
+`SG_SPEC_NECK_POCKET_QUERY_1.md` and corrected before dispatch.
 
 **`sg-spec`.** Carries no neck-pocket or pickup geometry at all. The only match
 across the whole repository is the prose fragment
@@ -124,7 +147,11 @@ Three things follow:
 
 - **There is a documented collision, and it is not the one the stopped order
   described.** It is *fret 24 versus the neck pickup*, not neck pocket versus
-  neck pickup. The pickup was moved from `167.6` to `207.125` — a bridgeward
+  neck pickup. There is in-house precedent:
+  `luthiers-toolbox/docs/archive/.../24_FRET_STRATOCASTER_DESIGN_HANDOFF.md`
+  reaches the same conclusion independently at the same 25.5 in scale — going to
+  24 frets relocates the **neck pickup**, while "the nut, bridge, and neck pocket
+  heel position remain identical". The pocket was never party to it. The pickup was moved from `167.6` to `207.125` — a bridgeward
   translation of **39.525 mm** — which is the same shape of work the stopped
   order specified, already done, under a different premise and using a 10.0 mm
   setback rather than the 8.0 mm structural web.

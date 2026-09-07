@@ -335,12 +335,13 @@ def render() -> str:
     w("| **Electronics cavity position** | Visible in the back render on the lower treble "
       "side under a cover plate. Never dimensioned. |")
     w("| **Neck pocket** | **No traceable governing source.** This sheet "
-      "previously said two sources disagreed. That claim was hardcoded here, "
-      "cited neither source, and did not survive a search: `luthiers-toolbox "
-      "smart_guitar_v1.json` carries one (76.2 x 55.9 x 15.9, r6.35 at "
-      "y_from_top 53.3) and it is withdrawn with every other cavity position; "
-      "`sg-spec` carries no neck-pocket geometry at all. Size and position "
-      "both come from the active CAD sprint. |")
+      "previously said two sources disagreed. That claim was a hardcoded "
+      "literal, named neither source, and is contradicted: the pocket appears "
+      "with dimensions in two `luthiers-toolbox` documents that agree to the "
+      "decimal (76.2 x 55.9 x 15.9, r6.35 at y_from_top 53.3), one deriving "
+      "from the other, and both withdrawn with every other cavity position. "
+      "`sg-spec` and `tap_tone_pi` carry none. Size and position both come "
+      "from the active CAD sprint. |")
     w("| **Bridge unit** | Unselected — and the product record says "
       f"`{product['configuration']['bridge_type']}` while both drawings are **tremolo** "
       "units. A fixed bridge routs far shallower, so 2.3 may be over-specified. |")
