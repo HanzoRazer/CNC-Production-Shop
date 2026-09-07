@@ -112,8 +112,8 @@ def test_body_extents_match_the_governed_blank(doc):
 
 def test_entity_counts_are_as_intended(doc):
     counts = Counter(e.dxftype() for e in doc.modelspace())
-    # 1 outline + 4 through-body voids + 8 cavities
-    assert counts["LWPOLYLINE"] == 13
+    # 1 outline + 4 through-body voids + 9 cavities
+    assert counts["LWPOLYLINE"] == 14
     assert counts["LINE"] == 1  # centreline reference
 
 
@@ -186,8 +186,8 @@ def test_pickup_layout_matches_the_product_record() -> None:
     )
     layout = record["configuration"]["pickup_layout"]
     assert layout == "dual_humbucker", (
-        "product record changed to %r - update CAVITIES deliberately, with a "
-        "ruling, rather than letting this test be edited to match" % layout
+        f"product record changed to {layout!r} - update CAVITIES deliberately, with a "
+        "ruling, rather than letting this test be edited to match"
     )
 
     routes = {c[1]: c for c in CAVITIES if c[1].startswith("PU_")}
