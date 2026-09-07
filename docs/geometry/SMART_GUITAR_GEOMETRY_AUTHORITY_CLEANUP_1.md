@@ -68,6 +68,14 @@ across the whole repository is the prose fragment
 a constraint note, not geometry. **Nothing to remove under ruling 6**, and
 `sg-spec` is outside this session's working directories in any case.
 
+That negative was produced from outside `sg-spec`, which is weaker than one
+produced from inside it, so it has been put to that repository's maintainer as
+`SG_SPEC_NECK_POCKET_QUERY_1.md` before being treated as settled. The query
+also raises the constraint itself: `bass_chamber` requires clearance from a
+"neck pocket projection" while its two sibling constraints resolve to numbers
+in the same file, which is a plausible origin of the belief that `sg-spec` knew
+where the neck pocket was.
+
 **The clearance that is not a collision.** From the one locatable pocket and
 the pickup route, at both candidate envelopes:
 
