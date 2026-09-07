@@ -25,7 +25,7 @@ bear, so nothing here has to be taken on trust:
 | Body length | **468.5** | Official CAD, ruled |
 | Body width, maximum | **402.85** | Outline aspect, corroborated three ways |
 | Body thickness | **47.0** | Ruled after four web failures |
-| Scale length | **647.7** | Product record |
+| Scale length | **647.7** | Product record — **active CAD sprint owns this**, see below |
 | Frets | **24** | Ruled — standard, not 25 |
 | Strings | **6** | |
 | Bass overhang past treble | **12.28** | Trace metadata; this is what fixes `x = 0` |
@@ -33,6 +33,28 @@ bear, so nothing here has to be taken on trust:
 | Web and floor minimum | **8.0** | Ruled |
 
 Neck joint **bolt_on** · headstock **none_headless** · nut **locking_clamp** · body **hollow_thin_skin_box**.
+
+### Who owns which figure
+
+The Smart Guitar is in an **active CAD sprint**, so live geometry moves in
+the CAD model, not here. This repository holds governed *records*; it does
+not constrain the model.
+
+| | Owner |
+|---|---|
+| Nut, scale, fret plane, neck angle, bridge station | **Active CAD sprint** |
+| Neck pocket, pickup and cavity positions | **Active CAD sprint** |
+| Interference measurement | **Active CAD sprint** |
+| Governed records, validation, cost consequences | This repository |
+
+The scale above is the latest **repository** value, not a final one. It is
+not superseded and nothing here contradicts it, but the CAD sprint has not
+returned its current nut-to-bridge geometry, so the bridge station does not
+follow from it yet. Do not place the bridge from this figure.
+
+Historical note: **628.65 mm** (24.75 in) appears throughout the neck
+make-or-buy records. It is superseded for this instrument and is retained
+there deliberately, because those records state what was actually quoted.
 
 ## 2. Parametric — right today, derived from a part
 
@@ -162,7 +184,7 @@ that must land on solid material.
 | Rout | Status |
 |---|---|
 | Pickup route | Two sources: **82.0 × 38.0 × 19.05, r4.0** and **92.0 × 40.0 × 19.0, r3.0**. Both assume humbuckers; pickup type is open. |
-| Neck pocket | Sources disagree on size and position. |
+| Neck pocket | No traceable governing source. See section 4. |
 | Control cavity | Seen in the render under a cover plate; never dimensioned. |
 | Cover-plate rebates | Not specified for any cavity. |
 
@@ -213,8 +235,9 @@ measurement, not a calculation.
 | **Voids — count, shape, position** | Three per the renders: upper bass, upper treble, lower bass. No dimensioned source for any of them. |
 | **Every cavity position** | Sizes in 2.2 are good. Placements were solved against the stale outline and are withdrawn. |
 | **Electronics cavity position** | Visible in the back render on the lower treble side under a cover plate. Never dimensioned. |
-| **Neck pocket** | Two sources disagree on size and position. |
+| **Neck pocket** | **No traceable governing source.** This sheet previously said two sources disagreed. That claim was hardcoded here, cited neither source, and did not survive a search: `luthiers-toolbox smart_guitar_v1.json` carries one (76.2 x 55.9 x 15.9, r6.35 at y_from_top 53.3) and it is withdrawn with every other cavity position; `sg-spec` carries no neck-pocket geometry at all. Size and position both come from the active CAD sprint. |
 | **Bridge unit** | Unselected — and the product record says `headless_fixed_with_fine_tuners` while both drawings are **tremolo** units. A fixed bridge routs far shallower, so 2.3 may be over-specified. |
+| **Neck angle** | An active-CAD assumption. No value has been returned to governance, and none is asserted here. |
 | **Pickup type and route** | Open upstream; route dimensions follow from it. |
 | **Skin thickness, core species, finish** | Not selected. Skin thickness changes every internal depth. |
 

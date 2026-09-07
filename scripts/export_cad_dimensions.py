@@ -90,7 +90,8 @@ def render() -> str:
     w(f"| Body width, maximum | **{con['body_width_mm']}** | Outline aspect, corroborated "
       "three ways |")
     w(f"| Body thickness | **{con['body_thickness_mm']}** | Ruled after four web failures |")
-    w(f"| Scale length | **{con['scale_length_mm']}** | Product record |")
+    w(f"| Scale length | **{con['scale_length_mm']}** | Product record — "
+      "**active CAD sprint owns this**, see below |")
     w(f"| Frets | **{con['fret_count']}** | Ruled — standard, not 25 |")
     w(f"| Strings | **{con['string_count']}** | |")
     w(f"| Bass overhang past treble | **{dxf.DOCUMENTED_BASS_OVERHANG_MM}** | Trace metadata; "
@@ -100,6 +101,28 @@ def render() -> str:
     w("")
     w(f"Neck joint **{con['neck_joint']}** · headstock **{series['headstock']}** · nut "
       f"**{series['nut_type']}** · body **{con['body_type']}**.")
+    w("")
+    w("### Who owns which figure")
+    w("")
+    w("The Smart Guitar is in an **active CAD sprint**, so live geometry moves in")
+    w("the CAD model, not here. This repository holds governed *records*; it does")
+    w("not constrain the model.")
+    w("")
+    w("| | Owner |")
+    w("|---|---|")
+    w("| Nut, scale, fret plane, neck angle, bridge station | **Active CAD sprint** |")
+    w("| Neck pocket, pickup and cavity positions | **Active CAD sprint** |")
+    w("| Interference measurement | **Active CAD sprint** |")
+    w("| Governed records, validation, cost consequences | This repository |")
+    w("")
+    w("The scale above is the latest **repository** value, not a final one. It is")
+    w("not superseded and nothing here contradicts it, but the CAD sprint has not")
+    w("returned its current nut-to-bridge geometry, so the bridge station does not")
+    w("follow from it yet. Do not place the bridge from this figure.")
+    w("")
+    w("Historical note: **628.65 mm** (24.75 in) appears throughout the neck")
+    w("make-or-buy records. It is superseded for this instrument and is retained")
+    w("there deliberately, because those records state what was actually quoted.")
     w("")
 
     w("## 2. Parametric — right today, derived from a part")
@@ -246,7 +269,7 @@ def render() -> str:
     w("|---|---|")
     w("| Pickup route | Two sources: **82.0 × 38.0 × 19.05, r4.0** and "
       "**92.0 × 40.0 × 19.0, r3.0**. Both assume humbuckers; pickup type is open. |")
-    w("| Neck pocket | Sources disagree on size and position. |")
+    w("| Neck pocket | No traceable governing source. See section 4. |")
     w("| Control cavity | Seen in the render under a cover plate; never dimensioned. |")
     w("| Cover-plate rebates | Not specified for any cavity. |")
     w("")
@@ -311,10 +334,18 @@ def render() -> str:
       "the stale outline and are withdrawn. |")
     w("| **Electronics cavity position** | Visible in the back render on the lower treble "
       "side under a cover plate. Never dimensioned. |")
-    w("| **Neck pocket** | Two sources disagree on size and position. |")
+    w("| **Neck pocket** | **No traceable governing source.** This sheet "
+      "previously said two sources disagreed. That claim was hardcoded here, "
+      "cited neither source, and did not survive a search: `luthiers-toolbox "
+      "smart_guitar_v1.json` carries one (76.2 x 55.9 x 15.9, r6.35 at "
+      "y_from_top 53.3) and it is withdrawn with every other cavity position; "
+      "`sg-spec` carries no neck-pocket geometry at all. Size and position "
+      "both come from the active CAD sprint. |")
     w("| **Bridge unit** | Unselected — and the product record says "
       f"`{product['configuration']['bridge_type']}` while both drawings are **tremolo** "
       "units. A fixed bridge routs far shallower, so 2.3 may be over-specified. |")
+    w("| **Neck angle** | An active-CAD assumption. No value has been "
+      "returned to governance, and none is asserted here. |")
     w("| **Pickup type and route** | Open upstream; route dimensions follow from it. |")
     w("| **Skin thickness, core species, finish** | Not selected. Skin thickness changes "
       "every internal depth. |")
