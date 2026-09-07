@@ -118,6 +118,13 @@ TRACE_THROUGH_BODY_VOIDS = (0, 1, 2, 4)
 # front_v5 cavity layers whose implied datum agreed to +/-1.2 mm. NECK_POCKET
 # and CONTROL_PLATE are excluded: they remain outliers after the offset is
 # removed, so they cannot calibrate it.
+#
+# PICKUP_NECK is FROZEN at 167.6 on purpose. It is NOT the current neck pickup
+# station - see CAVITIES below, where the ruled figure is 207.125. It is the
+# spec value as it stood when front_v5 was generated, and the calibration works
+# by comparing front_v5's drawn positions against the spec OF THAT ERA. Moving
+# it to the current station would push the spread past V5_DATUM_MAX_SPREAD and
+# the correction would be refused, silently taking REF_V5 with it.
 V5_DATUM_LAYERS: dict[str, float] = {
     "ARDUINO_POCKET": 133.5,
     "PICKUP_NECK": 167.6,
@@ -149,14 +156,40 @@ LAYERS: dict[str, tuple[int, int, str]] = {
 # Re-derive with scripts/solve_khaya_pocket_layout.py; do not hand-edit.
 #
 # The rows this replaces were stale in almost every particular: one 162 mm POD
-# before the split, a TEENSY pocket for a part no longer in the design, a
-# BATTERY drawn on top of it, a neck pickup deleted by the single-pickup
-# layout, and a 92 x 40 humbucker route where a 80 x 22 single coil now sits.
+# before the split, a TEENSY pocket for a part no longer in the design, and a
+# BATTERY drawn on top of it.
+#
+# PICKUP LAYOUT CORRECTED 2026-09-06 by owner ruling. A previous revision of
+# this table deleted PU_NECK and shrank PU_BRIDGE to an 80 x 22 single coil,
+# citing "the single-pickup layout". That was a CONFLATION. The single-pickup
+# idea was a sandbox discussion of a possible product VARIANT, and the only
+# ruling behind it - CONF-SINGLE-PICKUP-SPACE - is scoped in its own words to
+# "a solid body", concluding that onboard compute in the KHAYA is no longer
+# ruled out by geometry. Its parent CONF-SOLID-BODY-PACKING says explicitly
+# "NOT AFFECTED: the hollow thin-skin Smart Guitar". Nothing ruled a pickup
+# change for THIS instrument, and fixtures/products/smart_guitar_v1.json has
+# read "pickup_layout": "dual_humbucker" throughout - so this table had been
+# contradicting its own repo. Both routes are restored to the governed
+# 92.0 x 40.0 humbucker size; test_pickup_layout_matches_the_product_record
+# now holds the table to that record so the same drift cannot recur silently.
+#
+# PU_NECK y_from_top 207.125 is the RULED station, from luthiers-toolbox
+# smart_guitar_v1.json cavities.neck_pickup_route: y_from_nut 515.775, being
+# fret 24 at 485.775 plus a ruled 10.0 setback plus half the 40.0 route. It
+# resolves the fret-24 / neck-pickup collision at the 25.5 in scale.
+#
+# PU_BRIDGE y_from_top 294.6 is carried unchanged from that same record and is
+# STALE at the 25.5 in scale: it derives from 320.0 - 25.4 against the
+# superseded 628.65 bridge station. It is NOT corrected here, because the
+# 25.4 mm it rests on is an exact round inch with no stated derivation - moving
+# it needs a ruling, not arithmetic. bridge_route.y_from_top carries the same
+# STALE flag in the source record.
 CAVITIES = (
     ("CAV_BACK", "POD_PI", 11.910, 180.0, 93.0, 64.0),
     ("CAV_BACK", "POD_HAT", 94.410, 280.0, 73.0, 64.5),
     ("CAV_BACK", "BATTERY", 2.910, 247.5, 90.0, 55.0),
-    ("CAV_TOP", "PU_BRIDGE", 0.0, 294.6, 80.0, 22.0),
+    ("CAV_TOP", "PU_NECK", 0.0, 207.125, 92.0, 40.0),
+    ("CAV_TOP", "PU_BRIDGE", 0.0, 294.6, 92.0, 40.0),
     ("CAV_TOP", "NECK_POCKET", 0.0, 93.1, 76.8, 55.2),
     ("CAV_TOP", "BRIDGE", 0.0, 319.0, 95.8, 41.5),
     ("CAV_TOP", "CONTROL", 55.7, 345.3, 100.9, 49.4),

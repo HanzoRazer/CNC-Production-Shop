@@ -7,6 +7,7 @@ profiles, face separation, and extents matching the governed blank.
 
 from __future__ import annotations
 
+import json
 import sys
 from collections import Counter
 from pathlib import Path
@@ -111,8 +112,8 @@ def test_body_extents_match_the_governed_blank(doc):
 
 def test_entity_counts_are_as_intended(doc):
     counts = Counter(e.dxftype() for e in doc.modelspace())
-    # 1 outline + 4 through-body voids + 8 cavities
-    assert counts["LWPOLYLINE"] == 13
+    # 1 outline + 4 through-body voids + 9 cavities
+    assert counts["LWPOLYLINE"] == 14
     assert counts["LINE"] == 1  # centreline reference
 
 
@@ -154,13 +155,45 @@ def test_centreline_features_are_actually_on_the_centreline(doc):
         for e in doc.modelspace()
         if e.dxftype() == "LWPOLYLINE" and e.dxf.layer == "CAV_TOP"
     ]
-    widths = {
-        round(max(p[0] for p in e.get_points()) - min(p[0] for p in e.get_points()), 2): e
-        for e in profiles
-    }
-    entity = widths[round(route[4], 2)]
-    xs = [p[0] for p in entity.get_points()]
-    assert sum((min(xs), max(xs))) == pytest.approx(0.0, abs=0.01)
+
+    def _width(entity) -> float:
+        xs = [p[0] for p in entity.get_points()]
+        return round(max(xs) - min(xs), 2)
+
+    # Both humbucker routes share the 92.0 width, so keying entities BY width
+    # would silently drop one. Every profile at that width has to be centred,
+    # which is strictly stronger than testing whichever one a dict kept.
+    matches = [e for e in profiles if _width(e) == round(route[4], 2)]
+    assert len(matches) == 2, "expected both humbucker routes at the pickup width"
+    for entity in matches:
+        xs = [p[0] for p in entity.get_points()]
+        assert sum((min(xs), max(xs))) == pytest.approx(0.0, abs=0.01)
+
+
+def test_pickup_layout_matches_the_product_record() -> None:
+    """The cavity table must not drift from the product record's pickup layout.
+
+    It has, once: a sandbox discussion of a single-pickup product VARIANT was
+    read as a design change, PU_NECK was deleted and PU_BRIDGE shrunk to an
+    80 x 22 single coil, while fixtures/products/smart_guitar_v1.json went on
+    saying "dual_humbucker". Nothing caught it, because nothing tied the table
+    to the record. This does.
+    """
+    record = json.loads(
+        (ROOT / "fixtures" / "products" / "smart_guitar_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    layout = record["configuration"]["pickup_layout"]
+    assert layout == "dual_humbucker", (
+        f"product record changed to {layout!r} - update CAVITIES deliberately, with a "
+        "ruling, rather than letting this test be edited to match"
+    )
+
+    routes = {c[1]: c for c in CAVITIES if c[1].startswith("PU_")}
+    assert set(routes) == {"PU_NECK", "PU_BRIDGE"}
+    for label, cavity in routes.items():
+        assert cavity[4:] == (92.0, 40.0), f"{label} is not the governed humbucker route"
 
 
 def test_outline_honours_the_documented_bass_overhang(doc):
