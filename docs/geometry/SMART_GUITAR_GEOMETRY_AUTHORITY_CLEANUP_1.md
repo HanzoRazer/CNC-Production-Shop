@@ -82,8 +82,28 @@ row was real.
 **No document in this repository has ever named `sg-spec` in connection with the
 neck pocket.** The claim named neither source. `sg-spec` was searched because
 this project's own notes record it as canonical for cavity dimensions — checked,
-not accused. That distinction was stated wrongly in the first draft of
-`SG_SPEC_NECK_POCKET_QUERY_1.md` and corrected before dispatch.
+not accused. That distinction was stated wrongly in the first draft of the query
+and corrected before anything was sent. Ruled 2026-09-08: **`sg-spec` is not part
+of the neck-pocket authority chain**, the query is closed unsent, and no
+cross-repo work is opened. See `SG_SPEC_NECK_POCKET_FINDING_1.md`.
+
+**The finding to carry into the eventual pull request is therefore stronger than
+"the second source could not be found":**
+
+> There is currently no evidence that a second governing neck-pocket source ever
+> existed.
+
+Three issues were being conflated and are now separate:
+
+```text
+1. Unsupported provenance claim   "two sources disagree"
+                                  false / untraceable local prose  -> removed
+2. Local geometry-contract defect bass_chamber depends on a
+                                  "neck pocket projection" that is not
+                                  numerically governed              -> real, deferred
+3. Real CAD collision             fret 24 vs neck pickup
+                                  belongs to the active CAD sprint  -> not ours
+```
 
 **`sg-spec`.** Carries no neck-pocket or pickup geometry at all. The only match
 across the whole repository is the prose fragment
@@ -93,8 +113,8 @@ a constraint note, not geometry. **Nothing to remove under ruling 6**, and
 
 That negative was produced from outside `sg-spec`, which is weaker than one
 produced from inside it, so it has been put to that repository's maintainer as
-`SG_SPEC_NECK_POCKET_QUERY_1.md` before being treated as settled. The query
-also raises the constraint itself: `bass_chamber` requires clearance from a
+`SG_SPEC_NECK_POCKET_FINDING_1.md` before being treated as settled. That
+query was closed unsent on 2026-09-08; the document also raises the constraint itself: `bass_chamber` requires clearance from a
 "neck pocket projection" while its two sibling constraints resolve to numbers
 in the same file, which is a plausible origin of the belief that `sg-spec` knew
 where the neck pocket was.
@@ -165,7 +185,16 @@ Three things follow:
 
 Deleting an owner-merged station would be overreach; leaving it unremarked
 would let an unsourced figure keep the authority this cleanup exists to take
-away. It is therefore recorded here and referred back.
+away. Ruled 2026-09-08 — **neither is deleted, and neither is settled:**
+
+```text
+PU_NECK 207.125     STATUS: provisional / awaiting CAD confirmation
+10.0 mm setback     STATUS: unsupported repository ruling /
+                            awaiting CAD provenance
+```
+
+Do not delete them from an owner-merged commit merely because their provenance
+is weak. Do not let downstream work treat them as settled.
 
 ## Why this is held
 
@@ -196,15 +225,29 @@ fret-24 / pickup clearance       not yet witnessed
 final neck-pickup station        CAD sprint returns it
 ```
 
-Sequence:
+Frozen state, 2026-09-08:
 
 ```text
-next CAD release becomes the geometry witness
-  -> ingest the resolved neck / fret-24 / pickup geometry
-  -> reconcile 207.125 and the 10.0 setback against it
-  -> update this cleanup if the release changes what is true
-  -> submit one authority-consistent pull request
+branch    sg-authority-cleanup
+COMMITTED yes
+PUSHED    no
+MERGED    no
+
+HOLD REASON
+next CAD release is the pending geometry witness
 ```
+
+When that release arrives, reconcile these four in one pass and no more:
+
+```text
+1. actual 24-fret / neck-pickup collision geometry
+2. final neck-pocket projection
+3. PU_NECK = 207.125
+4. provenance and validity of the 10.0 mm setback
+```
+
+Then amend or rebase this cleanup and submit one coherent authority-correction
+pull request.
 
 ## Where this leaves the sequence
 

@@ -1,25 +1,36 @@
-# SG-SPEC-NECK-POCKET-QUERY-1
+# SG-SPEC-NECK-POCKET-FINDING-1
 
-**Raised:** 2026-09-07 · **To:** the `sg-spec` maintainer · **Status:** drafted, awaiting dispatch
-**Answer received:** — *(record it under "Response", do not edit the question)*
+**Raised:** 2026-09-07 · **Closed:** 2026-09-08 · **Status: NOT SENT — do not dispatch**
 
-Outbound query, not a governed record.
+**`sg-spec` is not part of the neck-pocket authority chain.** Ruled 2026-09-08.
+It was searched because this project's notes suggested it might hold cavity
+authority; the search found nothing relevant. No query goes to its maintainer
+and **no cross-repo work is opened from this finding.**
 
-**Framing corrected 2026-09-07 before dispatch.** The first draft said `sg-spec`
-"was believed to be" one of two disagreeing neck-pocket sources. That was wrong,
-and the correction matters enough to state plainly: **no document in
-CNC-Production-Shop has ever named `sg-spec` in connection with the neck
-pocket.** The claim it carried named *neither* source. `sg-spec` was searched
-because this project's own notes record it as canonical for cavity dimensions —
-it was checked, not accused. The only documents linking the two are the ones
-written during this cleanup.
+This document was drafted as an outbound query and is retained as the evidence
+record instead. Nothing in it was sent. Nothing in `sg-spec` was modified.
 
-What survives, and is the reason to send anything at all, is a finding about
-`sg-spec` that stands on its own: a cavity constraint there depends on geometry
-the repository does not define.
+Two things in it survive the closure, for different reasons:
 
-The text below is written to be pasted whole into an issue, an email, or a
-coding agent working in `sg-spec`. It states what the search could not reach.
+- **The `bass_chamber` constraint defect is real** and is the most actionable
+  repository defect in this area once the CAD sprint returns its geometry —
+  see *The finding* below. It is not repaired now, and specifically not with
+  repository arithmetic. The next CAD release supplies the actual neck-pocket /
+  fretboard / pickup relationship first.
+- **The framing correction is worth keeping visible.** The first draft said
+  `sg-spec` "was believed to be" one of two disagreeing neck-pocket sources.
+  That was false. **No document in CNC-Production-Shop has ever named `sg-spec`
+  in connection with the neck pocket** — the claim named *neither* source.
+  `sg-spec` was checked, not accused. Corrected before anything was sent, which
+  is the only reason it never left the repository with that error in it.
+
+Separately and explicitly **out of scope for this branch**: the reported
+uncommitted edits to quarantined files in `sg-spec` and its stale "canon:
+22 frets" note. Those are worth its owner checking and are a different incident.
+Do not fold them in here.
+
+The text below was written to be pasted whole into an issue or a coding agent.
+It is preserved verbatim, unsent, in case the decision is ever revisited.
 
 ---
 
@@ -141,8 +152,8 @@ sg-spec having neck-pocket geometry, so a plain "never had any" closes it.
 
 ## What each answer changes here
 
-The authority question is effectively closed by the contradiction above, so only
-one row still has teeth:
+Hypothetical — no answer is being sought. Retained because it records what the
+closure is betting on: that the third row is not the world we are in.
 
 | Answer to Q1 | Consequence for this repository |
 |---|---|
@@ -156,5 +167,7 @@ unevaluated, and it belongs in collision work rather than in a prose list.
 
 ## Response
 
-*Nothing received yet. Record the reply verbatim with its date and author, then
-revise the cleanup only if the third row above applies.*
+**None, and none expected.** The query was closed unsent on 2026-09-08. The
+table above is retained only because its third row describes the one outcome
+that would have cost something, and recording a road not taken is cheaper than
+re-deriving why it was not taken.
