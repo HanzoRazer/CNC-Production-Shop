@@ -118,7 +118,11 @@ request. It is not a customer order and not a price approval.
 
 `--root` is the source workspace. Every referenced record resolves under that
 root. The output directory must be new, inside the root, and not a symlink.
-An existing destination is refused.
+An existing destination is refused, including one created concurrently during
+publication. Publication uses Windows' non-replacing rename, Linux
+`renameat2(RENAME_NOREPLACE)`, or macOS `renamex_np(RENAME_EXCL)`. If the
+platform/filesystem cannot provide exclusive rename, the command fails without
+publishing a partial packet.
 
 | Path | Audience |
 |------|----------|
@@ -130,10 +134,13 @@ Exit 0 writes a validated draft packet. Exit 2 refuses invalid input or an
 existing destination and writes no packet. Exit 1 is an output or internal
 failure.
 
-A packet left under `exports/` contains an internal cost report with the
-technical machine rate. `tests/bids/test_machine_costed_bid.py` scans Markdown
-under `exports/` for that rate. Remove the generated packet before the full
-suite. The order is `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md`.
+A packet can remain under `exports/jobs/` when running the full suite. The
+commercial-boundary test still scans `fixtures/proposals/` and `exports/`,
+including every job-packet `customer/` directory. It excludes the private
+`internal/` subtree beneath a packet manifest, which correctly retains its
+technical cost details. Customer drafts require separate price
+approval and manufacturing release in both their JSON and Markdown next steps.
+The order is `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md`.
 
 ## License
 

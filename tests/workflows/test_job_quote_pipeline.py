@@ -272,7 +272,7 @@ def test_staging_failure_leaves_no_packet(workspace: Path, monkeypatch: pytest.M
     def boom(*_args, **_kwargs):
         raise OSError("simulated staging failure")
 
-    monkeypatch.setattr("business.workflows.reporting.os.rename", boom)
+    monkeypatch.setattr("business.workflows.reporting._rename_without_replacement", boom)
     destination = workspace / OUTPUT_REL
     with pytest.raises(JobQuoteFailureError):
         _run(workspace)
@@ -280,6 +280,40 @@ def test_staging_failure_leaves_no_packet(workspace: Path, monkeypatch: pytest.M
     parent = destination.parent
     if parent.exists():
         assert list(parent.glob(".job-quote-*")) == []
+
+
+@pytest.mark.parametrize("kind", ["empty_directory", "file", "symlink"])
+def test_destination_created_during_publication_is_not_replaced(
+    workspace: Path, monkeypatch: pytest.MonkeyPatch, kind: str
+) -> None:
+    from business.workflows import reporting
+
+    real_rename = reporting._rename_without_replacement
+    destination = workspace / OUTPUT_REL
+    identity = []
+
+    def raced_rename(source: Path, target: Path) -> None:
+        if kind == "empty_directory":
+            target.mkdir()
+        elif kind == "file":
+            target.write_bytes(b"concurrently created file")
+        else:
+            target.symlink_to(workspace / "other-target")
+        identity.append(target.lstat())
+        real_rename(source, target)
+
+    monkeypatch.setattr(reporting, "_rename_without_replacement", raced_rename)
+    with pytest.raises(JobQuoteRefusalError, match="already exists"):
+        _run(workspace)
+    assert destination.lstat().st_ino == identity[0].st_ino
+    if kind == "empty_directory":
+        assert list(destination.iterdir()) == []
+    elif kind == "file":
+        assert destination.read_bytes() == b"concurrently created file"
+    else:
+        assert destination.is_symlink()
+        assert not (workspace / "other-target").exists()
+    assert list(destination.parent.glob(".job-quote-*")) == []
 
 
 def test_output_outside_root_and_symlink_are_refused(workspace: Path, tmp_path: Path) -> None:
@@ -294,6 +328,21 @@ def test_output_outside_root_and_symlink_are_refused(workspace: Path, tmp_path: 
     with pytest.raises(JobQuoteRefusalError):
         run_job_quote(root=workspace, job=JOB_REL, output_dir="exports/jobs/linked-out")
     assert not (tmp_path / "linked-target").exists()
+
+
+def test_unavailable_exclusive_rename_fails_without_a_partial_packet(
+    workspace: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from business.workflows import reporting
+
+    if reporting.os.name == "nt":
+        pytest.skip("Windows os.rename already provides no-replacement semantics")
+    monkeypatch.setattr(reporting.ctypes, "CDLL", lambda *_args, **_kwargs: object())
+    with pytest.raises(JobQuoteFailureError, match="exclusive directory rename is unavailable"):
+        _run(workspace)
+    destination = workspace / OUTPUT_REL
+    assert not destination.exists()
+    assert list(destination.parent.glob(".job-quote-*")) == []
 
 
 def test_generated_validation_failure_publishes_nothing(

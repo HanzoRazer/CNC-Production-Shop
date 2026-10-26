@@ -20,7 +20,7 @@ from business.estimates.guitar import CALCULATOR_ID, calculate_guitar_build_esti
 from business.estimates.loading import load_guitar_estimate_input
 from business.estimates.models import GuitarBuildEstimateV1
 from business.proposals.generator import generate_proposal_from_summary
-from business.proposals.models import ProposalSectionV1, ProposalV1
+from business.proposals.models import ProposalSectionV1, ProposalTermV1, ProposalV1
 from business.workflows.estimate_to_bid import build_bid_from_estimate
 from business.workflows.loading import (
     load_job_quote,
@@ -98,6 +98,12 @@ _ARTIFACTS = (
     ("customer/proposal.md", "proposal_markdown", "customer"),
 )
 
+_DRAFT_NEXT_STEPS = (
+    "Review this draft and request any corrections to scope or assumptions.",
+    "Obtain separate price approval before making a customer commitment.",
+    "Obtain a separate manufacturing release before scheduling or starting production.",
+)
+
 
 def _section(proposal: ProposalV1, title: str) -> ProposalSectionV1:
     for section in proposal.sections:
@@ -115,6 +121,7 @@ def _replace_public_sections(
     updated: list[ProposalSectionV1] = []
     saw_deliverables = False
     saw_exclusions = False
+    saw_next_steps = False
     for section in proposal.sections:
         if section.title == "Deliverables":
             saw_deliverables = True
@@ -134,12 +141,35 @@ def _replace_public_sections(
                     bullets=exclusions,
                 )
             )
+        elif section.title == "Next Steps":
+            saw_next_steps = True
+            updated.append(
+                ProposalSectionV1(
+                    title="Next Steps",
+                    body=(
+                        "This draft supports review only. "
+                        "No approval or release is recorded here."
+                    ),
+                    bullets=list(_DRAFT_NEXT_STEPS),
+                )
+            )
         else:
             updated.append(section)
-    if not saw_deliverables or not saw_exclusions:
-        raise JobQuoteFailureError("proposal generator did not emit deliverables and exclusions")
+    if not saw_deliverables or not saw_exclusions or not saw_next_steps:
+        raise JobQuoteFailureError("proposal generator did not emit the required public sections")
     proposal.sections = updated
     proposal.exclusions = exclusions
+    proposal.next_steps = list(_DRAFT_NEXT_STEPS)
+    proposal.terms = [
+        ProposalTermV1(
+            title=term.title,
+            statement=(
+                "This draft does not schedule production. "
+                "Scheduling requires a separate manufacturing release."
+            ),
+        ) if term.title == "Scheduling" else term
+        for term in proposal.terms
+    ]
 
 
 def project_public_proposal(
@@ -248,6 +278,10 @@ def _assert_public_projection(
         raise JobQuoteFailureError("proposal deliverables do not match the job request")
     if exclusions.bullets != list(request.customer_exclusions):
         raise JobQuoteFailureError("proposal exclusion section does not match the job request")
+    if proposal.next_steps != list(_DRAFT_NEXT_STEPS):
+        raise JobQuoteFailureError("proposal next steps must require separate approval and release")
+    if _section(proposal, "Next Steps").bullets != proposal.next_steps:
+        raise JobQuoteFailureError("proposal next steps section does not match its review steps")
     if proposal.pricing.quantity != 1 or proposal.pricing.currency != "USD":
         raise JobQuoteFailureError("public pricing must stay quantity 1 and currency USD")
     if not money_equal(proposal.pricing.total_price, mapping.bid.pricing.quote_price):

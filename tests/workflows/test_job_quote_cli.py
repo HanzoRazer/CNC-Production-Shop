@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 from click.testing import CliRunner
 
 from business.workflows.cli import main
@@ -115,7 +117,7 @@ def test_publish_io_failure_exits_1(workspace: Path, monkeypatch) -> None:
     def boom(*_args, **_kwargs):
         raise OSError("simulated publish failure")
 
-    monkeypatch.setattr("business.workflows.reporting.os.rename", boom)
+    monkeypatch.setattr("business.workflows.reporting._rename_without_replacement", boom)
     result = CliRunner().invoke(
         main,
         ["run", "--root", str(workspace), "--job", JOB_REL, "--output-dir", OUTPUT_REL],
@@ -124,3 +126,39 @@ def test_publish_io_failure_exits_1(workspace: Path, monkeypatch) -> None:
     assert "error:" in result.stderr
     assert "Traceback" not in result.output
     assert not (workspace / OUTPUT_REL).exists()
+
+
+def test_cli_outputs_only_drafts_and_requires_separate_release(
+    workspace: Path, monkeypatch
+) -> None:
+    def forbidden(*_args, **_kwargs):
+        pytest.fail("quoting must not open connections or launch an external command")
+
+    monkeypatch.setattr("socket.create_connection", forbidden)
+    monkeypatch.setattr("subprocess.Popen", forbidden)
+    result = CliRunner().invoke(
+        main,
+        ["run", "--root", str(workspace), "--job", JOB_REL, "--output-dir", OUTPUT_REL],
+    )
+    assert result.exit_code == 0, result.output
+    packet = workspace / OUTPUT_REL
+    for relative in (
+        "internal/estimate.json",
+        "internal/bid.json",
+        "internal/bid_summary.json",
+        "customer/proposal.json",
+        "manifest.json",
+    ):
+        assert json.loads((packet / relative).read_text(encoding="utf-8"))["status"] == "draft"
+    proposal = json.loads((packet / "customer/proposal.json").read_text(encoding="utf-8"))
+    steps = next(section for section in proposal["sections"] if section["title"] == "Next Steps")
+    assert steps["bullets"] == proposal["next_steps"]
+    assert "separate price approval" in " ".join(proposal["next_steps"])
+    assert "separate manufacturing release" in " ".join(proposal["next_steps"])
+    public = (packet / "customer/proposal.json").read_text(encoding="utf-8")
+    public += (packet / "customer/proposal.md").read_text(encoding="utf-8")
+    for inherited in (
+        "Approve proposal to proceed", "Production begins upon approval", "Authorized Signature",
+        "Production scheduling begins after approval",
+    ):
+        assert inherited not in public

@@ -179,11 +179,17 @@ Independent proof, unchanged from the existing calculator: risked cost 1000 at 3
 
 Demo identities: job `JOB-CNC-QUOTE-DEMO-001`, estimate `GUITAR-BUILD-ESTIMATE-DEMO-001`, bid `BID-CNC-QUOTE-DEMO-001`, proposal `PROP-CNC-QUOTE-DEMO-001`, `created_at` `2026-10-25T16:00:00Z`, customer `INTERNAL-DEMO`.
 
-## Surfaces left in place
+## Review corrections — 2026-10-26
 
-The existing proposal generator still emits Next Steps bullets that say "Approve proposal to proceed" and "Production begins upon approval". The workflow sets status `draft`, clears the signature, and adds the draft-for-review notice. It does not change that inherited prose. Changing it would widen `business/proposals` past the authorized replay overrides.
+The owner requested fixes to the partial risk assessment and additional confirmed issues. The supplied assessment names PR #42, but GitHub returns no such PR in this repository. The exact matching title, 20-file diff and verification notes belong to PR #19, head `1c3e58f` before these corrections. PR #19 is already non-draft; that process objection is superseded.
 
-`tests/bids/test_machine_costed_bid.py` scans every Markdown file under `fixtures/proposals` and `exports/` and fails if `28.97` appears. The internal cost report correctly contains that technical rate. A packet left at `exports/jobs/` fails that existing test. The test was not changed. Remove the generated packet before the full suite. `exports/*` stays gitignored except the existing proposal and workbook exceptions.
+The full-packet byte replay/digest test already exists and passed before changes. It is retained, not duplicated. Both hosted Python checks passed on the original head.
+
+- The workflow now replaces its own Next Steps section, next_steps field, and Scheduling term with review-only language requiring separate price approval and manufacturing release. Legacy proposal generation is unchanged. A CLI regression checks all generated economic statuses, public JSON/Markdown, no signature, and forbids connection/subprocess attempts.
+- The commercial-boundary scan still inspects all proposal/export Markdown, but skips the private internal subtree beneath a packet manifest. Regressions generate a real packet and inject leaks into legacy, generic export, customer and nested customer paths. Users no longer have to delete the demo before tests. This targeted extension of tests/bids is within the owner's review-fix request.
+- A reproduced POSIX check/rename race replaced an existing empty output directory. Publication now uses exclusive rename: Windows os.rename, Linux renameat2(RENAME_NOREPLACE), or macOS renamex_np(RENAME_EXCL). Unavailable exclusive rename fails without publication. Tests create a directory, file or symlink immediately at the rename boundary and verify it survives, while staging is cleaned up. Actual OS-level verification for this follow-up is on Linux; hosted checks exercise the declared Python matrix.
+
+No estimate math, rate inputs, schemas, fixture totals, version declarations or release authority changes. Historical implementation verification below remains evidence for its original head; follow-up verification is recorded separately.
 
 ## Deferred
 
@@ -263,3 +269,31 @@ cam-assist status                               CAM Assist v0.1.1 — Ready
 ```
 
 No tag, release, or merge was performed.
+
+### Review-fix verification — 2026-10-26
+
+On CPython 3.12.14, the generated demo packet was retained at the documented
+`exports/jobs/cnc-job-quote-demo-001` path throughout the full test run:
+
+```text
+ruff check .                                          All checks passed
+mypy business --ignore-missing-imports                Success: 40 source files
+mypy musical_spatial_mapping --strict                 Success: 15 source files
+mypy cnc_version --strict                             Success: 1 source file
+mypy scripts/release --ignore-missing-imports         Success: 13 source files
+pytest --cov=business --cov-report=term-missing --cov-fail-under=90 -q
+    1516 passed, 1 skipped, 3 warnings in 70.31s
+    3225 statements, 235 missed; 92.71% coverage (90% gate passed)
+```
+
+The existing complete-packet replay/digest test passed. New regressions cover
+the commercial-boundary scan with a retained real packet and twelve injected
+customer leaks, CLI draft-only outputs with no connection/subprocess calls,
+three destination races, and unavailable exclusive rename without partial
+publication. This adds 18 test cases to the original 1498-pass suite.
+
+The guitar-estimate, bid, bid-summary, proposal, and machine-cost-basis
+validators passed; `cam-assist status` still reports v0.1.1 Ready. The demo
+retains manufacturing cost 924.09 and quote price 1320.13. No source fixture
+changes remain. Actual Windows/macOS execution was not performed locally;
+hosted checks on the follow-up head are separate evidence.

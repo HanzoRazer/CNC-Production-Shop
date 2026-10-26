@@ -5,9 +5,12 @@ Dev Order: CNC-JOB-QUOTE-WORKFLOW-001
 
 from __future__ import annotations
 
+import ctypes
+import errno
 import json
 import os
 import shutil
+import sys
 import tempfile
 from dataclasses import asdict
 from pathlib import Path
@@ -343,6 +346,42 @@ def _safe_relative(relative: str) -> Path:
     return Path(*parts)
 
 
+def _rename_without_replacement(source: Path, destination: Path) -> None:
+    """Atomically publish without replacing even a concurrently created empty directory.
+
+    Windows rename already refuses an existing destination. POSIX rename does
+    not, so use the platform's exclusive rename operation and fail closed if
+    it is unavailable. A check followed by ordinary POSIX rename is not enough.
+    """
+    if os.name == "nt":
+        os.rename(source, destination)
+        return
+    libc = ctypes.CDLL(None, use_errno=True)
+    if sys.platform.startswith("linux"):
+        rename = getattr(libc, "renameat2", None)
+        if rename is None:
+            raise OSError(errno.ENOTSUP, "exclusive directory rename is unavailable")
+        rename.argtypes = [
+            ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
+        ]
+        rename.restype = ctypes.c_int
+        # AT_FDCWD = -100; RENAME_NOREPLACE = 1.
+        result = rename(-100, os.fsencode(source), -100, os.fsencode(destination), 1)
+    elif sys.platform == "darwin":
+        rename = getattr(libc, "renamex_np", None)
+        if rename is None:
+            raise OSError(errno.ENOTSUP, "exclusive directory rename is unavailable")
+        rename.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint]
+        rename.restype = ctypes.c_int
+        # RENAME_EXCL = 0x00000004.
+        result = rename(os.fsencode(source), os.fsencode(destination), 4)
+    else:
+        raise OSError(errno.ENOTSUP, "exclusive directory rename is unavailable")
+    if result != 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error), str(destination))
+
+
 def publish_packet(output_dir: Path, files: dict[str, bytes]) -> None:
     """Stage the packet beside its destination and publish it only when complete."""
     if output_dir.is_symlink() or output_dir.exists():
@@ -365,10 +404,12 @@ def publish_packet(output_dir: Path, files: dict[str, bytes]) -> None:
             destination.write_bytes(raw)
         if output_dir.is_symlink() or output_dir.exists():
             raise JobQuoteRefusalError("output directory already exists")
-        os.rename(staging, output_dir)
+        _rename_without_replacement(staging, output_dir)
         published = True
     except JobQuoteRefusalError:
         raise
+    except FileExistsError as exc:
+        raise JobQuoteRefusalError("output directory already exists") from exc
     except OSError as exc:
         raise JobQuoteFailureError(f"could not publish packet: {exc}") from exc
     finally:
