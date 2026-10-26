@@ -93,6 +93,48 @@ python scripts/validate_bid_summaries.py
 python scripts/validate_proposals.py
 ```
 
+## Draft job quote
+
+From a source checkout, one command validates a job request, recomputes the
+existing guitar estimate, builds an internal bid and summary, and writes a
+customer draft proposal. It does not approve a price, send the proposal, or
+release manufacturing.
+
+This increment supports `guitar_estimate_input_v1`, quantity 1, currency USD,
+the existing explicit machine profile and cost basis, and target-margin
+pricing. Additional bid-level risk, overhead, and recovery percentages are
+zero. Schemas are read from the checkout. The command is not a wheel-only
+operation.
+
+```bash
+python -m business.workflows.cli run \
+  --root . \
+  --job fixtures/jobs/cnc_job_quote_demo_v1.json \
+  --output-dir exports/jobs/cnc-job-quote-demo-001
+```
+
+`fixtures/jobs/cnc_job_quote_demo_v1.json` is a synthetic `INTERNAL-DEMO`
+request. It is not a customer order and not a price approval.
+
+`--root` is the source workspace. Every referenced record resolves under that
+root. The output directory must be new, inside the root, and not a symlink.
+An existing destination is refused.
+
+| Path | Audience |
+|------|----------|
+| `customer/proposal.json`, `customer/proposal.md` | Draft for later customer delivery. The command does not send it. |
+| `internal/` | Job request, estimate, bid, bid summary, cost report, and captured source bytes. |
+| `manifest.json` | Lineage, digests, and the category mapping. A digest proves byte identity, not an approved price. |
+
+Exit 0 writes a validated draft packet. Exit 2 refuses invalid input or an
+existing destination and writes no packet. Exit 1 is an output or internal
+failure.
+
+A packet left under `exports/` contains an internal cost report with the
+technical machine rate. `tests/bids/test_machine_costed_bid.py` scans Markdown
+under `exports/` for that rate. Remove the generated packet before the full
+suite. The order is `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md`.
+
 ## License
 
 MIT License — Copyright © 2026 Texas Guitar Exchange LLC

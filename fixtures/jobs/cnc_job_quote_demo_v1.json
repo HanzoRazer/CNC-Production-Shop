@@ -1,0 +1,36 @@
+{
+  "record_type": "cnc_job_quote_request",
+  "record_version": "1.0.0",
+  "job_id": "JOB-CNC-QUOTE-DEMO-001",
+  "estimate_id": "GUITAR-BUILD-ESTIMATE-DEMO-001",
+  "bid_id": "BID-CNC-QUOTE-DEMO-001",
+  "proposal_id": "PROP-CNC-QUOTE-DEMO-001",
+  "project_name": "INTERNAL-DEMO Solid-Body Guitar",
+  "customer_name": "INTERNAL-DEMO",
+  "revision": "Draft 1",
+  "created_at": "2026-10-25T16:00:00Z",
+  "estimate_input_contract": "guitar_estimate_input_v1",
+  "estimate_input_ref": "fixtures/estimates/guitar/cnc_electric_guitar_baseline_input_v1.json",
+  "quantity": 1,
+  "currency": "USD",
+  "pricing_policy": {
+    "policy_id": "target_margin",
+    "policy_version": "1.0.0",
+    "target_margin_pct": 30
+  },
+  "customer_deliverables": [
+    "One solid-body electric guitar built to the referenced baseline specification",
+    "Final inspection record for that instrument"
+  ],
+  "customer_exclusions": [
+    "Packaging materials, crating, and cases",
+    "Shipping and freight",
+    "Sales tax",
+    "Warranty beyond this draft proposal",
+    "Design changes after this draft",
+    "Non-recurring engineering and unallocated overhead"
+  ],
+  "internal_notes": [
+    "INTERNAL-DEMO synthetic request. Not a customer order and not a price approval."
+  ]
+}

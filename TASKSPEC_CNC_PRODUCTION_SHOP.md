@@ -90,6 +90,8 @@ Stop when: all scenario tests pass." `
 
 ### CNC-COST-CORE-3 — Quote Result Export (JSON/Dict)
 
+**Disposition:** Not superseded by CNC-JOB-QUOTE-WORKFLOW-001. That order serializes existing estimate, bid, and proposal records. It does not add `SimpleJobCostResult.to_dict()` or `to_json()`.
+
 ```powershell
 cd C:\Users\thepr\Downloads\CNC-Production-Shop
 git checkout -b auto/CNC-COST-CORE-3/quote-export
@@ -103,6 +105,8 @@ Stop when: export tests pass." `
 ```
 
 ### CNC-COST-CORE-4 — CLI Demo Script
+
+**Disposition:** Not superseded by CNC-JOB-QUOTE-WORKFLOW-001. That order requires an explicit job request, machine profile, and cost basis. It does not add `scripts/demo_cnc_quote.py` or a shop-default-rate demo.
 
 ```powershell
 cd C:\Users\thepr\Downloads\CNC-Production-Shop
@@ -168,3 +172,17 @@ cost = 1000, margin = 30%
 quote = 1428.57 ✓
 NOT 1300.00 ✗
 ```
+
+---
+
+## Registered order: CNC-JOB-QUOTE-WORKFLOW-001
+
+**Status:** Implemented on branch `cursor/cnc-job-quote-workflow-001-7f77`. Not merged, tagged, or released by this order.
+
+**Date:** 2026-10-25
+
+**Baseline:** `main` at `54a60932ca5ec4ab2d8f552df6b4fe8cba3f072c`
+
+Source-checkout command for one draft packet: validate a `guitar_estimate_input_v1` job request, recompute the existing V1 guitar estimate, build `BidV1` and `BidSummaryV1`, and write a separate customer draft proposal. Quantity is 1, currency is USD, and additional bid-level risk, overhead, and recovery percentages are zero. The synthetic sample is `fixtures/jobs/cnc_job_quote_demo_v1.json` (`INTERNAL-DEMO`). Record and evidence: `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md`.
+
+CNC-COST-CORE-3 and CNC-COST-CORE-4 stay ready-to-run. This order does not replace them.
