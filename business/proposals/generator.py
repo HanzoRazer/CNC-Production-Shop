@@ -245,6 +245,8 @@ def generate_proposal_from_summary(
     *,
     source_summary_ref: str | None = None,
     project_ref: str | None = None,
+    proposal_id: str | None = None,
+    created_at: str | None = None,
 ) -> ProposalV1:
     """Generate a customer-facing proposal from a BidSummaryV1.
 
@@ -252,6 +254,10 @@ def generate_proposal_from_summary(
         summary: The internal bid summary to convert
         source_summary_ref: Optional path to source summary fixture
         project_ref: Optional path to project capture
+        proposal_id: Optional explicit proposal ID. Omitted values keep the
+            legacy generated ID.
+        created_at: Optional explicit UTC timestamp. Omitted values keep the
+            legacy clock read.
 
     Returns:
         ProposalV1 suitable for customer review
@@ -261,6 +267,8 @@ def generate_proposal_from_summary(
         - Uses rounded pricing when present, otherwise canonical
         - Does not expose risk_factors or target_margin_pct
         - Creates conservative customer-safe prose
+        - Keyword-only overrides are for replay. Callers that omit them keep
+          the previous ID and timestamp behavior.
     """
     total_price = (
         summary.rounded_quote_price
@@ -296,17 +304,21 @@ def generate_proposal_from_summary(
         _create_next_steps_section(next_steps),
     ]
 
-    proposal_id = _generate_proposal_id(summary.project_name)
-    created_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    resolved_proposal_id = (
+        _generate_proposal_id(summary.project_name) if proposal_id is None else proposal_id
+    )
+    resolved_created_at = (
+        datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ") if created_at is None else created_at
+    )
 
     return ProposalV1(
-        proposal_id=proposal_id,
+        proposal_id=resolved_proposal_id,
         source_bid_id=summary.bid_id,
         project_name=summary.project_name,
         customer_name=summary.customer_name,
         revision=summary.revision,
         status=summary.status,
-        created_at=created_at,
+        created_at=resolved_created_at,
         pricing=pricing,
         sections=sections,
         assumptions=assumptions,

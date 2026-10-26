@@ -269,3 +269,41 @@ class TestEcoLoomProposalGeneration:
         proposal = generate_proposal_from_summary(eco_loom_summary)
         # Should derive something from "Eco-Loom Scrubber Handle Prototype"
         assert "PROP-" in proposal.proposal_id
+
+
+class TestProposalReplayOverrides:
+    """Explicit IDs and timestamps are optional and keyword-only."""
+
+    def test_omitted_overrides_keep_legacy_id_and_notes(self, sample_summary):
+        proposal = generate_proposal_from_summary(sample_summary)
+        assert proposal.proposal_id.startswith("PROP-")
+        assert proposal.created_at.endswith("Z")
+        assert proposal.notes == ["Test note"]
+
+    def test_explicit_overrides_are_replayable(self, summary_without_rounded):
+        first = generate_proposal_from_summary(
+            summary_without_rounded,
+            proposal_id="PROP-REPLAY-001",
+            created_at="2026-10-25T16:00:00Z",
+        )
+        second = generate_proposal_from_summary(
+            summary_without_rounded,
+            proposal_id="PROP-REPLAY-001",
+            created_at="2026-10-25T16:00:00Z",
+        )
+        assert first.proposal_id == "PROP-REPLAY-001"
+        assert first.created_at == "2026-10-25T16:00:00Z"
+        assert first.pricing.total_price == summary_without_rounded.canonical_quote_price
+        assert first.notes == list(summary_without_rounded.notes)
+        assert first.proposal_id == second.proposal_id
+        assert first.created_at == second.created_at
+
+    def test_existing_callers_can_omit_the_new_arguments(self, sample_summary):
+        proposal = generate_proposal_from_summary(
+            sample_summary,
+            source_summary_ref="fixtures/bids/test.json",
+            project_ref="projects/test/capture.json",
+        )
+        assert proposal.source_summary_ref == "fixtures/bids/test.json"
+        assert proposal.project_ref == "projects/test/capture.json"
+        assert proposal.proposal_id.startswith("PROP-")

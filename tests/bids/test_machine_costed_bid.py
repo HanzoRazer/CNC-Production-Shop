@@ -97,6 +97,25 @@ def file_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
+def assert_customer_markdown_hides_technical_rate(root: Path) -> None:
+    """Scan customer outputs, including job packets, without treating internal reports as public."""
+    directories = [root / "fixtures" / "proposals", root / "exports"]
+    for directory in directories:
+        for path in directory.rglob("*.md"):
+            # A job packet's internal subtree is private; keep scanning every
+            # other export, including a customer file merely named internal/.
+            if any(
+                parent.name == "internal"
+                and (directory / parent.parent / "manifest.json").is_file()
+                for parent in path.relative_to(directory).parents
+                if parent != Path(".")
+            ):
+                continue
+            text = path.read_text(encoding="utf-8")
+            assert "28.97" not in text, path
+            assert "internal_technical_cost" not in text, path
+
+
 def _minimal_bid_dict(machine_costing: dict | None = None) -> dict:
     """Build a minimal schema-valid bid, optionally with machine_costing."""
     bid = {
@@ -517,17 +536,35 @@ class TestCommercialBoundary:
             assert "machine_hour_rate" not in json.dumps(data)
 
     def test_no_markdown_customer_artifact_exposes_technical_rate(self):
-        markdown_dirs = [
-            ROOT / "fixtures" / "proposals",
-            ROOT / "exports",
-        ]
-        for directory in markdown_dirs:
-            if not directory.exists():
-                continue
-            for path in directory.rglob("*.md"):
-                text = path.read_text(encoding="utf-8")
-                assert "28.97" not in text
-                assert "internal_technical_cost" not in text
+        assert_customer_markdown_hides_technical_rate(ROOT)
+
+    def test_generated_packet_can_remain_in_exports(self, tmp_path):
+        from business.workflows.quote_pipeline import run_job_quote
+        from tests.workflows.conftest import JOB_REL, OUTPUT_REL, copy_demo_workspace
+
+        workspace = copy_demo_workspace(tmp_path / "ws")
+        packet = run_job_quote(root=workspace, job=JOB_REL, output_dir=OUTPUT_REL).output_dir
+        assert "28.97" in (packet / "internal" / "cost_report.md").read_text(encoding="utf-8")
+        assert_customer_markdown_hides_technical_rate(workspace)
+
+    @pytest.mark.parametrize(
+        "relative",
+        [
+            "fixtures/proposals/leak.md",
+            "exports/proposals/leak.md",
+            "exports/other-customer-report.md",
+            "exports/jobs/demo/customer/leak.md",
+            "exports/jobs/nested/demo/customer/subdir/leak.md",
+            "exports/jobs/demo/customer/internal/leak.md",
+        ],
+    )
+    @pytest.mark.parametrize("private", ["28.97", "internal_technical_cost"])
+    def test_customer_scan_still_catches_leaks(self, tmp_path, relative, private):
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True)
+        path.write_text(private, encoding="utf-8")
+        with pytest.raises(AssertionError):
+            assert_customer_markdown_hides_technical_rate(tmp_path)
 
     def test_demo_is_internal_not_production_quote(self, demo):
         notes = " ".join(demo["notes"]).lower()
