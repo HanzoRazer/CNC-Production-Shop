@@ -1,6 +1,6 @@
 """Strict loading for a job quote request and its local sources.
 
-Dev Order: CNC-JOB-QUOTE-WORKFLOW-001
+Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001 and CNC-JOB-QUOTE-WORKFLOW-002
 
 Parsers reject duplicate keys, non-finite constants, and boolean numbers before
 any existing loader can coerce them. Referenced files are read once.
@@ -29,6 +29,7 @@ from business.calculators.machine_cost_basis import (
 )
 from business.workflows.models import (
     ESTIMATE_INPUT_CONTRACT,
+    ESTIMATE_INPUT_CONTRACT_V2,
     POLICY_ID,
     POLICY_VERSION,
     JobQuoteFailureError,
@@ -49,6 +50,11 @@ _SCHEMA_BY_ROLE = {
     "product": "products/guitar_product_definition_v1.schema.json",
     "machine_profile": "machines/machine_profile_v1.schema.json",
     "machine_cost_basis": "machines/machine_cost_basis_v1.schema.json",
+}
+
+_REQUEST_SCHEMAS = {
+    ("1.0.0", ESTIMATE_INPUT_CONTRACT): "workflows/job_quote_request_v1.schema.json",
+    ("2.0.0", ESTIMATE_INPUT_CONTRACT_V2): "workflows/job_quote_request_v2.schema.json",
 }
 
 
@@ -342,11 +348,13 @@ def _load_role(
     *,
     role: str,
     record_id_field: str,
+    schema_relative: str | None = None,
 ) -> tuple[SourceSnapshot, dict[str, Any]]:
     original_ref, path = resolve_workspace_file(root, ref, label=role)
     raw = _read_once(path, label=role)
     payload = parse_json_object(raw, label=role)
-    validate_instance(payload, _SCHEMA_BY_ROLE[role], label=role)
+    schema = schema_relative if schema_relative is not None else _SCHEMA_BY_ROLE[role]
+    validate_instance(payload, schema, label=role)
     record_id = payload.get(record_id_field)
     if not isinstance(record_id, str) or not record_id.strip():
         raise JobQuoteRefusalError(f"{role} is missing {record_id_field}")
@@ -366,7 +374,32 @@ def load_job_quote(root: Path | str, job: str) -> LoadedJobQuote:
     job_ref, job_path = resolve_workspace_file(workspace, job, label="job")
     job_bytes = _read_once(job_path, label="job request")
     job_payload = parse_json_object(job_bytes, label="job request")
-    validate_instance(job_payload, _SCHEMA_BY_ROLE["job_request"], label="job request")
+    version = job_payload.get("record_version")
+    contract = job_payload.get("estimate_input_contract")
+    if not isinstance(version, str) or not isinstance(contract, str):
+        raise JobQuoteRefusalError("unsupported request version and contract pair")
+    schema = _REQUEST_SCHEMAS.get((version, contract))
+    if schema is None:
+        raise JobQuoteRefusalError(
+            f"unsupported request version and contract pair: {version} / {contract}"
+        )
+    validate_instance(job_payload, schema, label="job request")
+    if (version, contract) == ("1.0.0", ESTIMATE_INPUT_CONTRACT):
+        return _load_guitar_job_quote(workspace, job_ref, job_path, job_bytes, job_payload)
+    from business.workflows.loading_v2 import load_thin_skin_job_quote
+
+    return load_thin_skin_job_quote(workspace, job_ref, job_path, job_bytes, job_payload)
+
+
+def _load_guitar_job_quote(
+    workspace: Path,
+    job_ref: str,
+    job_path: Path,
+    job_bytes: bytes,
+    job_payload: dict[str, Any],
+) -> LoadedJobQuote:
+    """Load a guitar_estimate_input_v1 request. The job payload is already validated."""
+    del job_path
     request = _request_from_payload(job_payload)
 
     estimate_snapshot, estimate_payload = _load_role(

@@ -1,6 +1,6 @@
 """Typed records for the job quote workflow.
 
-Dev Order: CNC-JOB-QUOTE-WORKFLOW-001
+Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001 and CNC-JOB-QUOTE-WORKFLOW-002
 """
 
 from __future__ import annotations
@@ -9,15 +9,25 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from business.bids.models import BidV1
+from business.bids.models_v2 import BidV2
 
 WORKFLOW_VERSION = "1.0.0"
 MAPPING_VERSION = "1.0.0"
+WORKFLOW_VERSION_V2 = "2.0.0"
+MAPPING_VERSION_V2 = "2.0.0"
 POLICY_ID = "target_margin"
 POLICY_VERSION = "1.0.0"
 RECORD_VERSION = "1.0.0"
+RECORD_VERSION_V2 = "2.0.0"
 REQUEST_RECORD_TYPE = "cnc_job_quote_request"
 MANIFEST_RECORD_TYPE = "cnc_job_quote_manifest"
 ESTIMATE_INPUT_CONTRACT = "guitar_estimate_input_v1"
+ESTIMATE_INPUT_CONTRACT_V2 = "thin_skin_estimate_input_v2"
+CALCULATOR_ID_V2 = "thin_skin_build_estimate_v2"
+BID_CONTRACT_V2 = "bid_v2"
+BID_SUMMARY_CONTRACT = "bid_summary_v1"
+PROPOSAL_CONTRACT = "proposal_v1"
+ESTIMATE_OUTPUT_CONTRACT_V2 = "thin_skin_build_estimate_v2"
 COST_BASIS_DISCLOSURE = "direct_manufacturing_cost_only"
 PACKET_MANUFACTURING_REF = "internal/estimate.json"
 SOURCE_SNAPSHOT_ROOT = "internal/sources"
@@ -70,6 +80,32 @@ class JobQuoteRequestV1:
 
 
 @dataclass(frozen=True)
+class JobQuoteRequestV2:
+    """Validated thin-skin request. Field meanings match V1; the contract does not."""
+
+    job_id: str
+    estimate_id: str
+    bid_id: str
+    proposal_id: str
+    project_name: str
+    customer_name: str
+    revision: str
+    created_at: str
+    effective_date: str
+    estimate_input_contract: str
+    estimate_input_ref: str
+    quantity: int
+    currency: str
+    pricing_policy: PricingPolicyV1
+    customer_deliverables: tuple[str, ...]
+    customer_exclusions: tuple[str, ...]
+    internal_notes: tuple[str, ...]
+
+
+JobQuoteRequest = JobQuoteRequestV1 | JobQuoteRequestV2
+
+
+@dataclass(frozen=True)
 class SourceSnapshot:
     """One source file captured before calculation."""
 
@@ -88,7 +124,7 @@ class SourceSnapshot:
 class LoadedJobQuote:
     """Immutable request plus the source bytes it names."""
 
-    request: JobQuoteRequestV1
+    request: JobQuoteRequest
     job_ref: str
     sources: tuple[SourceSnapshot, ...]
 
@@ -114,6 +150,32 @@ class EstimateToBidResult:
     mapped_total: float
     audit_total: float
     difference: float
+
+
+@dataclass(frozen=True)
+class DetailReconciliationV2:
+    """Cent-level equipment and machine detail gaps. They are not bid amounts."""
+
+    equipment_record_total: float
+    equipment_operation_detail_total: float
+    equipment_detail_difference: float
+    machine_record_total: float
+    machine_operation_detail_total: float
+    machine_detail_difference: float
+
+
+@dataclass(frozen=True)
+class EstimateToBidResultV2:
+    """BidV2 constructed from a thin-skin estimate, plus the mapping that built it."""
+
+    bid: BidV2
+    lines: tuple[CategoryMappingLineV1, ...]
+    mapped_amounts: tuple[tuple[str, float], ...]
+    estimate_total: float
+    mapped_total: float
+    audit_total: float
+    difference: float
+    detail: DetailReconciliationV2
 
 
 @dataclass(frozen=True)

@@ -363,17 +363,82 @@ def test_generated_validation_failure_publishes_nothing(
     assert not (workspace / OUTPUT_REL).exists()
 
 
+# SHA-256 of a complete V1 demo packet generated before this order changed code.
+# Same source bytes, fixed IDs/time, and relative layout must still match.
+V1_BASELINE_SHA256 = {
+    "customer/proposal.json": "a601bb0a023a82558964c800d57d3391ee7635d955d04d4844d5883a157bf663",
+    "customer/proposal.md": "7a80cbfd2aae58c91ca91ee5401b291ce10e86b12af27f696604e2ee6ca338ee",
+    "internal/bid.json": "a8fe3dceaced66494621f412c4f61c9316c944e4204e08df3cfabc8cdea5a0e2",
+    "internal/bid_summary.json": "e7bac01c68cac3ff7f77f2e16a20b4cb4d83364b6b49d9aec43de323730a5f49",
+    "internal/cost_report.md": "57475ab3b8737a708370965c44b37f4065b866a2e210294d21cedd954732e0fc",
+    "internal/estimate.json": "8be3a912c96e7adad260afb6f0887005dc4646007ff7430bcefee3ef7a94ab70",
+    "internal/job_request.json": "39f54330923bed9b1711813b6f073003ac5e421bd4d842563ab8e7fdc03914e2",
+    "internal/sources/fixtures/estimates/guitar/cnc_electric_guitar_baseline_input_v1.json": (
+        "16080f43a5e877375bc7a9b675542a922c08cff2c3f02101b0de188ac3b98b35"
+    ),
+    "internal/sources/fixtures/jobs/cnc_job_quote_demo_v1.json": (
+        "39f54330923bed9b1711813b6f073003ac5e421bd4d842563ab8e7fdc03914e2"
+    ),
+    "internal/sources/fixtures/machines/bcm_2030ca_atc_v1.json": (
+        "867e632afe0e340aece87219734cbbeba61dcf0c13be5996e71f1bac1275fd8a"
+    ),
+    "internal/sources/fixtures/machines/cost_basis/bcm_2030ca_atc_cost_basis_v1.json": (
+        "4d92a5a77ed7ae50347e1bd2d003736731a523cbd0b95e3b142c00784a49a47c"
+    ),
+    "internal/sources/fixtures/products/cnc_electric_guitar_baseline_v1.json": (
+        "1b0d34c46a1c7ded91d6d0a3010e4daaa5f34ab3db87fc015d6f21f5b61c0b90"
+    ),
+    "manifest.json": "f80398f299f71b3cb3241f1b882bce8390ba356c81dd1764d89c0cf29aa9f239",
+}
+
+
+def test_v1_packet_bytes_match_the_pre_change_baseline(workspace: Path) -> None:
+    packet = _run(workspace).output_dir
+    found = {
+        path.relative_to(packet).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in packet.rglob("*")
+        if path.is_file()
+    }
+    assert found == V1_BASELINE_SHA256
+
+
+def _assert_no_import_time_io(node: ast.AST) -> None:
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+        return
+    if isinstance(node, ast.Call):
+        func = node.func
+        if isinstance(func, ast.Name):
+            name = func.id
+        elif isinstance(func, ast.Attribute):
+            name = func.attr
+        else:
+            name = ""
+        assert name not in {"open", "read_text", "read_bytes", "urlopen"}
+    for child in ast.iter_child_nodes(node):
+        _assert_no_import_time_io(child)
+
+
 def test_business_workflow_does_not_import_cam_rmos_or_saw() -> None:
-    forbidden = {"cam_assist", "cam", "rmos", "saw_lab", "saw"}
-    roots = [ROOT / "business" / "workflows"]
-    for root in roots:
-        for path in root.rglob("*.py"):
-            tree = ast.parse(path.read_text(encoding="utf-8"))
-            for node in ast.walk(tree):
-                modules: list[str] = []
-                if isinstance(node, ast.Import):
-                    modules.extend(alias.name for alias in node.names)
-                elif isinstance(node, ast.ImportFrom) and node.module:
-                    modules.append(node.module)
-                for module in modules:
-                    assert module.split(".")[0] not in forbidden
+    forbidden = {
+        "cam_assist",
+        "cam",
+        "rmos",
+        "saw_lab",
+        "saw",
+        "socket",
+        "urllib",
+        "http",
+        "requests",
+        "httpx",
+    }
+    for path in (ROOT / "business" / "workflows").rglob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        _assert_no_import_time_io(tree)
+        for node in ast.walk(tree):
+            modules: list[str] = []
+            if isinstance(node, ast.Import):
+                modules.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                modules.append(node.module)
+            for module in modules:
+                assert module.split(".")[0] not in forbidden, path
