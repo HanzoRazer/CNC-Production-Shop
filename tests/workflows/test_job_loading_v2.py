@@ -15,7 +15,6 @@ from tests.workflows.conftest import (
     JOB_A,
     JOB_REL,
     OUTPUT_A,
-    ROOT,
     copy_demo_workspace,
     copy_thin_skin_workspace,
 )
@@ -37,9 +36,11 @@ def _estimate(workspace: Path) -> dict:
     return json.loads((workspace / ESTIMATE_A).read_text(encoding="utf-8"))
 
 
-def _assert_no_packet(workspace: Path, job: str = JOB_A) -> None:
+def _assert_no_packet(
+    workspace: Path, job: str = JOB_A, *, match: str | None = None
+) -> None:
     destination = workspace / OUTPUT_A
-    with pytest.raises(JobQuoteRefusalError):
+    with pytest.raises(JobQuoteRefusalError, match=match):
         run_job_quote(root=workspace, job=job, output_dir=OUTPUT_A)
     assert not destination.exists()
 
@@ -109,108 +110,134 @@ def test_request_pair_and_shape_are_refused(thin_skin_workspace: Path, mutator) 
     _assert_no_packet(thin_skin_workspace)
 
 
-def test_duplicate_key_boolean_and_nonfinite_json_are_refused(thin_skin_workspace: Path) -> None:
-    text = (thin_skin_workspace / JOB_A).read_text(encoding="utf-8")
-    duplicated = text.replace(
-        '"job_id": "JOB-THIN-SKIN-A-DEMO-001"',
-        '"job_id": "JOB-THIN-SKIN-A-DEMO-001", "job_id": "JOB-OTHER"',
-        1,
-    )
-    (thin_skin_workspace / JOB_A).write_text(duplicated, encoding="utf-8")
-    _assert_no_packet(thin_skin_workspace)
-
-    restored = json.loads(text)
-    _write(thin_skin_workspace, JOB_A, restored)
-    nan = text.replace('"target_margin_pct": 30', '"target_margin_pct": NaN', 1)
-    (thin_skin_workspace / JOB_A).write_text(nan, encoding="utf-8")
-    _assert_no_packet(thin_skin_workspace)
-
-    basis = json.loads((thin_skin_workspace / BASIS).read_text(encoding="utf-8"))
-    basis["equipment_hour_rate"] = True
-    _write(thin_skin_workspace, BASIS, basis)
-    (thin_skin_workspace / JOB_A).write_text(text, encoding="utf-8")
-    _assert_no_packet(thin_skin_workspace)
-
-
-def test_quantity_currency_and_identity_mismatches_are_refused(thin_skin_workspace: Path) -> None:
-    estimate = _estimate(thin_skin_workspace)
-    estimate["quantity"] = 2
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
-
-    estimate["quantity"] = 1
-    estimate["currency"] = "EUR"
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
-
-    estimate["currency"] = "USD"
-    estimate["operations"][1]["operation_id"] = estimate["operations"][0]["operation_id"]
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
+@pytest.mark.parametrize(
+    ("original", "replacement", "reason"),
+    [
+        pytest.param(
+            '"job_id": "JOB-THIN-SKIN-A-DEMO-001"',
+            '"job_id": "JOB-THIN-SKIN-A-DEMO-001", "job_id": "JOB-OTHER"',
+            "duplicate JSON key: job_id",
+            id="duplicate-job-key",
+        ),
+        pytest.param(
+            '"target_margin_pct": 30',
+            '"target_margin_pct": NaN',
+            "non-finite",
+            id="nonfinite-margin",
+        ),
+    ],
+)
+def test_invalid_json_is_refused(
+    thin_skin_workspace: Path, original: str, replacement: str, reason: str
+) -> None:
+    path = thin_skin_workspace / JOB_A
+    text = path.read_text(encoding="utf-8")
+    assert original in text
+    path.write_text(text.replace(original, replacement, 1), encoding="utf-8")
+    _assert_no_packet(thin_skin_workspace, match=reason)
 
 
-def test_duplicate_and_undeclared_equipment_are_refused(thin_skin_workspace: Path) -> None:
-    estimate = _estimate(thin_skin_workspace)
-    estimate["equipment_refs"].append(dict(estimate["equipment_refs"][0]))
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
-
-    estimate = _estimate(thin_skin_workspace)
-    estimate["operations"][0]["equipment_id"] = "EQUIPMENT-NOT-DECLARED-V1"
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
-
-    estimate = _estimate(thin_skin_workspace)
-    occupied = next(
-        operation
-        for operation in estimate["operations"]
-        if operation["time_model"]["equipment_occupancy_minutes"] > 0
-    )
-    occupied["equipment_id"] = ""
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
-
-
-def test_duplicate_input_and_inconsistent_rates_are_refused(thin_skin_workspace: Path) -> None:
-    estimate = _estimate(thin_skin_workspace)
-    estimate["material_inputs"][1]["input_id"] = estimate["material_inputs"][0]["input_id"]
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
-
-    estimate = _estimate(thin_skin_workspace)
-    estimate["labor_rate_inputs"][0]["loaded_rate_per_hour"] = 1.0
-    _write(thin_skin_workspace, ESTIMATE_A, estimate)
-    _assert_no_packet(thin_skin_workspace)
-
-    machine = json.loads((thin_skin_workspace / MACHINE_BASIS).read_text(encoding="utf-8"))
-    machine["machine_hour_rate"] = 1.0
-    _write(thin_skin_workspace, MACHINE_BASIS, machine)
-    _assert_no_packet(thin_skin_workspace)
-
-    recorded = json.loads((ROOT / MACHINE_BASIS).read_text(encoding="utf-8"))
-    machine["machine_hour_rate"] = recorded["machine_hour_rate"]
-    _write(thin_skin_workspace, MACHINE_BASIS, machine)
-    basis = json.loads((thin_skin_workspace / BASIS).read_text(encoding="utf-8"))
-    basis["equipment_hour_rate"] = 9.99
-    _write(thin_skin_workspace, BASIS, basis)
-    _assert_no_packet(thin_skin_workspace)
-
-    basis = json.loads((ROOT / BASIS).read_text(encoding="utf-8"))
-    basis["electricity"]["electricity_cost_per_hour"] = 5
-    _write(thin_skin_workspace, BASIS, basis)
-    _assert_no_packet(thin_skin_workspace)
-
-    basis = json.loads((ROOT / BASIS).read_text(encoding="utf-8"))
-    basis["currency"] = "EUR"
-    _write(thin_skin_workspace, BASIS, basis)
-    _assert_no_packet(thin_skin_workspace)
-
-    basis = json.loads((ROOT / BASIS).read_text(encoding="utf-8"))
-    _write(thin_skin_workspace, BASIS, basis)
-    profile = json.loads((thin_skin_workspace / PROFILE).read_text(encoding="utf-8"))
-    profile["connected_load_estimate"]["total_kw"] = 9
-    _write(thin_skin_workspace, PROFILE, profile)
-    _assert_no_packet(thin_skin_workspace)
+@pytest.mark.parametrize(
+    ("ref", "mutator", "reason"),
+    [
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: p.update(quantity=2),
+            "quantity",
+            id="estimate-quantity",
+        ),
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: p.update(currency="EUR"),
+            "currency",
+            id="estimate-currency",
+        ),
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: p["operations"][1].update(operation_id=p["operations"][0]["operation_id"]),
+            "duplicate operation_id",
+            id="duplicate-operation",
+        ),
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: p["equipment_refs"].append(dict(p["equipment_refs"][0])),
+            "duplicate equipment_id",
+            id="duplicate-equipment",
+        ),
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: p["operations"][0].update(equipment_id="EQUIPMENT-NOT-DECLARED-V1"),
+            "undeclared equipment_id",
+            id="undeclared-equipment",
+        ),
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: next(
+                op for op in p["operations"] if op["time_model"]["equipment_occupancy_minutes"] > 0
+            ).update(equipment_id=""),
+            "occupies undeclared equipment",
+            id="missing-occupancy-equipment",
+        ),
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: p["material_inputs"][1].update(input_id=p["material_inputs"][0]["input_id"]),
+            "duplicate input_id",
+            id="duplicate-input",
+        ),
+        pytest.param(
+            ESTIMATE_A,
+            lambda p: p["labor_rate_inputs"][0].update(loaded_rate_per_hour=1.0),
+            "loaded_rate_per_hour does not match its derivation",
+            id="labor-rate",
+        ),
+        pytest.param(
+            MACHINE_BASIS,
+            lambda p: p.update(machine_hour_rate=1.0),
+            "machine_hour_rate does not match",
+            id="machine-rate",
+        ),
+        pytest.param(
+            BASIS,
+            lambda p: p.update(equipment_hour_rate=9.99),
+            "equipment_hour_rate does not match",
+            id="equipment-rate",
+        ),
+        pytest.param(
+            BASIS,
+            lambda p: p["electricity"].update(electricity_cost_per_hour=5),
+            "equipment electricity_cost_per_hour does not match its derivation",
+            id="equipment-electricity",
+        ),
+        pytest.param(
+            BASIS,
+            lambda p: p.update(currency="EUR"),
+            "currency",
+            id="equipment-currency",
+        ),
+        pytest.param(
+            PROFILE,
+            lambda p: p["connected_load_estimate"].update(total_kw=9),
+            "connected_load_kw does not match the equipment profile",
+            id="equipment-load",
+        ),
+        pytest.param(
+            BASIS,
+            lambda p: p.update(equipment_hour_rate=True),
+            "equipment_hour_rate",
+            id="boolean-equipment-rate",
+        ),
+    ],
+)
+def test_invalid_source_is_refused_independently(
+    thin_skin_workspace: Path, ref: str, mutator, reason: str
+) -> None:
+    # The function-scoped fixture supplies valid source bytes for every case.
+    # Validate the baseline first so unrelated failures cannot satisfy this test.
+    load_job_quote(thin_skin_workspace, JOB_A)
+    payload = json.loads((thin_skin_workspace / ref).read_text(encoding="utf-8"))
+    mutator(payload)
+    _write(thin_skin_workspace, ref, payload)
+    _assert_no_packet(thin_skin_workspace, match=reason)
 
 
 @pytest.mark.parametrize(
