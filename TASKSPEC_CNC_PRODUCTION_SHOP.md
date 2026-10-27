@@ -177,7 +177,7 @@ NOT 1300.00 ✗
 
 ## Registered order: CNC-JOB-QUOTE-WORKFLOW-001
 
-**Status:** Implemented on branch `cursor/cnc-job-quote-workflow-001-7f77`. Not merged, tagged, or released by this order.
+**Status:** Merged via pull request #19. The merge commit on `main` is `408f88037707be868ae08ff2a0a25b1149a18932`, including review fix `236527c`. Not tagged or released by that order.
 
 **Date:** 2026-10-25
 
@@ -185,4 +185,16 @@ NOT 1300.00 ✗
 
 Source-checkout command for one draft packet: validate a `guitar_estimate_input_v1` job request, recompute the existing V1 guitar estimate, build `BidV1` and `BidSummaryV1`, and write a separate customer draft proposal. Quantity is 1, currency is USD, and additional bid-level risk, overhead, and recovery percentages are zero. The synthetic sample is `fixtures/jobs/cnc_job_quote_demo_v1.json` (`INTERNAL-DEMO`). Record and evidence: `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md`.
 
-CNC-COST-CORE-3 and CNC-COST-CORE-4 stay ready-to-run. This order does not replace them.
+CNC-COST-CORE-3 and CNC-COST-CORE-4 stay ready-to-run. Order 001 does not replace them.
+
+## Registered order: CNC-JOB-QUOTE-WORKFLOW-002
+
+**Status:** Implemented on branch `cursor/cnc-job-quote-workflow-002-884a`. Not merged, tagged, or released by this order.
+
+**Date:** 2026-10-26
+
+**Baseline:** `main` at `408f88037707be868ae08ff2a0a25b1149a18932`
+
+Source-checkout command for one thin-skin draft packet. The operator supplies `thin_skin_estimate_input_v2`, quantity 1, USD, an explicit target margin, and caller IDs and time. The workflow admits variant A or B, captures product, machine, and equipment sources, and writes `BidV2` plus the existing `BidSummaryV1` and `ProposalV1`. Equipment occupancy and the process rework and yield reserve stay explicit base amounts. The V1 solid-body packet bytes stay compatible. Samples: `fixtures/jobs/cnc_job_quote_thin_skin_a_v2.json` and `fixtures/jobs/cnc_job_quote_thin_skin_b_v2.json`. Record and evidence: `docs/orders/CNC-JOB-QUOTE-WORKFLOW-002.md`.
+
+CNC-COST-CORE-3 and CNC-COST-CORE-4 stay separate. This order does not implement them.

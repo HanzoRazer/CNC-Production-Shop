@@ -1,0 +1,36 @@
+{
+  "record_type": "cnc_job_quote_request",
+  "record_version": "2.0.0",
+  "job_id": "JOB-THIN-SKIN-B-DEMO-001",
+  "estimate_id": "THIN-SKIN-GUITAR-BUILD-ESTIMATE-VARIANT-B-DEMO-001",
+  "bid_id": "BID-THIN-SKIN-B-DEMO-001",
+  "proposal_id": "PROP-THIN-SKIN-B-DEMO-001",
+  "project_name": "INTERNAL-DEMO Thin-Skin Variant B",
+  "customer_name": "INTERNAL-DEMO",
+  "revision": "Draft 1",
+  "created_at": "2026-10-26T17:00:00Z",
+  "estimate_input_contract": "thin_skin_estimate_input_v2",
+  "estimate_input_ref": "fixtures/estimates/guitar/thin_skin_variant_b_input_v1.json",
+  "quantity": 1,
+  "currency": "USD",
+  "pricing_policy": {
+    "policy_id": "target_margin",
+    "policy_version": "1.0.0",
+    "target_margin_pct": 30
+  },
+  "customer_deliverables": [
+    "One thin-skin electric guitar built to the referenced variant B specification",
+    "Final inspection record for that instrument"
+  ],
+  "customer_exclusions": [
+    "Packaging materials, crating, and cases",
+    "Shipping and freight",
+    "Sales tax",
+    "Warranty beyond this draft proposal",
+    "Design changes after this draft",
+    "Non-recurring engineering and unallocated overhead"
+  ],
+  "internal_notes": [
+    "INTERNAL-DEMO synthetic thin-skin variant B request. Not a customer order and not a price approval."
+  ]
+}

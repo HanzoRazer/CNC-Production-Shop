@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bid_v2.schema.json",
+  "title": "BidV2",
+  "description": "Internal draft bid for a thin-skin estimate. Equipment occupancy and the process rework/yield reserve are explicit base-cost amounts. They are not CNC time, labor, tooling, or overhead. base_manufacturing_cost is the cent-rounded sum of the ten cost-basis amounts and is not an independent override. Additional pricing percentages are fixed at zero. This schema is not BidV1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_type",
+    "record_version",
+    "bid_id",
+    "project_name",
+    "customer_name",
+    "revision",
+    "status",
+    "created_at",
+    "updated_at",
+    "assumptions",
+    "line_items",
+    "cost_basis",
+    "pricing",
+    "notes",
+    "equipment_costing"
+  ],
+  "properties": {
+    "record_type": {"const": "cnc_bid"},
+    "record_version": {"const": "2.0.0"},
+    "bid_id": {"type": "string", "minLength": 1},
+    "project_name": {"type": "string", "minLength": 1},
+    "customer_name": {"type": "string", "minLength": 1},
+    "revision": {"type": "string", "minLength": 1},
+    "status": {"const": "draft"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "project_ref": {"type": ["string", "null"]},
+    "manufacturing_ref": {"type": ["string", "null"]},
+    "scenario_ref": {"type": ["string", "null"]},
+    "machine_costing": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Copied CNC evidence. derived_machine_time_cost must equal cost_basis.machine_time_cost. The hour rate is an internal technical cost, not a billing rate.",
+      "required": [
+        "machine_id",
+        "machine_profile_ref",
+        "cost_basis_id",
+        "cost_basis_ref",
+        "cost_basis_role",
+        "runtime_minutes",
+        "machine_hour_rate",
+        "derived_machine_time_cost",
+        "derivation",
+        "provenance_status"
+      ],
+      "properties": {
+        "machine_id": {"type": "string", "pattern": "^MACHINE-[A-Z0-9-]+$"},
+        "machine_profile_ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$"
+        },
+        "cost_basis_id": {"type": "string", "pattern": "^MACHINE-COST-BASIS-[A-Z0-9-]+$"},
+        "cost_basis_ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$"
+        },
+        "cost_basis_role": {"const": "internal_technical_cost"},
+        "runtime_minutes": {"type": "number", "exclusiveMinimum": 0},
+        "machine_hour_rate": {"type": "number", "minimum": 0},
+        "derived_machine_time_cost": {"type": "number", "minimum": 0},
+        "derivation": {"type": "string", "minLength": 1},
+        "provenance_status": {
+          "type": "string",
+          "enum": ["draft", "reviewed", "approved", "superseded", "retired"]
+        }
+      }
+    },
+    "equipment_costing": {
+      "type": "array",
+      "description": "Copied equipment occupancy evidence. The sum of derived_occupancy_cost, at the shop money convention, must equal cost_basis.equipment_occupancy_cost. Per-operation amounts may round separately and are not re-summed into the bid.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "equipment_id",
+          "equipment_profile_ref",
+          "cost_basis_id",
+          "cost_basis_ref",
+          "cost_basis_role",
+          "occupancy_minutes",
+          "equipment_hour_rate",
+          "derived_occupancy_cost",
+          "derivation",
+          "provenance_status"
+        ],
+        "properties": {
+          "equipment_id": {"type": "string", "pattern": "^EQUIPMENT-[A-Z0-9-]+$"},
+          "equipment_profile_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$"
+          },
+          "cost_basis_id": {"type": "string", "pattern": "^EQUIPMENT-COST-BASIS-[A-Z0-9-]+$"},
+          "cost_basis_ref": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?![A-Za-z]:)(?!/)(?!\\\\)(?!.*\\.\\.).+$"
+          },
+          "cost_basis_role": {"const": "internal_technical_cost"},
+          "occupancy_minutes": {"type": "number", "minimum": 0},
+          "equipment_hour_rate": {"type": "number", "minimum": 0},
+          "derived_occupancy_cost": {"type": "number", "minimum": 0},
+          "derivation": {"type": "string", "minLength": 1},
+          "provenance_status": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "value", "source", "confidence"],
+        "properties": {
+          "field": {"type": "string"},
+          "value": {},
+          "source": {"type": "string"},
+          "confidence": {
+            "type": "string",
+            "enum": ["draft", "reviewed", "approved", "superseded", "unknown"]
+          },
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "line_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "category", "quantity", "unit", "unit_cost", "total_cost"],
+        "properties": {
+          "name": {"type": "string"},
+          "category": {"type": "string"},
+          "quantity": {"type": "number", "minimum": 0},
+          "unit": {"type": "string"},
+          "unit_cost": {"type": "number", "minimum": 0},
+          "total_cost": {"type": "number", "minimum": 0},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "cost_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "direct_material_cost",
+        "direct_labor_cost",
+        "machine_time_cost",
+        "tooling_cost",
+        "setup_cost",
+        "finishing_cost",
+        "finishing_material_cost",
+        "engineering_cost",
+        "equipment_occupancy_cost",
+        "process_rework_and_yield_reserve",
+        "base_manufacturing_cost"
+      ],
+      "properties": {
+        "direct_material_cost": {"type": "number", "minimum": 0},
+        "direct_labor_cost": {"type": "number", "minimum": 0},
+        "machine_time_cost": {"type": "number", "minimum": 0},
+        "tooling_cost": {"const": 0},
+        "setup_cost": {"type": "number", "minimum": 0},
+        "finishing_cost": {"type": "number", "minimum": 0},
+        "finishing_material_cost": {"type": "number", "minimum": 0},
+        "engineering_cost": {"const": 0},
+        "equipment_occupancy_cost": {"type": "number", "minimum": 0},
+        "process_rework_and_yield_reserve": {"type": "number", "minimum": 0},
+        "base_manufacturing_cost": {"type": "number", "minimum": 0}
+      }
+    },
+    "pricing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_wear_pct",
+        "manufacturing_contingency_pct",
+        "business_overhead_pct",
+        "engineering_recovery_pct",
+        "target_margin_pct",
+        "risked_cost",
+        "quote_price",
+        "quantity",
+        "price_per_unit"
+      ],
+      "properties": {
+        "tool_wear_pct": {"const": 0},
+        "manufacturing_contingency_pct": {"const": 0},
+        "business_overhead_pct": {"const": 0},
+        "engineering_recovery_pct": {"const": 0},
+        "target_margin_pct": {"type": "number", "minimum": 0, "exclusiveMaximum": 100},
+        "risked_cost": {"type": "number", "minimum": 0},
+        "quote_price": {"type": "number", "minimum": 0},
+        "quantity": {"const": 1},
+        "price_per_unit": {"type": "number", "minimum": 0}
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

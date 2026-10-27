@@ -1,6 +1,6 @@
 """Orchestrate a draft job quote without adding cost math.
 
-Dev Order: CNC-JOB-QUOTE-WORKFLOW-001
+Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001 and CNC-JOB-QUOTE-WORKFLOW-002
 """
 
 from __future__ import annotations
@@ -14,14 +14,20 @@ from pathlib import Path
 from typing import Any
 
 from business.bids.generator import generate_bid_summary
+from business.bids.generator_v2 import generate_bid_summary_v2
 from business.bids.summary import BidSummaryV1
 from business.calculators.machine_cost_basis import as_money, money_equal
 from business.estimates.guitar import CALCULATOR_ID, calculate_guitar_build_estimate
+from business.estimates.guitar_v2 import CALCULATOR_ID as THIN_SKIN_CALCULATOR_ID
+from business.estimates.guitar_v2 import calculate_thin_skin_build_estimate
 from business.estimates.loading import load_guitar_estimate_input
+from business.estimates.loading_v2 import load_thin_skin_estimate_input
 from business.estimates.models import GuitarBuildEstimateV1
+from business.estimates.models_v2 import ThinSkinBuildEstimateV2
 from business.proposals.generator import generate_proposal_from_summary
 from business.proposals.models import ProposalSectionV1, ProposalTermV1, ProposalV1
 from business.workflows.estimate_to_bid import build_bid_from_estimate
+from business.workflows.estimate_to_bid_v2 import build_bid_from_thin_skin_estimate
 from business.workflows.loading import (
     load_job_quote,
     parse_json_object,
@@ -36,21 +42,28 @@ from business.workflows.models import (
     PACKET_MANUFACTURING_REF,
     SOURCE_SNAPSHOT_ROOT,
     EstimateToBidResult,
+    EstimateToBidResultV2,
     JobQuoteFailureError,
     JobQuotePacket,
     JobQuoteRefusalError,
+    JobQuoteRequest,
     JobQuoteRequestV1,
+    JobQuoteRequestV2,
     JobQuoteResult,
     LoadedJobQuote,
     SourceSnapshot,
 )
 from business.workflows.reporting import (
     bid_payload,
+    bid_payload_for,
     dumps_json,
     estimate_payload,
+    estimate_payload_for,
     manifest_payload,
+    manifest_payload_for,
     proposal_payload,
     publish_packet,
+    render_cost_report_for,
     render_customer_draft_markdown,
     render_internal_cost_report,
     summary_payload,
@@ -85,6 +98,35 @@ _FORBIDDEN_PUBLIC_KEYS = frozenset(
         "setup_cost",
         "finishing_material_cost",
         "engineering_cost",
+        "equipment_occupancy_cost",
+        "equipment_hour_rate",
+        "equipment_costing",
+        "equipment_occupancy_minutes",
+        "process_rework_and_yield_reserve",
+        "material_scrap_allowance",
+        "time_summary",
+        "risk_basis",
+        "operation_results",
+        "core_material_cost",
+        "skin_material_cost",
+        "adhesive_and_lamination_consumables",
+        "neck_and_fretboard_cost",
+        "other_consumables_cost",
+        "finish_material_cost",
+        "lamination_labor_cost",
+        "direct_build_labor_cost",
+        "finishing_labor_cost",
+        "assembly_labor_cost",
+        "setup_and_inspection_cost",
+        "base_wage_per_hour",
+        "loaded_rate_per_hour",
+        "payroll_burden_pct",
+        "occupancy_minutes",
+        "elapsed_wait_minutes",
+        "machine_runtime_minutes",
+        "labor_minutes",
+        "derived_occupancy_cost",
+        "derived_machine_time_cost",
     }
 )
 
@@ -114,7 +156,7 @@ def _section(proposal: ProposalV1, title: str) -> ProposalSectionV1:
 
 def _replace_public_sections(
     proposal: ProposalV1,
-    request: JobQuoteRequestV1,
+    request: JobQuoteRequest,
 ) -> None:
     deliverables = list(request.customer_deliverables)
     exclusions = list(request.customer_exclusions)
@@ -147,8 +189,7 @@ def _replace_public_sections(
                 ProposalSectionV1(
                     title="Next Steps",
                     body=(
-                        "This draft supports review only. "
-                        "No approval or release is recorded here."
+                        "This draft supports review only. No approval or release is recorded here."
                     ),
                     bullets=list(_DRAFT_NEXT_STEPS),
                 )
@@ -167,14 +208,16 @@ def _replace_public_sections(
                 "This draft does not schedule production. "
                 "Scheduling requires a separate manufacturing release."
             ),
-        ) if term.title == "Scheduling" else term
+        )
+        if term.title == "Scheduling"
+        else term
         for term in proposal.terms
     ]
 
 
 def project_public_proposal(
     summary: BidSummaryV1,
-    request: JobQuoteRequestV1,
+    request: JobQuoteRequest,
 ) -> ProposalV1:
     """Build a customer draft from prices only. Internal notes and assumptions stay off it."""
     public = BidSummaryV1(
@@ -223,9 +266,9 @@ def _forbid_public_keys(value: object, path: str = "$") -> None:
 def _assert_private_text_stays_internal(
     customer_text: str,
     *,
-    request: JobQuoteRequestV1,
-    estimate: GuitarBuildEstimateV1,
-    mapping: EstimateToBidResult,
+    request: JobQuoteRequest,
+    estimate: GuitarBuildEstimateV1 | ThinSkinBuildEstimateV2,
+    mapping: EstimateToBidResult | EstimateToBidResultV2,
     sources: tuple[SourceSnapshot, ...],
 ) -> None:
     public_text = "\n".join(
@@ -255,9 +298,9 @@ def _assert_public_projection(
     proposal: ProposalV1,
     markdown: str,
     *,
-    request: JobQuoteRequestV1,
-    estimate: GuitarBuildEstimateV1,
-    mapping: EstimateToBidResult,
+    request: JobQuoteRequest,
+    estimate: GuitarBuildEstimateV1 | ThinSkinBuildEstimateV2,
+    mapping: EstimateToBidResult | EstimateToBidResultV2,
     sources: tuple[SourceSnapshot, ...],
 ) -> None:
     if proposal.status != DRAFT_STATUS:
@@ -427,104 +470,323 @@ def _validate_generated(files: dict[str, bytes]) -> None:
         _validate_generated_json(files[path], schema, label)
 
 
+def _assert_links_v2(
+    *,
+    request: JobQuoteRequestV2,
+    estimate: ThinSkinBuildEstimateV2,
+    input_confidence: str,
+    mapping: EstimateToBidResultV2,
+    summary: BidSummaryV1,
+) -> None:
+    bid = mapping.bid
+    if estimate.estimate_id != request.estimate_id:
+        raise JobQuoteFailureError("estimate identity does not match the job request")
+    if estimate.estimate_input_ref != request.estimate_input_ref:
+        raise JobQuoteFailureError("estimate input ref does not match the job request")
+    if estimate.calculation.effective_date != request.effective_date:
+        raise JobQuoteFailureError("estimate effective_date does not match the request timestamp")
+    if estimate.calculation.calculator_id != THIN_SKIN_CALCULATOR_ID:
+        raise JobQuoteFailureError("estimate calculator identity changed")
+    statuses = (estimate.status, bid.status, summary.status)
+    if any(status != DRAFT_STATUS for status in statuses):
+        raise JobQuoteFailureError("economic outputs must remain draft")
+    if bid.record_type != "cnc_bid" or bid.record_version != "2.0.0":
+        raise JobQuoteFailureError("bid contract identity is not BidV2")
+    if estimate.provenance.confidence != input_confidence:
+        raise JobQuoteFailureError("workflow changed estimate confidence")
+    if estimate.quantity != 1 or estimate.currency != "USD":
+        raise JobQuoteFailureError("calculated estimate left the supported quantity or currency")
+    if bid.bid_id != request.bid_id or summary.bid_id != request.bid_id:
+        raise JobQuoteFailureError("bid identity does not match the job request")
+    if bid.manufacturing_ref != PACKET_MANUFACTURING_REF:
+        raise JobQuoteFailureError("bid manufacturing_ref is not the packet estimate reference")
+    if bid.project_ref is not None or bid.scenario_ref is not None:
+        raise JobQuoteFailureError("bid must not invent project or scenario refs")
+    if bid.machine_costing is None:
+        raise JobQuoteFailureError("bid is missing the copied machine costing")
+    if not money_equal(
+        bid.machine_costing.derived_machine_time_cost,
+        bid.cost_basis.machine_time_cost,
+    ):
+        raise JobQuoteFailureError("copied machine costing does not equal bid machine_time_cost")
+    if not money_equal(
+        bid.machine_costing.derived_machine_time_cost,
+        estimate.machine_costing.derived_machine_time_cost,
+    ):
+        raise JobQuoteFailureError("bid machine costing does not match the estimate")
+    if [item.equipment_id for item in bid.equipment_costing] != [
+        item.equipment_id for item in estimate.equipment_costing
+    ]:
+        raise JobQuoteFailureError("bid equipment records do not match the estimate")
+    for copied, source in zip(bid.equipment_costing, estimate.equipment_costing, strict=True):
+        if copied.equipment_profile_ref != source.equipment_profile_ref:
+            raise JobQuoteFailureError("equipment profile ref was not copied")
+        if (
+            copied.cost_basis_ref != source.cost_basis_ref
+            or copied.cost_basis_id != source.cost_basis_id
+        ):
+            raise JobQuoteFailureError("equipment cost basis identity was not copied")
+        if not money_equal(copied.equipment_hour_rate, source.equipment_hour_rate):
+            raise JobQuoteFailureError("equipment hour rate was not copied")
+        if not money_equal(copied.derived_occupancy_cost, source.derived_occupancy_cost):
+            raise JobQuoteFailureError("equipment occupancy cost was not copied")
+        if copied.provenance_status != source.provenance_status:
+            raise JobQuoteFailureError("equipment provenance was not copied")
+    if not money_equal(
+        bid.cost_basis.equipment_occupancy_cost,
+        estimate.cost_summary.equipment_occupancy_cost,
+    ):
+        raise JobQuoteFailureError("equipment occupancy was remapped into another cost")
+    if not money_equal(
+        bid.cost_basis.finishing_material_cost,
+        estimate.cost_summary.finish_material_cost,
+    ):
+        raise JobQuoteFailureError("finish material was not kept separate")
+    if bid.cost_basis.tooling_cost != 0 or bid.cost_basis.engineering_cost != 0:
+        raise JobQuoteFailureError("tooling and engineering must stay zero")
+    categories = [item.category for item in bid.line_items]
+    if len(categories) != 17 or len(set(categories)) != 17:
+        raise JobQuoteFailureError("bid audit lines must contain 17 distinct categories")
+    if "total_direct_manufacturing_cost" in categories:
+        raise JobQuoteFailureError("the estimate total was treated as another cost category")
+    base = as_money(bid.cost_basis.base_manufacturing_cost)
+    if not money_equal(base, estimate.cost_summary.total_direct_manufacturing_cost):
+        raise JobQuoteFailureError("bid base does not equal the estimate total")
+    if not money_equal(base, mapping.mapped_total) or not money_equal(base, mapping.audit_total):
+        raise JobQuoteFailureError("category mapping does not reconcile")
+    if mapping.difference != 0:
+        raise JobQuoteFailureError("rounding reconciliation was not zero")
+    if not money_equal(
+        mapping.detail.equipment_record_total, bid.cost_basis.equipment_occupancy_cost
+    ):
+        raise JobQuoteFailureError("equipment detail changed the mapped occupancy cost")
+    pricing = bid.pricing
+    if (
+        pricing.tool_wear_pct != 0
+        or pricing.manufacturing_contingency_pct != 0
+        or pricing.business_overhead_pct != 0
+        or pricing.engineering_recovery_pct != 0
+    ):
+        raise JobQuoteFailureError("additional pricing percentages must stay zero")
+    if not money_equal(pricing.risked_cost, base):
+        raise JobQuoteFailureError("risked cost changed with zero additional percentages")
+    if pricing.quantity != 1 or not money_equal(pricing.price_per_unit, pricing.quote_price):
+        raise JobQuoteFailureError("quantity 1 pricing did not stay consistent")
+    if float(pricing.target_margin_pct) != float(request.pricing_policy.target_margin_pct):
+        raise JobQuoteFailureError("bid margin does not match the job request")
+    if not money_equal(summary.canonical_quote_price, pricing.quote_price):
+        raise JobQuoteFailureError("bid summary price does not match the bid")
+    if not money_equal(summary.base_manufacturing_cost, base):
+        raise JobQuoteFailureError("bid summary base does not match the bid")
+    if summary.notes != list(bid.notes):
+        raise JobQuoteFailureError("bid summary dropped internal notes")
+    if [item.category for item in summary.line_items] != categories:
+        raise JobQuoteFailureError("bid summary dropped audit categories")
+    assumption_fields = {item.field for item in bid.assumptions}
+    if "material_supply" in assumption_fields or "delivery_date" in assumption_fields:
+        raise JobQuoteFailureError("workflow invented material-supply or delivery-date assumptions")
+
+
+def _validate_generated_v2(files: dict[str, bytes]) -> None:
+    checks = (
+        ("internal/estimate.json", "estimates/thin_skin_build_estimate_v2.schema.json", "estimate"),
+        ("internal/bid.json", "bids/bid_v2.schema.json", "bid"),
+        ("internal/bid_summary.json", "bids/bid_summary_v1.schema.json", "bid summary"),
+        ("customer/proposal.json", "proposals/proposal_v1.schema.json", "proposal"),
+    )
+    for path, schema, label in checks:
+        _validate_generated_json(files[path], schema, label)
+
+
+def _packet_from_guitar(loaded: LoadedJobQuote, snapshot_root: Path) -> JobQuotePacket:
+    request = loaded.request
+    if not isinstance(request, JobQuoteRequestV1):
+        raise JobQuoteFailureError("guitar packet received a non-V1 request")
+    try:
+        estimate_input = load_guitar_estimate_input(snapshot_root / request.estimate_input_ref)
+        input_confidence = estimate_input.provenance.confidence
+        estimate = calculate_guitar_build_estimate(
+            estimate_input,
+            estimate_id=request.estimate_id,
+            estimate_input_ref=request.estimate_input_ref,
+            effective_date=request.effective_date,
+            repo_root=snapshot_root,
+        )
+    except ValueError as exc:
+        raise JobQuoteRefusalError(str(exc)) from exc
+    estimate = replace(estimate, status=DRAFT_STATUS)
+    try:
+        mapping = build_bid_from_estimate(
+            estimate,
+            bid_id=request.bid_id,
+            project_name=request.project_name,
+            customer_name=request.customer_name,
+            revision=request.revision,
+            created_at=request.created_at,
+            target_margin_pct=request.pricing_policy.target_margin_pct,
+            manufacturing_ref=PACKET_MANUFACTURING_REF,
+            internal_notes=request.internal_notes,
+        )
+    except ValueError as exc:
+        raise JobQuoteFailureError(f"estimate to bid mapping failed: {exc}") from exc
+    summary = generate_bid_summary(mapping.bid)
+    proposal = project_public_proposal(summary, request)
+    markdown = render_customer_draft_markdown(proposal)
+    _assert_links(
+        request=request,
+        estimate=estimate,
+        input_confidence=input_confidence,
+        mapping=mapping,
+        summary=summary,
+    )
+    _assert_public_projection(
+        proposal,
+        markdown,
+        request=request,
+        estimate=estimate,
+        mapping=mapping,
+        sources=loaded.sources,
+    )
+    files: dict[str, bytes] = {}
+    files["internal/job_request.json"] = loaded.sources[0].raw_bytes
+    for source in loaded.sources:
+        files[f"{SOURCE_SNAPSHOT_ROOT}/{source.original_ref}"] = source.raw_bytes
+    files["internal/estimate.json"] = dumps_json(estimate_payload(estimate))
+    files["internal/bid.json"] = dumps_json(bid_payload(mapping.bid))
+    files["internal/bid_summary.json"] = dumps_json(summary_payload(summary))
+    files["internal/cost_report.md"] = render_internal_cost_report(
+        request=request,
+        estimate=estimate,
+        mapping=mapping,
+        sources=loaded.sources,
+    ).encode("utf-8")
+    files["customer/proposal.json"] = dumps_json(proposal_payload(proposal))
+    files["customer/proposal.md"] = markdown.encode("utf-8")
+    _validate_generated(files)
+    artifacts = _artifact_entries(files)
+    manifest = manifest_payload(
+        request=request,
+        estimate=estimate,
+        mapping=mapping,
+        sources=loaded.sources,
+        artifacts=artifacts,
+    )
+    manifest_bytes = dumps_json(manifest)
+    parsed_manifest = _validate_generated_json(
+        manifest_bytes,
+        "workflows/job_quote_manifest_v1.schema.json",
+        "manifest",
+    )
+    _assert_manifest_hashes(parsed_manifest, files)
+    files["manifest.json"] = manifest_bytes
+    return JobQuotePacket(
+        files=files,
+        job_id=request.job_id,
+        direct_manufacturing_cost=as_money(estimate.cost_summary.total_direct_manufacturing_cost),
+        quote_price=as_money(mapping.bid.pricing.quote_price),
+    )
+
+
+def _packet_from_thin_skin(loaded: LoadedJobQuote, snapshot_root: Path) -> JobQuotePacket:
+    request = loaded.request
+    if not isinstance(request, JobQuoteRequestV2):
+        raise JobQuoteFailureError("thin-skin packet received a non-V2 request")
+    try:
+        estimate_input = load_thin_skin_estimate_input(snapshot_root / request.estimate_input_ref)
+        input_confidence = estimate_input.provenance.confidence
+        estimate = calculate_thin_skin_build_estimate(
+            estimate_input,
+            estimate_id=request.estimate_id,
+            estimate_input_ref=request.estimate_input_ref,
+            effective_date=request.effective_date,
+            repo_root=snapshot_root,
+        )
+    except ValueError as exc:
+        raise JobQuoteRefusalError(str(exc)) from exc
+    estimate = replace(estimate, status=DRAFT_STATUS)
+    try:
+        mapping = build_bid_from_thin_skin_estimate(
+            estimate,
+            bid_id=request.bid_id,
+            project_name=request.project_name,
+            customer_name=request.customer_name,
+            revision=request.revision,
+            created_at=request.created_at,
+            target_margin_pct=request.pricing_policy.target_margin_pct,
+            manufacturing_ref=PACKET_MANUFACTURING_REF,
+            internal_notes=request.internal_notes,
+        )
+    except ValueError as exc:
+        raise JobQuoteFailureError(f"estimate to bid mapping failed: {exc}") from exc
+    summary = generate_bid_summary_v2(mapping.bid)
+    proposal = project_public_proposal(summary, request)
+    markdown = render_customer_draft_markdown(proposal)
+    _assert_links_v2(
+        request=request,
+        estimate=estimate,
+        input_confidence=input_confidence,
+        mapping=mapping,
+        summary=summary,
+    )
+    _assert_public_projection(
+        proposal,
+        markdown,
+        request=request,
+        estimate=estimate,
+        mapping=mapping,
+        sources=loaded.sources,
+    )
+    files: dict[str, bytes] = {}
+    job_source = next(source for source in loaded.sources if source.role == "job_request")
+    files["internal/job_request.json"] = job_source.raw_bytes
+    for source in loaded.sources:
+        files[f"{SOURCE_SNAPSHOT_ROOT}/{source.original_ref}"] = source.raw_bytes
+    files["internal/estimate.json"] = dumps_json(estimate_payload_for(estimate))
+    files["internal/bid.json"] = dumps_json(bid_payload_for(mapping.bid))
+    files["internal/bid_summary.json"] = dumps_json(summary_payload(summary))
+    files["internal/cost_report.md"] = render_cost_report_for(
+        request=request,
+        estimate=estimate,
+        mapping=mapping,
+        sources=loaded.sources,
+    ).encode("utf-8")
+    files["customer/proposal.json"] = dumps_json(proposal_payload(proposal))
+    files["customer/proposal.md"] = markdown.encode("utf-8")
+    _validate_generated_v2(files)
+    artifacts = _artifact_entries(files)
+    manifest = manifest_payload_for(
+        request=request,
+        estimate=estimate,
+        mapping=mapping,
+        sources=loaded.sources,
+        artifacts=artifacts,
+    )
+    manifest_bytes = dumps_json(manifest)
+    parsed_manifest = _validate_generated_json(
+        manifest_bytes,
+        "workflows/job_quote_manifest_v2.schema.json",
+        "manifest",
+    )
+    _assert_manifest_hashes(parsed_manifest, files)
+    files["manifest.json"] = manifest_bytes
+    return JobQuotePacket(
+        files=files,
+        job_id=request.job_id,
+        direct_manufacturing_cost=as_money(estimate.cost_summary.total_direct_manufacturing_cost),
+        quote_price=as_money(mapping.bid.pricing.quote_price),
+    )
+
+
 def build_job_quote_packet(loaded: LoadedJobQuote) -> JobQuotePacket:
     """Calculate from captured source bytes and return a validated, unpublished packet."""
-    request = loaded.request
     snapshot_root = Path(tempfile.mkdtemp(prefix="job-quote-snapshot-"))
     try:
         _write_snapshot_tree(loaded.sources, snapshot_root)
-        try:
-            estimate_input = load_guitar_estimate_input(
-                snapshot_root / request.estimate_input_ref
-            )
-            input_confidence = estimate_input.provenance.confidence
-            estimate = calculate_guitar_build_estimate(
-                estimate_input,
-                estimate_id=request.estimate_id,
-                estimate_input_ref=request.estimate_input_ref,
-                effective_date=request.effective_date,
-                repo_root=snapshot_root,
-            )
-        except ValueError as exc:
-            from business.workflows.models import JobQuoteRefusalError
-
-            raise JobQuoteRefusalError(str(exc)) from exc
-        estimate = replace(estimate, status=DRAFT_STATUS)
-        try:
-            mapping = build_bid_from_estimate(
-                estimate,
-                bid_id=request.bid_id,
-                project_name=request.project_name,
-                customer_name=request.customer_name,
-                revision=request.revision,
-                created_at=request.created_at,
-                target_margin_pct=request.pricing_policy.target_margin_pct,
-                manufacturing_ref=PACKET_MANUFACTURING_REF,
-                internal_notes=request.internal_notes,
-            )
-        except ValueError as exc:
-            raise JobQuoteFailureError(f"estimate to bid mapping failed: {exc}") from exc
-        summary = generate_bid_summary(mapping.bid)
-        proposal = project_public_proposal(summary, request)
-        markdown = render_customer_draft_markdown(proposal)
-        _assert_links(
-            request=request,
-            estimate=estimate,
-            input_confidence=input_confidence,
-            mapping=mapping,
-            summary=summary,
-        )
-        _assert_public_projection(
-            proposal,
-            markdown,
-            request=request,
-            estimate=estimate,
-            mapping=mapping,
-            sources=loaded.sources,
-        )
-
-        files: dict[str, bytes] = {}
-        job_source = loaded.sources[0]
-        files["internal/job_request.json"] = job_source.raw_bytes
-        for source in loaded.sources:
-            files[f"{SOURCE_SNAPSHOT_ROOT}/{source.original_ref}"] = source.raw_bytes
-        files["internal/estimate.json"] = dumps_json(estimate_payload(estimate))
-        files["internal/bid.json"] = dumps_json(bid_payload(mapping.bid))
-        files["internal/bid_summary.json"] = dumps_json(summary_payload(summary))
-        files["internal/cost_report.md"] = render_internal_cost_report(
-            request=request,
-            estimate=estimate,
-            mapping=mapping,
-            sources=loaded.sources,
-        ).encode("utf-8")
-        files["customer/proposal.json"] = dumps_json(proposal_payload(proposal))
-        files["customer/proposal.md"] = markdown.encode("utf-8")
-        _validate_generated(files)
-
-        artifacts = _artifact_entries(files)
-        manifest = manifest_payload(
-            request=request,
-            estimate=estimate,
-            mapping=mapping,
-            sources=loaded.sources,
-            artifacts=artifacts,
-        )
-        manifest_bytes = dumps_json(manifest)
-        parsed_manifest = _validate_generated_json(
-            manifest_bytes,
-            "workflows/job_quote_manifest_v1.schema.json",
-            "manifest",
-        )
-        _assert_manifest_hashes(parsed_manifest, files)
-        files["manifest.json"] = manifest_bytes
-        return JobQuotePacket(
-            files=files,
-            job_id=request.job_id,
-            direct_manufacturing_cost=as_money(
-                estimate.cost_summary.total_direct_manufacturing_cost
-            ),
-            quote_price=as_money(mapping.bid.pricing.quote_price),
-        )
+        if isinstance(loaded.request, JobQuoteRequestV2):
+            return _packet_from_thin_skin(loaded, snapshot_root)
+        if isinstance(loaded.request, JobQuoteRequestV1):
+            return _packet_from_guitar(loaded, snapshot_root)
+        raise JobQuoteFailureError("unsupported job quote request")
     finally:
         shutil.rmtree(snapshot_root, ignore_errors=True)
 

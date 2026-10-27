@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "job_quote_manifest_v2.schema.json",
+  "title": "CncJobQuoteManifestV2",
+  "description": "Internal lineage manifest for one draft thin-skin job quote packet. SHA-256 identifies bytes. It does not approve a price or a measurement. manifest.json is not included in its own artifact list. Workflow and mapping versions are contract lineage, not distribution versions.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*\\.\\.)(?!.*\\s).+$"
+    },
+    "money": {"type": "number", "minimum": 0},
+    "signed_money": {"type": "number"},
+    "source_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "record_id", "original_ref", "snapshot_ref", "sha256"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": [
+            "job_request",
+            "estimate_input",
+            "product",
+            "machine_profile",
+            "machine_cost_basis",
+            "equipment_profile",
+            "equipment_cost_basis"
+          ]
+        },
+        "record_id": {"type": "string", "minLength": 1},
+        "original_ref": {"$ref": "#/$defs/relative_path"},
+        "snapshot_ref": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "artifact_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "role", "audience"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "role": {
+          "type": "string",
+          "enum": [
+            "job_request",
+            "estimate",
+            "bid",
+            "bid_summary",
+            "cost_report",
+            "proposal_json",
+            "proposal_markdown"
+          ]
+        },
+        "audience": {
+          "type": "string",
+          "enum": ["internal", "customer"]
+        }
+      }
+    },
+    "mapping_line": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_category", "source_amount", "bid_field", "mapped_amount"],
+      "properties": {
+        "source_category": {"type": "string", "minLength": 1},
+        "source_amount": {"$ref": "#/$defs/money"},
+        "bid_field": {"type": "string", "minLength": 1},
+        "mapped_amount": {"$ref": "#/$defs/money"}
+      }
+    }
+  },
+  "required": [
+    "record_type",
+    "record_version",
+    "status",
+    "job_id",
+    "estimate_id",
+    "bid_id",
+    "proposal_id",
+    "created_at",
+    "effective_date",
+    "calculator_id",
+    "estimate_input_contract",
+    "estimate_output_contract",
+    "bid_contract",
+    "bid_summary_contract",
+    "proposal_contract",
+    "workflow_version",
+    "mapping_version",
+    "pricing_policy",
+    "sources",
+    "artifacts",
+    "category_mapping",
+    "cost_basis_disclosure",
+    "reference_namespaces"
+  ],
+  "properties": {
+    "record_type": {"const": "cnc_job_quote_manifest"},
+    "record_version": {"const": "2.0.0"},
+    "status": {"const": "draft"},
+    "job_id": {"$ref": "#/$defs/identifier"},
+    "estimate_id": {
+      "type": "string",
+      "pattern": "^THIN-SKIN-GUITAR-BUILD-ESTIMATE-[A-Z0-9-]+$"
+    },
+    "bid_id": {"$ref": "#/$defs/identifier"},
+    "proposal_id": {"$ref": "#/$defs/identifier"},
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "effective_date": {"type": "string", "format": "date"},
+    "calculator_id": {"const": "thin_skin_build_estimate_v2"},
+    "estimate_input_contract": {"const": "thin_skin_estimate_input_v2"},
+    "estimate_output_contract": {"const": "thin_skin_build_estimate_v2"},
+    "bid_contract": {"const": "bid_v2"},
+    "bid_summary_contract": {"const": "bid_summary_v1"},
+    "proposal_contract": {"const": "proposal_v1"},
+    "workflow_version": {"const": "2.0.0"},
+    "mapping_version": {"const": "2.0.0"},
+    "pricing_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "policy_version", "target_margin_pct"],
+      "properties": {
+        "policy_id": {"const": "target_margin"},
+        "policy_version": {"const": "1.0.0"},
+        "target_margin_pct": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 100
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 5,
+      "items": {"$ref": "#/$defs/source_entry"}
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {"$ref": "#/$defs/artifact_entry"}
+    },
+    "category_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mapping_version", "lines", "mapped_amounts", "rounding_reconciliation"],
+      "properties": {
+        "mapping_version": {"const": "2.0.0"},
+        "lines": {
+          "type": "array",
+          "minItems": 17,
+          "maxItems": 17,
+          "items": {"$ref": "#/$defs/mapping_line"}
+        },
+        "mapped_amounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "direct_material_cost",
+            "direct_labor_cost",
+            "machine_time_cost",
+            "tooling_cost",
+            "setup_cost",
+            "finishing_cost",
+            "finishing_material_cost",
+            "engineering_cost",
+            "equipment_occupancy_cost",
+            "process_rework_and_yield_reserve"
+          ],
+          "properties": {
+            "direct_material_cost": {"$ref": "#/$defs/money"},
+            "direct_labor_cost": {"$ref": "#/$defs/money"},
+            "machine_time_cost": {"$ref": "#/$defs/money"},
+            "tooling_cost": {"const": 0},
+            "setup_cost": {"$ref": "#/$defs/money"},
+            "finishing_cost": {"$ref": "#/$defs/money"},
+            "finishing_material_cost": {"$ref": "#/$defs/money"},
+            "engineering_cost": {"const": 0},
+            "equipment_occupancy_cost": {"$ref": "#/$defs/money"},
+            "process_rework_and_yield_reserve": {"$ref": "#/$defs/money"}
+          }
+        },
+        "rounding_reconciliation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "policy",
+            "estimate_total_direct_manufacturing_cost",
+            "mapped_category_total",
+            "audit_line_total",
+            "base_manufacturing_cost",
+            "difference",
+            "equipment_record_total",
+            "equipment_operation_detail_total",
+            "equipment_detail_difference",
+            "machine_record_total",
+            "machine_operation_detail_total",
+            "machine_detail_difference"
+          ],
+          "properties": {
+            "policy": {"const": "currency_half_up_2dp"},
+            "estimate_total_direct_manufacturing_cost": {"$ref": "#/$defs/money"},
+            "mapped_category_total": {"$ref": "#/$defs/money"},
+            "audit_line_total": {"$ref": "#/$defs/money"},
+            "base_manufacturing_cost": {"$ref": "#/$defs/money"},
+            "difference": {"const": 0},
+            "equipment_record_total": {"$ref": "#/$defs/money"},
+            "equipment_operation_detail_total": {"$ref": "#/$defs/money"},
+            "equipment_detail_difference": {"$ref": "#/$defs/signed_money"},
+            "machine_record_total": {"$ref": "#/$defs/money"},
+            "machine_operation_detail_total": {"$ref": "#/$defs/money"},
+            "machine_detail_difference": {"$ref": "#/$defs/signed_money"}
+          }
+        }
+      }
+    },
+    "cost_basis_disclosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "tool_wear_pct",
+        "manufacturing_contingency_pct",
+        "business_overhead_pct",
+        "engineering_recovery_pct"
+      ],
+      "properties": {
+        "basis": {"const": "direct_manufacturing_cost_only"},
+        "tool_wear_pct": {"const": 0},
+        "manufacturing_contingency_pct": {"const": 0},
+        "business_overhead_pct": {"const": 0},
+        "engineering_recovery_pct": {"const": 0}
+      }
+    },
+    "reference_namespaces": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packet_refs", "source_refs"],
+      "properties": {
+        "packet_refs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["base", "manufacturing_ref", "description"],
+          "properties": {
+            "base": {"const": "packet_root"},
+            "manufacturing_ref": {"const": "internal/estimate.json"},
+            "description": {"type": "string", "minLength": 1}
+          }
+        },
+        "source_refs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["base", "snapshot_root", "description"],
+          "properties": {
+            "base": {"const": "source_workspace"},
+            "snapshot_root": {"const": "internal/sources"},
+            "description": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    }
+  }
+}

@@ -11,7 +11,20 @@ import pytest
 from click.testing import CliRunner
 
 from business.workflows.cli import main
-from tests.workflows.conftest import JOB_REL, OUTPUT_REL
+from tests.workflows.conftest import (
+    JOB_A,
+    JOB_REL,
+    OUTPUT_A,
+    OUTPUT_REL,
+    copy_demo_workspace,
+    copy_thin_skin_workspace,
+)
+
+
+def _quote_case(tmp_path: Path, variant: str) -> tuple[Path, str, str]:
+    if variant == "v1":
+        return copy_demo_workspace(tmp_path / "ws"), JOB_REL, OUTPUT_REL
+    return copy_thin_skin_workspace(tmp_path / "ws", "a"), JOB_A, OUTPUT_A
 
 
 def test_module_command_from_another_working_directory(workspace: Path, tmp_path: Path) -> None:
@@ -62,30 +75,68 @@ def test_cli_runner_ignores_the_current_directory(workspace: Path, tmp_path: Pat
     assert (workspace / OUTPUT_REL / "manifest.json").is_file()
 
 
-def test_invalid_input_exits_2_without_a_traceback_or_packet(workspace: Path) -> None:
-    job = (workspace / JOB_REL).read_text(encoding="utf-8")
+def test_thin_skin_module_command_from_another_working_directory(
+    tmp_path: Path,
+) -> None:
+    workspace = copy_thin_skin_workspace(tmp_path / "ws", "a")
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "business.workflows.cli",
+            "run",
+            "--root",
+            str(workspace),
+            "--job",
+            JOB_A,
+            "--output-dir",
+            OUTPUT_A,
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "Traceback" not in result.stderr
+    assert "job_id: JOB-THIN-SKIN-A-DEMO-001" in result.stdout
+    assert "status: draft" in result.stdout
+    assert "direct_manufacturing_cost: 700.89" in result.stdout
+    assert "quote_price: 1001.27" in result.stdout
+    assert (workspace / OUTPUT_A / "customer" / "proposal.md").is_file()
+    assert (workspace / OUTPUT_A / "manifest.json").is_file()
+
+
+@pytest.mark.parametrize("variant", ["v1", "a"])
+def test_invalid_input_exits_2_without_a_traceback_or_packet(
+    tmp_path: Path, variant: str
+) -> None:
+    workspace, job_rel, output_rel = _quote_case(tmp_path, variant)
+    job = (workspace / job_rel).read_text(encoding="utf-8")
     replaced = job.replace('"quantity": 1', '"quantity": 2', 1)
-    (workspace / JOB_REL).write_text(replaced, encoding="utf-8")
+    (workspace / job_rel).write_text(replaced, encoding="utf-8")
     runner = CliRunner()
     result = runner.invoke(
         main,
-        ["run", "--root", str(workspace), "--job", JOB_REL, "--output-dir", OUTPUT_REL],
+        ["run", "--root", str(workspace), "--job", job_rel, "--output-dir", output_rel],
     )
     assert result.exit_code == 2
     assert "Traceback" not in result.output
     assert "error:" in result.stderr
-    assert not (workspace / OUTPUT_REL).exists()
+    assert not (workspace / output_rel).exists()
 
 
-def test_existing_output_exits_2_and_keeps_bytes(workspace: Path) -> None:
-    destination = workspace / OUTPUT_REL
+@pytest.mark.parametrize("variant", ["v1", "a"])
+def test_existing_output_exits_2_and_keeps_bytes(tmp_path: Path, variant: str) -> None:
+    workspace, job_rel, output_rel = _quote_case(tmp_path, variant)
+    destination = workspace / output_rel
     destination.mkdir(parents=True)
     marker = destination / "keep.txt"
     marker.write_bytes(b"same-bytes")
     runner = CliRunner()
     result = runner.invoke(
         main,
-        ["run", "--root", str(workspace), "--job", JOB_REL, "--output-dir", OUTPUT_REL],
+        ["run", "--root", str(workspace), "--job", job_rel, "--output-dir", output_rel],
     )
     assert result.exit_code == 2
     assert "Traceback" not in result.output
@@ -113,24 +164,30 @@ def test_unexpected_failure_is_not_relabelled_as_a_refusal(
     assert not (workspace / OUTPUT_REL).exists()
 
 
-def test_publish_io_failure_exits_1(workspace: Path, monkeypatch) -> None:
+@pytest.mark.parametrize("variant", ["v1", "a"])
+def test_publish_io_failure_exits_1(tmp_path: Path, variant: str, monkeypatch) -> None:
+    workspace, job_rel, output_rel = _quote_case(tmp_path, variant)
+
     def boom(*_args, **_kwargs):
         raise OSError("simulated publish failure")
 
     monkeypatch.setattr("business.workflows.reporting._rename_without_replacement", boom)
     result = CliRunner().invoke(
         main,
-        ["run", "--root", str(workspace), "--job", JOB_REL, "--output-dir", OUTPUT_REL],
+        ["run", "--root", str(workspace), "--job", job_rel, "--output-dir", output_rel],
     )
     assert result.exit_code == 1
     assert "error:" in result.stderr
     assert "Traceback" not in result.output
-    assert not (workspace / OUTPUT_REL).exists()
+    assert not (workspace / output_rel).exists()
 
 
+@pytest.mark.parametrize("variant", ["v1", "a"])
 def test_cli_outputs_only_drafts_and_requires_separate_release(
-    workspace: Path, monkeypatch
+    tmp_path: Path, variant: str, monkeypatch
 ) -> None:
+    workspace, job_rel, output_rel = _quote_case(tmp_path, variant)
+
     def forbidden(*_args, **_kwargs):
         pytest.fail("quoting must not open connections or launch an external command")
 
@@ -138,10 +195,10 @@ def test_cli_outputs_only_drafts_and_requires_separate_release(
     monkeypatch.setattr("subprocess.Popen", forbidden)
     result = CliRunner().invoke(
         main,
-        ["run", "--root", str(workspace), "--job", JOB_REL, "--output-dir", OUTPUT_REL],
+        ["run", "--root", str(workspace), "--job", job_rel, "--output-dir", output_rel],
     )
     assert result.exit_code == 0, result.output
-    packet = workspace / OUTPUT_REL
+    packet = workspace / output_rel
     for relative in (
         "internal/estimate.json",
         "internal/bid.json",

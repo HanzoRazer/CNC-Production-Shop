@@ -1,6 +1,6 @@
 """Stable serializers, internal reporting, and atomic packet publication.
 
-Dev Order: CNC-JOB-QUOTE-WORKFLOW-001
+Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001 and CNC-JOB-QUOTE-WORKFLOW-002
 """
 
 from __future__ import annotations
@@ -17,9 +17,11 @@ from pathlib import Path
 from typing import Any
 
 from business.bids.models import BidV1
+from business.bids.models_v2 import BidV2
 from business.bids.summary import BidSummaryV1
 from business.calculators.machine_cost_basis import as_money, money_equal
 from business.estimates.models import GuitarBuildEstimateV1
+from business.estimates.models_v2 import ThinSkinBuildEstimateV2
 from business.proposals.markdown import render_proposal_markdown
 from business.proposals.models import ProposalV1
 from business.workflows.models import (
@@ -27,9 +29,11 @@ from business.workflows.models import (
     MAPPING_VERSION,
     WORKFLOW_VERSION,
     EstimateToBidResult,
+    EstimateToBidResultV2,
     JobQuoteFailureError,
     JobQuoteRefusalError,
     JobQuoteRequestV1,
+    JobQuoteRequestV2,
     SourceSnapshot,
 )
 
@@ -320,9 +324,7 @@ def manifest_payload(
             "packet_refs": {
                 "base": "packet_root",
                 "manufacturing_ref": mapping.bid.manufacturing_ref,
-                "description": (
-                    "Packet references resolve relative to the output packet root."
-                ),
+                "description": ("Packet references resolve relative to the output packet root."),
             },
             "source_refs": {
                 "base": "source_workspace",
@@ -362,7 +364,11 @@ def _rename_without_replacement(source: Path, destination: Path) -> None:
         if rename is None:
             raise OSError(errno.ENOTSUP, "exclusive directory rename is unavailable")
         rename.argtypes = [
-            ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
         ]
         rename.restype = ctypes.c_int
         # AT_FDCWD = -100; RENAME_NOREPLACE = 1.
@@ -416,3 +422,99 @@ def publish_packet(output_dir: Path, files: dict[str, bytes]) -> None:
         if not published:
             shutil.rmtree(staging, ignore_errors=True)
 
+
+def estimate_payload_for(
+    estimate: GuitarBuildEstimateV1 | ThinSkinBuildEstimateV2,
+) -> dict[str, Any]:
+    """Serialize the estimate for the contract it actually is."""
+    if isinstance(estimate, GuitarBuildEstimateV1):
+        return estimate_payload(estimate)
+    if isinstance(estimate, ThinSkinBuildEstimateV2):
+        from business.workflows.reporting_v2 import estimate_payload_v2
+
+        return estimate_payload_v2(estimate)
+    raise JobQuoteFailureError("unsupported estimate payload")
+
+
+def bid_payload_for(bid: BidV1 | BidV2) -> dict[str, Any]:
+    """Serialize a V1 or V2 bid, including its computed base."""
+    if isinstance(bid, BidV1):
+        return bid_payload(bid)
+    if isinstance(bid, BidV2):
+        from business.workflows.reporting_v2 import bid_payload_v2
+
+        return bid_payload_v2(bid)
+    raise JobQuoteFailureError("unsupported bid payload")
+
+
+def render_cost_report_for(
+    *,
+    request: JobQuoteRequestV1 | JobQuoteRequestV2,
+    estimate: GuitarBuildEstimateV1 | ThinSkinBuildEstimateV2,
+    mapping: EstimateToBidResult | EstimateToBidResultV2,
+    sources: tuple[SourceSnapshot, ...],
+) -> str:
+    """Render the internal report that matches this request contract."""
+    if (
+        isinstance(request, JobQuoteRequestV1)
+        and isinstance(estimate, GuitarBuildEstimateV1)
+        and isinstance(mapping, EstimateToBidResult)
+    ):
+        return render_internal_cost_report(
+            request=request,
+            estimate=estimate,
+            mapping=mapping,
+            sources=sources,
+        )
+    if (
+        isinstance(request, JobQuoteRequestV2)
+        and isinstance(estimate, ThinSkinBuildEstimateV2)
+        and isinstance(mapping, EstimateToBidResultV2)
+    ):
+        from business.workflows.reporting_v2 import render_internal_cost_report_v2
+
+        return render_internal_cost_report_v2(
+            request=request,
+            estimate=estimate,
+            mapping=mapping,
+            sources=sources,
+        )
+    raise JobQuoteFailureError("unsupported cost report")
+
+
+def manifest_payload_for(
+    *,
+    request: JobQuoteRequestV1 | JobQuoteRequestV2,
+    estimate: GuitarBuildEstimateV1 | ThinSkinBuildEstimateV2,
+    mapping: EstimateToBidResult | EstimateToBidResultV2,
+    sources: tuple[SourceSnapshot, ...],
+    artifacts: tuple[dict[str, str], ...],
+) -> dict[str, Any]:
+    """Build the lineage manifest for this request contract."""
+    if (
+        isinstance(request, JobQuoteRequestV1)
+        and isinstance(estimate, GuitarBuildEstimateV1)
+        and isinstance(mapping, EstimateToBidResult)
+    ):
+        return manifest_payload(
+            request=request,
+            estimate=estimate,
+            mapping=mapping,
+            sources=sources,
+            artifacts=artifacts,
+        )
+    if (
+        isinstance(request, JobQuoteRequestV2)
+        and isinstance(estimate, ThinSkinBuildEstimateV2)
+        and isinstance(mapping, EstimateToBidResultV2)
+    ):
+        from business.workflows.reporting_v2 import manifest_payload_v2
+
+        return manifest_payload_v2(
+            request=request,
+            estimate=estimate,
+            mapping=mapping,
+            sources=sources,
+            artifacts=artifacts,
+        )
+    raise JobQuoteFailureError("unsupported manifest")

@@ -547,6 +547,33 @@ class TestCommercialBoundary:
         assert "28.97" in (packet / "internal" / "cost_report.md").read_text(encoding="utf-8")
         assert_customer_markdown_hides_technical_rate(workspace)
 
+    def test_retained_v1_and_thin_skin_exports_hide_customer_rates(self, tmp_path):
+        from business.workflows.quote_pipeline import run_job_quote
+        from tests.workflows.conftest import (
+            JOB_A,
+            JOB_B,
+            JOB_REL,
+            OUTPUT_A,
+            OUTPUT_B,
+            OUTPUT_REL,
+            copy_demo_workspace,
+            copy_thin_skin_workspace,
+        )
+
+        workspace = tmp_path / "ws"
+        copy_demo_workspace(workspace)
+        copy_thin_skin_workspace(workspace, "a")
+        copy_thin_skin_workspace(workspace, "b")
+        v1 = run_job_quote(root=workspace, job=JOB_REL, output_dir=OUTPUT_REL).output_dir
+        variant_a = run_job_quote(root=workspace, job=JOB_A, output_dir=OUTPUT_A).output_dir
+        variant_b = run_job_quote(root=workspace, job=JOB_B, output_dir=OUTPUT_B).output_dir
+        assert "28.97" in (v1 / "internal" / "cost_report.md").read_text(encoding="utf-8")
+        for packet in (variant_a, variant_b):
+            report = (packet / "internal" / "cost_report.md").read_text(encoding="utf-8")
+            assert "equipment_occupancy_cost" in report
+            assert (packet / "manifest.json").is_file()
+        assert_customer_markdown_hides_technical_rate(workspace)
+
     @pytest.mark.parametrize(
         "relative",
         [

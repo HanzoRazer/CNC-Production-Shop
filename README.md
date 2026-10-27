@@ -95,26 +95,57 @@ python scripts/validate_proposals.py
 
 ## Draft job quote
 
-From a source checkout, one command validates a job request, recomputes the
-existing guitar estimate, builds an internal bid and summary, and writes a
-customer draft proposal. It does not approve a price, send the proposal, or
-release manufacturing.
+From a source checkout, one command validates a job request, recomputes an
+existing estimate, builds an internal bid and summary, and writes a customer
+draft proposal. It does not approve a price, send the proposal, or release
+manufacturing. The direct manufacturing cost and the draft quote price are
+different numbers: the price applies the caller-supplied target margin to that
+cost. A 30% target margin is not a 30% markup.
 
-This increment supports `guitar_estimate_input_v1`, quantity 1, currency USD,
-the existing explicit machine profile and cost basis, and target-margin
-pricing. Additional bid-level risk, overhead, and recovery percentages are
-zero. Schemas are read from the checkout. The command is not a wheel-only
-operation.
+Dispatch uses the validated request `record_version` and `estimate_input_contract`.
+The fixture filename does not select the contract. Quantity is 1 and currency
+is USD. Additional bid-level tool wear, contingency, overhead, and engineering
+recovery percentages are zero. Schemas are read from the checkout. The command
+is not a wheel-only operation.
+
+| Request | Version | Estimate contract | Workflow / mapping | Bid | Summary | Proposal |
+|---------|---------|-------------------|--------------------|-----|---------|----------|
+| Solid-body demo | `1.0.0` | `guitar_estimate_input_v1` | `1.0.0` | `BidV1` | `bid_summary_v1` | `proposal_v1` |
+| Thin-skin A or B | `2.0.0` | `thin_skin_estimate_input_v2` | `2.0.0` | `bid_v2` `2.0.0` | `bid_summary_v1` | `proposal_v1` |
+
+Workflow and mapping versions are contract lineage, not a distribution version.
+Unknown versions, unknown contracts, and V1/V2 cross-pairs are refused before
+the estimate is loaded.
 
 ```bash
 python -m business.workflows.cli run \
   --root . \
   --job fixtures/jobs/cnc_job_quote_demo_v1.json \
   --output-dir exports/jobs/cnc-job-quote-demo-001
+
+python -m business.workflows.cli run \
+  --root . \
+  --job fixtures/jobs/cnc_job_quote_thin_skin_a_v2.json \
+  --output-dir exports/jobs/thin-skin-a-quote-001
+
+python -m business.workflows.cli run \
+  --root . \
+  --job fixtures/jobs/cnc_job_quote_thin_skin_b_v2.json \
+  --output-dir exports/jobs/thin-skin-b-quote-001
 ```
 
-`fixtures/jobs/cnc_job_quote_demo_v1.json` is a synthetic `INTERNAL-DEMO`
-request. It is not a customer order and not a price approval.
+The three job files are synthetic `INTERNAL-DEMO` requests. They are not
+customer orders and not price approvals. The solid-body request names the
+guitar estimate input, product, machine profile, and machine cost basis. Each
+thin-skin request also names that product's definition, the same machine pair,
+and the vacuum-press, spray-booth, and cure-rack equipment profile and cost
+basis. Those dependencies must already be in the checkout. The workflow does
+not invent rates or discover a latest file.
+
+`BidV2` keeps equipment occupancy and the process rework and yield reserve as
+their own base-cost amounts. They are not relabelled as CNC time, labor,
+tooling, or overhead. The customer proposal is still `ProposalV1`: notes,
+assumptions, rates, margin, reserve, time, and risk stay in `internal/`.
 
 `--root` is the source workspace. Every referenced record resolves under that
 root. The output directory must be new, inside the root, and not a symlink.
@@ -140,7 +171,8 @@ including every job-packet `customer/` directory. It excludes the private
 `internal/` subtree beneath a packet manifest, which correctly retains its
 technical cost details. Customer drafts require separate price
 approval and manufacturing release in both their JSON and Markdown next steps.
-The order is `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md`.
+The orders are `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md` and
+`docs/orders/CNC-JOB-QUOTE-WORKFLOW-002.md`.
 
 ## License
 

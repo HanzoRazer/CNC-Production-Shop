@@ -1,6 +1,6 @@
 """Source-checkout command for one draft job quote packet.
 
-Dev Order: CNC-JOB-QUOTE-WORKFLOW-001
+Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001 and CNC-JOB-QUOTE-WORKFLOW-002
 
 The command writes files. It does not send, approve, publish externally, or
 start manufacturing.
@@ -16,12 +16,22 @@ from business.workflows.quote_pipeline import run_job_quote
 
 @click.group()
 def main() -> None:
-    """Draft a job quote packet from a source checkout."""
+    """Draft a job quote packet from a source checkout.
+
+    Supported requests are guitar_estimate_input_v1 at record version 1.0.0
+    and thin_skin_estimate_input_v2 at record version 2.0.0. Both are quantity
+    1 and currency USD. The command does not choose a contract by filename.
+    """
 
 
 @main.command("run")
 @click.option("--root", required=True, type=str, help="Explicit source workspace.")
-@click.option("--job", required=True, type=str, help="Workspace-relative job request JSON.")
+@click.option(
+    "--job",
+    required=True,
+    type=str,
+    help="Workspace-relative job request JSON (v1 solid-body or v2 thin-skin).",
+)
 @click.option(
     "--output-dir",
     required=True,

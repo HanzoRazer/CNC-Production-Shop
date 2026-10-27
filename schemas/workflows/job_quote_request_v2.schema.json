@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "job_quote_request_v2.schema.json",
+  "title": "CncJobQuoteRequestV2",
+  "description": "Operator request for one draft thin-skin job quote. Identifiers are identities, not filesystem paths. This version accepts only thin_skin_estimate_input_v2, quantity 1, currency USD, and target-margin pricing. The input fixture filename does not select this contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "display_string": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!\\s*$).+$"
+    },
+    "workspace_ref": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*\\.\\.)(?!.*://)(?!.*\\s).+$"
+    }
+  },
+  "required": [
+    "record_type",
+    "record_version",
+    "job_id",
+    "estimate_id",
+    "bid_id",
+    "proposal_id",
+    "project_name",
+    "customer_name",
+    "revision",
+    "created_at",
+    "estimate_input_contract",
+    "estimate_input_ref",
+    "quantity",
+    "currency",
+    "pricing_policy",
+    "customer_deliverables",
+    "customer_exclusions",
+    "internal_notes"
+  ],
+  "properties": {
+    "record_type": {"const": "cnc_job_quote_request"},
+    "record_version": {"const": "2.0.0"},
+    "job_id": {"$ref": "#/$defs/identifier"},
+    "estimate_id": {
+      "type": "string",
+      "pattern": "^THIN-SKIN-GUITAR-BUILD-ESTIMATE-[A-Z0-9-]+$"
+    },
+    "bid_id": {"$ref": "#/$defs/identifier"},
+    "proposal_id": {"$ref": "#/$defs/identifier"},
+    "project_name": {"$ref": "#/$defs/display_string"},
+    "customer_name": {"$ref": "#/$defs/display_string"},
+    "revision": {"$ref": "#/$defs/display_string"},
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "estimate_input_contract": {"const": "thin_skin_estimate_input_v2"},
+    "estimate_input_ref": {"$ref": "#/$defs/workspace_ref"},
+    "quantity": {"type": "integer", "const": 1},
+    "currency": {"const": "USD"},
+    "pricing_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "policy_version", "target_margin_pct"],
+      "properties": {
+        "policy_id": {"const": "target_margin"},
+        "policy_version": {"const": "1.0.0"},
+        "target_margin_pct": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 100
+        }
+      }
+    },
+    "customer_deliverables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/display_string"}
+    },
+    "customer_exclusions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/display_string"}
+    },
+    "internal_notes": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}
