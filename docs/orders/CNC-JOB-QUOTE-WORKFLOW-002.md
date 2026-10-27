@@ -162,7 +162,7 @@ Rollback is to stop admitting V2 requests and keep using V1. Existing packets ar
 
 ## Verification evidence
 
-These commands were run on this branch after implementation. They are this order's results. Historical pass claims from order 001 are not reused.
+These commands were run on this branch after implementation, on commit `f86042becb90da9e52f063300bd10bae62b1fe98`. They are this order's results. Historical pass claims from order 001 are not reused. The sentence that names that commit was added afterward and does not change application code.
 
 The evidence paragraph was written after the gates. It does not change application code. The three demo packets below stayed in place for the full-suite customer-markdown scan.
 
