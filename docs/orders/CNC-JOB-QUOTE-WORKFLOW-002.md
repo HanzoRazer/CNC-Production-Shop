@@ -234,12 +234,12 @@ No tag, release, or merge was performed.
 
 ### Hosted checks
 
-GitHub Actions run [40443836030](https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/40443836030) succeeded on pull request head `2d5a5898868d3c2987ebfce51e37d42f358828c9`. Both jobs started at 10:22 PM America/Chicago on 2026-10-26 and finished at 10:24 PM America/Chicago.
+GitHub Actions run [40443836030](https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/40443836030) succeeded on `2d5a5898868d3c2987ebfce51e37d42f358828c9`. Both jobs started at 10:22 PM America/Chicago on 2026-10-26 and finished at 10:24 PM America/Chicago. This paragraph was written after that run.
 
 | Job | Result | Duration | Link |
 |-----|--------|----------|------|
 | test (3.12) | success | 1m17s | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/40443836030/job/121990242052 |
 | test (3.11) | success | 1m21s | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/40443836030/job/121990242263 |
 
-That head is the local evidence commit plus this hosted-result note. The application gates themselves ran on `f86042becb90da9e52f063300bd10bae62b1fe98`. Linux execution here is not macOS or Windows validation.
+The application gates themselves ran on `f86042becb90da9e52f063300bd10bae62b1fe98`. Linux execution here is not macOS or Windows validation.
 
