@@ -174,6 +174,55 @@ approval and manufacturing release in both their JSON and Markdown next steps.
 The orders are `docs/orders/CNC-JOB-QUOTE-WORKFLOW-001.md` and
 `docs/orders/CNC-JOB-QUOTE-WORKFLOW-002.md`.
 
+## Verify a saved draft packet
+
+`verify` reads a packet that `run` already wrote. The original source workspace
+and the checkout's current rates are not required. Verification uses the packet
+bytes plus the schemas and code in this source checkout. The packet directory
+may be anywhere on the machine, including a copy made on another computer.
+
+Supported packets are the exact combinations `run` emits: solid-body manifest
+`1.0.0` with workflow and mapping `1.0.0`, and thin-skin manifest `2.0.0` with
+workflow and mapping `2.0.0`. Any other combination is refused. The command
+does not repair, normalize, or annotate packet files, and it does not write a
+report into the packet.
+
+```bash
+python -m business.workflows.cli verify \
+  --packet-dir exports/jobs/thin-skin-a-quote-001
+
+python -m business.workflows.cli verify \
+  --packet-dir /path/to/copied-packet \
+  --expected-manifest-sha256 REPLACE_WITH_RETAINED_64_HEX_DIGEST \
+  --json
+```
+
+Replace the digest placeholder with the 64-character lowercase SHA-256 of
+`manifest.json` that the caller retained. This repository does not publish an
+authority digest. A matching value establishes equality with that supplied
+anchor. It does not establish who authorized the packet.
+
+Without an anchor, verification checks that the captured bytes still match
+supported deterministic generation. A coherent packet regenerated from edited
+sources can pass. With the retained digest, any changed manifest fails before
+replay. Neither result certifies source measurements, vendor prices, economic
+completeness, or shop readiness.
+
+A valid result means the captured packet is consistent with that generation.
+Economic status stays `draft`. The result is internal evidence. It is not a
+price approval, a customer commitment, or a manufacturing release. SHA-256 is
+not an authenticity proof, and the command does not lock the directory against
+a concurrent writer. Verify a packet that is not being written.
+
+Exit 0: every check passed and the economic status is still draft. Exit 2: the
+invocation or the packet is invalid. With `--json`, that result object is the
+only stdout. Exit 1: a file could not be read, temporary storage failed, or
+the verifier failed unexpectedly. That path does not print a verification
+result.
+
+`run` flags and output are unchanged. The order is
+`docs/orders/CNC-JOB-QUOTE-VERIFY-001.md`.
+
 ## License
 
 MIT License — Copyright © 2026 Texas Guitar Exchange LLC

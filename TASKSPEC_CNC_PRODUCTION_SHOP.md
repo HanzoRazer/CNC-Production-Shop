@@ -189,12 +189,24 @@ CNC-COST-CORE-3 and CNC-COST-CORE-4 stay ready-to-run. Order 001 does not replac
 
 ## Registered order: CNC-JOB-QUOTE-WORKFLOW-002
 
-**Status:** Implemented on branch `cursor/cnc-job-quote-workflow-002-884a`. Not merged, tagged, or released by this order.
+**Status:** Merged via pull request #20. The merge commit on `main` is `ef4d6e31bda91932dc123eca9702dc086fa3bd87`, including test-isolation fix `b392581`. Not tagged or released by that order.
 
 **Date:** 2026-10-26
 
 **Baseline:** `main` at `408f88037707be868ae08ff2a0a25b1149a18932`
 
 Source-checkout command for one thin-skin draft packet. The operator supplies `thin_skin_estimate_input_v2`, quantity 1, USD, an explicit target margin, and caller IDs and time. The workflow admits variant A or B, captures product, machine, and equipment sources, and writes `BidV2` plus the existing `BidSummaryV1` and `ProposalV1`. Equipment occupancy and the process rework and yield reserve stay explicit base amounts. The V1 solid-body packet bytes stay compatible. Samples: `fixtures/jobs/cnc_job_quote_thin_skin_a_v2.json` and `fixtures/jobs/cnc_job_quote_thin_skin_b_v2.json`. Record and evidence: `docs/orders/CNC-JOB-QUOTE-WORKFLOW-002.md`.
+
+CNC-COST-CORE-3 and CNC-COST-CORE-4 stay separate. This order does not implement them.
+
+## Registered order: CNC-JOB-QUOTE-VERIFY-001
+
+**Status:** Implemented on branch `cursor/cnc-job-quote-verify-001-884a`. Not merged, tagged, or released by this order.
+
+**Date:** 2026-10-27
+
+**Baseline:** `main` at `ef4d6e31bda91932dc123eca9702dc086fa3bd87`
+
+Read-only verification of one saved solid-body V1 or thin-skin V2 draft packet from its own bytes and this checkout's schemas and code. The original source workspace is not required. An optional caller-supplied manifest digest checks equality with that retained anchor. A valid result stays `draft` and is not a price approval, a customer commitment, or a manufacturing release. Record and evidence: `docs/orders/CNC-JOB-QUOTE-VERIFY-001.md`.
 
 CNC-COST-CORE-3 and CNC-COST-CORE-4 stay separate. This order does not implement them.
