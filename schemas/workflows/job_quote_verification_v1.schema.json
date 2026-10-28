@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "job_quote_verification_v1.schema.json",
+  "title": "CncJobQuoteVerificationV1",
+  "description": "Internal evidence that a saved draft quote packet matches supported deterministic generation. A valid result is not a price approval, a customer commitment, or a manufacturing release. It contains no costs, rates, timestamps, or absolute paths.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_type",
+    "record_version",
+    "authority",
+    "result",
+    "manifest_sha256",
+    "expected_manifest_sha256",
+    "anchor_status",
+    "packet_version",
+    "economic_status",
+    "job_id",
+    "estimate_id",
+    "bid_id",
+    "proposal_id",
+    "checks",
+    "errors"
+  ],
+  "properties": {
+    "record_type": {"const": "cnc_job_quote_verification"},
+    "record_version": {"const": "1.0.0"},
+    "authority": {"const": "verification_only"},
+    "result": {"enum": ["valid", "invalid"]},
+    "manifest_sha256": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "expected_manifest_sha256": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "anchor_status": {"enum": ["matched", "mismatch", "not_supplied", "not_checked"]},
+    "packet_version": {"enum": ["1.0.0", "2.0.0", null]},
+    "economic_status": {"enum": ["draft", null]},
+    "job_id": {"type": ["string", "null"]},
+    "estimate_id": {"type": ["string", "null"]},
+    "bid_id": {"type": ["string", "null"]},
+    "proposal_id": {"type": ["string", "null"]},
+    "checks": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "prefixItems": [
+        {"$ref": "#/$defs/inventory_check"},
+        {"$ref": "#/$defs/schemas_check"},
+        {"$ref": "#/$defs/hashes_check"},
+        {"$ref": "#/$defs/source_closure_check"},
+        {"$ref": "#/$defs/replay_check"}
+      ],
+      "items": false
+    },
+    "errors": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/diagnostic"}
+    }
+  },
+  "$defs": {
+    "check_status": {"enum": ["pass", "fail", "not_run"]},
+    "inventory_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": {"const": "inventory"},
+        "status": {"$ref": "#/$defs/check_status"}
+      }
+    },
+    "schemas_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": {"const": "schemas"},
+        "status": {"$ref": "#/$defs/check_status"}
+      }
+    },
+    "hashes_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": {"const": "hashes"},
+        "status": {"$ref": "#/$defs/check_status"}
+      }
+    },
+    "source_closure_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": {"const": "source_closure"},
+        "status": {"$ref": "#/$defs/check_status"}
+      }
+    },
+    "replay_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": {"const": "replay"},
+        "status": {"$ref": "#/$defs/check_status"}
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "member"],
+      "properties": {
+        "code": {
+          "enum": [
+            "PACKET_NOT_FOUND",
+            "UNSAFE_MEMBER",
+            "UNSUPPORTED_CONTRACT",
+            "SCHEMA_INVALID",
+            "INVENTORY_MISMATCH",
+            "DUPLICATE_ENTRY",
+            "HASH_MISMATCH",
+            "SOURCE_CLOSURE_MISMATCH",
+            "REPLAY_MISMATCH",
+            "ANCHOR_MISMATCH",
+            "PACKET_CHANGED_DURING_READ"
+          ]
+        },
+        "member": {"type": ["string", "null"], "minLength": 1}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"result": {"const": "valid"}},
+        "required": ["result"]
+      },
+      "then": {
+        "properties": {
+          "anchor_status": {"enum": ["matched", "not_supplied"]},
+          "economic_status": {"const": "draft"},
+          "packet_version": {"enum": ["1.0.0", "2.0.0"]},
+          "manifest_sha256": {"type": "string"},
+          "job_id": {"type": "string", "minLength": 1},
+          "estimate_id": {"type": "string", "minLength": 1},
+          "bid_id": {"type": "string", "minLength": 1},
+          "proposal_id": {"type": "string", "minLength": 1},
+          "errors": {"maxItems": 0}
+        }
+      }
+    }
+  ]
+}

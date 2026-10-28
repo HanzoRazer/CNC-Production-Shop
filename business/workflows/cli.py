@@ -1,17 +1,29 @@
-"""Source-checkout command for one draft job quote packet.
+"""Source-checkout commands for draft job quote packets.
 
-Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001 and CNC-JOB-QUOTE-WORKFLOW-002
+Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001, CNC-JOB-QUOTE-WORKFLOW-002,
+and CNC-JOB-QUOTE-VERIFY-001.
 
-The command writes files. It does not send, approve, publish externally, or
-start manufacturing.
+``run`` writes one new draft packet. ``verify`` only reads an existing packet.
+Neither command sends, approves, or releases manufacturing.
 """
 
 from __future__ import annotations
+
+import re
 
 import click
 
 from business.workflows.models import JobQuoteFailureError, JobQuoteRefusalError
 from business.workflows.quote_pipeline import run_job_quote
+from business.workflows.reporting import dumps_json
+from business.workflows.verification import verify_job_quote_packet
+from business.workflows.verification_models import (
+    VerificationOperationalError,
+    format_verification_text,
+    verification_payload,
+)
+
+_DIGEST = re.compile(r"^[0-9a-f]{64}$")
 
 
 @click.group()
@@ -54,6 +66,47 @@ def run_command(root: str, job: str, output_dir: str) -> None:
     click.echo(f"quote_price: {result.quote_price:.2f}")
     click.echo(f"output_dir: {result.output_dir.as_posix()}")
     click.echo(f"customer_proposal: {result.customer_proposal_markdown.as_posix()}")
+
+
+@main.command("verify")
+@click.option(
+    "--packet-dir",
+    required=True,
+    type=str,
+    help="Existing saved quote packet directory.",
+)
+@click.option(
+    "--expected-manifest-sha256",
+    default=None,
+    type=str,
+    help="Caller-retained lowercase SHA-256 of manifest.json. Not an authority.",
+)
+@click.option(
+    "--json",
+    "as_json",
+    is_flag=True,
+    help="Write the verification result JSON to stdout.",
+)
+def verify_command(packet_dir: str, expected_manifest_sha256: str | None, as_json: bool) -> None:
+    """Check a saved draft packet from its captured bytes. Writes nothing into it."""
+    if expected_manifest_sha256 is not None and _DIGEST.fullmatch(expected_manifest_sha256) is None:
+        raise click.BadParameter(
+            "expected manifest SHA-256 must be 64 lowercase hex characters",
+            param_hint="--expected-manifest-sha256",
+        )
+    try:
+        result = verify_job_quote_packet(packet_dir, expected_manifest_sha256)
+    except VerificationOperationalError as exc:
+        click.echo(f"error: {exc}", err=True)
+        raise SystemExit(1) from None
+    rendered = (
+        dumps_json(verification_payload(result)).decode("utf-8")
+        if as_json
+        else format_verification_text(result) + "\n"
+    )
+    click.echo(rendered, nl=False)
+    if result.result != "valid":
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":
