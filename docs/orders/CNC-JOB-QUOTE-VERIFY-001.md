@@ -127,6 +127,15 @@ CPython 3.11.18  1688 passed, 1 skipped, 3 warnings in 181.24s
                  finished 8:00 PM America/Chicago, 2026-10-27
 ```
 
-The 3.12 run started at 7:53 PM America/Chicago. The 3.11 run started at 7:57 PM America/Chicago, after the 3.12 run finished. Warnings were the existing zipfile duplicate-name notice and the Click `isolated_filesystem` deprecation. No checkout fixture was left modified. Hosted Actions links are added when they finish on this HEAD. Linux execution here is not macOS or Windows validation.
+The 3.12 run started at 7:53 PM America/Chicago. The 3.11 run started at 7:57 PM America/Chicago, after the 3.12 run finished. Warnings were the existing zipfile duplicate-name notice and the Click `isolated_filesystem` deprecation. No checkout fixture was left modified. Linux execution here is not macOS or Windows validation.
+
+### Hosted checks
+
+GitHub Actions run [40612483207](https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/40612483207) succeeded on `01d833b2021b8ff7f44b5278d7b23228b94d4789`. Both jobs started at 8:01 PM America/Chicago on 2026-10-27. This paragraph records that run. It does not change the verifier.
+
+| Job | Result | Duration | Finished (America/Chicago) | Link |
+|-----|--------|----------|----------------------------|------|
+| test (3.11) | success | 1m24s | 8:02 PM | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/40612483207/job/122567107139 |
+| test (3.12) | success | 2m22s | 8:03 PM | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/40612483207/job/122567107311 |
 
 A temporary V1 packet verified with economic status `draft`, packet version `1.0.0`, and manifest SHA-256 `f80398f299f71b3cb3241f1b882bce8390ba356c81dd1764d89c0cf29aa9f239`. That digest matches the existing pre-change V1 manifest oracle. All five checks passed. Appending one byte to `internal/cost_report.md` without updating the manifest failed at `hashes` with `HASH_MISMATCH` and left replay `not_run`. Supplying 64 zeroes as the expected digest failed with `ANCHOR_MISMATCH` before any check ran. The verification text did not include the manufacturing cost or the draft price.
