@@ -11,6 +11,7 @@ from __future__ import annotations
 import os
 import re
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 
 from business.workflows.loading import load_job_quote, validate_instance
@@ -29,6 +30,18 @@ _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 _RESULT_SCHEMA = "workflows/job_quote_verification_v1.schema.json"
 
 
+@dataclass(frozen=True)
+class VerifiedQuotePacket:
+    """A successful verification and the single capture that produced it.
+
+    This is internal evidence for a later human review record. It is not an
+    authenticated approval, a customer-send permission, or a manufacturing release.
+    """
+
+    verification: JobQuoteVerification
+    captured: CapturedPacket
+
+
 def verify_job_quote_packet(
     packet_dir: Path | str,
     expected_manifest_sha256: str | None = None,
@@ -36,16 +49,55 @@ def verify_job_quote_packet(
     """Verify one saved packet. Invalid packets return a result; I/O failures raise."""
     if expected_manifest_sha256 is not None and _DIGEST.fullmatch(expected_manifest_sha256) is None:
         raise ValueError("expected_manifest_sha256 must be 64 lowercase hex characters")
+    result, _captured = _verify_once(packet_dir, expected_manifest_sha256)
+    return result
+
+
+def require_verified_packet(
+    packet_dir: Path | str,
+    expected_manifest_sha256: str,
+) -> VerifiedQuotePacket:
+    """Admit and replay once. An explicit retained digest is required.
+
+    Invalid verification raises PacketRejectedError. The returned capture is the
+    only byte source for a review that follows this call.
+    """
+    if _DIGEST.fullmatch(expected_manifest_sha256) is None:
+        raise ValueError("expected_manifest_sha256 must be 64 lowercase hex characters")
+    result, captured = _verify_once(packet_dir, expected_manifest_sha256)
+    if captured is None or result.result != "valid" or result.anchor_status != "matched":
+        if result.result == "valid":
+            raise VerificationOperationalError("anchored verification did not retain its capture")
+        raise PacketRejectedError(result)
+    return VerifiedQuotePacket(verification=result, captured=captured)
+
+
+def ensure_captured_unchanged(verified: VerifiedQuotePacket) -> None:
+    """Raise when the packet changed after the capture used for verification."""
+    state = _state_from(verified.captured, verified.verification.expected_manifest_sha256)
+    ensure_unchanged(
+        verified.captured.root,
+        verified.captured.identities,
+        verified.captured.directories,
+        state,
+        "replay",
+    )
+
+
+def _verify_once(
+    packet_dir: Path | str,
+    expected_manifest_sha256: str | None,
+) -> tuple[JobQuoteVerification, CapturedPacket | None]:
     try:
         captured = admit_packet(packet_dir, expected_manifest_sha256)
     except PacketRejectedError as exc:
-        return _checked(exc.verification)
+        return _checked(exc.verification), None
     state = _state_from(captured, expected_manifest_sha256)
     try:
         verified = _replay(captured, state)
     except PacketRejectedError as exc:
-        return _checked(exc.verification)
-    return _checked(verified)
+        return _checked(exc.verification), None
+    return _checked(verified), captured
 
 
 def _replay(captured: CapturedPacket, state: _State) -> JobQuoteVerification:

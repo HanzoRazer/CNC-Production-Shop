@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "job_quote_price_review_v1.schema.json",
+  "title": "CncJobQuotePriceReviewV1",
+  "description": "Internal record of a caller-asserted human price decision. reviewer_identity_assurance caller_asserted does not authenticate a person, role, or approval authority. authority caller_asserted_price_review_only is not an authenticated approval, a permission to send the proposal, or a manufacturing-release token. The decision approve_price does not by itself open a business or machine gate. This record does not hash itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_type",
+    "record_version",
+    "review_id",
+    "reviewed_at",
+    "reviewer_ref",
+    "reviewer_role",
+    "decision",
+    "reason",
+    "internal_notes",
+    "authority",
+    "reviewer_identity_assurance",
+    "cost_basis_acknowledgment",
+    "subject",
+    "proposal_sha256",
+    "review_request_sha256",
+    "verification_sha256",
+    "verification_contract",
+    "verification_authority"
+  ],
+  "properties": {
+    "record_type": {"const": "cnc_job_quote_price_review"},
+    "record_version": {"const": "1.0.0"},
+    "review_id": {"type": "string", "minLength": 1},
+    "reviewed_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "reviewer_ref": {"type": "string", "minLength": 1},
+    "reviewer_role": {"type": "string", "minLength": 1},
+    "decision": {"enum": ["approve_price", "request_changes", "reject"]},
+    "reason": {"type": "string", "minLength": 1},
+    "internal_notes": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "authority": {"const": "caller_asserted_price_review_only"},
+    "reviewer_identity_assurance": {"const": "caller_asserted"},
+    "cost_basis_acknowledgment": {"const": "direct_manufacturing_cost_only"},
+    "subject": {"$ref": "#/$defs/subject"},
+    "proposal_sha256": {"$ref": "#/$defs/sha256"},
+    "review_request_sha256": {"$ref": "#/$defs/sha256"},
+    "verification_sha256": {"$ref": "#/$defs/sha256"},
+    "verification_contract": {"const": "job_quote_verification_v1"},
+    "verification_authority": {"const": "verification_only"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Identifies the captured draft that was reviewed. It does not repeat manufacturing cost, margin, equipment rates, or reserve detail.",
+      "required": [
+        "packet_version",
+        "manifest_sha256",
+        "job_id",
+        "estimate_id",
+        "bid_id",
+        "proposal_id",
+        "revision",
+        "currency",
+        "quantity",
+        "quote_price",
+        "economic_status"
+      ],
+      "properties": {
+        "packet_version": {"enum": ["1.0.0", "2.0.0"]},
+        "manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "job_id": {"type": "string", "minLength": 1},
+        "estimate_id": {"type": "string", "minLength": 1},
+        "bid_id": {"type": "string", "minLength": 1},
+        "proposal_id": {"type": "string", "minLength": 1},
+        "revision": {"type": "string", "minLength": 1},
+        "currency": {"const": "USD"},
+        "quantity": {"type": "integer", "const": 1},
+        "quote_price": {"type": "number", "minimum": 0},
+        "economic_status": {"const": "draft"}
+      }
+    }
+  }
+}

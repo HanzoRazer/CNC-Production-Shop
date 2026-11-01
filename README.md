@@ -223,6 +223,54 @@ result.
 `run` flags and output are unchanged. The order is
 `docs/orders/CNC-JOB-QUOTE-VERIFY-001.md`.
 
+## Record a human price decision
+
+`record-price-review` stores one caller-asserted decision against a verified
+draft packet. The decision is `approve_price`, `request_changes`, or `reject`.
+Verification does not choose it. `approve_price` does not authenticate the
+reviewer, authorize sending the proposal, or release manufacturing.
+
+The request JSON carries the manifest SHA-256 the human retained. The command
+does not hash whichever directory happens to be present, and it cannot prove
+how that digest was obtained. It verifies the packet once with that digest,
+compares the stated job, estimate, bid, proposal, revision, USD quantity of 1,
+and quote price with that same capture, and writes a new internal bundle
+outside the packet. The quote packet, its draft statuses, and both customer
+artifacts stay unchanged.
+
+```bash
+python -m business.workflows.cli record-price-review \
+  --packet-dir exports/jobs/thin-skin-a-quote-001 \
+  --request /path/to/price-review-request.json \
+  --output-dir exports/quote-reviews/PRICE-REVIEW-DEMO-001
+```
+
+Relative paths resolve against the current working directory. The output must
+be a new directory disjoint from the quote packet, including `customer/`.
+Parent traversal, symlink destinations, and symlink parent components are
+refused. An existing destination is refused, including one created during
+publication. The same request bytes, packet bytes, and retained digest produce
+the same bundle bytes. A retry needs a new review ID and a new directory.
+
+| Path | Role |
+|------|------|
+| `review_request.json` | Raw admitted request bytes. |
+| `verification.json` | Canonical verification result from this run. |
+| `review.json` | Immutable review record. It does not hash itself. |
+| `review.md` | Internal summary, including the asserted-identity limitation. |
+
+`authority` is `caller_asserted_price_review_only`. `reviewer_identity_assurance`
+is `caller_asserted`. The record is not a signature, an authenticated approval,
+a customer-send permission, or a manufacturing-release token. The packet's
+direct-manufacturing-cost-only disclosure is acknowledged and remains
+commercially incomplete. No consumer in this order treats the record as a gate.
+
+All three decisions exit 0 when a new bundle is written. Exit 2 refuses an
+invalid request, subject, packet, anchor, or output and writes no bundle.
+Exit 1 is an operational failure and also writes no bundle. `run` and `verify`
+keep their flags, exits, and result bytes. The order is
+`docs/orders/CNC-JOB-QUOTE-PRICE-REVIEW-001.md`.
+
 ## License
 
 MIT License — Copyright © 2026 Texas Guitar Exchange LLC

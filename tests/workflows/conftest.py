@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import shutil
 from pathlib import Path
 
@@ -148,6 +149,59 @@ def assert_rejected(
         for index in range(len(_PHASES))
     ]
     assert [check.status for check in result.checks] == expected
+
+
+def price_review_request_bytes(
+    packet: Path,
+    *,
+    decision: str = "approve_price",
+    review_id: str = "PRICE-REVIEW-DEMO-001",
+    reviewed_at: str | None = None,
+    reviewer_ref: str = "person-demo-001",
+    reviewer_role: str = "price-reviewer",
+    reason: str = "Synthetic rationale for a caller-asserted price decision.",
+    internal_notes: list[str] | None = None,
+    subject: dict[str, object] | None = None,
+    **fields: object,
+) -> bytes:
+    """Build one strict price-review request from a generated packet.
+
+    The manifest digest is retained here by the test. The command must not
+    compute a substitute from the directory it happens to see.
+    """
+    manifest_bytes = (packet / "manifest.json").read_bytes()
+    manifest = json.loads(manifest_bytes)
+    proposal = json.loads((packet / "customer" / "proposal.json").read_text(encoding="utf-8"))
+    job = json.loads((packet / "internal" / "job_request.json").read_text(encoding="utf-8"))
+    pricing = proposal["pricing"]
+    reviewed_subject: dict[str, object] = {
+        "bid_id": manifest["bid_id"],
+        "currency": "USD",
+        "estimate_id": manifest["estimate_id"],
+        "job_id": manifest["job_id"],
+        "proposal_id": manifest["proposal_id"],
+        "quantity": 1,
+        "quote_price": pricing["total_price"],
+        "revision": proposal["revision"],
+    }
+    if subject:
+        reviewed_subject.update(subject)
+    payload: dict[str, object] = {
+        "cost_basis_acknowledgment": "direct_manufacturing_cost_only",
+        "decision": decision,
+        "expected_manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
+        "internal_notes": ["private note"] if internal_notes is None else internal_notes,
+        "reason": reason,
+        "record_type": "cnc_job_quote_price_review_request",
+        "record_version": "1.0.0",
+        "review_id": review_id,
+        "reviewed_at": job["created_at"] if reviewed_at is None else reviewed_at,
+        "reviewed_subject": reviewed_subject,
+        "reviewer_ref": reviewer_ref,
+        "reviewer_role": reviewer_role,
+    }
+    payload.update(fields)
+    return json.dumps(payload, indent=2, sort_keys=True).encode("utf-8") + b"\n"
 
 
 def pristine_copy(generated_packets: dict[str, Path], tmp_path: Path, variant: str) -> Path:

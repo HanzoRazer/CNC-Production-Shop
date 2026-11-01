@@ -201,12 +201,24 @@ CNC-COST-CORE-3 and CNC-COST-CORE-4 stay separate. This order does not implement
 
 ## Registered order: CNC-JOB-QUOTE-VERIFY-001
 
-**Status:** Implemented on branch `cursor/cnc-job-quote-verify-001-884a`. Not merged, tagged, or released by this order.
+**Status:** Merged via pull request #21. The merge commit on `main` is `d24d637fe70ba7e4ef0d2e99f571579a34ac9c05`, including branch tip `63a430c`. Not tagged or released by that order.
 
 **Date:** 2026-10-27
 
 **Baseline:** `main` at `ef4d6e31bda91932dc123eca9702dc086fa3bd87`
 
 Read-only verification of one saved solid-body V1 or thin-skin V2 draft packet from its own bytes and this checkout's schemas and code. The original source workspace is not required. An optional caller-supplied manifest digest checks equality with that retained anchor. A valid result stays `draft` and is not a price approval, a customer commitment, or a manufacturing release. Record and evidence: `docs/orders/CNC-JOB-QUOTE-VERIFY-001.md`.
+
+CNC-COST-CORE-3 and CNC-COST-CORE-4 stay separate. This order does not implement them.
+
+## Registered order: CNC-JOB-QUOTE-PRICE-REVIEW-001
+
+**Status:** Implemented on branch `cursor/cnc-job-quote-price-review-001-884a`. Not merged, tagged, or released by this order.
+
+**Date:** 2026-10-31
+
+**Baseline:** `main` at `d24d637fe70ba7e4ef0d2e99f571579a34ac9c05`
+
+Record one caller-asserted human price decision (`approve_price`, `request_changes`, or `reject`) against the retained manifest digest, proposal, revision, and quoted amount of one verified draft packet. Fresh anchored verification is required. The review bundle is a new internal directory outside the packet. The packet, its draft economic statuses, and both customer artifacts stay unchanged. The record does not authenticate the reviewer, send the proposal, or release manufacturing. Record and evidence: `docs/orders/CNC-JOB-QUOTE-PRICE-REVIEW-001.md`.
 
 CNC-COST-CORE-3 and CNC-COST-CORE-4 stay separate. This order does not implement them.

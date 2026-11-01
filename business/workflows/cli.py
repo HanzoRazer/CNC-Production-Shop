@@ -1,10 +1,11 @@
 """Source-checkout commands for draft job quote packets.
 
 Dev Orders: CNC-JOB-QUOTE-WORKFLOW-001, CNC-JOB-QUOTE-WORKFLOW-002,
-and CNC-JOB-QUOTE-VERIFY-001.
+CNC-JOB-QUOTE-VERIFY-001, and CNC-JOB-QUOTE-PRICE-REVIEW-001.
 
 ``run`` writes one new draft packet. ``verify`` only reads an existing packet.
-Neither command sends, approves, or releases manufacturing.
+``record-price-review`` writes a separate internal review bundle.
+None of these commands sends a proposal or releases manufacturing.
 """
 
 from __future__ import annotations
@@ -14,6 +15,8 @@ import re
 import click
 
 from business.workflows.models import JobQuoteFailureError, JobQuoteRefusalError
+from business.workflows.price_review import record_price_review
+from business.workflows.price_review_models import PriceReviewFailureError, PriceReviewRefusalError
 from business.workflows.quote_pipeline import run_job_quote
 from business.workflows.reporting import dumps_json
 from business.workflows.verification import verify_job_quote_packet
@@ -107,6 +110,62 @@ def verify_command(packet_dir: str, expected_manifest_sha256: str | None, as_jso
     click.echo(rendered, nl=False)
     if result.result != "valid":
         raise SystemExit(2)
+
+
+@main.command("record-price-review")
+@click.option(
+    "--packet-dir",
+    required=True,
+    type=str,
+    help=("Existing quote packet. A relative path resolves against the current working directory."),
+)
+@click.option(
+    "--request",
+    "request_path",
+    required=True,
+    type=str,
+    help=(
+        "Local price-review request JSON. A relative path resolves against the "
+        "current working directory. The retained manifest digest is a field in "
+        "this file, not a digest computed from the packet directory."
+    ),
+)
+@click.option(
+    "--output-dir",
+    required=True,
+    type=str,
+    help=(
+        "New directory for the internal review bundle, outside the quote packet. "
+        "A relative path resolves against the current working directory. "
+        "Existing destinations are refused."
+    ),
+)
+def record_price_review_command(packet_dir: str, request_path: str, output_dir: str) -> None:
+    """Record a caller-asserted price decision for one verified draft packet.
+
+    approve_price, request_changes, and reject are human dispositions. This
+    command does not authenticate the reviewer, send the proposal, or release
+    manufacturing. The quote packet stays draft.
+    """
+    try:
+        recorded = record_price_review(
+            packet_dir=packet_dir,
+            request_path=request_path,
+            output_dir=output_dir,
+        )
+    except PriceReviewRefusalError as exc:
+        click.echo(f"error: {exc.code}", err=True)
+        raise SystemExit(2) from None
+    except PriceReviewFailureError as exc:
+        click.echo(f"error: {exc}", err=True)
+        raise SystemExit(1) from None
+    click.echo(f"decision: {recorded.decision}")
+    click.echo(f"review_id: {recorded.review_id}")
+    click.echo(f"quote_price: {recorded.quote_price:.2f}")
+    click.echo(f"manifest_sha256: {recorded.manifest_sha256}")
+    click.echo("authority: caller_asserted_price_review_only")
+    click.echo("reviewer_identity_assurance: caller_asserted")
+    click.echo(f"output_dir: {recorded.output_dir}")
 
 
 if __name__ == "__main__":
