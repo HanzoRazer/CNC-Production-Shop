@@ -162,3 +162,12 @@ The 3.12 run started at 10:25 PM America/Chicago. The 3.11 run started at 10:34 
 The 3.11 interpreter was installed for this run. Its first pytest could not build a wheel because that environment had no `pip` module. After `pip` was installed, the suite above passed, including the release wheel test. That was an environment gap, not a product failure.
 
 Nine decision and packet combinations recorded. V1 stayed 1320.13 with internal manufacturing total 924.09, variant A stayed 1001.27 with 700.89, and variant B stayed 1043.70 with 730.59. Those costs remain in the packet. They are not copied into the review subject. Each recorded bundle kept `economic_status: draft`, `authority: caller_asserted_price_review_only`, and `reviewer_identity_assurance: caller_asserted`. `reject` and `request_changes` exited 0 after a successful recording. The original packet files were unchanged, and `verify` still accepted them.
+
+### Hosted checks
+
+GitHub Actions run [41270009257](https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/41270009257) succeeded on `05f9caf86207d0e8b8fb74d82e5dcf073cbee135`. Both jobs started at 10:38 PM America/Chicago on 2026-10-31. This paragraph records that run. It does not change the recorder.
+
+| Job | Result | Duration | Finished (America/Chicago) | Link |
+|-----|--------|----------|----------------------------|------|
+| test (3.11) | success | 2m30s | 10:41 PM | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/41270009257/job/124740666553 |
+| test (3.12) | success | 1m50s | 10:40 PM | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/41270009257/job/124740666441 |
