@@ -329,9 +329,15 @@ def _object(raw: bytes, label: str) -> dict[str, Any]:
 def _cent_valued(value: object) -> bool:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         return False
-    if not math.isfinite(float(value)) or float(value) < 0:
+    try:
+        amount = float(value)
+    except OverflowError:
         return False
-    cents = float(value) * 100
+    if not math.isfinite(amount) or amount < 0:
+        return False
+    cents = amount * 100
+    if not math.isfinite(cents):
+        return False
     return abs(cents - round(cents)) <= 1e-6
 
 

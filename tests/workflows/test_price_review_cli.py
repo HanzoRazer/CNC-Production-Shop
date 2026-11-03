@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 from click.testing import CliRunner
+from markdown_it import MarkdownIt
 
 from business.workflows.cli import main
 from tests.workflows.conftest import copy_saved_packet, price_review_request_bytes
@@ -107,7 +108,14 @@ def test_cli_prints_the_stated_decision_and_keeps_notes_internal(
     assert result.stdout == expected + "\n"
     assert _CANARY_NOTE not in result.stdout
     assert _CANARY_REASON not in result.stdout
-    assert _CANARY_NOTE in (output / "review.md").read_text(encoding="utf-8")
+    rendered = (output / "review.md").read_text(encoding="utf-8")
+    plain = "".join(
+        child.content
+        for token in MarkdownIt().parse(rendered)
+        for child in (token.children or [])
+        if child.type == "text"
+    )
+    assert _CANARY_NOTE in plain
     review = json.loads((output / "review.json").read_text(encoding="utf-8"))
     assert review["decision"] == decision
     assert review["subject"]["economic_status"] == "draft"
@@ -164,6 +172,41 @@ def test_invalid_request_exits_2_without_notes_or_a_bundle(
     assert _CANARY_NOTE not in result.stderr
     assert "Traceback" not in result.stderr
     assert not output.exists()
+
+
+@pytest.mark.parametrize("price", [1e308, sys.float_info.max, 10**400])
+def test_extreme_finite_price_exits_2_before_verification(
+    generated_packets: dict[str, Path],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    price: int | float,
+) -> None:
+    packet, request, output = _prepare(tmp_path, generated_packets, "a", "approve_price")
+    payload = json.loads(request.read_bytes())
+    payload["reviewed_subject"]["quote_price"] = price
+    request.write_text(json.dumps(payload), encoding="utf-8")
+
+    def forbidden(*_args: object, **_kwargs: object) -> None:
+        pytest.fail("invalid price must be refused before packet verification")
+
+    monkeypatch.setattr("business.workflows.price_review.require_verified_packet", forbidden)
+    result = CliRunner().invoke(
+        main,
+        [
+            "record-price-review",
+            "--packet-dir",
+            str(packet),
+            "--request",
+            str(request),
+            "--output-dir",
+            str(output),
+        ],
+    )
+    assert result.exit_code == 2, result.exception
+    assert result.output == "error: REQUEST_INVALID\n"
+    assert isinstance(result.exception, SystemExit)
+    assert not output.exists()
+    assert not list(tmp_path.glob(".job-quote-*"))
 
 
 def test_publish_io_failure_exits_1(

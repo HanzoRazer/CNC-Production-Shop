@@ -8,6 +8,8 @@ reuses the exclusive packet publisher without changing that publisher.
 
 from __future__ import annotations
 
+import html
+import re
 from pathlib import Path
 
 from business.workflows.models import JobQuoteFailureError, JobQuoteRefusalError
@@ -58,26 +60,26 @@ def render_review_markdown(record: PriceReviewRecord) -> str:
         "No consumer may treat this unsigned record as an authenticated approval,",
         "a customer-send permission, or a manufacturing-release token.",
         "",
-        f"Review ID: {record.review_id}",
-        f"Reviewed at: {record.reviewed_at}",
-        f"Decision: {record.decision}",
-        f"Reviewer ref: {record.reviewer_ref}",
-        f"Reviewer role: {record.reviewer_role}",
-        f"Reviewer identity assurance: {record.reviewer_identity_assurance}",
-        f"Authority: {record.authority}",
-        f"Cost basis acknowledgment: {record.cost_basis_acknowledgment}",
+        f"Review ID: {_literal_markdown(record.review_id)}",
+        f"Reviewed at: {_literal_markdown(record.reviewed_at)}",
+        f"Decision: {_literal_markdown(record.decision)}",
+        f"Reviewer ref: {_literal_markdown(record.reviewer_ref)}",
+        f"Reviewer role: {_literal_markdown(record.reviewer_role)}",
+        f"Reviewer identity assurance: {_literal_markdown(record.reviewer_identity_assurance)}",
+        f"Authority: {_literal_markdown(record.authority)}",
+        f"Cost basis acknowledgment: {_literal_markdown(record.cost_basis_acknowledgment)}",
         "",
         "## Subject",
         "",
-        f"Packet version: {subject.packet_version}",
-        f"Economic status: {subject.economic_status}",
-        f"Manifest SHA-256: {subject.manifest_sha256}",
-        f"Job ID: {subject.job_id}",
-        f"Estimate ID: {subject.estimate_id}",
-        f"Bid ID: {subject.bid_id}",
-        f"Proposal ID: {subject.proposal_id}",
-        f"Revision: {subject.revision}",
-        f"Currency: {subject.currency}",
+        f"Packet version: {_literal_markdown(subject.packet_version)}",
+        f"Economic status: {_literal_markdown(subject.economic_status)}",
+        f"Manifest SHA-256: {_literal_markdown(subject.manifest_sha256)}",
+        f"Job ID: {_literal_markdown(subject.job_id)}",
+        f"Estimate ID: {_literal_markdown(subject.estimate_id)}",
+        f"Bid ID: {_literal_markdown(subject.bid_id)}",
+        f"Proposal ID: {_literal_markdown(subject.proposal_id)}",
+        f"Revision: {_literal_markdown(subject.revision)}",
+        f"Currency: {_literal_markdown(subject.currency)}",
         f"Quantity: {subject.quantity}",
         f"Quote price: {subject.quote_price:.2f}",
         "",
@@ -88,24 +90,32 @@ def render_review_markdown(record: PriceReviewRecord) -> str:
         "",
         "## Digests",
         "",
-        f"Proposal SHA-256: {record.proposal_sha256}",
-        f"Review request SHA-256: {record.review_request_sha256}",
-        f"Verification SHA-256: {record.verification_sha256}",
-        f"Verification contract: {record.verification_contract}",
-        f"Verification authority: {record.verification_authority}",
+        f"Proposal SHA-256: {_literal_markdown(record.proposal_sha256)}",
+        f"Review request SHA-256: {_literal_markdown(record.review_request_sha256)}",
+        f"Verification SHA-256: {_literal_markdown(record.verification_sha256)}",
+        f"Verification contract: {_literal_markdown(record.verification_contract)}",
+        f"Verification authority: {_literal_markdown(record.verification_authority)}",
         "",
         "## Rationale",
         "",
-        record.reason,
+        _literal_markdown(record.reason),
         "",
         "## Internal notes",
         "",
     ]
     if record.internal_notes:
-        lines.extend(f"- {note}" for note in record.internal_notes)
+        lines.extend(f"- {_literal_markdown(note)}" for note in record.internal_notes)
     else:
         lines.append("(none)")
     return "\n".join(lines) + "\n"
+
+
+def _literal_markdown(value: str) -> str:
+    """Present supplied text literally, without Markdown or raw HTML structure."""
+    escaped = re.sub(r"([\\`*_{}\[\]()#+.!|~\-])", r"\\\1", value)
+    escaped = html.escape(escaped, quote=False)
+    escaped = escaped.replace("\r", "&#13;").replace("\n", "&#10;").replace("\t", "&#9;")
+    return re.sub(r"^ +", lambda match: "&#32;" * len(match.group()), escaped)
 
 
 def bundle_files(

@@ -6,11 +6,13 @@ import errno
 import hashlib
 import json
 import os
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from markdown_it import MarkdownIt
 
 from business.workflows.loading import validate_instance
 from business.workflows.price_review import (
@@ -33,6 +35,7 @@ from business.workflows.price_review_models import (
     PriceReviewRefusalError,
     ReviewedSubject,
 )
+from business.workflows.price_review_reporting import render_review_markdown, review_payload
 from business.workflows.reporting import dumps_json
 from business.workflows.verification import verify_job_quote_packet
 from business.workflows.verification_models import verification_payload
@@ -247,8 +250,14 @@ def test_each_decision_records_the_retained_subject(
     bundle_text = (output / "review.json").read_text(encoding="utf-8") + rendered
     assert f"{price:.2f}" in bundle_text
     assert _COSTS[variant] not in bundle_text
-    assert _CANARY_NOTE in rendered
-    assert _CANARY_REASON in rendered
+    plain = "".join(
+        child.content
+        for token in MarkdownIt().parse(rendered)
+        for child in (token.children or [])
+        if child.type == "text"
+    )
+    assert _CANARY_NOTE in plain
+    assert _CANARY_REASON in plain
     assert "does not authenticate" in rendered
     assert "does not release manufacturing" in rendered
     assert "customer-send permission" in rendered
@@ -1313,3 +1322,56 @@ def test_money_helpers_reject_bools_and_non_cent_values() -> None:
     assert _is_zero(0.0) is True
     assert _is_zero(False) is False
     assert _is_zero("0") is False
+
+
+@pytest.mark.parametrize(
+    "field", ["reviewer_ref", "reviewer_role", "reason", "internal_notes", "revision"]
+)
+@pytest.mark.parametrize(
+    "supplied",
+    [
+        "<script>alert(1)</script> [approve](https://example.com) ![image](x) **authority**",
+        "    ```\n# APPROVED\n> release\n- send\n``` &lt;script&gt; \\ [x]",
+        "| field | value |\r\n\t---\r\n_authority_ <https://example.com> ~~release~~",
+    ],
+    ids=["html-links-emphasis", "blocks-fences-entities", "table-controls-autolink"],
+)
+def test_review_text_cannot_inject_markdown_or_html(field: str, supplied: str) -> None:
+    if field == "revision":
+        record = _record_sample(subject=replace(_subject_sample(), revision=supplied))
+    else:
+        record = _record_sample(**{field: (supplied,) if field == "internal_notes" else supplied})
+    tokens = MarkdownIt().parse(render_review_markdown(record))
+    children = [child for token in tokens for child in (token.children or [])]
+    assert not any(
+        token.type
+        in {
+            "html_block",
+            "html_inline",
+            "link_open",
+            "image",
+            "strong_open",
+            "em_open",
+            "fence",
+        }
+        for token in [*tokens, *children]
+    )
+    headings = [
+        token.content
+        for index, token in enumerate(tokens)
+        if index and tokens[index - 1].type == "heading_open"
+    ]
+    assert headings == [
+        "Internal price review",
+        "Subject",
+        "Digests",
+        "Rationale",
+        "Internal notes",
+    ]
+    text = "".join(child.content for child in children if child.type == "text")
+    assert supplied in text
+    payload = review_payload(record)
+    if field == "revision":
+        assert payload["subject"]["revision"] == supplied
+    else:
+        assert payload[field] == ([supplied] if field == "internal_notes" else supplied)

@@ -259,6 +259,12 @@ the same bundle bytes. A retry needs a new review ID and a new directory.
 | `review.json` | Immutable review record. It does not hash itself. |
 | `review.md` | Internal summary, including the asserted-identity limitation. |
 
+Supplied text is displayed literally in `review.md`; Markdown and raw HTML
+cannot introduce links, images, headings, or approval-looking formatting.
+The JSON files retain the original field values and raw request bytes.
+Prices whose float conversion or cent scaling overflows are refused as invalid
+requests (exit 2), before packet verification or bundle publication.
+
 `authority` is `caller_asserted_price_review_only`. `reviewer_identity_assurance`
 is `caller_asserted`. The record is not a signature, an authenticated approval,
 a customer-send permission, or a manufacturing-release token. The packet's

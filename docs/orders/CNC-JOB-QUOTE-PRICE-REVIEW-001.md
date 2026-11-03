@@ -171,3 +171,29 @@ GitHub Actions run [41270009257](https://github.com/HanzoRazer/CNC-Production-Sh
 |-----|--------|----------|----------------------------|------|
 | test (3.11) | success | 2m30s | 10:41 PM | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/41270009257/job/124740666553 |
 | test (3.12) | success | 1m50s | 10:40 PM | https://github.com/HanzoRazer/CNC-Production-Shop/actions/runs/41270009257/job/124740666441 |
+
+### PR #22 review corrections — 2026-11-03
+
+The review's finite-price overflow is reproduced on head c05c313: 1e308 and
+the largest finite float overflow cent scaling. A further case, a JSON integer
+10**400, overflows conversion to float. All three are now refused as
+REQUEST_INVALID before packet verification/publication, with CLI exit 2.
+
+Supplied text is rendered literally in the internal Markdown summary, including
+reviewer identity/role, rationale, notes and subject revision. Escaping prevents
+raw HTML, links/images, emphasis, headings, code fences and control characters
+from introducing document structure. JSON values and raw request bytes are
+unchanged. Caller-asserted identity and decision authority remain unchanged;
+there is no authentication, send permission or manufacturing release.
+
+Seven initial regressions failed against the original code before the fixes.
+Expanded coverage includes three extreme numeric cases and a 15-case
+Markdown/HTML parser matrix. The focused price-review suite passed 114 tests
+on CPython 3.12.14/Linux. Ruff and all four mypy gates passed.
+
+The full local suite reported 1805 passed, 1 skipped, 3 warnings and 91.46%
+business coverage (4823 statements, 412 missed), plus one environment failure:
+test_unix_socket_member_is_refused cannot create its AF_UNIX socket because
+this sandbox returns PermissionError/EPERM. That existing test was not changed
+or disabled. Hosted checks on the follow-up commit provide the complete-suite
+result separately in the PR body. No source fixtures were left modified.
