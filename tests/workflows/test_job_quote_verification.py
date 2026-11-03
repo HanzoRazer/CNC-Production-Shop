@@ -16,9 +16,14 @@ import pytest
 from business.workflows.loading import resolve_workspace_file, validate_instance
 from business.workflows.quote_pipeline import run_job_quote
 from business.workflows.reporting import dumps_json
-from business.workflows.verification import verify_job_quote_packet
+from business.workflows.verification import (
+    ensure_captured_unchanged,
+    require_verified_packet,
+    verify_job_quote_packet,
+)
 from business.workflows.verification_models import (
     JobQuoteVerification,
+    PacketRejectedError,
     VerificationDiagnostic,
     VerificationOperationalError,
     checks_for,
@@ -29,6 +34,7 @@ from tests.workflows.conftest import (
     ROOT,
     assert_rejected,
     copy_demo_workspace,
+    copy_saved_packet,
     packet_fingerprint,
     pristine_copy,
 )
@@ -584,3 +590,101 @@ def test_read_failure_is_operational(
     monkeypatch.setattr(os, "open", guarded)
     with pytest.raises(VerificationOperationalError, match="could not be read"):
         verify_job_quote_packet(packet)
+
+
+def test_require_verified_packet_admits_and_replays_once(
+    generated_packets: dict[str, Path],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from business.workflows import verification
+
+    packet = copy_saved_packet(generated_packets["v1"], tmp_path / "packet")
+    digest = hashlib.sha256((packet / "manifest.json").read_bytes()).hexdigest()
+    calls = {"admit": 0, "replay": 0}
+    real_admit = verification.admit_packet
+    real_build = verification.build_job_quote_packet
+
+    def admit(*args: object, **kwargs: object):
+        calls["admit"] += 1
+        return real_admit(*args, **kwargs)  # type: ignore[arg-type]
+
+    def build(*args: object, **kwargs: object):
+        calls["replay"] += 1
+        return real_build(*args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(verification, "admit_packet", admit)
+    monkeypatch.setattr(verification, "build_job_quote_packet", build)
+    verified = require_verified_packet(packet, digest)
+    assert calls == {"admit": 1, "replay": 1}
+    public = verify_job_quote_packet(packet, digest)
+    assert calls == {"admit": 2, "replay": 2}
+    assert isinstance(public, JobQuoteVerification)
+    assert dumps_json(verification_payload(verified.verification)) == dumps_json(
+        verification_payload(public)
+    )
+    for relative, raw in verified.captured.files.items():
+        assert (packet / relative).read_bytes() == raw
+    proposal = packet / "customer" / "proposal.json"
+    original = proposal.read_bytes()
+    proposal.write_bytes(original + b"\n")
+    assert verified.captured.files["customer/proposal.json"] == original
+    with pytest.raises(PacketRejectedError) as caught:
+        ensure_captured_unchanged(verified)
+    assert caught.value.verification.errors[0].code == "PACKET_CHANGED_DURING_READ"
+
+
+def test_public_verify_keeps_unanchored_results_and_discards_capture(
+    generated_packets: dict[str, Path],
+    tmp_path: Path,
+) -> None:
+    packet = copy_saved_packet(generated_packets["a"], tmp_path / "packet")
+    digest = hashlib.sha256((packet / "manifest.json").read_bytes()).hexdigest()
+    unanchored = verify_job_quote_packet(packet)
+    anchored = verify_job_quote_packet(packet, digest)
+    assert unanchored.result == "valid"
+    assert unanchored.anchor_status == "not_supplied"
+    assert anchored.result == "valid"
+    assert anchored.anchor_status == "matched"
+    assert not hasattr(unanchored, "captured")
+    assert dumps_json(verification_payload(unanchored)) != dumps_json(
+        verification_payload(anchored)
+    )
+    with pytest.raises(ValueError, match="64 lowercase hex"):
+        require_verified_packet(packet, "ABCD")
+
+
+def test_rejected_capture_matches_the_public_invalid_result(
+    generated_packets: dict[str, Path],
+    tmp_path: Path,
+) -> None:
+    packet = copy_saved_packet(generated_packets["b"], tmp_path / "packet")
+    digest = hashlib.sha256((packet / "manifest.json").read_bytes()).hexdigest()
+    report = packet / "internal" / "cost_report.md"
+    report.write_bytes(report.read_bytes() + b"\n")
+    public = verify_job_quote_packet(packet, digest)
+    with pytest.raises(PacketRejectedError) as caught:
+        require_verified_packet(packet, digest)
+    assert dumps_json(verification_payload(caught.value.verification)) == dumps_json(
+        verification_payload(public)
+    )
+    assert public.result == "invalid"
+
+
+def test_missing_capture_on_a_valid_result_is_operational(
+    generated_packets: dict[str, Path],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from business.workflows import verification
+
+    packet = copy_saved_packet(generated_packets["v1"], tmp_path / "packet")
+    digest = hashlib.sha256((packet / "manifest.json").read_bytes()).hexdigest()
+    result = verify_job_quote_packet(packet, digest)
+
+    def missing(*_args: object, **_kwargs: object):
+        return result, None
+
+    monkeypatch.setattr(verification, "_verify_once", missing)
+    with pytest.raises(VerificationOperationalError, match="did not retain its capture"):
+        require_verified_packet(packet, digest)
